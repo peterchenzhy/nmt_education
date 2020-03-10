@@ -1,9 +1,189 @@
-<page-header [title]="course.courseNo"></page-header>
-<nz-spin *ngIf="!i" class="modal-spin"></nz-spin>
-<div sv-container *ngIf="i">
-  <sv label="姓名">{{ i.owner }}</sv>
-  <sv label="会员卡号">32943898021309809423</sv>
-  <sv label="身份证">3321944288191034921</sv>
-  <sv label="联系方式">18112345678</sv>
-  <sv label="联系地址">曲丽丽 18100000000 浙江省杭州市西湖区黄姑山路工专路交叉路口</sv>
-</div>
+<page-header [title]="pageHeader"></page-header>
+<form nz-form [formGroup]="form" (ngSubmit)="_submitForm()" [nzLayout]="'vertical'">
+  <nz-card [nzBordered]="false" nzTitle="课程信息">
+    <nz-row nzGutter="16">
+      <nz-col nzLg="6" nzMd="12" nzSm="24">
+        <nz-form-item>
+          <nz-form-label nzFor="name">课程名称</nz-form-label>
+          <nz-form-control nzErrorTip="请输入课程名称">
+            <input nz-input formControlName="name" id="name" placeholder="请输入课程名称" />
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+      <nz-col [nzXl]="{ span: 6, offset: 2 }" [nzLg]="{ span: 8 }" [nzMd]="{ span: 12 }" nzSm="24">
+        <nz-form-item>
+          <nz-form-label>年度</nz-form-label>
+          <nz-form-control>
+            <input nz-input formControlName="year" id="year" />
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+      <nz-col [nzXl]="{ span: 8, offset: 2 }" [nzLg]="{ span: 10 }" [nzMd]="{ span: 24 }" nzSm="24">
+        <nz-form-item>
+          <nz-form-label>季度</nz-form-label>
+          <nz-form-control>
+            <input nz-input formControlName="season" id="season" />
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+    </nz-row>
+    <nz-row nzGutter="16">
+      <nz-col nzLg="6" nzMd="12" nzSm="24">
+        <nz-form-item>
+          <nz-form-label nzFor="type">课程类型</nz-form-label>
+          <nz-form-control nzErrorTip="请输入课程类型">
+            <nz-select formControlName="type" [nzPlaceHolder]="'请选择课程类型'" [nzShowSearch]="true">
+              <nz-option *ngFor="let i of typeList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+      <nz-col [nzXl]="{ span: 6, offset: 2 }" [nzLg]="{ span: 8 }" [nzMd]="{ span: 12 }" nzSm="24">
+        <nz-form-item>
+          <nz-form-label>开课日期</nz-form-label>
+          <nz-form-control>
+            <nz-date-picker formControlName="startDate" [nzStyle]="{ width: '100%' }"></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+      <nz-col [nzXl]="{ span: 8, offset: 2 }" [nzLg]="{ span: 10 }" [nzMd]="{ span: 24 }" nzSm="24">
+        <nz-form-item>
+          <nz-form-label>课程状态</nz-form-label>
+          <nz-form-control nzErrorTip="请选择课程状态">
+            <nz-select formControlName="status" [nzPlaceHolder]="'请选择课程状态'" [nzShowSearch]="true">
+              <nz-option *ngFor="let i of courseStatus" [nzLabel]="i.text" [nzValue]="i.value"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+    </nz-row>
+    <nz-row nzGutter="16">
+      <nz-col nzLg="6" nzMd="12" nzSm="24">
+        <nz-form-item>
+          <nz-form-label>教师</nz-form-label>
+          <nz-form-control nzErrorTip="请选择教师">
+            <nz-select formControlName="teacher" [nzPlaceHolder]="'请选择教师'" [nzShowSearch]="true">
+              <nz-option *ngFor="let i of teacherList" [nzLabel]="i.label" [nzValue]="i.value"> </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+      <nz-col [nzXl]="{ span: 6, offset: 2 }" [nzLg]="{ span: 8 }" [nzMd]="{ span: 12 }" nzSm="24">
+        <nz-form-item>
+          <nz-form-label>课程时长(分)</nz-form-label>
+          <nz-form-control>
+            <nz-input-number formControlName="duration" placeholder="请输入"></nz-input-number>
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+      <nz-col [nzXl]="{ span: 8, offset: 2 }" [nzLg]="{ span: 10 }" [nzMd]="{ span: 24 }" nzSm="24">
+        <nz-form-item>
+          <nz-form-label>课程总价(元)</nz-form-label>
+          <nz-form-control nzErrorTip="请输入课程总价">
+            <nz-input-number formControlName="price" placeholder="请输入课程总价"></nz-input-number>
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+    </nz-row>
+    <nz-row nzGutter="16">
+      <nz-col nzLg="6" nzMd="12" nzSm="24">
+        <nz-form-item>
+          <nz-form-label>所在校区</nz-form-label>
+          <nz-form-control nzErrorTip="请选择校区">
+            <nz-select formControlName="campous" [nzPlaceHolder]="'请选择校区'" [nzShowSearch]="true">
+              <nz-option *ngFor="let i of campousList" [nzLabel]="i.label" [nzValue]="i.value"> </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+      <nz-col [nzXl]="{ span: 6, offset: 2 }" [nzLg]="{ span: 8 }" [nzMd]="{ span: 12 }" nzSm="24">
+        <nz-form-item>
+          <nz-form-label>针对年级</nz-form-label>
+          <nz-form-control>
+            <nz-select formControlName="grade" [nzPlaceHolder]="'请选择年级'" [nzShowSearch]="true">
+              <nz-option *ngFor="let i of gradeList" [nzLabel]="i.label" [nzValue]="i.value"> </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+      <nz-col [nzXl]="{ span: 8, offset: 2 }" [nzLg]="{ span: 10 }" [nzMd]="{ span: 24 }" nzSm="24">
+        <nz-form-item>
+          <nz-form-label>教室</nz-form-label>
+          <nz-form-control>
+            <nz-select formControlName="classroom" [nzPlaceHolder]="'请选择教室'" [nzShowSearch]="true">
+              <nz-option *ngFor="let i of classroomList" [nzLabel]="i.label" [nzValue]="i.value"> </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+    </nz-row>
+  </nz-card>
+  <nz-card [nzBordered]="false" nzTitle="课时信息">
+    <nz-table formArrayName="sessions" [nzData]="sessions.value" [nzShowPagination]="false">
+      <thead>
+        <tr>
+          <th>课时</th>
+          <th>教师</th>
+          <th>上课时间</th>
+          <th>教室</th>
+          <th>价格</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of sessions.controls; let i = index" [formGroupName]="i">
+          <td>
+            <span>{{ i+1 }}</span>
+          </td>
+          <td>
+            <span *ngIf="editIndex !== i">{{ sessions.value[i].teacher }}</span>
+            <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请选择教师">
+              <nz-select formControlName="teacher" [nzPlaceHolder]="'请选择教师'" [nzShowSearch]="true">
+                <nz-option *ngFor="let i of teacherList" [nzLabel]="i.label" [nzValue]="i.label"> </nz-option>
+              </nz-select>
+            </span>
+          </td>
+          <td>
+            <span *ngIf="editIndex !== i">{{ sessions.value[i].dateTime }}</span>
+            <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请输入上课时间">
+              <input nz-input formControlName="dateTime" />
+            </span>
+          </td>
+          <td>
+            <span *ngIf="editIndex !== i">{{ sessions.value[i].classroom }}</span>
+            <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请选择教室">
+              <nz-select formControlName="classroom" [nzPlaceHolder]="'请选择教室'" [nzShowSearch]="true">
+                <nz-option *ngFor="let i of classroomList" [nzLabel]="i.label" [nzValue]="i.value"> </nz-option>
+              </nz-select>
+            </span>
+          </td>
+          <td>
+            <span *ngIf="editIndex !== i">{{ sessions.value[i].price }}</span>
+            <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请选择价格">
+              <nz-input-number formControlName="price" placeholder="请选择价格"></nz-input-number>
+            </span>
+          </td>
+          <td>
+            <span *ngIf="editIndex !== i">
+              <a (click)="edit(i)">编辑</a>
+              <nz-divider nzType="vertical"></nz-divider>
+              <a nz-popconfirm nzPopconfirmTitle="是否要删除此行？" (nzOnConfirm)="del(i)">删除</a>
+            </span>
+            <span *ngIf="editIndex === i">
+              <a (click)="save(i)">保存</a>
+              <nz-divider nzType="vertical"></nz-divider>
+              <a nz-popconfirm nzPopconfirmTitle="是否要取消操作？" (nzOnConfirm)="cancel(i)">取消</a>
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+    <button *ngIf="editIndex === -1" nz-button [nzType]="'dashed'" (click)="add()" nzBlock class="mt-md">
+      <i nz-icon nzType="plus"></i>
+      <span>新增成员</span>
+    </button>
+  </nz-card>
+  <footer-toolbar errorCollect>
+    <button nz-button type="primary" nzType="primary">提交</button>
+  </footer-toolbar>
+</form>
