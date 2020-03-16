@@ -12,11 +12,11 @@ for (let i = 0; i < 46; i += 1) {
             'https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png',
             'https://gw.alipayobjects.com/zos/rmsportal/udxAbMEhpwthVVcjLXik.png',
         ][i % 2],
-        courseNo: `CourseCode ${i}`,
-        campous: '二工大金海校区',
-        courseName: '课程名',
-        callNo: Math.floor(Math.random() * 1000),
-        status: Math.floor(Math.random() * 10) % 3,
+        studentNo: `StudentCode ${i}`,
+        studentName: '学生名',
+        contactNo: Math.floor(Math.random() * 1000),
+        status: Math.floor(Math.random() * 10) % 2,
+        gender: Math.floor(Math.random() * 10) % 2,
         startDate: new Date(`2017-07-${i < 18 ? '0' + (Math.floor(i / 2) + 1) : Math.floor(i / 2) + 1}`),
         createdAt: new Date(`2017-07-${i < 18 ? '0' + (Math.floor(i / 2) + 1) : Math.floor(i / 2) + 1}`),
         progress: Math.ceil(Math.random() * 100),
@@ -92,9 +92,9 @@ function saveRule(description: string) {
     });
 }
 
-export const COURSES = {
-    '/course': (req: MockRequest) => getRule(req.queryString),
-    '/course/:id': (req: MockRequest) => getRuleById(req.queryString),
-    'DELETE /course': (req: MockRequest) => removeRule(req.queryString.nos),
-    'POST /course': (req: MockRequest) => saveRule(req.body.description),
+export const STUDENTS = {
+    '/student': (req: MockRequest) => getRule(req.queryString),
+    '/student/:id': (req: MockRequest) => getRuleById(req.queryString),
+    'DELETE /student': (req: MockRequest) => removeRule(req.queryString.nos),
+    'POST /student': (req: MockRequest) => saveRule(req.body.description),
 };

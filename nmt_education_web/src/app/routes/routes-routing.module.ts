@@ -24,6 +24,7 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'course', loadChildren: () => import('./course/course.module').then(m => m.CourseModule) },
+      { path: 'personnel', loadChildren: () => import('./personnel/personnel.module').then(m => m.PersonnelModule) },
       //{ path: 'dashboard', component: DashboardComponent, data: { title: '仪表盘', titleI18n: 'dashboard' } },
       { path: 'exception', loadChildren: () => import('./exception/exception.module').then(m => m.ExceptionModule) },
       // 业务子模块

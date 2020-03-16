@@ -90,6 +90,21 @@ export class StartupService {
         group: true,
         children: [
           {
+            text: '人员管理',
+            group: true,
+            children: [
+              {
+                text: "学生列表",
+                link: '/personnel/student/list',
+                icon: { type: 'icon', value: 'appstore' }
+              },
+              {
+                text: "教师列表",
+                link: '/personnel/teacher/list',
+                icon: { type: 'icon', value: 'appstore' }
+              }]
+          },
+          {
             text: '课程管理',
             group: true,
             children: [
