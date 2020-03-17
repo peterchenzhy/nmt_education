@@ -1,0 +1,99 @@
+<page-header [title]="pageHeader"></page-header>
+<form nz-form [formGroup]="form" (ngSubmit)="_submitForm()" [nzLayout]="'vertical'">
+    <nz-card [nzBordered]="false" nzTitle="学生信息">
+        <nz-row nzGutter="16">
+            <nz-col nzLg="6" nzMd="12" nzSm="24">
+                <nz-form-item>
+                    <nz-form-label nzFor="name">学生姓名</nz-form-label>
+                    <nz-form-control nzErrorTip="请输入学生">
+                        <input nz-input formControlName="name" id="name" placeholder="请输入学生姓名" />
+                    </nz-form-control>
+                </nz-form-item>
+            </nz-col>
+            <nz-col [nzXl]="{ span: 6, offset: 2 }" [nzLg]="{ span: 8 }" [nzMd]="{ span: 12 }" nzSm="24">
+                <nz-form-item>
+                    <nz-form-label>性别</nz-form-label>
+                    <nz-radio-group formControlName="gender">
+                        <label nz-radio [nzValue]="0">男</label>
+                        <label nz-radio [nzValue]="1">女</label>
+                    </nz-radio-group>
+                </nz-form-item>
+            </nz-col>
+            <nz-col [nzXl]="{ span: 8, offset: 2 }" [nzLg]="{ span: 10 }" [nzMd]="{ span: 24 }" nzSm="24">
+                <nz-form-item>
+                    <nz-form-label>联系方式</nz-form-label>
+                    <nz-form-control>
+                        <input nz-input formControlName="contactNo" id="contactNo" />
+                    </nz-form-control>
+                </nz-form-item>
+            </nz-col>
+        </nz-row>
+    </nz-card>
+    <nz-card [nzBordered]="false" nzTitle="家长信息">
+        <nz-table formArrayName="parents" [nzData]="parents.value" [nzShowPagination]="false">
+            <thead>
+                <tr>
+                    <th>关系</th>
+                    <th>姓名</th>
+                    <th>联系方式</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of parents.controls; let i = index" [formGroupName]="i">
+                    <td>
+                        <span *ngIf="editIndex !== i">{{ parents.value[i].relation }}</span>
+                        <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请选择关系">
+                            <nz-select formControlName="relation" [nzPlaceHolder]="'请选择关系'" [nzShowSearch]="true">
+                                <nz-option *ngFor="let i of relationships" [nzLabel]="i.label" [nzValue]="i.value">
+                                </nz-option>
+                            </nz-select>
+                        </span>
+                    </td>
+                    <td>
+                        <span *ngIf="editIndex !== i">{{ parents.value[i].name }}</span>
+                        <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请输入家长姓名">
+                            <input nz-input formControlName="name" />
+                        </span>
+                    </td>
+                    <td>
+                        <span *ngIf="editIndex !== i">{{ parents.value[i].contactNo }}</span>
+                        <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请输入联系方式">
+                            <input formControlName="price" placeholder="请输入联系方式" />
+                        </span>
+                    </td>
+                    <td>
+                        <span *ngIf="editIndex !== i">
+                            <a (click)="edit(i)">编辑</a>
+                            <nz-divider nzType="vertical"></nz-divider>
+                            <a nz-popconfirm nzPopconfirmTitle="是否要删除此行？" (nzOnConfirm)="del(i)">删除</a>
+                        </span>
+                        <span *ngIf="editIndex === i">
+                            <a (click)="save(i)">保存</a>
+                            <nz-divider nzType="vertical"></nz-divider>
+                            <a nz-popconfirm nzPopconfirmTitle="是否要取消操作？" (nzOnConfirm)="cancel(i)">取消</a>
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+        <button *ngIf="editIndex === -1" nz-button [nzType]="'dashed'" (click)="add()" nzBlock class="mt-md">
+            <i nz-icon nzType="plus"></i>
+            <span>新增家长</span>
+        </button>
+    </nz-card>
+    <footer-toolbar errorCollect>
+        <button nz-button type="primary" nzType="primary">提交</button>
+    </footer-toolbar>
+</form>
+<nz-card [nzHoverable]="true" [nzBordered]="false">
+    <div class="text-lg mb-md">报名课程</div>
+    <st #st [data]="courses" [columns]="coursesColumns" [page]="{ show: true }">
+        <ng-template st-row="courseStatus" let-i>
+            <nz-badge [nzStatus]="i.courseStatusType" [nzText]="i.courseStatusText"></nz-badge>
+        </ng-template>
+        <ng-template st-row="orderStatus" let-i>
+            <nz-badge [nzStatus]="i.orderStatusType" [nzText]="i.orderStatusText"></nz-badge>
+        </ng-template>
+    </st>
+</nz-card>

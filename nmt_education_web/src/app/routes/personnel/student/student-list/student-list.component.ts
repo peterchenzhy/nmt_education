@@ -39,7 +39,7 @@ export class StudentListComponent implements OnInit {
             buttons: [
                 {
                     text: '编辑',
-                    click: (item: any) => this.router.navigate([`/student/view/${item.studentNo}`]),
+                    click: (item: any) => this.router.navigate([`/personnel/student/view/${item.studentNo}`]),
                 },
                 {
                     text: '报名',

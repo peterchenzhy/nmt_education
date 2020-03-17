@@ -2,10 +2,12 @@ import { NgModule } from '@angular/core';
 import { SharedModule } from '@shared';
 import { StudentRoutingModule } from './personnel-routing.module';
 import { StudentListComponent } from './student/student-list/student-list.component';
-//import { CourseViewComponent } from './course-view/course-view.component';
+import { StudentViewComponent } from './student/student-view/student-view.component';
+
 
 const COMPONENTS = [
-    StudentListComponent];
+  StudentListComponent,
+  StudentViewComponent];
 const COMPONENTS_NOROUNT = [
 ];
 
