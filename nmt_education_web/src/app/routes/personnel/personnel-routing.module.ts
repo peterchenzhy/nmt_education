@@ -8,7 +8,7 @@ const routes: Routes = [
         path: 'student',
         children: [
             { path: 'list', component: StudentListComponent },
-            { path: 'view/:studentno', component: StudentViewComponent }
+            { path: 'view/:studentno', component: StudentViewComponent, data: { title: '学生信息' } }
         ]
     },
     //{ path: 'view/:courseno', component: CourseViewComponent }

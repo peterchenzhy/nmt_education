@@ -5,6 +5,7 @@ import { _HttpClient } from '@delon/theme';
 import { ActivatedRoute } from '@angular/router';
 import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { STColumn, STComponent } from '@delon/abc';
+import { Student } from 'src/app/model/student.model';
 
 @Component({
     selector: 'app-student-view',
@@ -12,8 +13,7 @@ import { STColumn, STComponent } from '@delon/abc';
 })
 export class StudentViewComponent implements OnInit {
     pageHeader: string;
-    student: any = {};
-    i: any;
+    student: Student={};
     @ViewChild('st', { static: true })
     st: STComponent;
     constructor(
@@ -77,11 +77,11 @@ export class StudentViewComponent implements OnInit {
     { orderNo: 'order333', courseName: 'course333', campous: "二工大", courseStatus: 2, courseStatusText: "已结课", courseStatusType: "success", orderStatus: "1" ,orderStatusText: "完成", orderStatusType: "success"}];
 
     ngOnInit() {
-        this.student.studentNo = this.routerinfo.snapshot.params['studentno'];
-        this.http.get(`/student/${this.student.studentNo}`).subscribe(res => this.i = res);
-        this.pageHeader = `学生信息编辑 [${this.student.studentNo}]`;
+        this.student.id = this.routerinfo.snapshot.params['studentno'];
+        this.http.get(`/student/${this.student.id}`).subscribe(res => {this.student = res;this.form.patchValue(res);});
+        this.pageHeader = `学生信息编辑 [${this.student.id}]`;
         this.form = this.fb.group({
-            name: [null, [Validators.required]],
+            studentName: [null, [Validators.required]],
             gender: [null, []],
             contactNo: [null, []],
             parents: this.fb.array([])
@@ -89,13 +89,13 @@ export class StudentViewComponent implements OnInit {
         const parentsList = [
             {
                 key: '1',
-                relation: '0',
+                relation: '父亲',
                 name: 'Father',
                 contactNo: '130********'
             },
             {
                 key: '2',
-                relation: '0',
+                relation: '母亲',
                 name: 'Mother',
                 contactNo: '131********'
             }];
@@ -116,26 +116,14 @@ export class StudentViewComponent implements OnInit {
     }
 
     //#region get form fields
-    get name() {
-        return this.form.controls.name;
+    get studentName() {
+        return this.form.controls.studentName;
     }
-    get year() {
-        return this.form.controls.year;
+    get gender() {
+        return this.form.controls.gender;
     }
-    get season() {
-        return this.form.controls.season;
-    }
-    get type() {
-        return this.form.controls.type;
-    }
-    get startDate() {
-        return this.form.controls.startDate;
-    }
-    get teacher() {
-        return this.form.controls.teacher;
-    }
-    get duration() {
-        return this.form.controls.duration;
+    get contactNo() {
+        return this.form.controls.contactNo;
     }
 
     get parents() {

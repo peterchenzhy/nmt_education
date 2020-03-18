@@ -1,4 +1,4 @@
-<page-header [title]="pageHeader"></page-header>
+<page-header [title]="pageHeader" ></page-header>
 <form nz-form [formGroup]="form" (ngSubmit)="_submitForm()" [nzLayout]="'vertical'">
     <nz-card [nzBordered]="false" nzTitle="学生信息">
         <nz-row nzGutter="16">
@@ -6,7 +6,7 @@
                 <nz-form-item>
                     <nz-form-label nzFor="name">学生姓名</nz-form-label>
                     <nz-form-control nzErrorTip="请输入学生">
-                        <input nz-input formControlName="name" id="name" placeholder="请输入学生姓名" />
+                        <input nz-input formControlName="studentName" id="studentName" placeholder="请输入学生姓名" />
                     </nz-form-control>
                 </nz-form-item>
             </nz-col>
