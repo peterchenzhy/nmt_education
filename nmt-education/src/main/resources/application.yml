@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: nmt-education-server
+  cache:
+    type: ehcache
+    ehcache:
+      config: classpath:ehcache.xml
+#tomcat
+server:
+  tomcat:
+    max-threads: 60
+    uri-encoding: utf-8
+    accesslog:
+      enabled: true
+  servlet:
+    context-path: /nmt-education-server
+  port: 8110
+
+
+#mybatis
+mybatis:
+  type-aliases-package: com.nmt.education.pojo.po
+  mapper-locations:
+    - classpath:mybatis/*.xml
+  configuration-properties:
+    cacheEnabled: false
+    ####<!-- 查询时，关闭关联对象即时加载以提高性能 -->
+    lazyLoadingEnabled: true
+    ####<!-- 设置关联对象加载的形态，此处为按需加载字段(加载字段由SQL指定)，不会加载关联表的所有字段，以提高性能 -->
+    aggressiveLazyLoading: false
+    ####<!-- 对于未知的SQL查询，允许返回不同的结果集以达到通用的效果 -->
+    multipleResultSetsEnabled: true
+    ####<!-- 允许使用列标签代替列名 -->
+    useColumnLabel: true
+    ####<!-- 允许使用自定义的主键值(比如由程序生成的UUID 32位编码作为键值)，数据表的PK生成策略将被覆盖 -->
+    useGeneratedKeys: true
+    ####<!-- 给予被嵌套的resultMap以字段-属性的映射支持 -->
+    autoMappingBehavior: FULL
+    ####<!-- 对于批量更新操作缓存SQL以提高性能 -->
+    defaultExecutorType: SIMPLE
+    ####<!-- 数据库超过15秒仍未响应则超时，部分语句可单独指定超时时间 -->
+    defaultStatementTimeout: 15
+    jdbcTypeForNull: NULL
+    ####<!-- 当参数为NULL且字段列可为空的Double等类型时可直接当NULL插入 -->
+    callSettersOnNulls: true
+    ####<!-- 打印sql语句 -->
+    logPrefix: dao
