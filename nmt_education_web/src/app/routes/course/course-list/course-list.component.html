@@ -15,16 +15,16 @@
           <nz-form-label nzFor="status">课程状态</nz-form-label>
           <nz-form-control>
             <nz-select [(ngModel)]="q.status" name="status" id="status" [nzPlaceHolder]="'请选择'" [nzShowSearch]="true">
-              <nz-option *ngFor="let i of status; let idx = index" [nzLabel]="i.text" [nzValue]="idx"></nz-option>
+              <nz-option *ngFor="let i of courseStatusList; let idx = index" [nzLabel]="i.text" [nzValue]="i.index"></nz-option>
             </nz-select>
           </nz-form-control>
         </nz-form-item>
       </div>
       <div nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
         <nz-form-item>
-          <nz-form-label nzFor="campous">校区</nz-form-label>
+          <nz-form-label nzFor="campus">校区</nz-form-label>
           <nz-form-control>
-            <input nz-input [(ngModel)]="q.campous" name="campous" placeholder="请输入" id="campous" />
+            <input nz-input [(ngModel)]="q.campus" name="campus" placeholder="请输入" id="campus" />
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -73,8 +73,8 @@
     </nz-alert>
   </div>
   <st #st [columns]="columns" [data]="data" [loading]="loading" (change)="stChange($event)">
-    <ng-template st-row="status" let-i>
-      <nz-badge [nzStatus]="i.statusType" [nzText]="i.statusText"></nz-badge>
+    <ng-template st-row="courseStatus" let-i>
+      <nz-badge [nzStatus]="i.statusDetail.type" [nzText]="i.statusDetail.text"></nz-badge>
     </ng-template>
   </st>
 </nz-card>

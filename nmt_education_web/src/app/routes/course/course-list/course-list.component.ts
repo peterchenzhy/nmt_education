@@ -5,6 +5,8 @@ import { tap, map } from 'rxjs/operators';
 import { STComponent, STColumn, STData, STChange } from '@delon/abc';
 import { FormGroup, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
+import { COURSE_STATUS_LIST } from '@shared/constant/system.constant';
+import { Course } from 'src/app/model/course.model';
 
 @Component({
   selector: 'app-course-list',
@@ -26,28 +28,19 @@ export class CourseListComponent implements OnInit {
   };
   data: any[] = [];
   loading = false;
-  status = [
-    { index: 0, text: '未开始', value: false, type: 'default', checked: false },
-    {
-      index: 1,
-      text: '开课中',
-      value: false,
-      type: 'processing',
-      checked: false,
-    },
-    { index: 2, text: '已结课', value: false, type: 'success', checked: false }
-  ];
+  courseStatusList= COURSE_STATUS_LIST;
+
   @ViewChild('st', { static: true })
   st: STComponent;
   columns: STColumn[] = [
     { title: '', index: 'key', type: 'checkbox' },
     { title: '课程编号', index: 'courseNo' },
     { title: '名称', index: 'courseName' },
-    { title: '校区', index: 'campous' },
+    { title: '校区', index: 'campus' },
     {
       title: '状态',
       index: 'status',
-      render: 'status'
+      render: 'courseStatus'
     },
     {
       title: '开课时间',
@@ -81,7 +74,7 @@ export class CourseListComponent implements OnInit {
     private http: _HttpClient,
     public msg: NzMessageService,
     private modalSrv: NzModalService,
-    private cdr: ChangeDetectorRef,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
@@ -90,18 +83,18 @@ export class CourseListComponent implements OnInit {
 
   getData() {
     this.loading = true;
-    this.q.statusList = this.status.filter(w => w.checked).map(item => item.index);
+    this.q.statusList = COURSE_STATUS_LIST.filter(w => w.checked).map(item => item.index);
     if (this.q.status !== null && this.q.status > -1) {
       this.q.statusList.push(this.q.status);
     }
     this.http
       .get('/course', this.q)
       .pipe(
-        map((list: any[]) =>
+        map((list: Course[]) =>
           list.map(i => {
-            const statusItem = this.status[i.status];
-            i.statusText = statusItem.text;
-            i.statusType = statusItem.type;
+            i.statusDetail = COURSE_STATUS_LIST[i.status];
+            //i.statusText = statusItem.text;
+            //i.statusType = statusItem.type;
             return i;
           }),
         ),

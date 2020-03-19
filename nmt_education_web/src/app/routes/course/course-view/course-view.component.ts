@@ -4,6 +4,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { _HttpClient } from '@delon/theme';
 import { ActivatedRoute } from '@angular/router';
 import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { COURSE_STATUS_LIST, COURSE_STATUS, COURSE_SUBJECT, COURSE_SUBJECT_LIST, GRADE_LIST } from '@shared/constant/system.constant';
 
 @Component({
   selector: 'app-course-view',
@@ -26,13 +27,11 @@ export class CourseViewComponent implements OnInit {
   editIndex = -1;
   editObj = {};
   form: FormGroup;
-  typeList: any[] = [{ value: 'CHN', label: '语文' }, { value: 'MAT', label: '数学' }, { value: 'ENG', label: '英语' }];
-  courseStatus: any[] = [{ index: 0, text: '未开始', value: false, type: 'default', checked: false },
-  { index: 1, text: '开课中', value: false, type: 'processing', checked: false, },
-  { index: 2, text: '已结课', value: false, type: 'success', checked: false }];
+  courseSubjectList = COURSE_SUBJECT_LIST;
+  courseStatusList = COURSE_STATUS_LIST;
+  gradeList: any[] = GRADE_LIST;
   teacherList: any[] = [{ value: 'myk', label: '毛永康' }, { value: 'czy', label: '陈志毅' }, { value: 'drw', label: '杜任伟' }];
-  campousList: any[] = [{ value: 'sspu', label: '二工大' }, { value: 'shanda', label: '杉达' }, { value: 'jinrong', label: '金融学院' }];
-  gradeList: any[] = [{ value: '1', label: '一年级' }, { value: '2', label: '二年级' }, { value: '3', label: '三年级' }];
+  campusList: any[] = [{ value: 'sspu', label: '二工大' }, { value: 'shanda', label: '杉达' }, { value: 'jinrong', label: '金融学院' }];
   classroomList: any[] = [{ value: '101', label: '101' }, { value: '202', label: '202' }, { value: '303', label: '303' }];
 
   ngOnInit() {
@@ -49,7 +48,7 @@ export class CourseViewComponent implements OnInit {
       teacher: ['myk', [Validators.required]],
       duration: [null, [Validators.required]],
       price: [null, [Validators.required]],
-      campous: [null, [Validators.required]],
+      campus: [null, [Validators.required]],
       grade: [null, [Validators.required]],
       classroom: [null, [Validators.required]],
       sessions: this.fb.array([]),
@@ -122,8 +121,8 @@ export class CourseViewComponent implements OnInit {
   get price() {
     return this.form.controls.price;
   }
-  get campous() {
-    return this.form.controls.campous;
+  get campus() {
+    return this.form.controls.campus;
   }
   get grade() {
     return this.form.controls.grade;

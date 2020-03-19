@@ -41,13 +41,13 @@ export class StudentViewComponent implements OnInit {
     { index: 1, text: '完成', value: false, type: 'success', checked: false, },
     { index: 2, text: '冻结', value: false, type: 'error', checked: false, }];
     relationships: any[] = [{ value: '0', label: '父亲' }, { value: '1', label: '母亲' }, { value: '2', label: '其他' }];
-    campousList: any[] = [{ value: 'sspu', label: '二工大' }, { value: 'shanda', label: '杉达' }, { value: 'jinrong', label: '金融学院' }];
+    campusList: any[] = [{ value: 'sspu', label: '二工大' }, { value: 'shanda', label: '杉达' }, { value: 'jinrong', label: '金融学院' }];
     gradeList: any[] = [{ value: '1', label: '一年级' }, { value: '2', label: '二年级' }, { value: '3', label: '三年级' }];
     classroomList: any[] = [{ value: '101', label: '101' }, { value: '202', label: '202' }, { value: '303', label: '303' }];
     coursesColumns: STColumn[] = [
         { title: '订单编号', index: 'orderNo', type: 'link' },
         { title: '名称', index: 'courseName' },
-        { title: '校区', index: 'campous' },
+        { title: '校区', index: 'campus' },
         {
             title: '课程状态',
             index: 'courseStatus',
@@ -72,14 +72,14 @@ export class StudentViewComponent implements OnInit {
             ],
         },
     ];
-    courses = [{ orderNo: 'order111', courseName: 'course111', campous: "二工大", courseStatus: 1, courseStatusText: "开课中", courseStatusType: "processing", orderStatus: "0",orderStatusText: "正常", orderStatusType: "processing" },
-    { orderNo: 'order222', courseName: 'course222', campous: "二工大", courseStatus: 1, courseStatusText: "开课中", courseStatusType: "processing", orderStatus: "2" ,orderStatusText: "冻结", orderStatusType: "error"},
-    { orderNo: 'order333', courseName: 'course333', campous: "二工大", courseStatus: 2, courseStatusText: "已结课", courseStatusType: "success", orderStatus: "1" ,orderStatusText: "完成", orderStatusType: "success"}];
+    courses = [{ orderNo: 'order111', courseName: 'course111', campus: "二工大", courseStatus: 1, courseStatusText: "开课中", courseStatusType: "processing", orderStatus: "0",orderStatusText: "正常", orderStatusType: "processing" },
+    { orderNo: 'order222', courseName: 'course222', campus: "二工大", courseStatus: 1, courseStatusText: "开课中", courseStatusType: "processing", orderStatus: "2" ,orderStatusText: "冻结", orderStatusType: "error"},
+    { orderNo: 'order333', courseName: 'course333', campus: "二工大", courseStatus: 2, courseStatusText: "已结课", courseStatusType: "success", orderStatus: "1" ,orderStatusText: "完成", orderStatusType: "success"}];
 
     ngOnInit() {
-        this.student.id = this.routerinfo.snapshot.params['studentno'];
-        this.http.get(`/student/${this.student.id}`).subscribe(res => {this.student = res;this.form.patchValue(res);});
-        this.pageHeader = `学生信息编辑 [${this.student.id}]`;
+        this.student.code = this.routerinfo.snapshot.params['studentno'];
+        this.http.get(`/student/${this.student.code}`).subscribe(res => {this.student = res;this.form.patchValue(res);});
+        this.pageHeader = `学生信息编辑 [${this.student.code}]`;
         this.form = this.fb.group({
             studentName: [null, [Validators.required]],
             gender: [null, []],

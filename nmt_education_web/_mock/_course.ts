@@ -13,7 +13,7 @@ for (let i = 0; i < 46; i += 1) {
             'https://gw.alipayobjects.com/zos/rmsportal/udxAbMEhpwthVVcjLXik.png',
         ][i % 2],
         courseNo: `CourseCode ${i}`,
-        campous: '二工大金海校区',
+        campus: '二工大金海校区',
         courseName: '课程名',
         callNo: Math.floor(Math.random() * 1000),
         status: Math.floor(Math.random() * 10) % 3,
