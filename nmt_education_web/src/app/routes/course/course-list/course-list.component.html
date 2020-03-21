@@ -15,19 +15,24 @@
           <nz-form-label nzFor="status">课程状态</nz-form-label>
           <nz-form-control>
             <nz-select [(ngModel)]="q.status" name="status" id="status" [nzPlaceHolder]="'请选择'" [nzShowSearch]="true">
-              <nz-option *ngFor="let i of courseStatusList; let idx = index" [nzLabel]="i.text" [nzValue]="i.index"></nz-option>
+              <nz-option *ngFor="let i of courseStatusList; let idx = index" [nzLabel]="i.text" [nzValue]="i.value">
+              </nz-option>
             </nz-select>
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
+      <div nz-col nzMd="8" nzSm="24">
         <nz-form-item>
           <nz-form-label nzFor="campus">校区</nz-form-label>
           <nz-form-control>
-            <input nz-input [(ngModel)]="q.campus" name="campus" placeholder="请输入" id="campus" />
+            <nz-select [(ngModel)]="q.campus" name="campus" id="sss" [nzPlaceHolder]="'请选择'" [nzShowSearch]="true">
+              <nz-option *ngFor="let i of campusList; let idx = index" [nzLabel]="i.label" [nzValue]="i.value">
+              </nz-option>
+            </nz-select>
           </nz-form-control>
         </nz-form-item>
       </div>
+      <div nz-col nzMd="24" nzSm="24"></div>
       <div nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
         <nz-form-item>
           <nz-form-label nzFor="startDate">开课日期</nz-form-label>
@@ -36,7 +41,7 @@
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div nz-col [nzSpan]="expandForm ? 24 : 8" [class.text-right]="expandForm">
+      <div nz-col [nzSpan]="24" class="text-right">
         <button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
         <button nz-button type="reset" (click)="reset()" class="mx-sm">重置</button>
         <a (click)="expandForm = !expandForm">

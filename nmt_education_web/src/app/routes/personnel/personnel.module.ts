@@ -3,11 +3,14 @@ import { SharedModule } from '@shared';
 import { StudentRoutingModule } from './personnel-routing.module';
 import { StudentListComponent } from './student/student-list/student-list.component';
 import { StudentViewComponent } from './student/student-view/student-view.component';
-
+import { TeacherListComponent } from './teacher/teacher-list/teacher-list.component';
+import { TeacherViewComponent } from './teacher/teacher-view/teacher-view.component';
 
 const COMPONENTS = [
   StudentListComponent,
-  StudentViewComponent];
+  StudentViewComponent,
+  TeacherListComponent,
+  TeacherViewComponent];
 const COMPONENTS_NOROUNT = [
 ];
 

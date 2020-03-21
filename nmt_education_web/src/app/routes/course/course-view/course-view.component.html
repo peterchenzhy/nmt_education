@@ -20,9 +20,11 @@
       </nz-col>
       <nz-col [nzXl]="{ span: 8, offset: 2 }" [nzLg]="{ span: 10 }" [nzMd]="{ span: 24 }" nzSm="24">
         <nz-form-item>
-          <nz-form-label>季度</nz-form-label>
-          <nz-form-control>
-            <input nz-input formControlName="season" id="season" />
+          <nz-form-label nzFor="season">季度</nz-form-label>
+          <nz-form-control nzErrorTip="请输入季度">
+            <nz-select formControlName="season" id="season" [nzPlaceHolder]="'请输入季度'" [nzShowSearch]="true">
+              <nz-option *ngFor="let i of seasonList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+            </nz-select>
           </nz-form-control>
         </nz-form-item>
       </nz-col>
@@ -30,9 +32,9 @@
     <nz-row nzGutter="16">
       <nz-col nzLg="6" nzMd="12" nzSm="24">
         <nz-form-item>
-          <nz-form-label nzFor="type">课程类型</nz-form-label>
-          <nz-form-control nzErrorTip="请输入课程类型">
-            <nz-select formControlName="type" [nzPlaceHolder]="'请选择课程类型'" [nzShowSearch]="true">
+          <nz-form-label nzFor="subject">课程科目</nz-form-label>
+          <nz-form-control nzErrorTip="请输入课程科目">
+            <nz-select formControlName="subject" [nzPlaceHolder]="'请选择课程科目'" [nzShowSearch]="true">
               <nz-option *ngFor="let i of courseSubjectList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
             </nz-select>
           </nz-form-control>
@@ -40,9 +42,11 @@
       </nz-col>
       <nz-col [nzXl]="{ span: 6, offset: 2 }" [nzLg]="{ span: 8 }" [nzMd]="{ span: 12 }" nzSm="24">
         <nz-form-item>
-          <nz-form-label>开课日期</nz-form-label>
-          <nz-form-control>
-            <nz-date-picker formControlName="startDate" [nzStyle]="{ width: '100%' }"></nz-date-picker>
+          <nz-form-label nzFor="type">课程类型</nz-form-label>
+          <nz-form-control nzErrorTip="请输入课程类型">
+            <nz-select formControlName="type" [nzPlaceHolder]="'请选择课程类型'" [nzShowSearch]="true">
+              <nz-option *ngFor="let i of courseTypeList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+            </nz-select>
           </nz-form-control>
         </nz-form-item>
       </nz-col>
@@ -70,9 +74,9 @@
       </nz-col>
       <nz-col [nzXl]="{ span: 6, offset: 2 }" [nzLg]="{ span: 8 }" [nzMd]="{ span: 12 }" nzSm="24">
         <nz-form-item>
-          <nz-form-label>课程时长(分)</nz-form-label>
+          <nz-form-label>开课日期</nz-form-label>
           <nz-form-control>
-            <nz-input-number formControlName="duration" placeholder="请输入"></nz-input-number>
+            <nz-date-picker formControlName="startDate" [nzStyle]="{ width: '100%' }"></nz-date-picker>
           </nz-form-control>
         </nz-form-item>
       </nz-col>

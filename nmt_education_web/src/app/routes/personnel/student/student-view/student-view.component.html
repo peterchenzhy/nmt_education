@@ -5,7 +5,7 @@
             <nz-col nzLg="6" nzMd="12" nzSm="24">
                 <nz-form-item>
                     <nz-form-label nzFor="name">学生姓名</nz-form-label>
-                    <nz-form-control nzErrorTip="请输入学生">
+                    <nz-form-control nzErrorTip="请输入学生姓名">
                         <input nz-input formControlName="studentName" id="studentName" placeholder="请输入学生姓名" />
                     </nz-form-control>
                 </nz-form-item>
@@ -86,7 +86,7 @@
         <button nz-button type="primary" nzType="primary">提交</button>
     </footer-toolbar>
 </form>
-<nz-card [nzHoverable]="true" [nzBordered]="false">
+<nz-card [nzBordered]="true">
     <div class="text-lg mb-md">报名课程</div>
     <st #st [data]="courses" [columns]="coursesColumns" [page]="{ show: true }">
         <ng-template st-row="courseStatus" let-i>

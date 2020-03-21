@@ -4,7 +4,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { _HttpClient } from '@delon/theme';
 import { ActivatedRoute } from '@angular/router';
 import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { COURSE_STATUS_LIST, COURSE_STATUS, COURSE_SUBJECT, COURSE_SUBJECT_LIST, GRADE_LIST } from '@shared/constant/system.constant';
+import { COURSE_STATUS_LIST, COURSE_STATUS, COURSE_SUBJECT, COURSE_SUBJECT_LIST, GRADE_LIST, CAMPUS_LIST, SEASON_LIST, COURSE_TYPE_LIST } from '@shared/constant/system.constant';
 
 @Component({
   selector: 'app-course-view',
@@ -27,11 +27,13 @@ export class CourseViewComponent implements OnInit {
   editIndex = -1;
   editObj = {};
   form: FormGroup;
+  seasonList = SEASON_LIST;
+  courseTypeList = COURSE_TYPE_LIST;
   courseSubjectList = COURSE_SUBJECT_LIST;
   courseStatusList = COURSE_STATUS_LIST;
-  gradeList: any[] = GRADE_LIST;
+  gradeList = GRADE_LIST;
+  campusList = CAMPUS_LIST;
   teacherList: any[] = [{ value: 'myk', label: '毛永康' }, { value: 'czy', label: '陈志毅' }, { value: 'drw', label: '杜任伟' }];
-  campusList: any[] = [{ value: 'sspu', label: '二工大' }, { value: 'shanda', label: '杉达' }, { value: 'jinrong', label: '金融学院' }];
   classroomList: any[] = [{ value: '101', label: '101' }, { value: '202', label: '202' }, { value: '303', label: '303' }];
 
   ngOnInit() {

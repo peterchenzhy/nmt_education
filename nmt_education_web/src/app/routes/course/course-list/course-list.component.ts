@@ -5,7 +5,7 @@ import { tap, map } from 'rxjs/operators';
 import { STComponent, STColumn, STData, STChange } from '@delon/abc';
 import { FormGroup, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { COURSE_STATUS_LIST } from '@shared/constant/system.constant';
+import { COURSE_STATUS_LIST, CAMPUS_LIST } from '@shared/constant/system.constant';
 import { Course } from 'src/app/model/course.model';
 
 @Component({
@@ -23,12 +23,13 @@ export class CourseListComponent implements OnInit {
     sorter: '',
     courseNo: '',
     status: null,
-    campus: '',
+    campus: null,
     startDate: '',
   };
   data: any[] = [];
   loading = false;
-  courseStatusList= COURSE_STATUS_LIST;
+  courseStatusList = COURSE_STATUS_LIST;
+  campusList = CAMPUS_LIST;
 
   @ViewChild('st', { static: true })
   st: STComponent;
