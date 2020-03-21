@@ -33,7 +33,7 @@
           <nz-form-label nzFor="type">课程类型</nz-form-label>
           <nz-form-control nzErrorTip="请输入课程类型">
             <nz-select formControlName="type" [nzPlaceHolder]="'请选择课程类型'" [nzShowSearch]="true">
-              <nz-option *ngFor="let i of typeList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+              <nz-option *ngFor="let i of courseSubjectList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
             </nz-select>
           </nz-form-control>
         </nz-form-item>
@@ -51,7 +51,7 @@
           <nz-form-label>课程状态</nz-form-label>
           <nz-form-control nzErrorTip="请选择课程状态">
             <nz-select formControlName="status" [nzPlaceHolder]="'请选择课程状态'" [nzShowSearch]="true">
-              <nz-option *ngFor="let i of courseStatus" [nzLabel]="i.text" [nzValue]="i.value"></nz-option>
+              <nz-option *ngFor="let i of courseStatusList" [nzLabel]="i.text" [nzValue]="i.value"></nz-option>
             </nz-select>
           </nz-form-control>
         </nz-form-item>
@@ -90,8 +90,8 @@
         <nz-form-item>
           <nz-form-label>所在校区</nz-form-label>
           <nz-form-control nzErrorTip="请选择校区">
-            <nz-select formControlName="campous" [nzPlaceHolder]="'请选择校区'" [nzShowSearch]="true">
-              <nz-option *ngFor="let i of campousList" [nzLabel]="i.label" [nzValue]="i.value"> </nz-option>
+            <nz-select formControlName="campus" [nzPlaceHolder]="'请选择校区'" [nzShowSearch]="true">
+              <nz-option *ngFor="let i of campusList" [nzLabel]="i.label" [nzValue]="i.value"> </nz-option>
             </nz-select>
           </nz-form-control>
         </nz-form-item>

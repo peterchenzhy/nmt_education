@@ -1,10 +1,17 @@
-import { Parent } from './parent.model';
+import { GENDER } from '@shared/constant/system.constant';
 
-export class Student {
-    id?: string;
+export interface Student {
+    code?: string;
     name?: string;
-    gender?: number;
+    gender?: GENDER;
     contactNo?: string;
     balance?: number;
     parents?: Parent[];
+}
+
+export interface Parent {
+    code?: string;
+    name?: string;
+    relation?: number;
+    contactNo?: string;
 }
