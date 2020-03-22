@@ -7,13 +7,11 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="student_code" jdbcType="VARCHAR" property="studentCode" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="birthday" jdbcType="INTEGER" property="birthday" />
+    <result column="birthday" jdbcType="DATE" property="birthday" />
     <result column="school" jdbcType="VARCHAR" property="school" />
     <result column="grade" jdbcType="INTEGER" property="grade" />
-    <result column="contact1" jdbcType="VARCHAR" property="contact1" />
-    <result column="contact2" jdbcType="VARCHAR" property="contact2" />
-    <result column="phone1" jdbcType="VARCHAR" property="phone1" />
-    <result column="phone2" jdbcType="VARCHAR" property="phone2" />
+    <result column="sex" jdbcType="INTEGER" property="sex" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="creator" jdbcType="INTEGER" property="creator" />
@@ -23,12 +21,12 @@
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, student_code, `name`, birthday, school, grade, contact1, contact2, phone1, phone2, 
+    id, student_code, `name`, birthday, school, grade,  phone,sex,
     remark, `status`, creator, create_time, `operator`, operate_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     <!--@mbg.generated-->
-    select 
+    select
     <include refid="Base_Column_List" />
     from student
     where id = #{id,jdbcType=BIGINT}
@@ -40,16 +38,16 @@
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.StudentPo" useGeneratedKeys="true">
     <!--@mbg.generated-->
-    insert into student (student_code, `name`, birthday, 
-      school, grade, contact1, 
-      contact2, phone1, phone2, 
-      remark, `status`, creator, 
+    insert into student (student_code, `name`, birthday,
+      school, grade,sex,
+      phone,
+      remark, `status`, creator,
       create_time, `operator`, operate_time
       )
-    values (#{studentCode,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{birthday,jdbcType=INTEGER}, 
-      #{school,jdbcType=VARCHAR}, #{grade,jdbcType=TINYINT}, #{contact1,jdbcType=VARCHAR}, 
-      #{contact2,jdbcType=VARCHAR}, #{phone1,jdbcType=VARCHAR}, #{phone2,jdbcType=VARCHAR}, 
-      #{remark,jdbcType=VARCHAR}, #{status,jdbcType=BOOLEAN}, #{creator,jdbcType=INTEGER}, 
+    values (#{studentCode,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{birthday,jdbcType=INTEGER},
+      #{school,jdbcType=VARCHAR}, #{grade,jdbcType=TINYINT},sex,
+    #{phone,jdbcType=VARCHAR},
+      #{remark,jdbcType=VARCHAR}, #{status,jdbcType=BOOLEAN}, #{creator,jdbcType=INTEGER},
       #{createTime,jdbcType=TIMESTAMP}, #{operator,jdbcType=INTEGER}, #{operateTime,jdbcType=TIMESTAMP}
       )
   </insert>
@@ -72,18 +70,11 @@
       <if test="grade != null">
         grade,
       </if>
-      <if test="contact1 != null">
-        contact1,
+
+      <if test="phone != null">
+        phone,
       </if>
-      <if test="contact2 != null">
-        contact2,
-      </if>
-      <if test="phone1 != null">
-        phone1,
-      </if>
-      <if test="phone2 != null">
-        phone2,
-      </if>
+
       <if test="remark != null">
         remark,
       </if>
@@ -102,6 +93,9 @@
       <if test="operateTime != null">
         operate_time,
       </if>
+        <if test="sex != null">
+            sex,
+        </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="studentCode != null">
@@ -119,18 +113,11 @@
       <if test="grade != null">
         #{grade,jdbcType=TINYINT},
       </if>
-      <if test="contact1 != null">
-        #{contact1,jdbcType=VARCHAR},
+
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
       </if>
-      <if test="contact2 != null">
-        #{contact2,jdbcType=VARCHAR},
-      </if>
-      <if test="phone1 != null">
-        #{phone1,jdbcType=VARCHAR},
-      </if>
-      <if test="phone2 != null">
-        #{phone2,jdbcType=VARCHAR},
-      </if>
+
       <if test="remark != null">
         #{remark,jdbcType=VARCHAR},
       </if>
@@ -149,6 +136,9 @@
       <if test="operateTime != null">
         #{operateTime,jdbcType=TIMESTAMP},
       </if>
+        <if test="sex != null">
+            #{sex},
+        </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.nmt.education.pojo.po.StudentPo">
@@ -170,18 +160,13 @@
       <if test="grade != null">
         grade = #{grade,jdbcType=TINYINT},
       </if>
-      <if test="contact1 != null">
-        contact1 = #{contact1,jdbcType=VARCHAR},
+        <if test="sex != null">
+            sex = #{sex},
+        </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
       </if>
-      <if test="contact2 != null">
-        contact2 = #{contact2,jdbcType=VARCHAR},
-      </if>
-      <if test="phone1 != null">
-        phone1 = #{phone1,jdbcType=VARCHAR},
-      </if>
-      <if test="phone2 != null">
-        phone2 = #{phone2,jdbcType=VARCHAR},
-      </if>
+
       <if test="remark != null">
         remark = #{remark,jdbcType=VARCHAR},
       </if>
@@ -211,10 +196,8 @@
       birthday = #{birthday,jdbcType=INTEGER},
       school = #{school,jdbcType=VARCHAR},
       grade = #{grade,jdbcType=TINYINT},
-      contact1 = #{contact1,jdbcType=VARCHAR},
-      contact2 = #{contact2,jdbcType=VARCHAR},
-      phone1 = #{phone1,jdbcType=VARCHAR},
-      phone2 = #{phone2,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      sex=#{sex},
       remark = #{remark,jdbcType=VARCHAR},
       `status` = #{status,jdbcType=BOOLEAN},
       creator = #{creator,jdbcType=INTEGER},

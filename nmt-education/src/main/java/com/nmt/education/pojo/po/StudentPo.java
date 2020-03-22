@@ -32,7 +32,7 @@ public class StudentPo {
     /**
     * 生日
     */
-    private Integer birthday;
+    private Date birthday;
 
     /**
     * 学校
@@ -45,25 +45,15 @@ public class StudentPo {
     private Integer grade;
 
     /**
-    * 联系人1
+    * 电话
     */
-    private String contact1;
-
+    private String phone;
     /**
-    * 联系人2
-    */
-    private String contact2;
+     * 性别
+     */
+    private Integer sex;
 
-    /**
-    * 联系人1电话
 
-    */
-    private String phone1;
-
-    /**
-    * 联系人2电话
-    */
-    private String phone2;
 
     /**
     * 备注
