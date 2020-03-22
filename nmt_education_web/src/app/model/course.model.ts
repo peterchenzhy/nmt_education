@@ -16,7 +16,7 @@ export interface Course {
     assistant?: Teacher;
     campus?: Campus;
     classroom?: Classroom;
-    feeList: CourseFee[];
+    feeList?: CourseFee[];
     sessionList?: CourseSession[];
 }
 

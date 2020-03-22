@@ -4,16 +4,17 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { _HttpClient } from '@delon/theme';
 import { ActivatedRoute } from '@angular/router';
 import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { COURSE_STATUS_LIST, COURSE_STATUS, COURSE_SUBJECT, COURSE_SUBJECT_LIST, GRADE_LIST, CAMPUS_LIST, SEASON_LIST, COURSE_TYPE_LIST } from '@shared/constant/system.constant';
+import { COURSE_STATUS_LIST, COURSE_STATUS, COURSE_SUBJECT, COURSE_SUBJECT_LIST, GRADE_LIST, CAMPUS_LIST, SEASON_LIST, COURSE_TYPE_LIST, FEE_TYPE_LIST, getFeeTypeLabel } from '@shared/constant/system.constant';
+import { Course } from 'src/app/model/course.model';
 
 @Component({
   selector: 'app-course-view',
   templateUrl: './course-view.component.html',
 })
 export class CourseViewComponent implements OnInit {
+  getFeeTypeLabel = getFeeTypeLabel;
   pageHeader: string;
-  course: any = {};
-  i: any;
+  course: Course = {};
 
   constructor(
     private fb: FormBuilder,
@@ -24,22 +25,25 @@ export class CourseViewComponent implements OnInit {
 
   }
 
-  editIndex = -1;
-  editObj = {};
+  editSessionIndex = -1;
+  editSessionObj = {};
+  editFeeIndex = -1;
+  editFeeObj = {};
   form: FormGroup;
   seasonList = SEASON_LIST;
   courseTypeList = COURSE_TYPE_LIST;
   courseSubjectList = COURSE_SUBJECT_LIST;
   courseStatusList = COURSE_STATUS_LIST;
+  feeTypeList = FEE_TYPE_LIST;
   gradeList = GRADE_LIST;
   campusList = CAMPUS_LIST;
   teacherList: any[] = [{ value: 'myk', label: '毛永康' }, { value: 'czy', label: '陈志毅' }, { value: 'drw', label: '杜任伟' }];
   classroomList: any[] = [{ value: '101', label: '101' }, { value: '202', label: '202' }, { value: '303', label: '303' }];
 
   ngOnInit() {
-    this.course.courseNo = this.routerinfo.snapshot.params['courseno'];
-    this.http.get(`/course/${this.course.courseNo}`).subscribe(res => this.i = res);
-    this.pageHeader = `课程编辑 [${this.course.courseNo}]`;
+    this.course.code = this.routerinfo.snapshot.params['courseno'];
+    this.http.get(`/course/${this.course.code}`).subscribe(res => this.course = res);
+    this.pageHeader = `课程编辑 [${this.course.code}]`;
     this.form = this.fb.group({
       name: [null, [Validators.required]],
       year: [null, []],
@@ -48,14 +52,15 @@ export class CourseViewComponent implements OnInit {
       startDate: [null, [Validators.required]],
       status: [1, [Validators.required]],
       teacher: ['myk', [Validators.required]],
-      duration: [null, [Validators.required]],
+      subject: [null, [Validators.required]],
       price: [null, [Validators.required]],
       campus: [null, [Validators.required]],
       grade: [null, [Validators.required]],
       classroom: [null, [Validators.required]],
       sessions: this.fb.array([]),
+      feeList: this.fb.array([])
     });
-    const userList = [
+    const sessionList = [
       {
         key: '1',
         classroom: '101',
@@ -78,19 +83,45 @@ export class CourseViewComponent implements OnInit {
         price: '100',
       },
     ];
-    userList.forEach(i => {
-      const field = this.createUser();
+    sessionList.forEach(i => {
+      const field = this.createSession();
       field.patchValue(i);
       this.sessions.push(field);
     });
+
+    const feeList = [
+      {
+        key: '1',
+        feeType: 2,
+        price: 200,
+      },
+      {
+        key: '2',
+        feeType: 3,
+        price: 100,
+      }];
+    feeList.forEach(i => {
+      const field = this.createFee();
+      field.patchValue(i);
+      this.feeList.push(field);
+    });
   }
 
-  createUser(): FormGroup {
+  createSession(): FormGroup {
     return this.fb.group({
       key: [null],
       teacher: [null, [Validators.required]],
       dateTime: [null, [Validators.required]],
       classroom: [null, [Validators.required]],
+      price: [null, [Validators.required]],
+    });
+  }
+
+
+  createFee(): FormGroup {
+    return this.fb.group({
+      key: [null],
+      feeType: [null, [Validators.required]],
       price: [null, [Validators.required]],
     });
   }
@@ -117,8 +148,8 @@ export class CourseViewComponent implements OnInit {
   get teacher() {
     return this.form.controls.teacher;
   }
-  get duration() {
-    return this.form.controls.duration;
+  get subject() {
+    return this.form.controls.subject;
   }
   get price() {
     return this.form.controls.price;
@@ -136,10 +167,14 @@ export class CourseViewComponent implements OnInit {
   get sessions() {
     return this.form.controls.sessions as FormArray;
   }
+
+  get feeList() {
+    return this.form.controls.feeList as FormArray;
+  }
   //#endregion
 
   add() {
-    this.sessions.push(this.createUser());
+    this.sessions.push(this.createSession());
     this.edit(this.sessions.length - 1);
   }
 
@@ -148,26 +183,58 @@ export class CourseViewComponent implements OnInit {
   }
 
   edit(index: number) {
-    if (this.editIndex !== -1 && this.editObj) {
-      this.sessions.at(this.editIndex).patchValue(this.editObj);
+    if (this.editSessionIndex !== -1 && this.editSessionObj) {
+      this.sessions.at(this.editSessionIndex).patchValue(this.editSessionObj);
     }
-    this.editObj = { ...this.sessions.at(index).value };
-    this.editIndex = index;
+    this.editSessionObj = { ...this.sessions.at(index).value };
+    this.editSessionIndex = index;
   }
 
   save(index: number) {
     this.sessions.at(index).markAsDirty();
     if (this.sessions.at(index).invalid) return;
-    this.editIndex = -1;
+    this.editSessionIndex = -1;
   }
 
   cancel(index: number) {
     if (!this.sessions.at(index).value.key) {
       this.del(index);
     } else {
-      this.sessions.at(index).patchValue(this.editObj);
+      this.sessions.at(index).patchValue(this.editSessionObj);
     }
-    this.editIndex = -1;
+    this.editSessionIndex = -1;
+  }
+
+  addFee() {
+    this.feeList.push(this.createFee());
+    this.editFee(this.feeList.length - 1);
+  }
+
+  delFee(index: number) {
+    this.feeList.removeAt(index);
+  }
+
+  editFee(index: number) {
+    if (this.editFeeIndex !== -1 && this.editFeeObj) {
+      this.feeList.at(this.editFeeIndex).patchValue(this.editFeeObj);
+    }
+    this.editFeeObj = { ...this.feeList.at(index).value };
+    this.editFeeIndex = index;
+  }
+
+  saveFee(index: number) {
+    this.feeList.at(index).markAsDirty();
+    if (this.feeList.at(index).invalid) return;
+    this.editFeeIndex = -1;
+  }
+
+  cancelFee(index: number) {
+    if (!this.feeList.at(index).value.key) {
+      this.delFee(index);
+    } else {
+      this.feeList.at(index).patchValue(this.editFeeObj);
+    }
+    this.editFeeIndex = -1;
   }
 
   _submitForm() {
