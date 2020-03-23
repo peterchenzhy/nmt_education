@@ -10,7 +10,7 @@ import com.nmt.education.service.student.StudentPoMapper;
  * @Version 1.0
  */
 @Service
-public class StudentPoService{
+public class StudentService {
 
     @Resource
     private StudentPoMapper studentPoMapper;

@@ -17,10 +17,10 @@ import java.util.Date;
  * @Version 1.0
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class StudentPoServiceTest extends BaseTest {
+class StudentServiceTest extends BaseTest {
 
     @Autowired
-    private StudentPoService studentPoService;
+    private StudentService studentService;
 
     @Test
     @Order(0)
@@ -39,12 +39,12 @@ class StudentPoServiceTest extends BaseTest {
         studentPo.setCreateTime(new Date());
         studentPo.setOperator(1);
         studentPo.setOperateTime(new Date());
-        studentPoService.insertSelective(studentPo);
+        studentService.insertSelective(studentPo);
     }
 
     @Test
     @Order(1)
     void selectByPrimaryKey() {
-        System.out.println(JSON.toJSONString(studentPoService.selectByPrimaryKey(1L)));
+        System.out.println(JSON.toJSONString(studentService.selectByPrimaryKey(1L)));
     }
 }

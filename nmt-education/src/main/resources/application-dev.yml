@@ -14,3 +14,5 @@ spring:
     minIdle: 3
     maxActive: 20
     maxWait: 60000
+
+swagger.enabled: true
