@@ -1,4 +1,4 @@
-import { GENDER } from '@shared/constant/system.constant';
+import { GENDER, RELATIONSHIP } from '@shared/constant/system.constant';
 
 export interface Student {
     code?: string;
@@ -12,6 +12,6 @@ export interface Student {
 export interface Parent {
     code?: string;
     name?: string;
-    relation?: number;
+    relation?: RELATIONSHIP;
     contactNo?: string;
 }

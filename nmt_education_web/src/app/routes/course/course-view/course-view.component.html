@@ -20,9 +20,11 @@
       </nz-col>
       <nz-col [nzXl]="{ span: 8, offset: 2 }" [nzLg]="{ span: 10 }" [nzMd]="{ span: 24 }" nzSm="24">
         <nz-form-item>
-          <nz-form-label>季度</nz-form-label>
-          <nz-form-control>
-            <input nz-input formControlName="season" id="season" />
+          <nz-form-label nzFor="season">季度</nz-form-label>
+          <nz-form-control nzErrorTip="请输入季度">
+            <nz-select formControlName="season" id="season" [nzPlaceHolder]="'请输入季度'" [nzShowSearch]="true">
+              <nz-option *ngFor="let i of seasonList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+            </nz-select>
           </nz-form-control>
         </nz-form-item>
       </nz-col>
@@ -30,9 +32,9 @@
     <nz-row nzGutter="16">
       <nz-col nzLg="6" nzMd="12" nzSm="24">
         <nz-form-item>
-          <nz-form-label nzFor="type">课程类型</nz-form-label>
-          <nz-form-control nzErrorTip="请输入课程类型">
-            <nz-select formControlName="type" [nzPlaceHolder]="'请选择课程类型'" [nzShowSearch]="true">
+          <nz-form-label nzFor="subject">课程科目</nz-form-label>
+          <nz-form-control nzErrorTip="请输入课程科目">
+            <nz-select formControlName="subject" [nzPlaceHolder]="'请选择课程科目'" [nzShowSearch]="true">
               <nz-option *ngFor="let i of courseSubjectList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
             </nz-select>
           </nz-form-control>
@@ -40,9 +42,11 @@
       </nz-col>
       <nz-col [nzXl]="{ span: 6, offset: 2 }" [nzLg]="{ span: 8 }" [nzMd]="{ span: 12 }" nzSm="24">
         <nz-form-item>
-          <nz-form-label>开课日期</nz-form-label>
-          <nz-form-control>
-            <nz-date-picker formControlName="startDate" [nzStyle]="{ width: '100%' }"></nz-date-picker>
+          <nz-form-label nzFor="type">课程类型</nz-form-label>
+          <nz-form-control nzErrorTip="请输入课程类型">
+            <nz-select formControlName="type" [nzPlaceHolder]="'请选择课程类型'" [nzShowSearch]="true">
+              <nz-option *ngFor="let i of courseTypeList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+            </nz-select>
           </nz-form-control>
         </nz-form-item>
       </nz-col>
@@ -70,9 +74,9 @@
       </nz-col>
       <nz-col [nzXl]="{ span: 6, offset: 2 }" [nzLg]="{ span: 8 }" [nzMd]="{ span: 12 }" nzSm="24">
         <nz-form-item>
-          <nz-form-label>课程时长(分)</nz-form-label>
+          <nz-form-label>开课日期</nz-form-label>
           <nz-form-control>
-            <nz-input-number formControlName="duration" placeholder="请输入"></nz-input-number>
+            <nz-date-picker formControlName="startDate" [nzStyle]="{ width: '100%' }"></nz-date-picker>
           </nz-form-control>
         </nz-form-item>
       </nz-col>
@@ -118,6 +122,51 @@
       </nz-col>
     </nz-row>
   </nz-card>
+  <nz-card [nzBordered]="false" nzTitle="费用列表">
+    <nz-table formArrayName="feeList" [nzData]="feeList.value" [nzShowPagination]="false">
+      <thead>
+        <tr>
+          <th>费用类型</th>
+          <th>价格</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of feeList.controls; let i = index" [formGroupName]="i">
+          <td>
+            <span *ngIf="editFeeIndex !== i">{{ getFeeTypeLabel(feeList.value[i].feeType) }}</span>
+            <span *ngIf="editFeeIndex === i" nz-form-control nzErrorTip="请选费用类型">
+              <nz-select formControlName="feeType" [nzPlaceHolder]="'请选费用类型'" [nzShowSearch]="true">
+                <nz-option *ngFor="let i of feeTypeList" [nzLabel]="i.label" [nzValue]="i.value"> </nz-option>
+              </nz-select>
+            </span>
+          </td>
+          <td>
+            <span *ngIf="editFeeIndex !== i">{{ feeList.value[i].price }}</span>
+            <span *ngIf="editFeeIndex === i" nz-form-control nzErrorTip="请输入价格">
+              <nz-input-number formControlName="price" placeholder="请输入价格"></nz-input-number>
+            </span>
+          </td>
+          <td>
+            <span *ngIf="editFeeIndex !== i">
+              <a (click)="editFee(i)">编辑</a>
+              <nz-divider nzType="vertical"></nz-divider>
+              <a nz-popconfirm nzPopconfirmTitle="是否要删除此行？" (nzOnConfirm)="delFee(i)">删除</a>
+            </span>
+            <span *ngIf="editFeeIndex === i">
+              <a (click)="saveFee(i)">保存</a>
+              <nz-divider nzType="vertical"></nz-divider>
+              <a nz-popconfirm nzPopconfirmTitle="是否要取消操作？" (nzOnConfirm)="cancelFee(i)">取消</a>
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+    <button *ngIf="editFeeIndex === -1" nz-button [nzType]="'dashed'" (click)="addFee()" nzBlock class="mt-md">
+      <i nz-icon nzType="plus"></i>
+      <span>新增费用</span>
+    </button>
+  </nz-card>
   <nz-card [nzBordered]="false" nzTitle="课时信息">
     <nz-table formArrayName="sessions" [nzData]="sessions.value" [nzShowPagination]="false">
       <thead>
@@ -136,40 +185,40 @@
             <span>{{ i+1 }}</span>
           </td>
           <td>
-            <span *ngIf="editIndex !== i">{{ sessions.value[i].teacher }}</span>
-            <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请选择教师">
+            <span *ngIf="editSessionIndex !== i">{{ sessions.value[i].teacher }}</span>
+            <span *ngIf="editSessionIndex === i" nz-form-control nzErrorTip="请选择教师">
               <nz-select formControlName="teacher" [nzPlaceHolder]="'请选择教师'" [nzShowSearch]="true">
                 <nz-option *ngFor="let i of teacherList" [nzLabel]="i.label" [nzValue]="i.label"> </nz-option>
               </nz-select>
             </span>
           </td>
           <td>
-            <span *ngIf="editIndex !== i">{{ sessions.value[i].dateTime }}</span>
-            <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请输入上课时间">
+            <span *ngIf="editSessionIndex !== i">{{ sessions.value[i].dateTime }}</span>
+            <span *ngIf="editSessionIndex === i" nz-form-control nzErrorTip="请输入上课时间">
               <input nz-input formControlName="dateTime" />
             </span>
           </td>
           <td>
-            <span *ngIf="editIndex !== i">{{ sessions.value[i].classroom }}</span>
-            <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请选择教室">
+            <span *ngIf="editSessionIndex !== i">{{ sessions.value[i].classroom }}</span>
+            <span *ngIf="editSessionIndex === i" nz-form-control nzErrorTip="请选择教室">
               <nz-select formControlName="classroom" [nzPlaceHolder]="'请选择教室'" [nzShowSearch]="true">
                 <nz-option *ngFor="let i of classroomList" [nzLabel]="i.label" [nzValue]="i.value"> </nz-option>
               </nz-select>
             </span>
           </td>
           <td>
-            <span *ngIf="editIndex !== i">{{ sessions.value[i].price }}</span>
-            <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请选择价格">
+            <span *ngIf="editSessionIndex !== i">{{ sessions.value[i].price }}</span>
+            <span *ngIf="editSessionIndex === i" nz-form-control nzErrorTip="请选择价格">
               <nz-input-number formControlName="price" placeholder="请选择价格"></nz-input-number>
             </span>
           </td>
           <td>
-            <span *ngIf="editIndex !== i">
+            <span *ngIf="editSessionIndex !== i">
               <a (click)="edit(i)">编辑</a>
               <nz-divider nzType="vertical"></nz-divider>
               <a nz-popconfirm nzPopconfirmTitle="是否要删除此行？" (nzOnConfirm)="del(i)">删除</a>
             </span>
-            <span *ngIf="editIndex === i">
+            <span *ngIf="editSessionIndex === i">
               <a (click)="save(i)">保存</a>
               <nz-divider nzType="vertical"></nz-divider>
               <a nz-popconfirm nzPopconfirmTitle="是否要取消操作？" (nzOnConfirm)="cancel(i)">取消</a>
@@ -178,7 +227,7 @@
         </tr>
       </tbody>
     </nz-table>
-    <button *ngIf="editIndex === -1" nz-button [nzType]="'dashed'" (click)="add()" nzBlock class="mt-md">
+    <button *ngIf="editSessionIndex === -1" nz-button [nzType]="'dashed'" (click)="add()" nzBlock class="mt-md">
       <i nz-icon nzType="plus"></i>
       <span>新增成员</span>
     </button>

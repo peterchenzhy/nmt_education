@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { STColumn, STComponent } from '@delon/abc';
 import { Student } from 'src/app/model/student.model';
+import { COURSE_STATUS_LIST, ORDER_STATUS_LIST, RELATIONSHIP_LIST, GRADE_LIST, CAMPUS_LIST } from '@shared/constant/system.constant';
 
 @Component({
     selector: 'app-student-view',
@@ -13,7 +14,7 @@ import { Student } from 'src/app/model/student.model';
 })
 export class StudentViewComponent implements OnInit {
     pageHeader: string;
-    student: Student={};
+    student: Student = {};
     @ViewChild('st', { static: true })
     st: STComponent;
     constructor(
@@ -27,22 +28,11 @@ export class StudentViewComponent implements OnInit {
     editIndex = -1;
     editObj = {};
     form: FormGroup;
-    typeList: any[] = [{ value: 'CHN', label: '语文' }, { value: 'MAT', label: '数学' }, { value: 'ENG', label: '英语' }];
-    courseStatus: any[] = [{ index: 0, text: '未开始', value: false, type: 'default', checked: false },
-    {
-        index: 1,
-        text: '开课中',
-        value: false,
-        type: 'processing',
-        checked: false,
-    },
-    { index: 2, text: '已结课', value: false, type: 'success', checked: false }];
-    orderStatus: any[] = [{ index: 0, text: '正常', value: false, type: 'processing', checked: false },
-    { index: 1, text: '完成', value: false, type: 'success', checked: false, },
-    { index: 2, text: '冻结', value: false, type: 'error', checked: false, }];
-    relationships: any[] = [{ value: '0', label: '父亲' }, { value: '1', label: '母亲' }, { value: '2', label: '其他' }];
-    campusList: any[] = [{ value: 'sspu', label: '二工大' }, { value: 'shanda', label: '杉达' }, { value: 'jinrong', label: '金融学院' }];
-    gradeList: any[] = [{ value: '1', label: '一年级' }, { value: '2', label: '二年级' }, { value: '3', label: '三年级' }];
+    courseStatus = COURSE_STATUS_LIST;
+    orderStatus: any[] = ORDER_STATUS_LIST;
+    relationships: any[] = RELATIONSHIP_LIST;
+    campusList: any[] = CAMPUS_LIST;
+    gradeList: any[] = GRADE_LIST;
     classroomList: any[] = [{ value: '101', label: '101' }, { value: '202', label: '202' }, { value: '303', label: '303' }];
     coursesColumns: STColumn[] = [
         { title: '订单编号', index: 'orderNo', type: 'link' },
@@ -72,13 +62,13 @@ export class StudentViewComponent implements OnInit {
             ],
         },
     ];
-    courses = [{ orderNo: 'order111', courseName: 'course111', campus: "二工大", courseStatus: 1, courseStatusText: "开课中", courseStatusType: "processing", orderStatus: "0",orderStatusText: "正常", orderStatusType: "processing" },
-    { orderNo: 'order222', courseName: 'course222', campus: "二工大", courseStatus: 1, courseStatusText: "开课中", courseStatusType: "processing", orderStatus: "2" ,orderStatusText: "冻结", orderStatusType: "error"},
-    { orderNo: 'order333', courseName: 'course333', campus: "二工大", courseStatus: 2, courseStatusText: "已结课", courseStatusType: "success", orderStatus: "1" ,orderStatusText: "完成", orderStatusType: "success"}];
+    courses = [{ orderNo: 'order111', courseName: 'course111', campus: "二工大", courseStatus: 1, courseStatusText: "开课中", courseStatusType: "processing", orderStatus: "0", orderStatusText: "续费", orderStatusType: "purple" },
+    { orderNo: 'order222', courseName: 'course222', campus: "二工大", courseStatus: 1, courseStatusText: "开课中", courseStatusType: "processing", orderStatus: "2", orderStatusText: "冻结", orderStatusType: "error" },
+    { orderNo: 'order333', courseName: 'course333', campus: "二工大", courseStatus: 2, courseStatusText: "已结课", courseStatusType: "success", orderStatus: "1", orderStatusText: "完成", orderStatusType: "success" }];
 
     ngOnInit() {
-        this.student.code = this.routerinfo.snapshot.params['studentno'];
-        this.http.get(`/student/${this.student.code}`).subscribe(res => {this.student = res;this.form.patchValue(res);});
+        this.student.code = this.routerinfo.snapshot.params['code'];
+        this.http.get(`/student/${this.student.code}`).subscribe(res => { this.student = res; this.form.patchValue(res); });
         this.pageHeader = `学生信息编辑 [${this.student.code}]`;
         this.form = this.fb.group({
             studentName: [null, [Validators.required]],

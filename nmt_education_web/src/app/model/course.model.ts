@@ -1,5 +1,6 @@
 import { Status } from './system.model';
 import { COURSE_STATUS, COURSE_SUBJECT, GRADE } from '@shared/constant/system.constant';
+import { Teacher } from './teacher.model';
 
 export interface Course {
     code?: string;
@@ -15,16 +16,10 @@ export interface Course {
     assistant?: Teacher;
     campus?: Campus;
     classroom?: Classroom;
-    feeList: CourseFee[];
+    feeList?: CourseFee[];
     sessionList?: CourseSession[];
 }
 
-export interface Teacher {
-    code?: string;
-    name?: string;
-    contactNo: string;
-    salary: number;
-}
 
 export interface CourseSession {
     id?: string;

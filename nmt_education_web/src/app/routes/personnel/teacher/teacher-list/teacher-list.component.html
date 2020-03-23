@@ -1,10 +1,10 @@
-<page-header [title]="'学生管理'"></page-header>
+<page-header [title]="'教师管理'"></page-header>
 <nz-card [nzBordered]="false">
   <form nz-form [nzLayout]="'inline'" (ngSubmit)="getData()" class="search__form">
     <div nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 24, xl: 48, xxl: 48 }">
       <div nz-col nzMd="6" nzSm="24">
         <nz-form-item>
-          <nz-form-label nzFor="no">学生编号</nz-form-label>
+          <nz-form-label nzFor="no">教师编号</nz-form-label>
           <nz-form-control>
             <input nz-input [(ngModel)]="q.no" name="no" placeholder="请输入" id="no" />
           </nz-form-control>
@@ -12,7 +12,7 @@
       </div>
       <div nz-col nzMd="6" nzSm="24">
         <nz-form-item>
-          <nz-form-label nzFor="no">学生姓名</nz-form-label>
+          <nz-form-label nzFor="no">教师姓名</nz-form-label>
           <nz-form-control>
             <input nz-input [(ngModel)]="q.name" name="name" placeholder="请输入" id="name" />
           </nz-form-control>
@@ -20,28 +20,29 @@
       </div>
       <div nz-col nzMd="6" nzSm="24">
         <nz-form-item>
-          <nz-form-label nzFor="contactNo">联系方式</nz-form-label>
+          <nz-form-label nzFor="subject">教授科目</nz-form-label>
           <nz-form-control>
-            <input nz-input [(ngModel)]="q.contactNo" name="contactNo" placeholder="请输入" id="contactNo" />
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-      <div nz-col nzMd="6" nzSm="24" *ngIf="expandForm">
-        <nz-form-item>
-          <nz-form-label nzFor="status">学生状态</nz-form-label>
-          <nz-form-control>
-            <nz-select [(ngModel)]="q.status" name="status" id="status" [nzPlaceHolder]="'请选择'" [nzShowSearch]="true">
-              <nz-option *ngFor="let i of status;" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+            <nz-select [(ngModel)]="q.subject" name="subject" id="subject" [nzPlaceHolder]="'请选择'" [nzShowSearch]="true">
+              <nz-option *ngFor="let i of courseSubjects;" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
             </nz-select>
           </nz-form-control>
         </nz-form-item>
-        
       </div>
       <div nz-col nzMd="6" nzSm="24" *ngIf="expandForm">
         <nz-form-item>
           <nz-form-label nzFor="contactNo">联系方式</nz-form-label>
           <nz-form-control>
             <input nz-input [(ngModel)]="q.contactNo" name="contactNo" placeholder="请输入" id="contactNo" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzMd="6" nzSm="24" *ngIf="expandForm">
+        <nz-form-item>
+          <nz-form-label nzFor="grade">年级</nz-form-label>
+          <nz-form-control>
+            <nz-select [(ngModel)]="q.grade" name="grade" id="grade" [nzPlaceHolder]="'请选择'" [nzShowSearch]="true">
+              <nz-option *ngFor="let i of gradeList;" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+            </nz-select>
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -57,7 +58,7 @@
   </form>
   <button nz-button (click)="add(modalContent)" [nzType]="'primary'">
     <i nz-icon nzType="plus"></i>
-    <span>添加学生</span>
+    <span>添加教师</span>
   </button>
   <ng-container *ngIf="selectedRows.length > 0">
     <button nz-button>批量操作</button>
@@ -82,8 +83,11 @@
     </nz-alert>
   </div>
   <st #st [columns]="columns" [data]="data" [loading]="loading" (change)="stChange($event)">
-    <ng-template st-row="status" let-i>
-      <nz-badge [nzStatus]="i.statusType" [nzText]="i.statusText"></nz-badge>
+    <ng-template st-row="genderRender" let-i>
+      <span>{{getGenderLabel(i.gender)}}</span>
+    </ng-template>
+    <ng-template st-row="subjectRender" let-i>
+      <span>{{getCourseSubjectLabel(i.courseSubject)}}</span>
     </ng-template>
   </st>
 </nz-card>
