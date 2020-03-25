@@ -174,7 +174,7 @@
           <th>课时</th>
           <th>教师</th>
           <th>上课时间</th>
-          <th>教室</th>
+          <th>时长(分钟)</th>
           <th>价格</th>
           <th>操作</th>
         </tr>
@@ -185,25 +185,24 @@
             <span>{{ i+1 }}</span>
           </td>
           <td>
-            <span *ngIf="editSessionIndex !== i">{{ sessions.value[i].teacher }}</span>
+            <span *ngIf="editSessionIndex !== i">{{ getTeacherName(sessions.value[i].teacher) }}</span>
             <span *ngIf="editSessionIndex === i" nz-form-control nzErrorTip="请选择教师">
               <nz-select formControlName="teacher" [nzPlaceHolder]="'请选择教师'" [nzShowSearch]="true">
-                <nz-option *ngFor="let i of teacherList" [nzLabel]="i.label" [nzValue]="i.label"> </nz-option>
+                <nz-option *ngFor="let i of teacherList" [nzLabel]="i.label" [nzValue]="i.value"> </nz-option>
               </nz-select>
             </span>
           </td>
           <td>
-            <span *ngIf="editSessionIndex !== i">{{ sessions.value[i].dateTime }}</span>
+            <span *ngIf="editSessionIndex !== i">{{ sessions.value[i].startDateTime.toLocaleString() }}</span>
             <span *ngIf="editSessionIndex === i" nz-form-control nzErrorTip="请输入上课时间">
-              <input nz-input formControlName="dateTime" />
+              <nz-date-picker nzShowTime nzFormat="yyyy-MM-dd HH:mm:ss" nzPlaceHolder="Select Time"
+              formControlName="startDateTime"></nz-date-picker>
             </span>
           </td>
           <td>
-            <span *ngIf="editSessionIndex !== i">{{ sessions.value[i].classroom }}</span>
-            <span *ngIf="editSessionIndex === i" nz-form-control nzErrorTip="请选择教室">
-              <nz-select formControlName="classroom" [nzPlaceHolder]="'请选择教室'" [nzShowSearch]="true">
-                <nz-option *ngFor="let i of classroomList" [nzLabel]="i.label" [nzValue]="i.value"> </nz-option>
-              </nz-select>
+            <span *ngIf="editSessionIndex !== i">{{ sessions.value[i].duration }}</span>
+            <span *ngIf="editSessionIndex === i" nz-form-control nzErrorTip="请输入时长">
+              <nz-input-number formControlName="duration" placeholder="请输入时长"></nz-input-number>
             </span>
           </td>
           <td>
@@ -227,12 +226,63 @@
         </tr>
       </tbody>
     </nz-table>
-    <button *ngIf="editSessionIndex === -1" nz-button [nzType]="'dashed'" (click)="add()" nzBlock class="mt-md">
+    <button *ngIf="editSessionIndex === -1" nz-button [nzType]="'dashed'" (click)="add(modalCreateSession)" nzBlock
+      class="mt-md">
       <i nz-icon nzType="plus"></i>
-      <span>新增成员</span>
+      <span>新增课时</span>
     </button>
   </nz-card>
   <footer-toolbar errorCollect>
     <button nz-button type="primary" nzType="primary">提交</button>
   </footer-toolbar>
 </form>
+
+<ng-template #modalCreateSession>
+  <div class="search__form">
+    <nz-form-item>
+      <nz-form-label>开始日期</nz-form-label>
+      <nz-form-control>
+        <nz-date-picker style="width: 100%;" [(ngModel)]="sessionParam.startDate"></nz-date-picker>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label>课时数量</nz-form-label>
+      <nz-form-control>
+        <nz-input-number style="width: 100%;" [(ngModel)]="sessionParam.count" placeholder="请输入课时数量"></nz-input-number>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label>上课时间</nz-form-label>
+      <nz-form-control>
+        <nz-time-picker style="width: 100%;" [(ngModel)]="sessionParam.startTime"></nz-time-picker>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label>时长 (分)</nz-form-label>
+      <nz-form-control>
+        <nz-input-number style="width: 100%;" [(ngModel)]="sessionParam.duration" placeholder="请输入课时数量">
+        </nz-input-number>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label>规律</nz-form-label>
+      <nz-form-control>
+        <nz-checkbox-group [(ngModel)]="sessionParam.dayOfWeek"> </nz-checkbox-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label>教师</nz-form-label>
+      <nz-form-control>
+        <nz-select [(ngModel)]="sessionParam.teacher" style="width: 100%;" [nzPlaceHolder]="'请选择教师'" [nzShowSearch]="true">
+          <nz-option *ngFor="let i of teacherList" [nzLabel]="i.label" [nzValue]="i.value"> </nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label>价格 (元)</nz-form-label>
+      <nz-form-control>
+        <nz-input-number style="width: 100%;" [(ngModel)]="sessionParam.price" placeholder="请输入课程价格"></nz-input-number>
+      </nz-form-control>
+    </nz-form-item>
+  </div>
+</ng-template>

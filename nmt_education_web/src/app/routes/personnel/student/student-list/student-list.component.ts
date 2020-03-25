@@ -5,13 +5,14 @@ import { tap, map } from 'rxjs/operators';
 import { STComponent, STColumn, STData, STChange } from '@delon/abc';
 import { FormGroup, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
+import { GENDER_LIST, getGenderLabel } from '@shared/constant/system.constant';
 
 @Component({
     selector: 'app-student-list',
     templateUrl: './student-list.component.html',
 })
 export class StudentListComponent implements OnInit {
-
+    getGenderLabel = getGenderLabel;
     q: any = {
         pi: 1,
         ps: 10,
@@ -23,17 +24,15 @@ export class StudentListComponent implements OnInit {
     };
     data: any[] = [];
     loading = false;
-    status = [{ label: "正常", value: 0 }, { label: "冻结", value: 1 }];
-    gender = [{ label: "男", value: 0 }, { label: "女", value: 1 }];
+    genderList = GENDER_LIST;
     @ViewChild('st', { static: true })
     st: STComponent;
     columns: STColumn[] = [
         { title: '', index: 'key', type: 'checkbox' },
         { title: '学生编号', index: 'studentNo' },
         { title: '姓名', index: 'studentName' },
-        { title: '性别', index: 'genderText' },
-        { title: '联系电话', index: 'contactNo'},
-        { title: '状态', index: 'statusText' },
+        { title: '性别', index: 'gender', render: "genderRender" },
+        { title: '联系电话', index: 'contactNo' },
         {
             title: '操作',
             buttons: [
@@ -76,10 +75,6 @@ export class StudentListComponent implements OnInit {
             .pipe(
                 map((list: any[]) =>
                     list.map(i => {
-                        const statusItem = this.status[i.status];
-                        i.statusText = statusItem.label;
-                        const genderItem = this.gender[i.gender];
-                        i.genderText=genderItem.label;
                         return i;
                     }),
                 ),

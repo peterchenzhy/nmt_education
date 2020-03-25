@@ -1,11 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { Component, OnInit, TemplateRef } from '@angular/core';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { _HttpClient } from '@delon/theme';
 import { ActivatedRoute } from '@angular/router';
 import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { COURSE_STATUS_LIST, COURSE_STATUS, COURSE_SUBJECT, COURSE_SUBJECT_LIST, GRADE_LIST, CAMPUS_LIST, SEASON_LIST, COURSE_TYPE_LIST, FEE_TYPE_LIST, getFeeTypeLabel } from '@shared/constant/system.constant';
-import { Course } from 'src/app/model/course.model';
+import { Course, CourseSession } from 'src/app/model/course.model';
+import { Session } from 'protractor';
 
 @Component({
   selector: 'app-course-view',
@@ -15,11 +16,22 @@ export class CourseViewComponent implements OnInit {
   getFeeTypeLabel = getFeeTypeLabel;
   pageHeader: string;
   course: Course = {};
+  sessionParam: any = {
+    startDate: new Date(),
+    count: 0,
+    startTime: new Date("2020-01-01 00:00:00"),
+    duration: 0,
+    dayOfWeek: [{ label: '星期天', value: 0 }, { label: '星期一', value: 1 }, { label: '星期二', value: 2 },
+    { label: '星期三', value: 3 }, { label: '星期四', value: 4 }, { label: '星期五', value: 5 }, { label: '星期六', value: 6 }],
+    price: 0,
+    teacher: null
+  };
 
   constructor(
     private fb: FormBuilder,
     private routerinfo: ActivatedRoute,
     public msgSrv: NzMessageService,
+    private modalSrv: NzModalService,
     public http: _HttpClient
   ) {
 
@@ -60,27 +72,27 @@ export class CourseViewComponent implements OnInit {
       sessions: this.fb.array([]),
       feeList: this.fb.array([])
     });
-    const sessionList = [
+    const sessionList: CourseSession[] = [
       {
-        key: '1',
-        classroom: '101',
-        teacher: '陈志毅',
-        dateTime: '2020-03-10 14:00:00',
-        price: '200',
+        id: "1",
+        teacher: "czy",
+        duration: 90,
+        startDateTime: new Date('2020-03-10 14:00:00'),
+        price: 200
       },
       {
-        key: '2',
-        classroom: '101',
-        teacher: '陈志毅',
-        dateTime: '2020-03-17 14:00:00',
-        price: '100',
+        id: '2',
+        teacher: "czy",
+        duration: 90,
+        startDateTime: new Date('2020-03-17 14:00:00'),
+        price: 100
       },
       {
-        key: '3',
-        classroom: '101',
-        teacher: '陈志毅',
-        dateTime: '2020-03-24 14:00:00',
-        price: '100',
+        id: '3',
+        teacher: "czy",
+        duration: 90,
+        startDateTime: new Date('2020-03-24 14:00:00'),
+        price: 100
       },
     ];
     sessionList.forEach(i => {
@@ -109,10 +121,10 @@ export class CourseViewComponent implements OnInit {
 
   createSession(): FormGroup {
     return this.fb.group({
-      key: [null],
+      id: [null],
       teacher: [null, [Validators.required]],
-      dateTime: [null, [Validators.required]],
-      classroom: [null, [Validators.required]],
+      startDateTime: [null, [Validators.required]],
+      duration: [null, [Validators.required]],
       price: [null, [Validators.required]],
     });
   }
@@ -173,9 +185,38 @@ export class CourseViewComponent implements OnInit {
   }
   //#endregion
 
-  add() {
-    this.sessions.push(this.createSession());
-    this.edit(this.sessions.length - 1);
+  // add() {
+  //   this.sessions.push(this.createSession());
+  //   this.edit(this.sessions.length - 1);
+  // }
+
+  add(tpl: TemplateRef<{}>) {
+    this.modalSrv.create({
+      nzTitle: '创建课时',
+      nzContent: tpl,
+      nzWidth: 350,
+      nzOnOk: () => {
+        for (let i = 0; i < this.sessionParam.count;) {
+          let day = this.sessionParam.startDate.getDay();
+          if (this.sessionParam.dayOfWeek.find(d => { return d.checked && d.value == day; })) {
+            let newSession: CourseSession = {};
+            newSession.id = (this.sessions.length + 1).toString();
+            newSession.teacher = this.sessionParam.teacher;
+            newSession.duration = this.sessionParam.duration;
+            newSession.price = this.sessionParam.price;
+            let dateStr = this.sessionParam.startDate.toLocaleDateString();
+            let timeStr = this.sessionParam.startTime.toTimeString();
+            newSession.startDateTime = new Date(dateStr + " " + timeStr);
+            const sessionObj = this.createSession();
+            sessionObj.patchValue(newSession);
+            this.sessions.push(sessionObj);
+            i++;
+          }
+          this.sessionParam.startDate.setDate(this.sessionParam.startDate.getDate() + 1);
+        }
+
+      },
+    });
   }
 
   del(index: number) {
@@ -245,4 +286,7 @@ export class CourseViewComponent implements OnInit {
     if (this.form.invalid) return;
   }
 
+  getTeacherName(code: string) {
+    return this.teacherList.find(t => { return t.value == code; }).label;
+  }
 }

@@ -25,9 +25,8 @@ export interface CourseSession {
     id?: string;
     startDateTime?: Date;
     duration?: number;
-    teacher?: Teacher;
-    price?: number;
-    classroom?: Classroom;
+    teacher?: string;
+    price?: number
 }
 
 export interface CourseFee {

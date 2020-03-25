@@ -35,7 +35,7 @@
             </nz-select>
           </nz-form-control>
         </nz-form-item>
-        
+
       </div>
       <div nz-col nzMd="6" nzSm="24" *ngIf="expandForm">
         <nz-form-item>
@@ -82,8 +82,8 @@
     </nz-alert>
   </div>
   <st #st [columns]="columns" [data]="data" [loading]="loading" (change)="stChange($event)">
-    <ng-template st-row="status" let-i>
-      <nz-badge [nzStatus]="i.statusType" [nzText]="i.statusText"></nz-badge>
+    <ng-template st-row="genderRender" let-i>
+      <span>{{getGenderLabel(i.gender)}}</span>
     </ng-template>
   </st>
 </nz-card>
