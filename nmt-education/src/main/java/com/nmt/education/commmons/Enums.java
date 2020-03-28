@@ -59,7 +59,7 @@ public interface Enums {
     enum registrationStatus implements IEnum {
         新报(1, "新报"),
         续报(2, "续报"),
-        退费中(3, "已退费"),
+        退费中(3, "退费中"),
         已退费(4, "已退费");
 
         @Getter

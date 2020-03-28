@@ -22,6 +22,29 @@ public class EnumsService {
      */
     public Map<String, List<EnumVo>> all() {
         Map<String, List<EnumVo>> map = new HashMap<>();
+        map.putAll(getLocalEnums());
+        map.putAll(getDbEnums());
+        return map;
+    }
+
+    /**
+     * 获取数据库枚举
+     *
+     * @return
+     */
+    private Map<String, List<EnumVo>> getDbEnums() {
+        Map<String, List<EnumVo>> map = new HashMap<>();
+
+        return map;
+    }
+
+    /**
+     * 获取本地枚举
+     *
+     * @return
+     */
+    private Map<String, List<EnumVo>> getLocalEnums() {
+        Map<String, List<EnumVo>> map = new HashMap<>();
         map.put(getEnumKey(Enums.CourseStatus.class), getEnumVos(Enums.CourseStatus.values()));
         map.put(getEnumKey(Enums.FeeStatus.class), getEnumVos(Enums.FeeStatus.values()));
         map.put(getEnumKey(Enums.registrationStatus.class), getEnumVos(Enums.registrationStatus.values()));
