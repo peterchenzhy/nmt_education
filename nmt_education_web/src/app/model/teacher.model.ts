@@ -5,13 +5,14 @@ export interface Teacher {
     name?: string;
     gender?: GENDER;
     contactNo?: string;
-    courseSubject?: COURSE_SUBJECT;
+    introduction?: string;
     courseSalary?: CourseSalary[];
 }
 
 export interface CourseSalary {
     id?: string;
     grade?: GRADE;
+    courseSubject?: COURSE_SUBJECT;
     courseType?: COURSE_TYPE;
     salary?: number;
 }

@@ -1,20 +1,20 @@
 import { Status } from './system.model';
-import { COURSE_STATUS, COURSE_SUBJECT, GRADE } from '@shared/constant/system.constant';
+import { COURSE_STATUS, COURSE_SUBJECT, GRADE, COURSE_TYPE, FEE_TYPE, CAMPUS, SEASON } from '@shared/constant/system.constant';
 import { Teacher } from './teacher.model';
 
 export interface Course {
     code?: string;
     name?: string;
     year?: number;
-    season?: number;
+    season?: SEASON;
     startDate?: Date;
     grade?: GRADE;
     subject?: COURSE_SUBJECT;
-    type?: string;
+    type?: COURSE_TYPE;
     status?: COURSE_STATUS;
     statusDetail?: Status;
     assistant?: Teacher;
-    campus?: Campus;
+    campus?: CAMPUS;
     classroom?: Classroom;
     feeList?: CourseFee[];
     sessionList?: CourseSession[];
@@ -31,7 +31,7 @@ export interface CourseSession {
 
 export interface CourseFee {
     code?: string;
-    name?: string;
+    type?: FEE_TYPE;
     price?: number;
 }
 

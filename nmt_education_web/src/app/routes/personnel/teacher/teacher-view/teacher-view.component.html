@@ -29,14 +29,12 @@
             </nz-col>
         </nz-row>
         <nz-row nzGutter="16">
-            <nz-col nzLg="6" nzMd="12" nzSm="24">
+            <nz-col nzLg="12" nzMd="24" nzSm="24">
                 <nz-form-item>
-                    <nz-form-label nzFor="subject">科目</nz-form-label>
-                    <nz-form-control nzErrorTip="请选择科目">
-                        <nz-select formControlName="subject" [nzPlaceHolder]="'请选择课程状态'" [nzShowSearch]="true">
-                            <nz-option *ngFor="let i of courseSubjectList" [nzLabel]="i.label" [nzValue]="i.value">
-                            </nz-option>
-                        </nz-select>
+                    <nz-form-label nzFor="introduction">介绍</nz-form-label>
+                    <nz-form-control nzErrorTip="请输入教师介绍">
+                        <textarea nz-input formControlName="introduction" [nzAutosize]="{ minRows: 4 }"
+                            placeholder="请输入教师介绍"></textarea>
                     </nz-form-control>
                 </nz-form-item>
             </nz-col>
@@ -48,6 +46,7 @@
                 <tr>
                     <th>ID</th>
                     <th>年级</th>
+                    <th>科目</th>
                     <th>课程类型</th>
                     <th>薪资</th>
                     <th>操作</th>
@@ -68,6 +67,15 @@
                         </span>
                     </td>
                     <td>
+                        <span *ngIf="editIndex !== i">{{ getCourseSubjectLabel(salayConfig.value[i].courseSubject) }}</span>
+                        <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请选择年级">
+                            <nz-select formControlName="courseSubject" [nzPlaceHolder]="'请选择课程状态'" [nzShowSearch]="true">
+                                <nz-option *ngFor="let i of courseSubjectList" [nzLabel]="i.label" [nzValue]="i.value">
+                                </nz-option>
+                            </nz-select>
+                        </span>
+                    </td>
+                    <td>
                         <span *ngIf="editIndex !== i">{{ getCourseTypeLabel(salayConfig.value[i].courseType) }}</span>
                         <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请选择课程类型">
                             <nz-select formControlName="courseType" [nzPlaceHolder]="'请选择课程类型'" [nzShowSearch]="true">
@@ -79,7 +87,7 @@
                     <td>
                         <span *ngIf="editIndex !== i">{{ salayConfig.value[i].salary }}</span>
                         <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请输入薪资">
-                            <nz-input-number formControlName="salary" placeholder="请输入薪资" ></nz-input-number>
+                            <nz-input-number formControlName="salary" placeholder="请输入薪资"></nz-input-number>
                         </span>
                     </td>
                     <td>

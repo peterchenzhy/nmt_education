@@ -1,25 +1,22 @@
 import { HttpRequest } from '@angular/common/http';
 import { MockRequest } from '@delon/mock';
+import { Student } from 'src/app/model/student.model';
 
-const list: any[] = [];
+const list: Student[] = [];
 
 for (let i = 0; i < 46; i += 1) {
     list.push({
-        key: i,
-        disabled: i % 6 === 0,
-        href: 'https://ant.design',
-        avatar: [
-            'https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png',
-            'https://gw.alipayobjects.com/zos/rmsportal/udxAbMEhpwthVVcjLXik.png',
-        ][i % 2],
-        studentNo: `StudentCode ${i}`,
-        studentName: '学生名',
-        contactNo: Math.floor(Math.random() * 1000),
-        status: Math.floor(Math.random() * 10) % 2,
-        gender: Math.floor(Math.random() * 10) % 2,
-        startDate: new Date(`2017-07-${i < 18 ? '0' + (Math.floor(i / 2) + 1) : Math.floor(i / 2) + 1}`),
-        createdAt: new Date(`2017-07-${i < 18 ? '0' + (Math.floor(i / 2) + 1) : Math.floor(i / 2) + 1}`),
-        progress: Math.ceil(Math.random() * 100),
+        // key: i,
+        // disabled: i % 6 === 0,
+        // href: 'https://ant.design',
+        // avatar: [
+        //     'https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png',
+        //     'https://gw.alipayobjects.com/zos/rmsportal/udxAbMEhpwthVVcjLXik.png',
+        // ][i % 2],
+        code: `StudentCode ${i}`,
+        name: '学生名',
+        contactNo: Math.floor(Math.random() * 1000).toString(),
+        gender: Math.floor(Math.random() * 10) % 2
     });
 }
 
@@ -34,11 +31,8 @@ function getRule(params: any) {
             return prev[s[0]] - next[s[0]];
         });
     }
-    if (params.statusList && params.statusList.length > 0) {
-        ret = ret.filter(data => params.statusList.indexOf(data.status) > -1);
-    }
     if (params.no) {
-        ret = ret.filter(data => data.no.indexOf(params.no) > -1);
+        ret = ret.filter(data => data.code.indexOf(params.no) > -1);
     }
     return ret;
 }
@@ -54,18 +48,15 @@ function getRuleById(params: any) {
             return prev[s[0]] - next[s[0]];
         });
     }
-    if (params.statusList && params.statusList.length > 0) {
-        ret = ret.filter(data => params.statusList.indexOf(data.status) > -1);
-    }
     if (params.no) {
-        ret = ret.filter(data => data.no.indexOf(params.no) > -1);
+        ret = ret.filter(data => data.code.indexOf(params.no) > -1);
     }
     return ret[0];
 }
 
 function removeRule(nos: string): boolean {
     nos.split(',').forEach(no => {
-        const idx = list.findIndex(w => w.no === no);
+        const idx = list.findIndex(w => w.code === no);
         if (idx !== -1) list.splice(idx, 1);
     });
     return true;
@@ -74,21 +65,10 @@ function removeRule(nos: string): boolean {
 function saveRule(description: string) {
     const i = Math.ceil(Math.random() * 10000);
     list.unshift({
-        key: i,
-        href: 'https://ant.design',
-        avatar: [
-            'https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png',
-            'https://gw.alipayobjects.com/zos/rmsportal/udxAbMEhpwthVVcjLXik.png',
-        ][i % 2],
-        no: `TradeCode ${i}`,
-        title: `一个任务名称 ${i}`,
-        owner: '曲丽丽',
-        description,
-        callNo: Math.floor(Math.random() * 1000),
-        status: Math.floor(Math.random() * 10) % 2,
-        updatedAt: new Date(),
-        createdAt: new Date(),
-        progress: Math.ceil(Math.random() * 100),
+        code: `StudentCode ${i}`,
+        name: '学生名',
+        contactNo: Math.floor(Math.random() * 1000).toString(),
+        gender: Math.floor(Math.random() * 10) % 2
     });
 }
 

@@ -115,6 +115,16 @@ export class StartupService {
               }]
           },
           {
+            text: '订单管理',
+            group: true,
+            children: [
+              {
+                text: "订单列表",
+                link: '/order/list',
+                icon: { type: 'icon', value: 'appstore' }
+              }]
+          },
+          {
             text: 'Quick Menu',
             icon: { type: 'icon', value: 'rocket' },
             shortcutRoot: true
