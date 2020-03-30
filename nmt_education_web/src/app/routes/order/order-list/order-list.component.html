@@ -1,31 +1,29 @@
-<page-header [title]="'课程管理'"></page-header>
+<page-header [title]="'订单管理'"></page-header>
 <nz-card [nzBordered]="false">
   <form nz-form [nzLayout]="'inline'" (ngSubmit)="getData()" class="search__form">
     <div nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 24, xl: 48, xxl: 48 }">
       <div nz-col nzMd="8" nzSm="24">
         <nz-form-item>
-          <nz-form-label nzFor="no">课程编号</nz-form-label>
+          <nz-form-label nzFor="orderCode">订单编号</nz-form-label>
           <nz-form-control>
-            <input nz-input [(ngModel)]="q.no" name="no" placeholder="请输入" id="no" />
+            <input nz-input [(ngModel)]="q.orderCode" name="orderCode" placeholder="请输入" id="orderCode" />
           </nz-form-control>
         </nz-form-item>
       </div>
       <div nz-col nzMd="8" nzSm="24">
-        <div>
-          <nz-form-item>
-            <nz-form-label nzFor="startDate">开课日期</nz-form-label>
-            <nz-form-control [formGroup]="courseDate">
-              <nz-range-picker formControlName="courseDate"></nz-range-picker>
+        <nz-form-item>
+            <nz-form-label nzFor="signInDate">报名日期</nz-form-label>
+            <nz-form-control [formGroup]="signInDate">
+              <nz-range-picker formControlName="signInDate"></nz-range-picker>
             </nz-form-control>
           </nz-form-item>
-        </div>
       </div>
       <div nz-col nzMd="8" nzSm="24">
         <nz-form-item>
-          <nz-form-label nzFor="status">课程状态</nz-form-label>
+          <nz-form-label nzFor="status">订单状态</nz-form-label>
           <nz-form-control>
             <nz-select [(ngModel)]="q.status" name="status" id="status" [nzPlaceHolder]="'请选择'" [nzShowSearch]="true">
-              <nz-option *ngFor="let i of courseStatusList; let idx = index" [nzLabel]="i.text" [nzValue]="i.value">
+              <nz-option *ngFor="let i of orderStatusList; let idx = index" [nzLabel]="i.text" [nzValue]="i.value">
               </nz-option>
             </nz-select>
           </nz-form-control>
@@ -34,15 +32,19 @@
       <div nz-col nzMd="24" nzSm="24"></div>
       <div nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
         <nz-form-item>
-          <nz-form-label nzFor="campus">校区</nz-form-label>
+            <nz-form-label nzFor="studentCode">学生编号</nz-form-label>
+            <nz-form-control>
+              <input nz-input [(ngModel)]="q.studentCode" name="studentCode" placeholder="请输入" id="studentCode" />
+            </nz-form-control>
+          </nz-form-item>
+      </div>
+      <div nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
+        <nz-form-item>
+          <nz-form-label nzFor="courseCode">课程编号</nz-form-label>
           <nz-form-control>
-            <nz-select [(ngModel)]="q.campus" name="campus" id="sss" [nzPlaceHolder]="'请选择'" [nzShowSearch]="true">
-              <nz-option *ngFor="let i of campusList; let idx = index" [nzLabel]="i.label" [nzValue]="i.value">
-              </nz-option>
-            </nz-select>
+            <input nz-input [(ngModel)]="q.courseCode" name="courseCode" placeholder="请输入" id="courseCode" />
           </nz-form-control>
         </nz-form-item>
-
       </div>
       <div nz-col [nzSpan]="24" class="text-right">
         <button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
@@ -58,7 +60,7 @@
     <i nz-icon nzType="plus"></i>
     <span>新建</span>
   </button>
-  <ng-container *ngIf="selectedRows.length > 0">
+  <!-- <ng-container *ngIf="selectedRows.length > 0">
     <button nz-button>批量操作</button>
     <button nz-button nz-dropdown [nzDropdownMenu]="batchMenu" nzPlacement="bottomLeft">
       更多操作
@@ -79,9 +81,9 @@
         <a *ngIf="totalCallNo > 0" (click)="st.clearCheck()" class="ml-lg">清空</a>
       </ng-template>
     </nz-alert>
-  </div>
+  </div> -->
   <st #st [columns]="columns" [data]="data" [loading]="loading" (change)="stChange($event)">
-    <ng-template st-row="courseStatus" let-i>
+    <ng-template st-row="orderStatus" let-i>
       <nz-badge [nzStatus]="i.statusDetail.type" [nzText]="i.statusDetail.text"></nz-badge>
     </ng-template>
   </st>

@@ -10,7 +10,7 @@ for (let i = 0; i < 46; i += 1) {
         name: '教师名',
         contactNo: "130********",
         gender: Math.floor(Math.random() * 10) % 2,
-        courseSubject: (Math.floor(Math.random() * 10) % 6) + 1
+        introduction: "教师介绍"
     });
 }
 

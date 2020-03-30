@@ -5,7 +5,7 @@ import { _HttpClient } from '@delon/theme';
 import { ActivatedRoute } from '@angular/router';
 import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { STColumn, STComponent } from '@delon/abc';
-import { GRADE_LIST, CAMPUS_LIST, COURSE_SUBJECT_LIST, COURSE_TYPE_LIST, getGradeLabel, getCourseTypeLabel } from '@shared/constant/system.constant';
+import { GRADE_LIST, CAMPUS_LIST, COURSE_SUBJECT_LIST, COURSE_TYPE_LIST, getGradeLabel, getCourseTypeLabel, getCourseSubjectLabel } from '@shared/constant/system.constant';
 import { Teacher } from 'src/app/model/teacher.model';
 
 @Component({
@@ -15,6 +15,7 @@ import { Teacher } from 'src/app/model/teacher.model';
 export class TeacherViewComponent implements OnInit {
     getGradeLabel = getGradeLabel;
     getCourseTypeLabel = getCourseTypeLabel;
+    getCourseSubjectLabel = getCourseSubjectLabel;
     pageHeader: string;
     teacher: Teacher = {};
     @ViewChild('st', { static: true })
@@ -53,7 +54,7 @@ export class TeacherViewComponent implements OnInit {
         this.form = this.fb.group({
             name: [null, [Validators.required]],
             gender: [null, []],
-            subject: [null, [Validators.required]],
+            introduction: [null, []],
             contactNo: [null, []],
             salayConfig: this.fb.array([])
         });
@@ -61,12 +62,14 @@ export class TeacherViewComponent implements OnInit {
             {
                 id: '1',
                 grade: 4,
+                courseSubject: 2,
                 courseType: 1,
                 salary: '500'
             },
             {
                 id: '2',
                 grade: 4,
+                courseSubject: 3,
                 courseType: 3,
                 salary: '600'
             }];
@@ -81,6 +84,7 @@ export class TeacherViewComponent implements OnInit {
         return this.fb.group({
             id: [null],
             grade: [null, [Validators.required]],
+            courseSubject: [null, [Validators.required]],
             courseType: [null, [Validators.required]],
             salary: [null, [Validators.required]]
         });
@@ -95,6 +99,10 @@ export class TeacherViewComponent implements OnInit {
     }
     get contactNo() {
         return this.form.controls.contactNo;
+    }
+
+    get introduction() {
+        return this.form.controls.introduction;
     }
 
     get salayConfig() {

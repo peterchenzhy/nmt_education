@@ -49,7 +49,7 @@ export const GRADE_LIST = [
     { value: 11, label: '高一' }, { value: 12, label: '高二' }, { value: 13, label: '高三' }];
 export enum GRADE { ONE = 1, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, SENIOR_ONE = 11, SENIOR_TWO = 12, SENIOR_THREE = 13 }
 export function getGradeLabel(grade: GRADE) {
-    let obj = COURSE_CLASSIFICATION_LIST.find(i => { return i.value == grade });
+    let obj = GRADE_LIST.find(i => { return i.value == grade });
     return obj ? obj.label : "";
 }
 
@@ -74,8 +74,8 @@ export function getOrderStatus(status: ORDER_STATUS) {
 
 export const FEE_TYPE_LIST = [
     { value: 1, label: '普通学费' }, { value: 2, label: '试听费用' },
-    { value: 3, label: '材料费' }, { value: 4, label: '试验费' }];
-export enum FEE_TYPE { TUITION = 1, AUDITION, MATERIAL, TRAIL }
+    { value: 3, label: '材料费' }, { value: 4, label: '试验费' }, { value: 5, label: '退费' }];
+export enum FEE_TYPE { TUITION = 1, AUDITION, MATERIAL, TRAIL, REFUND }
 export function getFeeTypeLabel(type: FEE_TYPE) {
     let obj = FEE_TYPE_LIST.find(i => { return i.value == type });
     return obj ? obj.label : "";
@@ -87,6 +87,15 @@ export const PAY_STATUS_LIST = [
 export enum PAY_STATUS { UNPAY = 1, PAIED, FROZEN, REFUNDED }
 export function getPayStatusLabel(type: PAY_STATUS) {
     let obj = PAY_STATUS_LIST.find(i => { return i.value == type });
+    return obj ? obj.label : "";
+}
+
+export const PAY_METHOD_LIST = [
+    { value: 1, label: '现金' }, { value: 2, label: '刷卡' },
+    { value: 3, label: '微信' }, { value: 4, label: '支付宝' }];
+export enum PAY_METHOD { CASH = 1, CARD, WECHART, ALIPAY }
+export function getPayMethodLabel(method: PAY_METHOD) {
+    let obj = PAY_METHOD_LIST.find(i => { return i.value == method });
     return obj ? obj.label : "";
 }
 
