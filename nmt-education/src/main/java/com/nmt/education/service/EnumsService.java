@@ -1,19 +1,24 @@
 package com.nmt.education.service;
 
+import com.google.common.collect.Maps;
 import com.nmt.education.commmons.Enums;
 import com.nmt.education.commmons.IEnum;
+import com.nmt.education.commmons.SysConfigEnum;
+import com.nmt.education.pojo.po.SysConfigPo;
 import com.nmt.education.pojo.vo.EnumVo;
+import com.nmt.education.service.sysconfig.SysConfigService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class EnumsService {
 
+    @Autowired
+    private SysConfigService sysConfigService;
 
     /**
      * 返回全部枚举
@@ -33,7 +38,26 @@ public class EnumsService {
      * @return
      */
     private Map<String, List<EnumVo>> getDbEnums() {
+     Map<Integer,List<SysConfigPo>> sysConfigMap = sysConfigService.getAllConfigs().stream().collect(Collectors.groupingBy(SysConfigPo::getType));
+        if (CollectionUtils.isEmpty(sysConfigMap)) {
+            return Maps.newHashMap();
+        }
         Map<String, List<EnumVo>> map = new HashMap<>();
+        sysConfigMap.keySet().stream().forEach(k->{
+            List<EnumVo> l = new ArrayList<>();
+            sysConfigMap.get(k).stream().forEach(e->{
+                EnumVo v = new EnumVo();
+                v.setLabel(e.getDescription());
+                v.setValue(e.getValue());
+                v.setDbConfig(true);
+                v.setType(e.getType());
+                v.setTypeCode(e.getTypeCode());
+                v.setTypeDesc(e.getTypeDesc());
+                l.add(v);
+            });
+            map.put(SysConfigEnum.codeOf(k).getDesc(),l);
+        });
+
 
         return map;
     }
@@ -48,6 +72,7 @@ public class EnumsService {
         map.put(getEnumKey(Enums.CourseStatus.class), getEnumVos(Enums.CourseStatus.values()));
         map.put(getEnumKey(Enums.FeeStatus.class), getEnumVos(Enums.FeeStatus.values()));
         map.put(getEnumKey(Enums.registrationStatus.class), getEnumVos(Enums.registrationStatus.values()));
+        map.putAll(getDbEnums());
         return map;
     }
 

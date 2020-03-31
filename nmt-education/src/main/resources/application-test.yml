@@ -1,1 +1,17 @@
+spring:
+  application:
+    profiles:
+      active: test
 
+  datasource:
+    url: jdbc:mysql://localhost:6670/llsgzs?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true&allowMultiQueries=true
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: root
+    password: czy1377449!
+    initialSize: 1
+    minIdle: 3
+    maxActive: 20
+    maxWait: 60000
+
+swagger.enabled: true

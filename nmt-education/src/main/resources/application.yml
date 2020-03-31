@@ -14,7 +14,7 @@ server:
       enabled: true
   servlet:
     context-path: /nmt-education-server
-  port: 8110
+  port: 8998
 
 
 #mybatis

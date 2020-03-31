@@ -1,5 +1,7 @@
 package com.nmt.education.service.sysconfig;
 
+import com.nmt.education.config.cache.CacheManagerConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
@@ -11,7 +13,12 @@ public class SysConfigService {
     @Resource
     private SysConfigPoMapper sysConfigPoMapper;
 
-    
+    @Cacheable(key = "'getAllConfigs'", value = CacheManagerConfig.EhCacheNames.CACHE_10MINS, cacheManager = CacheManagerConfig.CacheManagerNames.EHCACHE_CACHE_MANAGER)
+    public List<SysConfigPo> getAllConfigs(){
+        return this.sysConfigPoMapper.getAllConfigs();
+    }
+
+
     public int insertSelective(SysConfigPo record) {
         return sysConfigPoMapper.insertSelective(record);
     }

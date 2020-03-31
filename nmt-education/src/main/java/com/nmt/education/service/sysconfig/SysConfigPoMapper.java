@@ -25,4 +25,6 @@ public interface SysConfigPoMapper {
     int insertOrUpdateSelective(SysConfigPo record);
 
     int updateBatchSelective(List<SysConfigPo> list);
+
+    List<SysConfigPo> getAllConfigs();
 }

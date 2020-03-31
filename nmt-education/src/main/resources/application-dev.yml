@@ -1,6 +1,5 @@
 spring:
   application:
-    name: nmtjy-server
     profiles:
       active: dev
 
