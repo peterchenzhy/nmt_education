@@ -5,6 +5,7 @@ import { OrderViewComponent } from './order-view/order-view.component';
 
 const routes: Routes = [
   { path: 'list', component: OrderListComponent },
+  { path: 'create', component: OrderViewComponent },
   { path: 'view/:orderno', component: OrderViewComponent }
 ];
 

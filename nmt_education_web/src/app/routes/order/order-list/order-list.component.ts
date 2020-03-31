@@ -37,13 +37,8 @@ export class OrderListComponent implements OnInit {
     columns: STColumn[] = [
         { title: '', index: 'key', type: 'checkbox' },
         { title: '订单编号', index: 'id' },
-        { title: '姓名', index: 'student' },
-        { title: '课程名', index: 'course' },
-        {
-            title: '状态',
-            index: 'status',
-            render: 'orderStatus'
-        },
+        { title: '姓名', index: 'student', render: "studentName" },
+        { title: '课程名', index: 'course', render: "courseName" },
         {
             title: '报名时间',
             index: 'signInDate',
@@ -52,6 +47,11 @@ export class OrderListComponent implements OnInit {
                 compare: (a: any, b: any) => a.updatedAt - b.updatedAt,
             },
         },
+        {
+            title: '状态',
+            index: 'status',
+            render: 'orderStatus'
+        },
         { title: '总金额', index: 'totalPrice' },
         { title: '余额', index: 'balance' },
         {
@@ -59,7 +59,7 @@ export class OrderListComponent implements OnInit {
             buttons: [
                 {
                     text: '编辑',
-                    click: (item: any) => this.router.navigate([`/order/view/${item.orderCode}`]),
+                    click: (item: any) => this.router.navigate([`/order/view/${item.id}`]),
                 }
             ],
         },
