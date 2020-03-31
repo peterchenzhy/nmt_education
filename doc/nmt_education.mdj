@@ -2075,7 +2075,7 @@
 									"font": "Arial;13;1",
 									"left": 592,
 									"top": 677,
-									"width": 93.552734375,
+									"width": 94.48583984375,
 									"height": 13,
 									"text": "退费记录"
 								},
@@ -2101,7 +2101,7 @@
 											"font": "Arial;13;0",
 											"left": 597,
 											"top": 700,
-											"width": 83.552734375,
+											"width": 84.48583984375,
 											"height": 13
 										},
 										{
@@ -2116,7 +2116,7 @@
 											"font": "Arial;13;0",
 											"left": 597,
 											"top": 715,
-											"width": 83.552734375,
+											"width": 84.48583984375,
 											"height": 13
 										},
 										{
@@ -2131,7 +2131,7 @@
 											"font": "Arial;13;0",
 											"left": 597,
 											"top": 730,
-											"width": 83.552734375,
+											"width": 84.48583984375,
 											"height": 13
 										},
 										{
@@ -2146,21 +2146,21 @@
 											"font": "Arial;13;0",
 											"left": 597,
 											"top": 745,
-											"width": 83.552734375,
+											"width": 84.48583984375,
 											"height": 13
 										}
 									],
 									"font": "Arial;13;0",
 									"left": 592,
 									"top": 695,
-									"width": 93.552734375,
+									"width": 94.48583984375,
 									"height": 68
 								}
 							],
 							"font": "Arial;13;0",
 							"left": 592,
 							"top": 672,
-							"width": 93.552734375,
+							"width": 94.48583984375,
 							"height": 91,
 							"nameLabel": {
 								"$ref": "AAAAAAFwv3vgv7ihMSU="
@@ -3035,7 +3035,7 @@
 									"font": "Arial;13;1",
 									"left": 264,
 									"top": 797,
-									"width": 93.552734375,
+									"width": 94.48583984375,
 									"height": 13,
 									"text": "学生课表"
 								},
@@ -3061,7 +3061,7 @@
 											"font": "Arial;13;0",
 											"left": 269,
 											"top": 820,
-											"width": 83.552734375,
+											"width": 84.48583984375,
 											"height": 13
 										},
 										{
@@ -3076,7 +3076,7 @@
 											"font": "Arial;13;0",
 											"left": 269,
 											"top": 835,
-											"width": 83.552734375,
+											"width": 84.48583984375,
 											"height": 13
 										},
 										{
@@ -3091,7 +3091,7 @@
 											"font": "Arial;13;0",
 											"left": 269,
 											"top": 850,
-											"width": 83.552734375,
+											"width": 84.48583984375,
 											"height": 13
 										},
 										{
@@ -3106,21 +3106,21 @@
 											"font": "Arial;13;0",
 											"left": 269,
 											"top": 865,
-											"width": 83.552734375,
+											"width": 84.48583984375,
 											"height": 13
 										}
 									],
 									"font": "Arial;13;0",
 									"left": 264,
 									"top": 815,
-									"width": 93.552734375,
+									"width": 94.48583984375,
 									"height": 68
 								}
 							],
 							"font": "Arial;13;0",
 							"left": 264,
 							"top": 792,
-							"width": 93.552734375,
+							"width": 94.48583984375,
 							"height": 91,
 							"nameLabel": {
 								"$ref": "AAAAAAFw1xEGe41QIo0="
@@ -3310,7 +3310,7 @@
 									"font": "Arial;13;1",
 									"left": 408,
 									"top": 797,
-									"width": 93.552734375,
+									"width": 94.48583984375,
 									"height": 13,
 									"text": "学生账户"
 								},
@@ -3336,7 +3336,7 @@
 											"font": "Arial;13;0",
 											"left": 413,
 											"top": 820,
-											"width": 83.552734375,
+											"width": 84.48583984375,
 											"height": 13
 										},
 										{
@@ -3351,21 +3351,21 @@
 											"font": "Arial;13;0",
 											"left": 413,
 											"top": 835,
-											"width": 83.552734375,
+											"width": 84.48583984375,
 											"height": 13
 										}
 									],
 									"font": "Arial;13;0",
 									"left": 408,
 									"top": 815,
-									"width": 93.552734375,
+									"width": 94.48583984375,
 									"height": 38
 								}
 							],
 							"font": "Arial;13;0",
 							"left": 408,
 							"top": 792,
-							"width": 93.552734375,
+							"width": 94.48583984375,
 							"height": 61,
 							"nameLabel": {
 								"$ref": "AAAAAAFw1yY/EI3lIEw="
@@ -10538,7 +10538,7 @@
 											"visible": false,
 											"font": "Arial;13;0",
 											"left": -16,
-											"width": 80.9072265625,
+											"width": 90.1875,
 											"height": 13,
 											"text": "(from Model4)"
 										},
@@ -10650,7 +10650,7 @@
 											"font": "Arial;13;0",
 											"left": -368,
 											"top": -616,
-											"width": 90.27001953125,
+											"width": 94.44677734375,
 											"height": 13,
 											"text": "(from 用户中心)"
 										},
@@ -10755,7 +10755,7 @@
 											"font": "Arial;13;0",
 											"left": -184,
 											"top": -744,
-											"width": 90.27001953125,
+											"width": 94.44677734375,
 											"height": 13,
 											"text": "(from 用户中心)"
 										},
@@ -10860,7 +10860,7 @@
 											"font": "Arial;13;0",
 											"left": -128,
 											"top": -600,
-											"width": 90.27001953125,
+											"width": 94.44677734375,
 											"height": 13,
 											"text": "(from 用户中心)"
 										},
@@ -10961,7 +10961,7 @@
 											},
 											"visible": false,
 											"font": "Arial;13;0",
-											"width": 80.9072265625,
+											"width": 90.1875,
 											"height": 13,
 											"text": "(from Model4)"
 										},
@@ -11084,7 +11084,7 @@
 											"font": "Arial;13;0",
 											"left": -32,
 											"top": -16,
-											"width": 80.9072265625,
+											"width": 90.1875,
 											"height": 13,
 											"text": "(from Model4)"
 										},
@@ -11711,7 +11711,7 @@
 											"font": "Arial;13;0",
 											"left": -32,
 											"top": -48,
-											"width": 80.9072265625,
+											"width": 90.1875,
 											"height": 13,
 											"text": "(from Model4)"
 										},
@@ -12241,7 +12241,7 @@
 											"font": "Arial;13;0",
 											"left": -32,
 											"top": -32,
-											"width": 80.9072265625,
+											"width": 90.1875,
 											"height": 13,
 											"text": "(from Model4)"
 										},
@@ -12439,6 +12439,398 @@
 						"$ref": "AAAAAAFw1p4lmYqjqSM="
 					},
 					"name": "个人账户"
+				}
+			]
+		},
+		{
+			"_type": "FCFlowchart",
+			"_id": "AAAAAAFxH2PW8UG+svI=",
+			"_parent": {
+				"$ref": "AAAAAAFF+h6SjaM2Hec="
+			},
+			"name": "Flowchart1",
+			"ownedElements": [
+				{
+					"_type": "FCFlowchartDiagram",
+					"_id": "AAAAAAFxH2PW8UG/5MI=",
+					"_parent": {
+						"$ref": "AAAAAAFxH2PW8UG+svI="
+					},
+					"name": "FlowchartDiagram1",
+					"ownedViews": [
+						{
+							"_type": "FCTerminatorView",
+							"_id": "AAAAAAFxH2PqokHj1vQ=",
+							"_parent": {
+								"$ref": "AAAAAAFxH2PW8UG/5MI="
+							},
+							"model": {
+								"$ref": "AAAAAAFxH2PqokHh6DQ="
+							},
+							"subViews": [
+								{
+									"_type": "LabelView",
+									"_id": "AAAAAAFxH2PqokHkdwc=",
+									"_parent": {
+										"$ref": "AAAAAAFxH2PqokHj1vQ="
+									},
+									"font": "Arial;13;0",
+									"left": 146,
+									"top": 90,
+									"width": 69,
+									"height": 13,
+									"text": "报名流程1",
+									"wordWrap": true
+								}
+							],
+							"font": "Arial;13;0",
+							"left": 136,
+							"top": 80,
+							"width": 89,
+							"height": 33,
+							"nameLabel": {
+								"$ref": "AAAAAAFxH2PqokHkdwc="
+							}
+						},
+						{
+							"_type": "FCProcessView",
+							"_id": "AAAAAAFxH2hXKkHtHNo=",
+							"_parent": {
+								"$ref": "AAAAAAFxH2PW8UG/5MI="
+							},
+							"model": {
+								"$ref": "AAAAAAFxH2hXKkHr39I="
+							},
+							"subViews": [
+								{
+									"_type": "LabelView",
+									"_id": "AAAAAAFxH2hXKkHu1ts=",
+									"_parent": {
+										"$ref": "AAAAAAFxH2hXKkHtHNo="
+									},
+									"font": "Arial;13;0",
+									"left": 154,
+									"top": 138,
+									"width": 54.18994140625,
+									"height": 13,
+									"text": "选择课程",
+									"wordWrap": true
+								}
+							],
+							"font": "Arial;13;0",
+							"left": 144,
+							"top": 128,
+							"width": 74.18994140625,
+							"height": 33,
+							"nameLabel": {
+								"$ref": "AAAAAAFxH2hXKkHu1ts="
+							}
+						},
+						{
+							"_type": "FCFlowView",
+							"_id": "AAAAAAFxH2iAN0H3d0o=",
+							"_parent": {
+								"$ref": "AAAAAAFxH2PW8UG/5MI="
+							},
+							"model": {
+								"$ref": "AAAAAAFxH2iAN0H18kw="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAFxH2iAOEH4rZU=",
+									"_parent": {
+										"$ref": "AAAAAAFxH2iAN0H3d0o="
+									},
+									"model": {
+										"$ref": "AAAAAAFxH2iAN0H18kw="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"left": 194,
+									"top": 113,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAFxH2iAN0H3d0o="
+									},
+									"edgePosition": 1
+								}
+							],
+							"font": "Arial;13;0",
+							"head": {
+								"$ref": "AAAAAAFxH2hXKkHtHNo="
+							},
+							"tail": {
+								"$ref": "AAAAAAFxH2PqokHj1vQ="
+							},
+							"lineStyle": 2,
+							"points": "180:112;180:128",
+							"nameLabel": {
+								"$ref": "AAAAAAFxH2iAOEH4rZU="
+							}
+						},
+						{
+							"_type": "FCProcessView",
+							"_id": "AAAAAAFxH3CL00IfNdM=",
+							"_parent": {
+								"$ref": "AAAAAAFxH2PW8UG/5MI="
+							},
+							"model": {
+								"$ref": "AAAAAAFxH3CL0kIdabY="
+							},
+							"subViews": [
+								{
+									"_type": "LabelView",
+									"_id": "AAAAAAFxH3CL00IgFdg=",
+									"_parent": {
+										"$ref": "AAAAAAFxH3CL00IfNdM="
+									},
+									"font": "Arial;13;0",
+									"left": 154,
+									"top": 208,
+									"width": 54.18994140625,
+									"height": 13,
+									"text": "选择学生",
+									"wordWrap": true
+								}
+							],
+							"font": "Arial;13;0",
+							"left": 144,
+							"top": 198,
+							"width": 74.18994140625,
+							"height": 33,
+							"nameLabel": {
+								"$ref": "AAAAAAFxH3CL00IgFdg="
+							}
+						},
+						{
+							"_type": "FCFlowView",
+							"_id": "AAAAAAFxH3CMMkIn9Dw=",
+							"_parent": {
+								"$ref": "AAAAAAFxH2PW8UG/5MI="
+							},
+							"model": {
+								"$ref": "AAAAAAFxH3CMMkIlxkQ="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAFxH3CMM0Ioo7c=",
+									"_parent": {
+										"$ref": "AAAAAAFxH3CMMkIn9Dw="
+									},
+									"model": {
+										"$ref": "AAAAAAFxH3CMMkIlxkQ="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"left": 194,
+									"top": 172,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAFxH3CMMkIn9Dw="
+									},
+									"edgePosition": 1
+								}
+							],
+							"font": "Arial;13;0",
+							"head": {
+								"$ref": "AAAAAAFxH3CL00IfNdM="
+							},
+							"tail": {
+								"$ref": "AAAAAAFxH2hXKkHtHNo="
+							},
+							"lineStyle": 2,
+							"points": "180:160;180:198",
+							"nameLabel": {
+								"$ref": "AAAAAAFxH3CMM0Ioo7c="
+							}
+						},
+						{
+							"_type": "FCTerminatorView",
+							"_id": "AAAAAAFxH4BMEUI+Bok=",
+							"_parent": {
+								"$ref": "AAAAAAFxH2PW8UG/5MI="
+							},
+							"model": {
+								"$ref": "AAAAAAFxH4BMEUI8B8Y="
+							},
+							"subViews": [
+								{
+									"_type": "LabelView",
+									"_id": "AAAAAAFxH4BMEUI/p9I=",
+									"_parent": {
+										"$ref": "AAAAAAFxH4BMEUI+Bok="
+									},
+									"font": "Arial;13;0",
+									"left": 290,
+									"top": 90,
+									"width": 68.63720703125,
+									"height": 13,
+									"text": "报名流程2",
+									"wordWrap": true
+								}
+							],
+							"font": "Arial;13;0",
+							"left": 280,
+							"top": 80,
+							"width": 88.63720703125,
+							"height": 33,
+							"nameLabel": {
+								"$ref": "AAAAAAFxH4BMEUI/p9I="
+							}
+						},
+						{
+							"_type": "FCProcessView",
+							"_id": "AAAAAAFxH4EthUJWYNU=",
+							"_parent": {
+								"$ref": "AAAAAAFxH2PW8UG/5MI="
+							},
+							"model": {
+								"$ref": "AAAAAAFxH4EthUJUeks="
+							},
+							"subViews": [
+								{
+									"_type": "LabelView",
+									"_id": "AAAAAAFxH4EthUJX2SI=",
+									"_parent": {
+										"$ref": "AAAAAAFxH4EthUJWYNU="
+									},
+									"font": "Arial;13;0",
+									"left": 282,
+									"top": 154,
+									"width": 54.18994140625,
+									"height": 13,
+									"text": "选择学生",
+									"wordWrap": true
+								}
+							],
+							"font": "Arial;13;0",
+							"left": 272,
+							"top": 144,
+							"width": 74.18994140625,
+							"height": 33,
+							"nameLabel": {
+								"$ref": "AAAAAAFxH4EthUJX2SI="
+							}
+						},
+						{
+							"_type": "FCProcessView",
+							"_id": "AAAAAAFxH4FLS0JgUyE=",
+							"_parent": {
+								"$ref": "AAAAAAFxH2PW8UG/5MI="
+							},
+							"model": {
+								"$ref": "AAAAAAFxH4FLS0Jer/w="
+							},
+							"subViews": [
+								{
+									"_type": "LabelView",
+									"_id": "AAAAAAFxH4FLS0JhoHQ=",
+									"_parent": {
+										"$ref": "AAAAAAFxH4FLS0JgUyE="
+									},
+									"font": "Arial;13;0",
+									"left": 314,
+									"top": 234,
+									"width": 54.18994140625,
+									"height": 13,
+									"text": "选择课程",
+									"wordWrap": true
+								}
+							],
+							"font": "Arial;13;0",
+							"left": 304,
+							"top": 224,
+							"width": 74.18994140625,
+							"height": 33,
+							"nameLabel": {
+								"$ref": "AAAAAAFxH4FLS0JhoHQ="
+							}
+						}
+					]
+				},
+				{
+					"_type": "FCTerminator",
+					"_id": "AAAAAAFxH2PqokHh6DQ=",
+					"_parent": {
+						"$ref": "AAAAAAFxH2PW8UG+svI="
+					},
+					"name": "报名流程1",
+					"ownedElements": [
+						{
+							"_type": "FCFlow",
+							"_id": "AAAAAAFxH2iAN0H18kw=",
+							"_parent": {
+								"$ref": "AAAAAAFxH2PqokHh6DQ="
+							},
+							"source": {
+								"$ref": "AAAAAAFxH2PqokHh6DQ="
+							},
+							"target": {
+								"$ref": "AAAAAAFxH2hXKkHr39I="
+							}
+						}
+					]
+				},
+				{
+					"_type": "FCProcess",
+					"_id": "AAAAAAFxH2hXKkHr39I=",
+					"_parent": {
+						"$ref": "AAAAAAFxH2PW8UG+svI="
+					},
+					"name": "选择课程",
+					"ownedElements": [
+						{
+							"_type": "FCFlow",
+							"_id": "AAAAAAFxH3CMMkIlxkQ=",
+							"_parent": {
+								"$ref": "AAAAAAFxH2hXKkHr39I="
+							},
+							"source": {
+								"$ref": "AAAAAAFxH2hXKkHr39I="
+							},
+							"target": {
+								"$ref": "AAAAAAFxH3CL0kIdabY="
+							}
+						}
+					]
+				},
+				{
+					"_type": "FCProcess",
+					"_id": "AAAAAAFxH3CL0kIdabY=",
+					"_parent": {
+						"$ref": "AAAAAAFxH2PW8UG+svI="
+					},
+					"name": "选择学生"
+				},
+				{
+					"_type": "FCTerminator",
+					"_id": "AAAAAAFxH4BMEUI8B8Y=",
+					"_parent": {
+						"$ref": "AAAAAAFxH2PW8UG+svI="
+					},
+					"name": "报名流程2"
+				},
+				{
+					"_type": "FCProcess",
+					"_id": "AAAAAAFxH4EthUJUeks=",
+					"_parent": {
+						"$ref": "AAAAAAFxH2PW8UG+svI="
+					},
+					"name": "选择学生"
+				},
+				{
+					"_type": "FCProcess",
+					"_id": "AAAAAAFxH4FLS0Jer/w=",
+					"_parent": {
+						"$ref": "AAAAAAFxH2PW8UG+svI="
+					},
+					"name": "选择课程"
 				}
 			]
 		}
