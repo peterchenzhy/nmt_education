@@ -13,6 +13,8 @@ import java.util.Objects;
  */
 public class EhcacheUtils {
 
+    public static String SYS_CACHE = "SYS_CACHE";
+
     private static CacheManager cacheManager;
 
     public static void setCache(String cacheName, String key, Object value) {

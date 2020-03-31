@@ -1,6 +1,7 @@
 package com.nmt.education.service.sysconfig;
 
 import com.nmt.education.pojo.po.SysConfigPo;
+
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -27,4 +28,6 @@ public interface SysConfigPoMapper {
     int updateBatchSelective(List<SysConfigPo> list);
 
     List<SysConfigPo> getAllConfigs();
+
+    SysConfigPo queryByTypeValue(@Param("type") Integer type, @Param("value") Integer value);
 }
