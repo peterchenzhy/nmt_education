@@ -21,7 +21,10 @@ export interface Payment {
     type?: FEE_TYPE;
     method?: PAY_METHOD;
     status?: PAY_STATUS;
+    price?: number;
+    discount?: number;
     receivable?: number;
+    deduction?: number;
     paied?: number;
     comment?: string;
 }

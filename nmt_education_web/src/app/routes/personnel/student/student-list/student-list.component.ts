@@ -19,7 +19,7 @@ export class StudentListComponent implements OnInit {
         pi: 1,
         ps: 10,
         sorter: '',
-        courseNo: '',
+        phone: '',
         status: null,
         name: '',
         startDate: '',
@@ -34,7 +34,7 @@ export class StudentListComponent implements OnInit {
         { title: '学生编号', index: 'code' },
         { title: '姓名', index: 'name' },
         { title: '性别', index: 'gender', render: "genderRender" },
-        { title: '联系电话', index: 'contactNo' },
+        { title: '联系电话', index: 'phone' },
         {
             title: '操作',
             buttons: [
@@ -44,7 +44,7 @@ export class StudentListComponent implements OnInit {
                 },
                 {
                     text: '报名',
-                    click: (item: Student) => this.router.navigate(['/order/create', { student: new Buffer(JSON.stringify({ ...item, _values: undefined })).toString('base64') }])
+                    click: (item: Student) => this.router.navigate(['/order/create', { student: JSON.stringify({ ...item, _values: undefined }) }])
 
                 },
             ],

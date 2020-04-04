@@ -23,7 +23,7 @@
                 <nz-form-item>
                     <nz-form-label>联系方式</nz-form-label>
                     <nz-form-control>
-                        <input nz-input formControlName="contactNo" id="contactNo" />
+                        <input nz-input formControlName="phone" id="phone" />
                     </nz-form-control>
                 </nz-form-item>
             </nz-col>
@@ -57,7 +57,7 @@
                         </span>
                     </td>
                     <td>
-                        <span *ngIf="editIndex !== i">{{ parents.value[i].contactNo }}</span>
+                        <span *ngIf="editIndex !== i">{{ parents.value[i].phone }}</span>
                         <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请输入联系方式">
                             <input formControlName="price" placeholder="请输入联系方式" />
                         </span>

@@ -24,7 +24,7 @@ for (let i = 0; i < 46; i += 1) {
         student: {
             code: `StudentCode ${i}`,
             name: '学生名',
-            contactNo: Math.floor(Math.random() * 1000).toString(),
+            phone: Math.floor(Math.random() * 1000).toString(),
             gender: Math.floor(Math.random() * 10) % 2
         },
         payList: [],

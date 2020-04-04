@@ -4,7 +4,7 @@ export interface Teacher {
     code?: string;
     name?: string;
     gender?: GENDER;
-    contactNo?: string;
+    phone?: string;
     introduction?: string;
     courseSalary?: CourseSalary[];
 }

@@ -73,7 +73,7 @@ export class StudentViewComponent implements OnInit {
         this.form = this.fb.group({
             studentName: [null, [Validators.required]],
             gender: [null, []],
-            contactNo: [null, []],
+            phone: [null, []],
             parents: this.fb.array([])
         });
         const parentsList = [
@@ -81,13 +81,13 @@ export class StudentViewComponent implements OnInit {
                 key: '1',
                 relation: '父亲',
                 name: 'Father',
-                contactNo: '130********'
+                phone: '130********'
             },
             {
                 key: '2',
                 relation: '母亲',
                 name: 'Mother',
-                contactNo: '131********'
+                phone: '131********'
             }];
         parentsList.forEach(i => {
             const field = this.createParent();
@@ -101,7 +101,7 @@ export class StudentViewComponent implements OnInit {
             key: [null],
             relation: [null, [Validators.required]],
             name: [null, [Validators.required]],
-            contactNo: [null, [Validators.required]]
+            phone: [null, [Validators.required]]
         });
     }
 
@@ -112,8 +112,8 @@ export class StudentViewComponent implements OnInit {
     get gender() {
         return this.form.controls.gender;
     }
-    get contactNo() {
-        return this.form.controls.contactNo;
+    get phone() {
+        return this.form.controls.phone;
     }
 
     get parents() {

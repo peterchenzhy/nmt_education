@@ -55,7 +55,7 @@ export class TeacherViewComponent implements OnInit {
             name: [null, [Validators.required]],
             gender: [null, []],
             introduction: [null, []],
-            contactNo: [null, []],
+            phone: [null, []],
             salayConfig: this.fb.array([])
         });
         const salaryList = [
@@ -97,8 +97,8 @@ export class TeacherViewComponent implements OnInit {
     get gender() {
         return this.form.controls.gender;
     }
-    get contactNo() {
-        return this.form.controls.contactNo;
+    get phone() {
+        return this.form.controls.phone;
     }
 
     get introduction() {
