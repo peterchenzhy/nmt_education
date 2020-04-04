@@ -35,7 +35,7 @@ public class StudentReqDto {
     /**
     * 学校
     */
-    @ApiModelProperty(value = "学校")
+    @ApiModelProperty(value = "学校",required = true)
     private String school;
 
     /**
@@ -56,12 +56,12 @@ public class StudentReqDto {
     /**
     * 电话
     */
-    @ApiModelProperty(value = "电话")
+    @ApiModelProperty(value = "电话",required = true)
     private String phone;
     /**
      * 性别
      */
-    @ApiModelProperty(value = "性别")
+    @ApiModelProperty(value = "性别",required = true)
     @Range(min=0,max =1 ,message = "性别只能是0或1")
     private Integer sex;
 

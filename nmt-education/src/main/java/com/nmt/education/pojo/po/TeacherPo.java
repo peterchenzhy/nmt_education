@@ -1,13 +1,11 @@
 package com.nmt.education.pojo.po;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@ApiModel(value = "com-nmt-education-pojo-po-TeacherPo")
 @Getter
 @Setter
 @ToString
