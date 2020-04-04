@@ -1,20 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.nmt.education.service.student.StudentPoMapper">
-  <resultMap id="BaseResultMap" type="com.nmt.education.pojo.po.StudentPo">
+<mapper namespace="com.nmt.education.service.teacher.TeacherPoMapper">
+  <resultMap id="BaseResultMap" type="com.nmt.education.pojo.po.TeacherPo">
     <!--@mbg.generated-->
-    <!--@Table student-->
+    <!--@Table teacher-->
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="student_code" jdbcType="VARCHAR" property="studentCode" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="birthday" jdbcType="DATE" property="birthday" />
+    <result column="sex" jdbcType="BOOLEAN" property="sex" />
     <result column="school" jdbcType="VARCHAR" property="school" />
-    <result column="grade" jdbcType="TINYINT" property="grade" />
-    <result column="phone" jdbcType="VARCHAR" property="phone" />
-    <result column="sex" jdbcType="TINYINT" property="sex" />
-    <result column="campus" jdbcType="TINYINT" property="campus" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="BOOLEAN" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="creator" jdbcType="INTEGER" property="creator" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="operator" jdbcType="INTEGER" property="operator" />
@@ -22,76 +18,53 @@
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, student_code, `name`, birthday, school, grade, phone, sex, campus, remark, `status`,
-    creator, create_time, `operator`, operate_time
+    id, `name`, birthday, sex, school, `status`, remark, creator, create_time, `operator`, 
+    operate_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     <!--@mbg.generated-->
-    select
+    select 
     <include refid="Base_Column_List" />
-    from student
+    from teacher
     where id = #{id,jdbcType=BIGINT}
-  </select>
-  <select id="queryLike" resultMap="BaseResultMap">
-    <!--@mbg.generated-->
-    select
-    <include refid="Base_Column_List" />
-    from student
-    where status = 1
-    and name like '%'#{name}'%'
-      order by id desc limit 1 ;
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     <!--@mbg.generated-->
-    delete from student
+    delete from teacher
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.StudentPo" useGeneratedKeys="true">
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.TeacherPo" useGeneratedKeys="true">
     <!--@mbg.generated-->
-    insert into student (student_code, `name`, birthday,
-      school, grade, phone,
-      sex, campus, remark,
-      `status`, creator, create_time,
-      `operator`, operate_time)
-    values (#{studentCode,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{birthday,jdbcType=DATE},
-      #{school,jdbcType=VARCHAR}, #{grade,jdbcType=TINYINT}, #{phone,jdbcType=VARCHAR},
-      #{sex,jdbcType=TINYINT}, #{campus,jdbcType=TINYINT}, #{remark,jdbcType=VARCHAR},
-      #{status,jdbcType=BOOLEAN}, #{creator,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
-      #{operator,jdbcType=INTEGER}, #{operateTime,jdbcType=TIMESTAMP})
+    insert into teacher (`name`, birthday, sex, 
+      school, `status`, remark, 
+      creator, create_time, `operator`, 
+      operate_time)
+    values (#{name,jdbcType=VARCHAR}, #{birthday,jdbcType=DATE}, #{sex,jdbcType=BOOLEAN}, 
+      #{school,jdbcType=VARCHAR}, #{status,jdbcType=BOOLEAN}, #{remark,jdbcType=VARCHAR}, 
+      #{creator,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{operator,jdbcType=INTEGER}, 
+      #{operateTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.StudentPo" useGeneratedKeys="true">
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.TeacherPo" useGeneratedKeys="true">
     <!--@mbg.generated-->
-    insert into student
+    insert into teacher
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="studentCode != null">
-        student_code,
-      </if>
       <if test="name != null">
         `name`,
       </if>
       <if test="birthday != null">
         birthday,
       </if>
-      <if test="school != null">
-        school,
-      </if>
-      <if test="grade != null">
-        grade,
-      </if>
-      <if test="phone != null">
-        phone,
-      </if>
       <if test="sex != null">
         sex,
       </if>
-      <if test="campus != null">
-        campus,
-      </if>
-      <if test="remark != null">
-        remark,
+      <if test="school != null">
+        school,
       </if>
       <if test="status != null">
         `status`,
+      </if>
+      <if test="remark != null">
+        remark,
       </if>
       <if test="creator != null">
         creator,
@@ -107,35 +80,23 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="studentCode != null">
-        #{studentCode,jdbcType=VARCHAR},
-      </if>
       <if test="name != null">
         #{name,jdbcType=VARCHAR},
       </if>
       <if test="birthday != null">
         #{birthday,jdbcType=DATE},
       </if>
+      <if test="sex != null">
+        #{sex,jdbcType=BOOLEAN},
+      </if>
       <if test="school != null">
         #{school,jdbcType=VARCHAR},
       </if>
-      <if test="grade != null">
-        #{grade,jdbcType=TINYINT},
-      </if>
-      <if test="phone != null">
-        #{phone,jdbcType=VARCHAR},
-      </if>
-      <if test="sex != null">
-        #{sex,jdbcType=TINYINT},
-      </if>
-      <if test="campus != null">
-        #{campus,jdbcType=TINYINT},
+      <if test="status != null">
+        #{status,jdbcType=BOOLEAN},
       </if>
       <if test="remark != null">
         #{remark,jdbcType=VARCHAR},
-      </if>
-      <if test="status != null">
-        #{status,jdbcType=BOOLEAN},
       </if>
       <if test="creator != null">
         #{creator,jdbcType=INTEGER},
@@ -151,39 +112,27 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.nmt.education.pojo.po.StudentPo">
+  <update id="updateByPrimaryKeySelective" parameterType="com.nmt.education.pojo.po.TeacherPo">
     <!--@mbg.generated-->
-    update student
+    update teacher
     <set>
-      <if test="studentCode != null">
-        student_code = #{studentCode,jdbcType=VARCHAR},
-      </if>
       <if test="name != null">
         `name` = #{name,jdbcType=VARCHAR},
       </if>
       <if test="birthday != null">
         birthday = #{birthday,jdbcType=DATE},
       </if>
+      <if test="sex != null">
+        sex = #{sex,jdbcType=BOOLEAN},
+      </if>
       <if test="school != null">
         school = #{school,jdbcType=VARCHAR},
       </if>
-      <if test="grade != null">
-        grade = #{grade,jdbcType=TINYINT},
-      </if>
-      <if test="phone != null">
-        phone = #{phone,jdbcType=VARCHAR},
-      </if>
-      <if test="sex != null">
-        sex = #{sex,jdbcType=TINYINT},
-      </if>
-      <if test="campus != null">
-        campus = #{campus,jdbcType=TINYINT},
+      <if test="status != null">
+        `status` = #{status,jdbcType=BOOLEAN},
       </if>
       <if test="remark != null">
         remark = #{remark,jdbcType=VARCHAR},
-      </if>
-      <if test="status != null">
-        `status` = #{status,jdbcType=BOOLEAN},
       </if>
       <if test="creator != null">
         creator = #{creator,jdbcType=INTEGER},
@@ -200,19 +149,15 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.nmt.education.pojo.po.StudentPo">
+  <update id="updateByPrimaryKey" parameterType="com.nmt.education.pojo.po.TeacherPo">
     <!--@mbg.generated-->
-    update student
-    set student_code = #{studentCode,jdbcType=VARCHAR},
-      `name` = #{name,jdbcType=VARCHAR},
+    update teacher
+    set `name` = #{name,jdbcType=VARCHAR},
       birthday = #{birthday,jdbcType=DATE},
+      sex = #{sex,jdbcType=BOOLEAN},
       school = #{school,jdbcType=VARCHAR},
-      grade = #{grade,jdbcType=TINYINT},
-      phone = #{phone,jdbcType=VARCHAR},
-      sex = #{sex,jdbcType=TINYINT},
-      campus = #{campus,jdbcType=TINYINT},
-      remark = #{remark,jdbcType=VARCHAR},
       `status` = #{status,jdbcType=BOOLEAN},
+      remark = #{remark,jdbcType=VARCHAR},
       creator = #{creator,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       `operator` = #{operator,jdbcType=INTEGER},

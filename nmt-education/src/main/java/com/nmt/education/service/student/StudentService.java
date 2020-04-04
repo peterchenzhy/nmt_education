@@ -2,8 +2,11 @@ package com.nmt.education.service.student;
 
 import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.pojo.dto.req.StudentReqDto;
+import com.nmt.education.pojo.dto.req.StudentSearchReqDto;
 import com.nmt.education.pojo.po.StudentPo;
+import com.nmt.education.pojo.vo.StudentVo;
 import com.nmt.education.service.CodeService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,6 +58,29 @@ public class StudentService {
 
     }
 
+    /**
+     * 搜索 学生
+     *
+     * @param logInUser
+     * @param dto
+     * @return  com.nmt.education.pojo.vo.StudentVo
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/4/4 9:05
+     */
+    public StudentVo search(Integer logInUser, StudentSearchReqDto dto) {
+        StudentPo studentPo = this.queryLike(dto.getName());
+        StudentVo vo  = new StudentVo();
+        BeanUtils.copyProperties(studentPo,vo);
+        return vo ;
+    }
+
+
+    public StudentPo queryLike(String name){
+        return this.studentPoMapper.queryLike(name);
+    }
+
 
     public int deleteByPrimaryKey(Long id) {
         return studentPoMapper.deleteByPrimaryKey(id);
@@ -84,5 +110,6 @@ public class StudentService {
     public int updateByPrimaryKey(StudentPo record) {
         return studentPoMapper.updateByPrimaryKey(record);
     }
+
 
 }

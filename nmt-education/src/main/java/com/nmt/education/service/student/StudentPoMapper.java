@@ -2,6 +2,7 @@ package com.nmt.education.service.student;
 
 import com.nmt.education.pojo.po.StudentPo;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface StudentPoMapper {
@@ -16,4 +17,6 @@ public interface StudentPoMapper {
     int updateByPrimaryKeySelective(StudentPo record);
 
     int updateByPrimaryKey(StudentPo record);
+
+    StudentPo queryLike(@Param("name") String name);
 }
