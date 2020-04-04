@@ -9,7 +9,8 @@
     <result column="birthday" jdbcType="DATE" property="birthday" />
     <result column="sex" jdbcType="BOOLEAN" property="sex" />
     <result column="school" jdbcType="VARCHAR" property="school" />
-    <result column="status" jdbcType="BOOLEAN" property="status" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="status" jdbcType="INTEGER" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="creator" jdbcType="INTEGER" property="creator" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -19,7 +20,7 @@
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
     id, `name`, birthday, sex, school, `status`, remark, creator, create_time, `operator`,
-    operate_time
+    operate_time,phone
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     <!--@mbg.generated-->
@@ -36,6 +37,16 @@
     where status = 1
     and name like concat(#{name},'%')
   </select>
+  <select id="query"  resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select
+    <include refid="Base_Column_List" />
+    from teacher
+    where status = 1
+    <if test="phone != null">
+      and phone = #{phone}
+    </if>
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     <!--@mbg.generated-->
     delete from teacher
@@ -44,11 +55,11 @@
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.TeacherPo" useGeneratedKeys="true">
     <!--@mbg.generated-->
     insert into teacher (`name`, birthday, sex,
-      school, `status`, remark,
+      school, `status`, remark,phone,
       creator, create_time, `operator`,
       operate_time)
     values (#{name,jdbcType=VARCHAR}, #{birthday,jdbcType=DATE}, #{sex,jdbcType=BOOLEAN},
-      #{school,jdbcType=VARCHAR}, #{status,jdbcType=BOOLEAN}, #{remark,jdbcType=VARCHAR},
+      #{school,jdbcType=VARCHAR}, #{status,jdbcType=BOOLEAN}, #{remark,jdbcType=VARCHAR},#{phone},
       #{creator,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{operator,jdbcType=INTEGER},
       #{operateTime,jdbcType=TIMESTAMP})
   </insert>
@@ -86,6 +97,9 @@
       <if test="operateTime != null">
         operate_time,
       </if>
+      <if test="phone != null">
+        phone,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="name != null">
@@ -117,6 +131,9 @@
       </if>
       <if test="operateTime != null">
         #{operateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="phone != null">
+        #{phone},
       </if>
     </trim>
   </insert>

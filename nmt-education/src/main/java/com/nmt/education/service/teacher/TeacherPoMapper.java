@@ -21,4 +21,6 @@ public interface TeacherPoMapper {
     int updateByPrimaryKey(TeacherPo record);
 
     List<TeacherPo> queryFuzzy(@Param("name") String name);
+
+    List<TeacherPo> query(@Param("phone") String phone);
 }

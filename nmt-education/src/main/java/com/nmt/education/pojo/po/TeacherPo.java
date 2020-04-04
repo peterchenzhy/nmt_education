@@ -33,6 +33,11 @@ public class TeacherPo {
      */
     @ApiModelProperty(value = "性别")
     private Boolean sex;
+    /**
+     * 电话
+     */
+    @ApiModelProperty(value = "电话")
+    private String phone;
 
     /**
      * 任职学校

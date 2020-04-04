@@ -49,6 +49,17 @@
     where status = 1
     and name like concat(#{name},'%')
   </select>
+
+  <select id="query" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select
+    <include refid="Base_Column_List" />
+    from student
+    where status = 1
+    <if test="phone != null">
+      and phone = #{phone}
+    </if>
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     <!--@mbg.generated-->
     delete from student

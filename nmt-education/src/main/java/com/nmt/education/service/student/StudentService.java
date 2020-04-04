@@ -1,5 +1,7 @@
 package com.nmt.education.service.student;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.pojo.dto.req.StudentReqDto;
 import com.nmt.education.pojo.dto.req.StudentSearchReqDto;
@@ -9,6 +11,7 @@ import com.nmt.education.service.CodeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -73,17 +76,32 @@ public class StudentService {
      * @version v1
      * @since 2020/4/4 9:05
      */
-    public StudentVo search(Integer logInUser, StudentSearchReqDto dto) {
-        StudentPo studentPo = this.queryLike(dto.getName());
-        StudentVo vo = new StudentVo();
-        BeanUtils.copyProperties(studentPo, vo);
-        return vo;
+    public PageInfo<StudentVo> search(Integer logInUser, StudentSearchReqDto dto) {
+        PageInfo<StudentPo> pageInfo;
+        if (StringUtils.hasLength(dto.getPhone())) {
+            pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSzie()).doSelectPageInfo(() -> this.queryByPhone(dto.getPhone()));
+        } else {
+            if (StringUtils.hasLength(dto.getName())) {
+                pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSzie()).doSelectPageInfo(() -> this.searchFuzzy(dto.getName()));
+            } else {
+                pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSzie()).doSelectPageInfo(() -> this.queryByPhone(null));
+            }
+        }
+        if (CollectionUtils.isEmpty(pageInfo.getList())) {
+            return new PageInfo<>();
+        }
+        List<StudentVo> voList = new ArrayList<>(pageInfo.getList().size());
+        pageInfo.getList().stream().forEach(e -> voList.add(po2vo(e)));
+        PageInfo voPage = new PageInfo();
+        BeanUtils.copyProperties(pageInfo, voPage);
+        voPage.setList(voList);
+        return voPage;
     }
 
-
-    public StudentPo queryLike(String name) {
-        return this.studentPoMapper.queryLike(name);
+    private List<StudentPo> queryByPhone(String phone) {
+        return this.studentPoMapper.query(phone);
     }
+
 
 
     public int deleteByPrimaryKey(Long id) {
@@ -124,15 +142,22 @@ public class StudentService {
      */
     public List<StudentVo> searchFuzzy(String name) {
         if (StringUtils.hasLength(name)) {
-            List list = this.studentPoMapper.queryFuzzy(name);
+            List<StudentPo> list = this.studentPoMapper.queryFuzzy(name);
             List<StudentVo> result = new ArrayList<>(list.size());
             list.forEach(e -> {
-                StudentVo vo = new StudentVo();
-                BeanUtils.copyProperties(e, vo);
+                StudentVo vo = po2vo(e);
                 result.add(vo);
             });
             return result;
         }
         return Collections.emptyList();
     }
+
+    private StudentVo po2vo(StudentPo po) {
+        StudentVo vo = new StudentVo();
+        BeanUtils.copyProperties(po, vo);
+        return vo;
+    }
+
+
 }

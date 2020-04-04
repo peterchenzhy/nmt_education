@@ -19,12 +19,13 @@ class TeacherServiceTest extends BaseTest {
     @Test
     void newTeacher() {
         TeacherReqDto teacherReqDto = new TeacherReqDto();
-        teacherReqDto.setName("王老四");
+        teacherReqDto.setName("王老d");
         teacherReqDto.setBirthday(new Date());
         teacherReqDto.setSchool("华二初中部张江集团吧啦啦啦啦");
         teacherReqDto.setPhone("123211323");
         teacherReqDto.setSex(0);
         teacherReqDto.setRemark("adasdas 阿达阿达的");
+        teacherReqDto.setPhone("13774493070");
         teacherService.newTeacher(1,teacherReqDto);
     }
 }

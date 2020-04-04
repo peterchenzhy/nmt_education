@@ -1,16 +1,18 @@
 package com.nmt.education.service.teacher;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.pojo.dto.req.TeacherReqDto;
+import com.nmt.education.pojo.dto.req.TeacherSearchReqDto;
 import com.nmt.education.pojo.po.TeacherPo;
-import com.nmt.education.pojo.vo.StudentVo;
 import com.nmt.education.pojo.vo.TeacherVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -30,6 +32,7 @@ public class TeacherService {
         teacherPo.setBirthday(dto.getBirthday());
         teacherPo.setSchool(dto.getSchool());
         teacherPo.setStatus(StatusEnum.VALID.getCode());
+        teacherPo.setPhone(dto.getPhone());
         teacherPo.setRemark(dto.getRemark());
         teacherPo.setCreator(logInUser);
         teacherPo.setCreateTime(new Date());
@@ -77,15 +80,48 @@ public class TeacherService {
      */
     public List<TeacherVo> searchFuzzy(String name) {
         if(StringUtils.hasLength(name)){
-            List list = this.teacherPoMapper.queryFuzzy(name);
+            List<TeacherPo> list = this.teacherPoMapper.queryFuzzy(name);
             List<TeacherVo> result = new ArrayList<>(list.size());
             list.forEach(e->{
-                TeacherVo vo = new TeacherVo();
-                BeanUtils.copyProperties(e,vo);
+                TeacherVo vo = po2vo(e);
                 result.add(vo);
             });
             return result;
         }
         return Collections.emptyList();
+    }
+
+    private TeacherVo po2vo(TeacherPo e) {
+        TeacherVo vo = new TeacherVo();
+        BeanUtils.copyProperties(e,vo);
+        return vo;
+    }
+
+    //老师分页搜索
+    public PageInfo<TeacherVo> search(Integer logInUser, TeacherSearchReqDto dto) {
+        PageInfo<TeacherPo> pageInfo;
+        if (StringUtils.hasLength(dto.getPhone())) {
+            pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSzie()).doSelectPageInfo(() -> this.queryByPhone(dto.getPhone()));
+        } else {
+            if (StringUtils.hasLength(dto.getName())) {
+                pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSzie()).doSelectPageInfo(() -> this.teacherPoMapper.queryFuzzy(dto.getName()));
+            } else {
+                pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSzie()).doSelectPageInfo(() -> this.queryByPhone(null));
+            }
+        }
+        if (CollectionUtils.isEmpty(pageInfo.getList())) {
+            return new PageInfo<>();
+        }
+        List<TeacherVo> voList = new ArrayList<>(pageInfo.getList().size());
+        pageInfo.getList().stream().forEach(e -> voList.add(po2vo(e)));
+        PageInfo voPage = new PageInfo();
+        BeanUtils.copyProperties(pageInfo, voPage);
+        voPage.setList(voList);
+        return voPage;
+    }
+
+    private List<TeacherPo> queryByPhone(String phone) {
+        return this.teacherPoMapper.query(phone);
+
     }
 }

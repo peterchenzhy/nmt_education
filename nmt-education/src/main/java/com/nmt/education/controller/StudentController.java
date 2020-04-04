@@ -1,5 +1,6 @@
 package com.nmt.education.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.Consts;
 import com.nmt.education.pojo.dto.req.StudentReqDto;
 import com.nmt.education.pojo.dto.req.StudentSearchReqDto;
@@ -52,8 +53,8 @@ public class StudentController {
 
     @ApiOperation(value = "search", notes = "搜索学生")
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public StudentVo searchStudent(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
-                                   @RequestBody @Validated StudentSearchReqDto dto, BindingResult bindingResult) {
+    public PageInfo<StudentVo> searchStudent(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
+                                            @RequestBody @Validated StudentSearchReqDto dto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             List<ObjectError> errors = bindingResult.getAllErrors();
             StringBuilder sb = new StringBuilder();

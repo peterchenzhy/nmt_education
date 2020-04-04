@@ -13,12 +13,12 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class StudentSearchReqDto {
+public class TeacherSearchReqDto {
 
     /**
      * 学生姓名
      */
-    @ApiModelProperty(value = "学生姓名")
+    @ApiModelProperty(value = "老师姓名")
     private String name;
 
     /**
