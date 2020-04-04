@@ -23,5 +23,5 @@ public interface StudentPoMapper {
 
     StudentPo queryLike(@Param("name") String name);
 
-    List<StudentVo> queryFuzzy(@Param("name") String name);
+    List<StudentPo> queryFuzzy(@Param("name") String name);
 }

@@ -4,10 +4,14 @@ import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.pojo.dto.req.TeacherReqDto;
 import com.nmt.education.pojo.po.TeacherPo;
 import com.nmt.education.pojo.vo.StudentVo;
+import com.nmt.education.pojo.vo.TeacherVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -71,9 +75,16 @@ public class TeacherService {
      * @param name
      * @return
      */
-    public List<StudentVo> searchFuzzy(String name) {
+    public List<TeacherVo> searchFuzzy(String name) {
         if(StringUtils.hasLength(name)){
-            return this.teacherPoMapper.queryFuzzy(name);
+            List list = this.teacherPoMapper.queryFuzzy(name);
+            List<TeacherVo> result = new ArrayList<>(list.size());
+            list.forEach(e->{
+                TeacherVo vo = new TeacherVo();
+                BeanUtils.copyProperties(e,vo);
+                result.add(vo);
+            });
+            return result;
         }
         return Collections.emptyList();
     }

@@ -1,7 +1,6 @@
 package com.nmt.education.service.teacher;
 
 import com.nmt.education.pojo.po.TeacherPo;
-import com.nmt.education.pojo.vo.StudentVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -21,5 +20,5 @@ public interface TeacherPoMapper {
 
     int updateByPrimaryKey(TeacherPo record);
 
-    List<StudentVo> queryFuzzy(@Param("name") String name);
+    List<TeacherPo> queryFuzzy(@Param("name") String name);
 }

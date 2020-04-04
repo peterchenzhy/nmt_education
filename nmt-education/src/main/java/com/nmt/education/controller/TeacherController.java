@@ -4,6 +4,7 @@ import com.nmt.education.commmons.Consts;
 import com.nmt.education.pojo.dto.req.StudentSearchReqDto;
 import com.nmt.education.pojo.dto.req.TeacherReqDto;
 import com.nmt.education.pojo.vo.StudentVo;
+import com.nmt.education.pojo.vo.TeacherVo;
 import com.nmt.education.service.teacher.TeacherService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,7 +39,7 @@ public class TeacherController {
 
     @ApiOperation(value = "search/fuzzy", notes = "老师模糊搜索，左匹配，不含联系方式")
     @RequestMapping(value = "/search/fuzzy", method = RequestMethod.GET)
-    public List<StudentVo> searchFuzzy(@RequestParam(value = "name") String name) {
+    public List<TeacherVo> searchFuzzy(@RequestParam(value = "name") String name) {
         return teacherService.searchFuzzy(name);
     }
 

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -66,7 +67,7 @@ public class StudentService {
      *
      * @param logInUser
      * @param dto
-     * @return  com.nmt.education.pojo.vo.StudentVo
+     * @return com.nmt.education.pojo.vo.StudentVo
      * @author PeterChen
      * @modifier PeterChen
      * @version v1
@@ -74,13 +75,13 @@ public class StudentService {
      */
     public StudentVo search(Integer logInUser, StudentSearchReqDto dto) {
         StudentPo studentPo = this.queryLike(dto.getName());
-        StudentVo vo  = new StudentVo();
-        BeanUtils.copyProperties(studentPo,vo);
-        return vo ;
+        StudentVo vo = new StudentVo();
+        BeanUtils.copyProperties(studentPo, vo);
+        return vo;
     }
 
 
-    public StudentPo queryLike(String name){
+    public StudentPo queryLike(String name) {
         return this.studentPoMapper.queryLike(name);
     }
 
@@ -117,12 +118,20 @@ public class StudentService {
 
     /**
      * 学生模糊搜索 ，左匹配 不含联系方式
+     *
      * @param name
      * @return
      */
     public List<StudentVo> searchFuzzy(String name) {
-        if(StringUtils.hasLength(name)){
-            return this.studentPoMapper.queryFuzzy(name);
+        if (StringUtils.hasLength(name)) {
+            List list = this.studentPoMapper.queryFuzzy(name);
+            List<StudentVo> result = new ArrayList<>(list.size());
+            list.forEach(e -> {
+                StudentVo vo = new StudentVo();
+                BeanUtils.copyProperties(e, vo);
+                result.add(vo);
+            });
+            return result;
         }
         return Collections.emptyList();
     }
