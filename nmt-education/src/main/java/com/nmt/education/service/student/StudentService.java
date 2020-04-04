@@ -9,9 +9,12 @@ import com.nmt.education.service.CodeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Author: PeterChen
@@ -112,4 +115,15 @@ public class StudentService {
     }
 
 
+    /**
+     * 学生模糊搜索 ，左匹配 不含联系方式
+     * @param name
+     * @return
+     */
+    public List<StudentVo> searchFuzzy(String name) {
+        if(StringUtils.hasLength(name)){
+            return this.studentPoMapper.queryFuzzy(name);
+        }
+        return Collections.emptyList();
+    }
 }

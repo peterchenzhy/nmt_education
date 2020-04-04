@@ -16,7 +16,6 @@ server:
 #    context-path: /nmt-education-server
   port: 8998
 
-
 #mybatis
 mybatis:
   type-aliases-package: com.nmt.education.pojo.po
@@ -45,3 +44,7 @@ mybatis:
     callSettersOnNulls: true
     ####<!-- 打印sql语句 -->
     logPrefix: dao
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+#日志配置
+logging.level.com.nmt.education.service: debug

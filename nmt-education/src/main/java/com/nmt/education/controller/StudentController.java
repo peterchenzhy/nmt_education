@@ -7,9 +7,7 @@ import com.nmt.education.pojo.vo.StudentVo;
 import com.nmt.education.service.student.StudentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
@@ -41,10 +39,10 @@ public class StudentController {
     @RequestMapping(value = "/new", method = RequestMethod.POST)
     public Boolean newStudent(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
                               @RequestBody @Validated StudentReqDto dto, BindingResult bindingResult) {
-        if(bindingResult.hasErrors()){
-            List<ObjectError> errors =bindingResult.getAllErrors();
+        if (bindingResult.hasErrors()) {
+            List<ObjectError> errors = bindingResult.getAllErrors();
             StringBuilder sb = new StringBuilder();
-            errors.stream().forEach(e->{
+            errors.stream().forEach(e -> {
                 sb.append(e.getDefaultMessage()).append(Consts.分号);
             });
             throw new RuntimeException(sb.toString());
@@ -56,15 +54,22 @@ public class StudentController {
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public StudentVo searchStudent(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
                                    @RequestBody @Validated StudentSearchReqDto dto, BindingResult bindingResult) {
-        if(bindingResult.hasErrors()){
-            List<ObjectError> errors =bindingResult.getAllErrors();
+        if (bindingResult.hasErrors()) {
+            List<ObjectError> errors = bindingResult.getAllErrors();
             StringBuilder sb = new StringBuilder();
-            errors.stream().forEach(e->{
+            errors.stream().forEach(e -> {
                 sb.append(e.getDefaultMessage()).append(Consts.分号);
             });
             throw new RuntimeException(sb.toString());
         }
         return studentService.search(logInUser, dto);
+    }
+
+
+    @ApiOperation(value = "search/fuzzy", notes = "学生模糊搜索，左匹配，不含联系方式")
+    @RequestMapping(value = "/search/fuzzy", method = RequestMethod.GET)
+    public List<StudentVo> searchStudent(@RequestParam(value = "name") String name) {
+        return studentService.searchFuzzy(name);
     }
 
 

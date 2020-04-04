@@ -3,10 +3,14 @@ package com.nmt.education.service.teacher;
 import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.pojo.dto.req.TeacherReqDto;
 import com.nmt.education.pojo.po.TeacherPo;
+import com.nmt.education.pojo.vo.StudentVo;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class TeacherService {
@@ -61,4 +65,16 @@ public class TeacherService {
     }
 
 
+
+    /**
+     * 学生模糊搜索 ，左匹配 不含联系方式
+     * @param name
+     * @return
+     */
+    public List<StudentVo> searchFuzzy(String name) {
+        if(StringUtils.hasLength(name)){
+            return this.teacherPoMapper.queryFuzzy(name);
+        }
+        return Collections.emptyList();
+    }
 }

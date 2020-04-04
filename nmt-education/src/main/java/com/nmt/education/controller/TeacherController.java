@@ -35,6 +35,14 @@ public class TeacherController {
     @Autowired
     TeacherService teacherService;
 
+
+    @ApiOperation(value = "search/fuzzy", notes = "老师模糊搜索，左匹配，不含联系方式")
+    @RequestMapping(value = "/search/fuzzy", method = RequestMethod.GET)
+    public List<StudentVo> searchFuzzy(@RequestParam(value = "name") String name) {
+        return teacherService.searchFuzzy(name);
+    }
+
+
     @ApiOperation(value = "new", notes = "新增老师")
     @RequestMapping(value = "/new", method = RequestMethod.POST)
     public Boolean newStudent(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
