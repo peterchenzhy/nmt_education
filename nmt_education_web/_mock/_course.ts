@@ -13,7 +13,7 @@ for (let i = 0; i < 46; i += 1) {
         grade: Math.floor(Math.random() * 10) % 8,
         subject: Math.floor(Math.random() * 10) % 5,
         type: Math.floor(Math.random() * 10) % 4,
-        campus: (Math.floor(Math.random() * 10) % 4) + 1,
+        campus: (Math.floor(Math.random() * 10) % 2) + 1,
         status: Math.floor(Math.random() * 10) % 3,
         startDate: new Date(`2017-07-${i < 18 ? '0' + (Math.floor(i / 2) + 1) : Math.floor(i / 2) + 1}`)
     });
@@ -77,7 +77,7 @@ function saveRule(description: string) {
         grade: Math.floor(Math.random() * 10) % 8,
         subject: Math.floor(Math.random() * 10) % 5,
         type: Math.floor(Math.random() * 10) % 4,
-        campus: (Math.floor(Math.random() * 10) % 4) + 1,
+        campus: (Math.floor(Math.random() * 10) % 2) + 1,
         status: Math.floor(Math.random() * 10) % 3,
         startDate: new Date(`2017-07-${i < 18 ? '0' + (Math.floor(i / 2) + 1) : Math.floor(i / 2) + 1}`)
    

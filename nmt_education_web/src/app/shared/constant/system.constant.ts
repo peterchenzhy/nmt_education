@@ -73,8 +73,8 @@ export function getOrderStatus(status: ORDER_STATUS) {
 }
 
 export const FEE_TYPE_LIST = [
-    { value: 1, label: '普通学费' }, { value: 2, label: '试听费用' },
-    { value: 3, label: '材料费' }, { value: 4, label: '试验费' }, { value: 5, label: '退费' }];
+    { value: 1, label: '普通学费' }, { value: 2, label: '试听费用' }, { value: 3, label: '材料费' },
+    { value: 4, label: '试验费' }, { value: 5, label: '退费' }];
 export enum FEE_TYPE { TUITION = 1, AUDITION, MATERIAL, TRAIL, REFUND }
 export function getFeeTypeLabel(type: FEE_TYPE) {
     let obj = FEE_TYPE_LIST.find(i => { return i.value == type });
@@ -111,4 +111,20 @@ export enum CAMPUS { SOUTH_QUAY = 1, SIPING_ROAD }
 export function getCampusLabel(campus: CAMPUS) {
     let obj = CAMPUS_LIST.find(i => { return i.value == campus });
     return obj ? obj.label : "";
+}
+
+export const SysConstantUtil = {
+    getSeasonLabel: getSeasonLabel,
+    getRelationshipLabel: getRelationshipLabel,
+    getPayMethodLabel: getPayMethodLabel,
+    getPayStatusLabel: getPayStatusLabel,
+    getFeeTypeLabel: getFeeTypeLabel,
+    getOrderStatus: getOrderStatus,
+    getGenderLabel: getGenderLabel,
+    getGradeLabel: getGradeLabel,
+    getCourseClassificationLabel: getCourseClassificationLabel,
+    getCourseTypeLabel: getCourseTypeLabel,
+    getCourseSubjectLabel: getCourseSubjectLabel,
+    getCourseStatus: getCourseStatus,
+    getCampusLabel: getCampusLabel
 }

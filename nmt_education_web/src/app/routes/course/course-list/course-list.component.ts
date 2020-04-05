@@ -5,7 +5,7 @@ import { tap, map } from 'rxjs/operators';
 import { STComponent, STColumn, STData, STChange } from '@delon/abc';
 import { FormGroup, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { COURSE_STATUS_LIST, CAMPUS_LIST } from '@shared/constant/system.constant';
+import { COURSE_STATUS_LIST, CAMPUS_LIST, getCampusLabel } from '@shared/constant/system.constant';
 import { Course } from 'src/app/model/course.model';
 
 @Component({
@@ -13,7 +13,7 @@ import { Course } from 'src/app/model/course.model';
   templateUrl: './course-list.component.html',
 })
 export class CourseListComponent implements OnInit {
-
+  getCampusLabel = getCampusLabel;
   courseDate = new FormGroup({
     courseDate: new FormControl()
   });
@@ -35,9 +35,9 @@ export class CourseListComponent implements OnInit {
   st: STComponent;
   columns: STColumn[] = [
     { title: '', index: 'key', type: 'checkbox' },
-    { title: '课程编号', index: 'courseNo' },
-    { title: '名称', index: 'courseName' },
-    { title: '校区', index: 'campus' },
+    { title: '课程编号', index: 'code' },
+    { title: '名称', index: 'name' },
+    { title: '校区', index: 'campus', render: "courseCampus" },
     {
       title: '状态',
       index: 'status',

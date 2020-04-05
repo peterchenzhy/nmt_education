@@ -8,7 +8,7 @@ for (let i = 0; i < 46; i += 1) {
     list.push({
         code: `TeacherCode ${i}`,
         name: '教师名',
-        contactNo: "130********",
+        phone: "130********",
         gender: Math.floor(Math.random() * 10) % 2,
         introduction: "教师介绍"
     });
