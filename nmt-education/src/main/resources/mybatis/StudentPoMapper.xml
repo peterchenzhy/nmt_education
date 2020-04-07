@@ -219,23 +219,4 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.nmt.education.pojo.po.StudentPo">
-    <!--@mbg.generated-->
-    update student
-    set student_code = #{studentCode,jdbcType=VARCHAR},
-      `name` = #{name,jdbcType=VARCHAR},
-      birthday = #{birthday,jdbcType=DATE},
-      school = #{school,jdbcType=VARCHAR},
-      grade = #{grade,jdbcType=TINYINT},
-      phone = #{phone,jdbcType=VARCHAR},
-      sex = #{sex,jdbcType=TINYINT},
-      campus = #{campus,jdbcType=TINYINT},
-      remark = #{remark,jdbcType=VARCHAR},
-      `status` = #{status,jdbcType=BOOLEAN},
-      creator = #{creator,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      `operator` = #{operator,jdbcType=INTEGER},
-      operate_time = #{operateTime,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
 </mapper>

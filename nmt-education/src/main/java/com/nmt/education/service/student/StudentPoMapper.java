@@ -18,7 +18,6 @@ public interface StudentPoMapper {
 
     int updateByPrimaryKeySelective(StudentPo record);
 
-    int updateByPrimaryKey(StudentPo record);
 
     List<StudentPo> queryFuzzy(@Param("name") String name);
 

@@ -8,7 +8,7 @@ import java.util.List;
 
 @Mapper
 public interface TeacherPoMapper {
-    int deleteByPrimaryKey(Long id);
+    int invalidByPrimaryKey(@Param("id") Long id, @Param("operator") Integer operator);
 
     int insert(TeacherPo record);
 

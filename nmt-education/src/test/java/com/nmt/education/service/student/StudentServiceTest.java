@@ -61,4 +61,19 @@ class StudentServiceTest extends BaseTest {
         req.setRemark(null);
         this.studentService.newStudent(loginUser,req);
     }
+
+    @Test
+    void editStudent() {
+        StudentReqDto dto = new StudentReqDto();
+        dto.setId(1L);
+        dto.setName("HULU");
+        dto.setBirthday(new Date());
+        dto.setSchool("waterluu");
+        dto.setGrade(5);
+        dto.setCampus(1);
+        dto.setPhone("133434");
+        dto.setSex(1);
+        dto.setRemark("remark");
+        System.out.println( studentService.editStudent(loginUser,dto) );
+    }
 }

@@ -11,14 +11,12 @@ import com.nmt.education.service.CodeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Author: PeterChen
@@ -62,7 +60,35 @@ public class StudentService {
         studentPo.setOperator(logInUser);
         studentPo.setOperateTime(new Date());
         return this.insertSelective(studentPo) > 0;
+    }
 
+
+    /**
+     * 编辑学生
+     *
+     * @param logInUser
+     * @param dto
+     * @return java.lang.Boolean
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/4/5 19:59
+     */
+    public Boolean editStudent(Integer logInUser, StudentReqDto dto) {
+        Assert.notNull(dto.getId(),"编辑学生缺少id");
+        StudentPo studentPo = selectByPrimaryKey(dto.getId());
+        Assert.notNull(studentPo,"学生信息不存在"+dto.getId());
+        studentPo.setName(dto.getName());
+        studentPo.setBirthday(dto.getBirthday());
+        studentPo.setSchool(dto.getSchool());
+        studentPo.setGrade(dto.getGrade());
+        studentPo.setPhone(dto.getPhone());
+        studentPo.setSex(dto.getSex());
+        studentPo.setCampus(dto.getCampus());
+        studentPo.setRemark(dto.getRemark());
+        studentPo.setOperator(logInUser);
+        studentPo.setOperateTime(new Date());
+        return this.updateByPrimaryKeySelective(studentPo)>0 ;
     }
 
     /**
@@ -103,7 +129,6 @@ public class StudentService {
     }
 
 
-
     public int deleteByPrimaryKey(Long id) {
         return studentPoMapper.deleteByPrimaryKey(id);
     }
@@ -129,9 +154,6 @@ public class StudentService {
     }
 
 
-    public int updateByPrimaryKey(StudentPo record) {
-        return studentPoMapper.updateByPrimaryKey(record);
-    }
 
 
     /**

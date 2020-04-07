@@ -43,4 +43,10 @@ public class EnumVo {
     @ApiModelProperty(value = "枚举类型描述")
     private String typeDesc;
 
+    /**
+     * icon
+     */
+    @ApiModelProperty(value = "icon前端用")
+    private String icon;
+
 }

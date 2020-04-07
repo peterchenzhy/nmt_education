@@ -7,8 +7,12 @@ import com.nmt.education.pojo.dto.req.TeacherReqDto;
 import com.nmt.education.pojo.dto.req.TeacherSearchReqDto;
 import com.nmt.education.pojo.po.TeacherPo;
 import com.nmt.education.pojo.vo.TeacherVo;
+import com.nmt.education.service.teacher.config.TeacherSalaryConfigService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -21,12 +25,42 @@ import java.util.List;
 @Service
 public class TeacherService {
 
+
+    @Autowired
+    private TeacherSalaryConfigService teacherSalaryConfigService;
     @Resource
     private TeacherPoMapper teacherPoMapper;
 
 
-    //新增老师
-    public Boolean newTeacher(Integer logInUser, TeacherReqDto dto) {
+    /**
+     * 新增老师
+     *
+     * @param operator 操作人
+     * @param dto      请求对象
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/4/6 15:33
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean newTeacher(Integer operator, TeacherReqDto dto) {
+        TeacherPo teacherPo = newTeacherPo(operator, dto);
+        boolean result = insertSelective(teacherPo) > 0;
+        teacherSalaryConfigService.newSalayConfig(dto.getTeacherSalaryConfigList(), teacherPo.getId(), operator);
+        return result;
+    }
+
+    /**
+     * 生成新老师po
+     *
+     * @param operator
+     * @param dto
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/4/7 22:08
+     */
+    private TeacherPo newTeacherPo(Integer operator, TeacherReqDto dto) {
         TeacherPo teacherPo = new TeacherPo();
         teacherPo.setName(dto.getName());
         teacherPo.setBirthday(dto.getBirthday());
@@ -34,16 +68,46 @@ public class TeacherService {
         teacherPo.setStatus(StatusEnum.VALID.getCode());
         teacherPo.setPhone(dto.getPhone());
         teacherPo.setRemark(dto.getRemark());
-        teacherPo.setCreator(logInUser);
+        teacherPo.setCreator(operator);
         teacherPo.setCreateTime(new Date());
-        teacherPo.setOperator(logInUser);
+        teacherPo.setOperator(operator);
         teacherPo.setOperateTime(new Date());
-        return insertSelective(teacherPo) > 0;
-
+        return teacherPo;
     }
 
-    public int deleteByPrimaryKey(Long id) {
-        return teacherPoMapper.deleteByPrimaryKey(id);
+
+    /**
+     * 修改老师
+     *
+     * @param operator
+     * @param dto
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/4/7 22:08
+     */
+    public Boolean editTeacher(Integer operator, TeacherReqDto dto) {
+        Assert.notNull(dto.getId(), "编辑老师缺少id");
+        TeacherPo teacherPo = selectByPrimaryKey(dto.getId());
+        Assert.notNull(teacherPo, "老师信息不存在" + dto.getId());
+        if (dto.getDeleteFlg()) {
+            invalidByPrimaryKey(teacherPo.getId(), operator);
+        } else {
+            teacherPo.setName(dto.getName());
+            teacherPo.setBirthday(dto.getBirthday());
+            teacherPo.setSchool(dto.getSchool());
+            teacherPo.setPhone(dto.getPhone());
+            teacherPo.setRemark(dto.getRemark());
+            teacherPo.setOperator(operator);
+            teacherPo.setOperateTime(new Date());
+            this.updateByPrimaryKeySelective(teacherPo);
+        }
+        teacherSalaryConfigService.editSalayConfig(dto.getTeacherSalaryConfigList(), teacherPo.getId(), operator);
+        return true;
+    }
+
+    public int invalidByPrimaryKey(Long id, Integer operator) {
+        return teacherPoMapper.invalidByPrimaryKey(id, operator);
     }
 
 
@@ -72,17 +136,17 @@ public class TeacherService {
     }
 
 
-
     /**
      * 学生模糊搜索 ，左匹配 不含联系方式
+     *
      * @param name
      * @return
      */
     public List<TeacherVo> searchFuzzy(String name) {
-        if(StringUtils.hasLength(name)){
+        if (StringUtils.hasLength(name)) {
             List<TeacherPo> list = this.teacherPoMapper.queryFuzzy(name);
             List<TeacherVo> result = new ArrayList<>(list.size());
-            list.forEach(e->{
+            list.forEach(e -> {
                 TeacherVo vo = po2vo(e);
                 result.add(vo);
             });
@@ -93,7 +157,7 @@ public class TeacherService {
 
     private TeacherVo po2vo(TeacherPo e) {
         TeacherVo vo = new TeacherVo();
-        BeanUtils.copyProperties(e,vo);
+        BeanUtils.copyProperties(e, vo);
         return vo;
     }
 
@@ -124,4 +188,6 @@ public class TeacherService {
         return this.teacherPoMapper.query(phone);
 
     }
+
+
 }

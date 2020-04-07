@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nmt.education.service.teacher.config.TeacherSalaryConfigPoMapper">
+    <resultMap id="BaseResultMap" type="com.nmt.education.pojo.po.TeacherSalaryConfigPo">
+        <!--@mbg.generated-->
+        <!--@Table teacher_salary_config-->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="teacher_id" jdbcType="BIGINT" property="teacherId"/>
+        <result column="grade" jdbcType="INTEGER" property="grade"/>
+        <result column="course_subject" jdbcType="INTEGER" property="courseSubject"/>
+        <result column="course_type" jdbcType="INTEGER" property="courseType"/>
+        <result column="unit_price" jdbcType="VARCHAR" property="unitPrice"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="status" jdbcType="BOOLEAN" property="status"/>
+        <result column="creator" jdbcType="INTEGER" property="creator"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="operator" jdbcType="INTEGER" property="operator"/>
+        <result column="operate_time" jdbcType="TIMESTAMP" property="operateTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, teacher_id, grade, course_subject, course_type, unit_price, remark, `status`,
+        creator, create_time, `operator`, operate_time
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from teacher_salary_config
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        <!--@mbg.generated-->
+        delete from teacher_salary_config
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.TeacherSalaryConfigPo" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into teacher_salary_config (teacher_id, grade, course_subject,
+        course_type, unit_price, remark,
+        `status`, creator, create_time,
+        `operator`, operate_time)
+        values (#{teacherId,jdbcType=BIGINT}, #{grade,jdbcType=INTEGER}, #{courseSubject,jdbcType=INTEGER},
+        #{courseType,jdbcType=INTEGER}, #{unitPrice,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},
+        #{status,jdbcType=BOOLEAN}, #{creator,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
+        #{operator,jdbcType=INTEGER}, #{operateTime,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="batchInsert">
+        insert into teacher_salary_config (teacher_id, grade, course_subject,
+        course_type, unit_price, remark,
+        `status`, creator, create_time,
+        `operator`, operate_time)
+        values
+        <foreach collection="list" item="e" separator=",">
+            (#{e.teacherId,jdbcType=BIGINT}, #{e.grade,jdbcType=INTEGER}, #{e.courseSubject,jdbcType=INTEGER},
+            #{e.courseType,jdbcType=INTEGER}, #{e.unitPrice,jdbcType=VARCHAR}, #{e.remark,jdbcType=VARCHAR},
+            #{e.status,jdbcType=BOOLEAN}, #{e.creator,jdbcType=INTEGER}, #{e.createTime,jdbcType=TIMESTAMP},
+            #{e.operator,jdbcType=INTEGER}, #{e.operateTime,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.TeacherSalaryConfigPo"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into teacher_salary_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="teacherId != null">
+                teacher_id,
+            </if>
+            <if test="grade != null">
+                grade,
+            </if>
+            <if test="courseSubject != null">
+                course_subject,
+            </if>
+            <if test="courseType != null">
+                course_type,
+            </if>
+            <if test="unitPrice != null">
+                unit_price,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="status != null">
+                `status`,
+            </if>
+            <if test="creator != null">
+                creator,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="operator != null">
+                `operator`,
+            </if>
+            <if test="operateTime != null">
+                operate_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="teacherId != null">
+                #{teacherId,jdbcType=BIGINT},
+            </if>
+            <if test="grade != null">
+                #{grade,jdbcType=INTEGER},
+            </if>
+            <if test="courseSubject != null">
+                #{courseSubject,jdbcType=INTEGER},
+            </if>
+            <if test="courseType != null">
+                #{courseType,jdbcType=INTEGER},
+            </if>
+            <if test="unitPrice != null">
+                #{unitPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=BOOLEAN},
+            </if>
+            <if test="creator != null">
+                #{creator,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="operator != null">
+                #{operator,jdbcType=INTEGER},
+            </if>
+            <if test="operateTime != null">
+                #{operateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.nmt.education.pojo.po.TeacherSalaryConfigPo">
+        <!--@mbg.generated-->
+        update teacher_salary_config
+        <set>
+            <if test="teacherId != null">
+                teacher_id = #{teacherId,jdbcType=BIGINT},
+            </if>
+            <if test="grade != null">
+                grade = #{grade,jdbcType=INTEGER},
+            </if>
+            <if test="courseSubject != null">
+                course_subject = #{courseSubject,jdbcType=INTEGER},
+            </if>
+            <if test="courseType != null">
+                course_type = #{courseType,jdbcType=INTEGER},
+            </if>
+            <if test="unitPrice != null">
+                unit_price = #{unitPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                `status` = #{status,jdbcType=BOOLEAN},
+            </if>
+            <if test="creator != null">
+                creator = #{creator,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="operator != null">
+                `operator` = #{operator,jdbcType=INTEGER},
+            </if>
+            <if test="operateTime != null">
+                operate_time = #{operateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.nmt.education.pojo.po.TeacherSalaryConfigPo">
+        <!--@mbg.generated-->
+        update teacher_salary_config
+        set teacher_id = #{teacherId,jdbcType=BIGINT},
+        grade = #{grade,jdbcType=INTEGER},
+        course_subject = #{courseSubject,jdbcType=INTEGER},
+        course_type = #{courseType,jdbcType=INTEGER},
+        unit_price = #{unitPrice,jdbcType=VARCHAR},
+        remark = #{remark,jdbcType=VARCHAR},
+        `status` = #{status,jdbcType=BOOLEAN},
+        creator = #{creator,jdbcType=INTEGER},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+        `operator` = #{operator,jdbcType=INTEGER},
+        operate_time = #{operateTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="invalidBatchByids">
+        update teacher_salary_config
+        set status = 0 ,operator = #{operator},operate_time = #{date}
+        where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

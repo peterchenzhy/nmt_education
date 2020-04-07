@@ -1,18 +1,15 @@
 package com.nmt.education.controller;
 
 import com.github.pagehelper.PageInfo;
-import com.nmt.education.commmons.Consts;
-import com.nmt.education.pojo.dto.req.StudentSearchReqDto;
+import com.nmt.education.commmons.utils.ReqDtoCheckUtil;
 import com.nmt.education.pojo.dto.req.TeacherReqDto;
 import com.nmt.education.pojo.dto.req.TeacherSearchReqDto;
-import com.nmt.education.pojo.vo.StudentVo;
 import com.nmt.education.pojo.vo.TeacherVo;
 import com.nmt.education.service.teacher.TeacherService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,34 +46,28 @@ public class TeacherController {
 
     @ApiOperation(value = "new", notes = "新增老师")
     @RequestMapping(value = "/new", method = RequestMethod.POST)
-    public Boolean newStudent(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
+    public Boolean newTeacher(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
                               @RequestBody @Validated TeacherReqDto dto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            List<ObjectError> errors = bindingResult.getAllErrors();
-            StringBuilder sb = new StringBuilder();
-            errors.stream().forEach(e -> {
-                sb.append(e.getDefaultMessage()).append(Consts.分号);
-            });
-            throw new RuntimeException(sb.toString());
-        }
+        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
         return teacherService.newTeacher(logInUser, dto);
     }
+
+    @ApiOperation(value = "edit", notes = "修改老师")
+    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    public Boolean editTeacher(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
+                               @RequestBody @Validated TeacherReqDto dto, BindingResult bindingResult) {
+        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
+        return teacherService.editTeacher(logInUser, dto);
+    }
+
 
     @ApiOperation(value = "search", notes = "搜索老师")
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public PageInfo<TeacherVo> searchStudent(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
                                              @RequestBody @Validated TeacherSearchReqDto dto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            List<ObjectError> errors = bindingResult.getAllErrors();
-            StringBuilder sb = new StringBuilder();
-            errors.stream().forEach(e -> {
-                sb.append(e.getDefaultMessage()).append(Consts.分号);
-            });
-            throw new RuntimeException(sb.toString());
-        }
+        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
         return teacherService.search(logInUser, dto);
     }
-
 
 
 }

@@ -21,4 +21,7 @@ public interface IEnum {
      * @return 枚举描述
      */
     String getDesc();
+
+
+    String getIcon();
 }

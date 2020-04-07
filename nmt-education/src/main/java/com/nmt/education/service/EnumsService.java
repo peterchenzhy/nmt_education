@@ -38,14 +38,14 @@ public class EnumsService {
      * @return
      */
     private Map<String, List<EnumVo>> getDbEnums() {
-     Map<Integer,List<SysConfigPo>> sysConfigMap = sysConfigService.getAllConfigs().stream().collect(Collectors.groupingBy(SysConfigPo::getType));
+        Map<Integer, List<SysConfigPo>> sysConfigMap = sysConfigService.getAllConfigs().stream().collect(Collectors.groupingBy(SysConfigPo::getType));
         if (CollectionUtils.isEmpty(sysConfigMap)) {
             return Maps.newHashMap();
         }
         Map<String, List<EnumVo>> map = new HashMap<>();
-        sysConfigMap.keySet().stream().forEach(k->{
+        sysConfigMap.keySet().stream().forEach(k -> {
             List<EnumVo> l = new ArrayList<>();
-            sysConfigMap.get(k).stream().forEach(e->{
+            sysConfigMap.get(k).stream().forEach(e -> {
                 EnumVo v = new EnumVo();
                 v.setLabel(e.getDescription());
                 v.setValue(e.getValue());
@@ -55,7 +55,7 @@ public class EnumsService {
                 v.setTypeDesc(e.getTypeDesc());
                 l.add(v);
             });
-            map.put(SysConfigEnum.codeOf(k).getDesc(),l);
+            map.put(SysConfigEnum.codeOf(k).getDesc(), l);
         });
 
 
@@ -71,7 +71,7 @@ public class EnumsService {
         Map<String, List<EnumVo>> map = new HashMap<>();
         map.put(getEnumKey(Enums.CourseStatus.class), getEnumVos(Enums.CourseStatus.values()));
         map.put(getEnumKey(Enums.FeeStatus.class), getEnumVos(Enums.FeeStatus.values()));
-        map.put(getEnumKey(Enums.registrationStatus.class), getEnumVos(Enums.registrationStatus.values()));
+        map.put(getEnumKey(Enums.RegistrationStatus.class), getEnumVos(Enums.RegistrationStatus.values()));
         map.putAll(getDbEnums());
         return map;
     }
@@ -101,6 +101,7 @@ public class EnumsService {
      * @return String
      */
     private String getEnumKey(Class<? extends IEnum> iEnumClass) {
-        return iEnumClass.getSimpleName();
+        String s = iEnumClass.getSimpleName();
+        return (new StringBuilder()).append(Character.toLowerCase(s.charAt(0))).append(s.substring(1)).toString();
     }
 }

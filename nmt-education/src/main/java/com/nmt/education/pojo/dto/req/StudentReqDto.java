@@ -19,55 +19,60 @@ import java.util.Date;
 @ToString
 public class StudentReqDto {
 
+    @ApiModelProperty(value = "数据id,仅编辑使用")
+    private Long id;
+
+    @ApiModelProperty(value = "数据是否删除标志，默认false")
+    private Boolean deleteFlg = false ;
     /**
-    * 学生姓名
-    */
+     * 学生姓名
+     */
     @NotNull(message = "学生姓名不能为空")
-    @ApiModelProperty(value = "学生姓名",required = true)
+    @ApiModelProperty(value = "学生姓名", required = true)
     private String name;
 
     /**
-    * 生日
-    */
-    @ApiModelProperty(value = "生日",dataType = "Date")
+     * 生日
+     */
+    @ApiModelProperty(value = "生日", dataType = "Date")
     private Date birthday;
 
     /**
-    * 学校
-    */
-    @ApiModelProperty(value = "学校",required = true)
+     * 学校
+     */
+    @ApiModelProperty(value = "学校", required = true)
     private String school;
 
     /**
-    * 年级 小学初中1-9 高中10-12 
-    */
+     * 年级 小学初中1-9 高中10-12
+     */
     @NotNull(message = "年级不能为空")
     @Range(min = 1, message = "年级必须大于0")
-    @ApiModelProperty(value = "年级",required = true)
+    @ApiModelProperty(value = "年级", required = true)
     private Integer grade;
     /**
      * 所在校区
      */
     @NotNull(message = "所在校区不能为空")
-    @ApiModelProperty(value = "所在校区",required = true)
+    @ApiModelProperty(value = "所在校区", required = true)
     @Range(min = 1, message = "所在校区必须大于0")
     private Integer campus;
 
     /**
-    * 电话
-    */
-    @ApiModelProperty(value = "电话",required = true)
+     * 电话
+     */
+    @ApiModelProperty(value = "电话", required = true)
     private String phone;
     /**
      * 性别
      */
-    @ApiModelProperty(value = "性别",required = true)
-    @Range(min=0,max =1 ,message = "性别只能是0或1")
+    @ApiModelProperty(value = "性别", required = true)
+    @Range(min = 0, max = 1, message = "性别只能是0或1")
     private Integer sex;
 
     /**
-    * 备注
-    */
+     * 备注
+     */
     @ApiModelProperty(value = "备注")
     private String remark;
 
