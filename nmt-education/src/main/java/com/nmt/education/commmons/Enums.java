@@ -39,10 +39,10 @@ public interface Enums {
      * 费用状态
      */
     enum FeeStatus implements IEnum {
-        未缴费(0, "未缴费", ""),
-        已缴费(1, "已缴费", ""),
-        已冻结(2, "已冻结", ""),
-        已退费(3, "已退费", "");
+        未缴费(0, "未缴费", null),
+        已缴费(1, "已缴费", null),
+        已冻结(2, "已冻结", null),
+        已退费(3, "已退费", null);
 
         @Getter
         private Integer code;

@@ -13125,35 +13125,6 @@
 							}
 						},
 						{
-							"_type": "UMLNoteView",
-							"_id": "AAAAAAFxKxbS3xZnXq4=",
-							"_parent": {
-								"$ref": "AAAAAAFxH2PW8UG/5MI="
-							},
-							"font": "Arial;13;0",
-							"left": 383,
-							"top": 368,
-							"width": 100,
-							"height": 50,
-							"text": "可以暂不实现"
-						},
-						{
-							"_type": "UMLNoteLinkView",
-							"_id": "AAAAAAFxKxbTCxZq25o=",
-							"_parent": {
-								"$ref": "AAAAAAFxH2PW8UG/5MI="
-							},
-							"font": "Arial;13;0",
-							"head": {
-								"$ref": "AAAAAAFxKxbS3xZnXq4="
-							},
-							"tail": {
-								"$ref": "AAAAAAFxKxd3AxZ0N+s="
-							},
-							"lineStyle": 1,
-							"points": "314:424;382:406"
-						},
-						{
 							"_type": "FCProcessView",
 							"_id": "AAAAAAFxKxd3AxZ0N+s=",
 							"_parent": {

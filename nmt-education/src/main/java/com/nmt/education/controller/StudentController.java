@@ -2,6 +2,7 @@ package com.nmt.education.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.Consts;
+import com.nmt.education.commmons.utils.ReqDtoCheckUtil;
 import com.nmt.education.pojo.dto.req.StudentReqDto;
 import com.nmt.education.pojo.dto.req.StudentSearchReqDto;
 import com.nmt.education.pojo.vo.StudentVo;
@@ -40,14 +41,7 @@ public class StudentController {
     @RequestMapping(value = "/new", method = RequestMethod.POST)
     public Boolean newStudent(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
                               @RequestBody @Validated StudentReqDto dto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            List<ObjectError> errors = bindingResult.getAllErrors();
-            StringBuilder sb = new StringBuilder();
-            errors.stream().forEach(e -> {
-                sb.append(e.getDefaultMessage()).append(Consts.分号);
-            });
-            throw new RuntimeException(sb.toString());
-        }
+        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
         return studentService.newStudent(logInUser, dto);
     }
 
@@ -55,14 +49,7 @@ public class StudentController {
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public Boolean editStudent(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
                               @RequestBody @Validated StudentReqDto dto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            List<ObjectError> errors = bindingResult.getAllErrors();
-            StringBuilder sb = new StringBuilder();
-            errors.stream().forEach(e -> {
-                sb.append(e.getDefaultMessage()).append(Consts.分号);
-            });
-            throw new RuntimeException(sb.toString());
-        }
+        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
         return studentService.editStudent(logInUser, dto);
     }
 
@@ -70,14 +57,7 @@ public class StudentController {
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public PageInfo<StudentVo> searchStudent(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
                                             @RequestBody @Validated StudentSearchReqDto dto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            List<ObjectError> errors = bindingResult.getAllErrors();
-            StringBuilder sb = new StringBuilder();
-            errors.stream().forEach(e -> {
-                sb.append(e.getDefaultMessage()).append(Consts.分号);
-            });
-            throw new RuntimeException(sb.toString());
-        }
+        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
         return studentService.search(logInUser, dto);
     }
 

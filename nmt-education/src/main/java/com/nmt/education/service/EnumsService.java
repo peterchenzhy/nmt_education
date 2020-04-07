@@ -90,6 +90,7 @@ public class EnumsService {
             vo.setValue((int) e.getCode());
             vo.setTypeDesc(e.getClass().getSimpleName());
             vo.setDbConfig(false);
+            vo.setIcon(e.getIcon());
             return vo;
         }).collect(Collectors.toList());
     }
