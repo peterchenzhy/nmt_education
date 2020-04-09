@@ -2,6 +2,7 @@ package com.nmt.education.service.teacher;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.nmt.education.commmons.Enums;
 import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.pojo.dto.req.TeacherReqDto;
 import com.nmt.education.pojo.dto.req.TeacherSearchReqDto;
@@ -21,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
+import static com.nmt.education.commmons.Enums.EditFlag.需要删除;
 
 @Service
 public class TeacherService {
@@ -90,18 +93,25 @@ public class TeacherService {
         Assert.notNull(dto.getId(), "编辑老师缺少id");
         TeacherPo teacherPo = selectByPrimaryKey(dto.getId());
         Assert.notNull(teacherPo, "老师信息不存在" + dto.getId());
-        if (dto.getDeleteFlg()) {
-            invalidByPrimaryKey(teacherPo.getId(), operator);
-        } else {
-            teacherPo.setName(dto.getName());
-            teacherPo.setBirthday(dto.getBirthday());
-            teacherPo.setSchool(dto.getSchool());
-            teacherPo.setPhone(dto.getPhone());
-            teacherPo.setRemark(dto.getRemark());
-            teacherPo.setOperator(operator);
-            teacherPo.setOperateTime(new Date());
-            this.updateByPrimaryKeySelective(teacherPo);
+        Enums.EditFlag editFlag = Enums.EditFlag.codeOf(dto.getEditFlag());
+        switch (editFlag) {
+            case 需要删除:
+                invalidByPrimaryKey(teacherPo.getId(), operator);
+                break;
+            case 修改:
+                teacherPo.setName(dto.getName());
+                teacherPo.setBirthday(dto.getBirthday());
+                teacherPo.setSchool(dto.getSchool());
+                teacherPo.setPhone(dto.getPhone());
+                teacherPo.setRemark(dto.getRemark());
+                teacherPo.setOperator(operator);
+                teacherPo.setOperateTime(new Date());
+                this.updateByPrimaryKeySelective(teacherPo);
+                break;
+            default:
+                break;
         }
+
         teacherSalaryConfigService.editSalayConfig(dto.getTeacherSalaryConfigList(), teacherPo.getId(), operator);
         return true;
     }

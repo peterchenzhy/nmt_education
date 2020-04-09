@@ -81,4 +81,36 @@ public interface Enums {
             this.icon = icon;
         }
     }
+
+    /**
+     * 编辑标志
+     */
+    enum EditFlag implements IEnum {
+        无变化(0, "无变化", null),
+        新增(1, "新增", null),
+        修改(2, "修改", null),
+        需要删除(3, "需要删除", null);
+
+        @Getter
+        private Integer code;
+        @Getter
+        private String desc;
+        @Getter
+        private String icon;
+
+        EditFlag(Integer code, String desc, String icon) {
+            this.desc = desc;
+            this.code = code;
+            this.icon = icon;
+        }
+
+        public static EditFlag codeOf(Integer code) {
+            EditFlag result = null;
+            for (EditFlag e : EditFlag.values()) {
+                e.getCode().equals(code);
+                return e;
+            }
+            return result;
+        }
+    }
 }

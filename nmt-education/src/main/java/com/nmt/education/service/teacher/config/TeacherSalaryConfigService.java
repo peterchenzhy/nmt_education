@@ -1,5 +1,6 @@
 package com.nmt.education.service.teacher.config;
 
+import com.nmt.education.commmons.Enums;
 import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.pojo.dto.req.TeacherSalaryConfigReqDto;
 import com.nmt.education.pojo.po.TeacherSalaryConfigPo;
@@ -91,14 +92,18 @@ public class TeacherSalaryConfigService {
         if (CollectionUtils.isEmpty(teacherSalaryConfigList)) {
             return;
         }
-        List<TeacherSalaryConfigReqDto> needNew = teacherSalaryConfigList.stream().filter(e -> !e.getDeleteFlg()).collect(Collectors.toList());
+        List<TeacherSalaryConfigReqDto> del = teacherSalaryConfigList.stream().filter(e -> Enums.EditFlag.需要删除.getCode().equals(e.getEditFlag())
+        ).collect(Collectors.toList());
+        List<TeacherSalaryConfigReqDto> needNew = teacherSalaryConfigList.stream().filter(e -> Enums.EditFlag.新增.getCode().equals(e.getEditFlag())
+                || Enums.EditFlag.修改.getCode().equals(e.getEditFlag())
+        ).collect(Collectors.toList());
         List<TeacherSalaryConfigPo> list = new ArrayList<>();
         needNew.stream().forEach(e -> {
             list.add(newTeacherSalaryConfigPo(operator, e, teacherId));
         });
-        invalidBatch(teacherSalaryConfigList.stream().filter(e -> Objects.nonNull(e.getId())).map(e -> e.getId()).collect(Collectors.toList()), operator);
+        needNew.addAll(del);
+        invalidBatch(needNew.stream().filter(e -> Objects.nonNull(e.getId())).map(e -> e.getId()).collect(Collectors.toList()), operator);
         insertBatch(list);
-
     }
 
     private TeacherSalaryConfigPo newTeacherSalaryConfigPo(int operator, TeacherSalaryConfigReqDto e, Long teacherId) {
