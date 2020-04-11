@@ -8,4 +8,5 @@ import lombok.Setter;
 public class UserVo {
 
     private String msg = "登录成功";
+    private Integer userId = 100001;
 }

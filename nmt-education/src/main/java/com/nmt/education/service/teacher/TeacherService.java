@@ -9,8 +9,10 @@ import com.nmt.education.pojo.dto.req.TeacherSearchReqDto;
 import com.nmt.education.pojo.po.TeacherPo;
 import com.nmt.education.pojo.vo.TeacherVo;
 import com.nmt.education.service.teacher.config.TeacherSalaryConfigService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -23,17 +25,49 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import static com.nmt.education.commmons.Enums.EditFlag.需要删除;
-
 @Service
+@Slf4j
 public class TeacherService {
 
 
     @Autowired
     private TeacherSalaryConfigService teacherSalaryConfigService;
+    @Autowired
+    @Lazy
+    private TeacherService self ;
     @Resource
     private TeacherPoMapper teacherPoMapper;
 
+    /**
+     * 教师信息，修改，删除接口
+     * 编辑标志；0：无变化，1：新增，2：编辑，3：需要删除
+     *
+     * @param loginUser
+     * @param dto
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/4/11 21:48
+     */
+    public Boolean teacherManager(Integer loginUser, TeacherReqDto dto) {
+        Enums.EditFlag editFlag = Enums.EditFlag.codeOf(dto.getEditFlag());
+        switch (editFlag) {
+            case 新增:
+                self.newTeacher(loginUser, dto);
+                break;
+            case 修改:
+                self.editTeacher(loginUser, dto);
+                break;
+            case 需要删除:
+                self.editTeacher(loginUser, dto);
+                break;
+            default:
+                log.error("请求数据不合规，无法辨认editFlag！" + dto);
+                break;
+        }
+
+        return true;
+    }
 
     /**
      * 新增老师

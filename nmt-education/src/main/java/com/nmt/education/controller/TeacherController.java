@@ -44,20 +44,12 @@ public class TeacherController {
     }
 
 
-    @ApiOperation(value = "new", notes = "新增老师")
-    @RequestMapping(value = "/new", method = RequestMethod.POST)
+    @ApiOperation(value = "manager", notes = "教师管理")
+    @RequestMapping(value = "/manager", method = RequestMethod.POST)
     public Boolean newTeacher(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
                               @RequestBody @Validated TeacherReqDto dto, BindingResult bindingResult) {
         ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
-        return teacherService.newTeacher(logInUser, dto);
-    }
-
-    @ApiOperation(value = "edit", notes = "修改老师")
-    @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public Boolean editTeacher(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
-                               @RequestBody @Validated TeacherReqDto dto, BindingResult bindingResult) {
-        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
-        return teacherService.editTeacher(logInUser, dto);
+        return teacherService.teacherManager(logInUser, dto);
     }
 
 
