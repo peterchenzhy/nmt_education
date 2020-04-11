@@ -5,15 +5,13 @@ import { tap, map } from 'rxjs/operators';
 import { STComponent, STColumn, STData, STChange } from '@delon/abc';
 import { FormGroup, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { COURSE_SUBJECT_LIST, GENDER_LIST, GRADE_LIST, getGenderLabel, getCourseSubjectLabel } from '@shared/constant/system.constant';
+import { GlobalService } from '@shared/service/global.service';
 
 @Component({
     selector: 'app-teacher-list',
     templateUrl: './teacher-list.component.html',
 })
 export class TeacherListComponent implements OnInit {
-    getGenderLabel = getGenderLabel;
-    getCourseSubjectLabel = getCourseSubjectLabel;
     q: any = {
         pi: 1,
         ps: 10,
@@ -25,9 +23,9 @@ export class TeacherListComponent implements OnInit {
     };
     data: any[] = [];
     loading = false;
-    courseSubjects = COURSE_SUBJECT_LIST;
-    genderList = GENDER_LIST;
-    gradeList = GRADE_LIST;
+    courseSubjects = this.globalService.COURSE_SUBJECT_LIST;
+    genderList = this.globalService.GENDER_LIST;
+    gradeList = this.globalService.GRADE_LIST;
     @ViewChild('st', { static: true })
     st: STComponent;
     columns: STColumn[] = [
@@ -57,6 +55,7 @@ export class TeacherListComponent implements OnInit {
     expandForm = false;
 
     constructor(
+        private globalService: GlobalService,
         private router: Router,
         private http: _HttpClient,
         public msg: NzMessageService,

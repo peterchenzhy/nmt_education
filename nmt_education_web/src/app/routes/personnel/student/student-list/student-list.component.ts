@@ -5,42 +5,38 @@ import { tap, map } from 'rxjs/operators';
 import { STComponent, STColumn, STData, STChange } from '@delon/abc';
 import { FormGroup, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { GENDER_LIST, getGenderLabel } from '@shared/constant/system.constant';
 import { Student } from 'src/app/model/student.model';
-import {Buffer} from 'buffer';
+import { Buffer } from 'buffer';
+import { GlobalService } from '@shared/service/global.service';
+import { ResponseData, StudentQueryParam } from 'src/app/model/system.model';
+import { StudentService } from '@shared/service/student.service';
 
 @Component({
     selector: 'app-student-list',
     templateUrl: './student-list.component.html',
 })
 export class StudentListComponent implements OnInit {
-    getGenderLabel = getGenderLabel;
-    q: any = {
-        pi: 1,
-        ps: 10,
-        sorter: '',
-        phone: '',
-        status: null,
-        name: '',
-        startDate: '',
-    };
-    data: Student[] = [];
     loading = false;
-    genderList = GENDER_LIST;
+    pager = {
+        front: false
+    };
+    queryParam: StudentQueryParam = { pageNo: 1, pageSize: 10 };
+    data: ResponseData = { list: [], total: 0 };
+    genderList = this.globalService.GENDER_LIST;
     @ViewChild('st', { static: true })
     st: STComponent;
     columns: STColumn[] = [
-        { title: '', index: 'key', type: 'checkbox' },
-        { title: '学生编号', index: 'code' },
+        { title: '', index: 'id', type: 'checkbox' },
+        { title: '学生编号', index: 'studentCode' },
         { title: '姓名', index: 'name' },
-        { title: '性别', index: 'gender', render: "genderRender" },
+        { title: '性别', index: 'sex', render: "genderRender" },
         { title: '联系电话', index: 'phone' },
         {
             title: '操作',
             buttons: [
                 {
                     text: '编辑',
-                    click: (item: any) => this.router.navigate([`/personnel/student/view/${item.studentNo}`])
+                    click: (item: any) => this.router.navigate([`/personnel/student/edit/${item.id}`,{msg:"ss"}])
                 },
                 {
                     text: '报名',
@@ -51,11 +47,11 @@ export class StudentListComponent implements OnInit {
         },
     ];
     selectedRows: STData[] = [];
-    description = '';
-    totalCallNo = 0;
     expandForm = false;
 
     constructor(
+        private globalService: GlobalService,
+        private studentService: StudentService,
         private router: Router,
         private http: _HttpClient,
         public msg: NzMessageService,
@@ -64,27 +60,21 @@ export class StudentListComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+        //this.getData();
+    }
+    startQueryData() {
+        this.queryParam.pageNo = 1;
         this.getData();
     }
-
     getData() {
         this.loading = true;
-        //this.q.statusList = this.status.filter(w => w.checked).map(item => item.index);
-        // if (this.q.status !== null && this.q.status > -1) {
-        //     this.q.statusList.push(this.q.status);
-        // }
-        this.http
-            .get('/student', this.q)
+        this.studentService.queryStudents(this.queryParam)
             .pipe(
-                map((list: any[]) =>
-                    list.map(i => {
-                        return i;
-                    }),
-                ),
                 tap(() => (this.loading = false)),
             )
-            .subscribe(res => {
+            .subscribe((res: ResponseData) => {
                 this.data = res;
+                this.data.list=this.data.list==null?[]:this.data.list;
                 this.cdr.detectChanges();
             });
     }
@@ -93,13 +83,14 @@ export class StudentListComponent implements OnInit {
         switch (e.type) {
             case 'checkbox':
                 this.selectedRows = e.checkbox!;
-                this.totalCallNo = this.selectedRows.reduce((total, cv) => total + cv.callNo, 0);
                 this.cdr.detectChanges();
                 break;
-            case 'filter':
+            case 'pi':
+                this.queryParam.pageNo = e.pi;
                 this.getData();
                 break;
         }
+
     }
 
     remove() {
@@ -109,23 +100,15 @@ export class StudentListComponent implements OnInit {
         });
     }
 
-    approval() {
-        this.msg.success(`审批了 ${this.selectedRows.length} 笔`);
-    }
-
-    add(tpl: TemplateRef<{}>) {
-        this.modalSrv.create({
-            nzTitle: '新建规则',
-            nzContent: tpl,
-            nzOnOk: () => {
-                this.loading = true;
-                this.http.post('/course', { description: this.description }).subscribe(() => this.getData());
-            },
-        });
+    addNewStudent() {
+        this.router.navigate([`/personnel/student/edit/create`]);
     }
 
     reset() {
         // wait form reset updated finished
+        this.queryParam.name = "";
+        this.queryParam.phone = "";
+        this.queryParam.pageNo = 1;
         setTimeout(() => this.getData());
     }
 }

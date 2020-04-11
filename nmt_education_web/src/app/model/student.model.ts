@@ -1,15 +1,23 @@
 import { GENDER, RELATIONSHIP } from '@shared/constant/system.constant';
 
 export interface Student {
-    code?: string;
+    id?: string;
+    studentCode?: string;
     name?: string;
-    gender?: GENDER;
+    sex?: GENDER;
     phone?: string;
+    grade?: number;
     school?: string;
     birthday?: Date;
     remark?: string;
     campus?: number;
-    parents?: Parent[];
+    contractList?: Parent[];
+    status?: number;
+    createTime?: Date;
+    creator?: number;
+    operateTime?: Date;
+    operator?: number;
+    deleteFlg?: boolean;
 }
 
 export interface Parent {

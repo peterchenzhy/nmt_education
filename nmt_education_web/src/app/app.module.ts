@@ -27,7 +27,7 @@ const LANG_PROVIDES = [
 
 // #region JSON Schema form (using @delon/form)
 import { JsonSchemaModule } from '@shared/json-schema/json-schema.module';
-const FORM_MODULES = [ JsonSchemaModule ];
+const FORM_MODULES = [JsonSchemaModule];
 // #endregion
 
 
@@ -36,8 +36,8 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { SimpleInterceptor } from '@delon/auth';
 import { DefaultInterceptor } from '@core/net/default.interceptor';
 const INTERCEPTOR_PROVIDES = [
-  { provide: HTTP_INTERCEPTORS, useClass: SimpleInterceptor, multi: true},
-  { provide: HTTP_INTERCEPTORS, useClass: DefaultInterceptor, multi: true}
+  { provide: HTTP_INTERCEPTORS, useClass: SimpleInterceptor, multi: true },
+  { provide: HTTP_INTERCEPTORS, useClass: DefaultInterceptor, multi: true }
 ];
 // #endregion
 
@@ -68,6 +68,7 @@ import { SharedModule } from './shared/shared.module';
 import { AppComponent } from './app.component';
 import { RoutesModule } from './routes/routes.module';
 import { LayoutModule } from './layout/layout.module';
+import { ServiceModule } from '@shared/service/service.module';
 
 @NgModule({
   declarations: [
@@ -82,6 +83,7 @@ import { LayoutModule } from './layout/layout.module';
     SharedModule,
     LayoutModule,
     RoutesModule,
+    ServiceModule,
     ...FORM_MODULES,
     ...GLOBAL_THIRD_MODULES
   ],

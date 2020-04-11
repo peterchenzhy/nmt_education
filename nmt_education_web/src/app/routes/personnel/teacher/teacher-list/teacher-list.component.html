@@ -84,10 +84,10 @@
   </div>
   <st #st [columns]="columns" [data]="data" [loading]="loading" (change)="stChange($event)">
     <ng-template st-row="genderRender" let-i>
-      <span>{{getGenderLabel(i.gender)}}</span>
+      <span>{{globalService.getGenderLabel(i.gender)}}</span>
     </ng-template>
     <ng-template st-row="subjectRender" let-i>
-      <span>{{getCourseSubjectLabel(i.courseSubject)}}</span>
+      <span>{{globalService.getCourseSubjectLabel(i.courseSubject)}}</span>
     </ng-template>
   </st>
 </nz-card>

@@ -10,7 +10,9 @@ const routes: Routes = [
         path: 'student',
         children: [
             { path: 'list', component: StudentListComponent },
-            { path: 'view/:code', component: StudentViewComponent, data: { title: '学生信息' } }
+            { path: 'view/:id', component: StudentViewComponent, data: { title: '学生信息' } },
+            { path: 'edit/:id', component: StudentViewComponent, data: { title: '学生信息编辑' } },
+            { path: 'create', component: StudentViewComponent, data: { title: '学生信息创建' } }
         ]
     },
     {

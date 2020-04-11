@@ -1,4 +1,4 @@
-import { GENDER, COURSE_STATUS, COURSE_SUBJECT, COURSE_TYPE, GRADE } from '@shared/constant/system.constant';
+import { GENDER, COURSE_STATUS, COURSE_TYPE } from '@shared/constant/system.constant';
 
 export interface Teacher {
     code?: string;
@@ -11,8 +11,8 @@ export interface Teacher {
 
 export interface CourseSalary {
     id?: string;
-    grade?: GRADE;
-    courseSubject?: COURSE_SUBJECT;
+    grade?: number;
+    courseSubject?: number;
     courseType?: COURSE_TYPE;
     salary?: number;
 }

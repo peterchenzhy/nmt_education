@@ -1,20 +1,20 @@
-import { Status } from './system.model';
-import { COURSE_STATUS, COURSE_SUBJECT, GRADE, COURSE_TYPE, FEE_TYPE, CAMPUS, SEASON } from '@shared/constant/system.constant';
+import { SysEnum } from './system.model';
+import { COURSE_STATUS, COURSE_TYPE } from '@shared/constant/system.constant';
 import { Teacher } from './teacher.model';
 
 export interface Course {
     code?: string;
     name?: string;
     year?: number;
-    season?: SEASON;
+    season?: number;
     startDate?: Date;
-    grade?: GRADE;
-    subject?: COURSE_SUBJECT;
+    grade?: number;
+    subject?: number;
     type?: COURSE_TYPE;
     status?: COURSE_STATUS;
-    statusDetail?: Status;
+    statusDetail?: SysEnum;
     assistant?: Teacher;
-    campus?: CAMPUS;
+    campus?: number;
     classroom?: Classroom;
     feeList?: CourseFee[];
     sessionList?: CourseSession[];
@@ -31,7 +31,7 @@ export interface CourseSession {
 
 export interface CourseFee {
     code?: string;
-    type?: FEE_TYPE;
+    type?: number;
     price?: number;
 }
 

@@ -5,22 +5,20 @@ import { _HttpClient } from '@delon/theme';
 import { ActivatedRoute } from '@angular/router';
 import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { STColumn, STComponent } from '@delon/abc';
-import { GRADE_LIST, CAMPUS_LIST, COURSE_SUBJECT_LIST, COURSE_TYPE_LIST, getGradeLabel, getCourseTypeLabel, getCourseSubjectLabel } from '@shared/constant/system.constant';
 import { Teacher } from 'src/app/model/teacher.model';
+import { GlobalService } from '@shared/service/global.service';
 
 @Component({
     selector: 'app-teacher-view',
     templateUrl: './teacher-view.component.html',
 })
 export class TeacherViewComponent implements OnInit {
-    getGradeLabel = getGradeLabel;
-    getCourseTypeLabel = getCourseTypeLabel;
-    getCourseSubjectLabel = getCourseSubjectLabel;
     pageHeader: string;
     teacher: Teacher = {};
     @ViewChild('st', { static: true })
     st: STComponent;
     constructor(
+        private globalService: GlobalService,
         private fb: FormBuilder,
         private routerinfo: ActivatedRoute,
         public msgSrv: NzMessageService,
@@ -31,11 +29,11 @@ export class TeacherViewComponent implements OnInit {
     editIndex = -1;
     editObj = {};
     form: FormGroup;
-    courseTypeList = COURSE_TYPE_LIST;
-    courseSubjectList: any[] = COURSE_SUBJECT_LIST;
-    campusList: any[] = CAMPUS_LIST;
-    gradeList: any[] = GRADE_LIST;
-    classroomList: any[] = [{ value: '101', label: '101' }, { value: '202', label: '202' }, { value: '303', label: '303' }];
+    courseTypeList = this.globalService.COURSE_TYPE_LIST;
+    courseSubjectList = this.globalService.COURSE_SUBJECT_LIST;
+    campusList = this.globalService.CAMPUS_LIST;
+    gradeList = this.globalService.GRADE_LIST;
+    classroomList = [{ value: '101', label: '101' }, { value: '202', label: '202' }, { value: '303', label: '303' }];
     coursesColumns: STColumn[] = [
         { title: '名称', index: 'courseName' },
         { title: '校区', index: 'campus' },

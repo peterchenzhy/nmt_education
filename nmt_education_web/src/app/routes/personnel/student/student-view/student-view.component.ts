@@ -1,38 +1,42 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { NzModalRef } from 'ng-zorro-antd/modal';
+import { Location } from '@angular/common';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { _HttpClient } from '@delon/theme';
 import { ActivatedRoute } from '@angular/router';
 import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { STColumn, STComponent } from '@delon/abc';
 import { Student } from 'src/app/model/student.model';
-import { COURSE_STATUS_LIST, ORDER_STATUS_LIST, RELATIONSHIP_LIST, GRADE_LIST, CAMPUS_LIST } from '@shared/constant/system.constant';
+import { GlobalService } from '@shared/service/global.service';
+import { StudentService } from '@shared/service/student.service';
 
 @Component({
     selector: 'app-student-view',
     templateUrl: './student-view.component.html',
 })
 export class StudentViewComponent implements OnInit {
-    pageHeader: string;
+    pageHeader: string = "学生信息编辑";
     student: Student = {};
-    @ViewChild('st', { static: true })
-    st: STComponent;
-    constructor(
-        private fb: FormBuilder,
-        private routerinfo: ActivatedRoute,
-        public msgSrv: NzMessageService,
-        public http: _HttpClient
-    ) {
-    }
-
     editIndex = -1;
     editObj = {};
     form: FormGroup;
-    courseStatus = COURSE_STATUS_LIST;
-    orderStatus: any[] = ORDER_STATUS_LIST;
-    relationships: any[] = RELATIONSHIP_LIST;
-    campusList: any[] = CAMPUS_LIST;
-    gradeList: any[] = GRADE_LIST;
+    @ViewChild('st', { static: true })
+    st: STComponent;
+    constructor(
+        private globalService: GlobalService,
+        private studentService: StudentService,
+        private fb: FormBuilder,
+        private routerinfo: ActivatedRoute,
+        public msgSrv: NzMessageService,
+        public http: _HttpClient,
+        private _location: Location
+    ) {
+    }
+    courseStatus = this.globalService.COURSE_STATUS_LIST;
+    orderStatus: any[] = this.globalService.ORDER_STATUS_LIST;
+    relationships: any[] = this.globalService.RELATIONSHIP_LIST;
+    campusList: any[] = this.globalService.CAMPUS_LIST;
+    gradeList: any[] = this.globalService.GRADE_LIST;
     classroomList: any[] = [{ value: '101', label: '101' }, { value: '202', label: '202' }, { value: '303', label: '303' }];
     coursesColumns: STColumn[] = [
         { title: '订单编号', index: 'orderNo', type: 'link' },
@@ -62,38 +66,50 @@ export class StudentViewComponent implements OnInit {
             ],
         },
     ];
-    courses = [{ orderNo: 'order111', courseName: 'course111', campus: "二工大", courseStatus: 1, courseStatusText: "开课中", courseStatusType: "processing", orderStatus: "0", orderStatusText: "续费", orderStatusType: "purple" },
-    { orderNo: 'order222', courseName: 'course222', campus: "二工大", courseStatus: 1, courseStatusText: "开课中", courseStatusType: "processing", orderStatus: "2", orderStatusText: "冻结", orderStatusType: "error" },
-    { orderNo: 'order333', courseName: 'course333', campus: "二工大", courseStatus: 2, courseStatusText: "已结课", courseStatusType: "success", orderStatus: "1", orderStatusText: "完成", orderStatusType: "success" }];
-
+    // courses = [{ orderNo: 'order111', courseName: 'course111', campus: "二工大", courseStatus: 1, courseStatusText: "开课中", courseStatusType: "processing", orderStatus: "0", orderStatusText: "续费", orderStatusType: "purple" },
+    // { orderNo: 'order222', courseName: 'course222', campus: "二工大", courseStatus: 1, courseStatusText: "开课中", courseStatusType: "processing", orderStatus: "2", orderStatusText: "冻结", orderStatusType: "error" },
+    // { orderNo: 'order333', courseName: 'course333', campus: "二工大", courseStatus: 2, courseStatusText: "已结课", courseStatusType: "success", orderStatus: "1", orderStatusText: "完成", orderStatusType: "success" }];
+    courses = [];
     ngOnInit() {
-        this.student.code = this.routerinfo.snapshot.params['code'];
-        this.http.get(`/student/${this.student.code}`).subscribe(res => { this.student = res; this.form.patchValue(res); });
-        this.pageHeader = `学生信息编辑 [${this.student.code}]`;
+        let id = this.routerinfo.snapshot.params['id'];
         this.form = this.fb.group({
-            studentName: [null, [Validators.required]],
-            gender: [null, []],
-            phone: [null, []],
+            id: [null, []],
+            name: [null, [Validators.required]],
+            sex: [null, []],
+            grade: [null, [Validators.required]],
+            school: [null, []],
+            birthday: [null, []],
+            campus: [null, [Validators.required]],
+            remark: [null, []],
+            phone: [null, [Validators.required]],
+            deleteFlg: [false, []],
             parents: this.fb.array([])
         });
-        const parentsList = [
-            {
-                key: '1',
-                relation: '父亲',
-                name: 'Father',
-                phone: '130********'
-            },
-            {
-                key: '2',
-                relation: '母亲',
-                name: 'Mother',
-                phone: '131********'
-            }];
-        parentsList.forEach(i => {
-            const field = this.createParent();
-            field.patchValue(i);
-            this.parents.push(field);
-        });
+        if (!id || id.toUpperCase() == "CREATE") {
+            this.form.patchValue(this.student);
+            return;
+        }
+        this.pageHeader = `学生信息编辑 [${id}]`;
+        this.http.get(`/student/${id}`).subscribe(res => { this.student = res; this.form.patchValue(res); });
+
+        // const parentsList = [
+        //     {
+        //         key: '1',
+        //         relation: '父亲',
+        //         name: 'Father',
+        //         phone: '130********'
+        //     },
+        //     {
+        //         key: '2',
+        //         relation: '母亲',
+        //         name: 'Mother',
+        //         phone: '131********'
+        //     }];
+        // parentsList.forEach(i => {
+        //     const field = this.createParent();
+        //     field.patchValue(i);
+        //     this.parents.push(field);
+        // });
     }
 
     createParent(): FormGroup {
@@ -106,15 +122,15 @@ export class StudentViewComponent implements OnInit {
     }
 
     //#region get form fields
-    get studentName() {
-        return this.form.controls.studentName;
-    }
-    get gender() {
-        return this.form.controls.gender;
-    }
-    get phone() {
-        return this.form.controls.phone;
-    }
+    // get studentName() {
+    //     return this.form.controls.name;
+    // }
+    // get gender() {
+    //     return this.form.controls.sex;
+    // }
+    // get phone() {
+    //     return this.form.controls.phone;
+    // }
 
     get parents() {
         return this.form.controls.parents as FormArray;
@@ -159,6 +175,13 @@ export class StudentViewComponent implements OnInit {
             this.form.controls[key].updateValueAndValidity();
         });
         if (this.form.invalid) return;
+
+        this.studentService.addStudent(this.form.value).subscribe((res) => {
+            this.goBack();
+        });
     }
 
+    goBack(){
+        this._location.back();
+    }
 }
