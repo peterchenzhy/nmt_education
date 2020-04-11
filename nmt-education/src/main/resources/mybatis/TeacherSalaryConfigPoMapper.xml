@@ -4,7 +4,7 @@
     <resultMap id="BaseResultMap" type="com.nmt.education.pojo.po.TeacherSalaryConfigPo">
         <!--@mbg.generated-->
         <!--@Table teacher_salary_config-->
-        <id column="id" jdbcType="INTEGER" property="id"/>
+        <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="teacher_id" jdbcType="BIGINT" property="teacherId"/>
         <result column="grade" jdbcType="INTEGER" property="grade"/>
         <result column="course_subject" jdbcType="INTEGER" property="courseSubject"/>
@@ -27,12 +27,12 @@
         select
         <include refid="Base_Column_List"/>
         from teacher_salary_config
-        where id = #{id,jdbcType=INTEGER}
+        where id = #{id}
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         <!--@mbg.generated-->
         delete from teacher_salary_config
-        where id = #{id,jdbcType=INTEGER}
+        where id = #{id}
     </delete>
     <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.TeacherSalaryConfigPo" useGeneratedKeys="true">
         <!--@mbg.generated-->
@@ -171,7 +171,7 @@
                 operate_time = #{operateTime,jdbcType=TIMESTAMP},
             </if>
         </set>
-        where id = #{id,jdbcType=INTEGER}
+        where id = #{id}
     </update>
     <update id="updateByPrimaryKey" parameterType="com.nmt.education.pojo.po.TeacherSalaryConfigPo">
         <!--@mbg.generated-->
@@ -187,7 +187,7 @@
         create_time = #{createTime,jdbcType=TIMESTAMP},
         `operator` = #{operator,jdbcType=INTEGER},
         operate_time = #{operateTime,jdbcType=TIMESTAMP}
-        where id = #{id,jdbcType=INTEGER}
+        where id = #{id}
     </update>
     <update id="invalidBatchByids">
         update teacher_salary_config
@@ -197,4 +197,12 @@
             #{id}
         </foreach>
     </update>
+    <select id="selectByTeacherId" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from teacher_salary_config
+        where status = 1 and
+        teacher_id = #{teacherId}
+    </select>
 </mapper>

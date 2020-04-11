@@ -34,7 +34,7 @@ public class TeacherService {
     private TeacherSalaryConfigService teacherSalaryConfigService;
     @Autowired
     @Lazy
-    private TeacherService self ;
+    private TeacherService self;
     @Resource
     private TeacherPoMapper teacherPoMapper;
 
@@ -199,14 +199,28 @@ public class TeacherService {
         return Collections.emptyList();
     }
 
+
     private TeacherVo po2vo(TeacherPo e) {
         TeacherVo vo = new TeacherVo();
         BeanUtils.copyProperties(e, vo);
+        //todo 老师的价格如果是敏感数据，那么这边需要做权限控制或者
+        vo.setTeacherSalaryConfigPoList(teacherSalaryConfigService.selectByTeacherId(vo.getId()));
         return vo;
     }
 
-    //老师分页搜索
-    public PageInfo<TeacherVo> search(Integer logInUser, TeacherSearchReqDto dto) {
+    /**
+     * 老师分页搜索
+     *
+     * @param loginUser
+     * @param dto
+     * @return com.github.pagehelper.PageInfo<com.nmt.education.pojo.vo.TeacherVo>
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @summary
+     * @since 2020/4/11 22:50
+     */
+    public PageInfo<TeacherVo> search(Integer loginUser, TeacherSearchReqDto dto) {
         PageInfo<TeacherPo> pageInfo;
         if (StringUtils.hasLength(dto.getPhone())) {
             pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSzie()).doSelectPageInfo(() -> this.queryByPhone(dto.getPhone()));
@@ -221,7 +235,7 @@ public class TeacherService {
             return new PageInfo<>();
         }
         List<TeacherVo> voList = new ArrayList<>(pageInfo.getList().size());
-        pageInfo.getList().stream().forEach(e -> voList.add(po2vo(e)));
+        pageInfo.getList().forEach(e -> voList.add(po2vo(e)));
         PageInfo voPage = new PageInfo();
         BeanUtils.copyProperties(pageInfo, voPage);
         voPage.setList(voList);

@@ -24,4 +24,6 @@ public interface TeacherSalaryConfigPoMapper {
     void batchInsert(@Param("list") List<TeacherSalaryConfigPo> salaryConfigPoList);
 
     void invalidBatchByids(@Param("ids") List<Long> ids, @Param("operator") Integer operator, @Param("date") Date date);
+
+    List<TeacherSalaryConfigPo> selectByTeacherId(@Param("teacherId") Long teacherId);
 }

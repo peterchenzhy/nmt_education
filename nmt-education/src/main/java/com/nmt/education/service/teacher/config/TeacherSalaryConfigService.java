@@ -4,18 +4,17 @@ import com.nmt.education.commmons.Enums;
 import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.pojo.dto.req.TeacherSalaryConfigReqDto;
 import com.nmt.education.pojo.po.TeacherSalaryConfigPo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class TeacherSalaryConfigService {
 
     @Resource
@@ -148,4 +147,21 @@ public class TeacherSalaryConfigService {
     }
 
 
+    /**
+     * 根据老师id 获取价格信息
+     *
+     * @param teacherId
+     * @return java.util.List<com.nmt.education.pojo.po.TeacherSalaryConfigPo>
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/4/11 22:57
+     */
+    public List<TeacherSalaryConfigPo> selectByTeacherId(Long teacherId) {
+        if(Objects.isNull(teacherId)){
+            log.error("selectByTeacherId param--teacherId 为空");
+            return Collections.EMPTY_LIST;
+        }
+        return this.teacherSalaryConfigPoMapper.selectByTeacherId(teacherId);
+    }
 }
