@@ -2,12 +2,10 @@ package com.nmt.education.service.student;
 
 import com.nmt.education.pojo.po.StudentPo;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
-/**
- * @Author: PeterChen
- * @Date: 2020/3/19 0:29
- * @Version 1.0
- */
+import java.util.List;
+
 @Mapper
 public interface StudentPoMapper {
     int deleteByPrimaryKey(Long id);
@@ -20,5 +18,8 @@ public interface StudentPoMapper {
 
     int updateByPrimaryKeySelective(StudentPo record);
 
-    int updateByPrimaryKey(StudentPo record);
+
+    List<StudentPo> queryFuzzy(@Param("name") String name);
+
+    List<StudentPo> query(@Param("phone") String phone);
 }

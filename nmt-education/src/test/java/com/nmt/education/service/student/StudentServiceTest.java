@@ -2,11 +2,9 @@ package com.nmt.education.service.student;
 
 import com.alibaba.fastjson.JSON;
 import com.nmt.education.BaseTest;
+import com.nmt.education.pojo.dto.req.StudentReqDto;
 import com.nmt.education.pojo.po.StudentPo;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
@@ -21,6 +19,8 @@ class StudentServiceTest extends BaseTest {
 
     @Autowired
     private StudentService studentService;
+
+    int loginUser = 1000336 ;
 
     @Test
     @Order(0)
@@ -46,5 +46,34 @@ class StudentServiceTest extends BaseTest {
     @Order(1)
     void selectByPrimaryKey() {
         System.out.println(JSON.toJSONString(studentService.selectByPrimaryKey(1L)));
+    }
+
+    @Test
+    void newStudent() {
+        StudentReqDto req = new StudentReqDto();
+        req.setName("peter");
+        req.setBirthday(null);
+        req.setSchool("大兴小学");
+        req.setGrade(2);
+        req.setCampus(1);
+        req.setPhone("13774403");
+        req.setSex(1);
+        req.setRemark(null);
+        this.studentService.newStudent(loginUser,req);
+    }
+
+    @Test
+    void editStudent() {
+        StudentReqDto dto = new StudentReqDto();
+        dto.setId(1L);
+        dto.setName("HULU");
+        dto.setBirthday(new Date());
+        dto.setSchool("waterluu");
+        dto.setGrade(5);
+        dto.setCampus(1);
+        dto.setPhone("133434");
+        dto.setSex(1);
+        dto.setRemark("remark");
+        System.out.println( studentService.editStudent(loginUser,dto) );
     }
 }

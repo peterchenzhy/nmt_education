@@ -13,9 +13,8 @@ server:
     accesslog:
       enabled: true
   servlet:
-    context-path: /nmt-education-server
-  port: 8110
-
+    context-path: /nmt-education
+  port: 8998
 
 #mybatis
 mybatis:
@@ -45,3 +44,6 @@ mybatis:
     callSettersOnNulls: true
     ####<!-- 打印sql语句 -->
     logPrefix: dao
+
+#日志配置
+logging.level.com.nmt.education.service: debug

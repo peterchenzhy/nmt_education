@@ -1,16 +1,15 @@
 package com.nmt.education.pojo.po;
 
 import io.swagger.annotations.ApiModelProperty;
+import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.Date;
-
 @Getter
 @Setter
 @ToString
-public class StudentPo {
+public class TeacherPo {
     /**
      * 主键id
      */
@@ -18,15 +17,9 @@ public class StudentPo {
     private Long id;
 
     /**
-     * 学生编码
+     * 老师姓名
      */
-    @ApiModelProperty(value = "学生编码")
-    private String studentCode;
-
-    /**
-     * 学生姓名
-     */
-    @ApiModelProperty(value = "学生姓名")
+    @ApiModelProperty(value = "老师姓名")
     private String name;
 
     /**
@@ -36,46 +29,33 @@ public class StudentPo {
     private Date birthday;
 
     /**
-     * 学校
-     */
-    @ApiModelProperty(value = "学校")
-    private String school;
-
-    /**
-     * 年级 小学初中1-9 高中10-12
-     */
-    @ApiModelProperty(value = "年级 小学初中1-9 高中10-12 ")
-    private Integer grade;
-
-    /**
-     * 联系人1电话
-     */
-    @ApiModelProperty(value = "联系人1电话,")
-    private String phone;
-
-    /**
      * 性别
      */
     @ApiModelProperty(value = "性别")
-    private Integer sex;
+    private Boolean sex;
+    /**
+     * 电话
+     */
+    @ApiModelProperty(value = "电话")
+    private String phone;
 
     /**
-     * 所在校区
+     * 任职学校
      */
-    @ApiModelProperty(value = "所在校区")
-    private Integer campus;
-
-    /**
-     * 备注
-     */
-    @ApiModelProperty(value = "备注")
-    private String remark;
+    @ApiModelProperty(value = "任职学校")
+    private String school;
 
     /**
      * 有效：1 无效：0
      */
     @ApiModelProperty(value = "有效：1 无效：0")
     private Integer status;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(value = "备注")
+    private String remark;
 
     /**
      * 创建人

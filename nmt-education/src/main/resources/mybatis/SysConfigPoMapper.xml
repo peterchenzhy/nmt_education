@@ -29,6 +29,21 @@
     from sys_config
     where id = #{id,jdbcType=BIGINT}
   </select>
+  <select id="getAllConfigs" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sys_config
+    where status = 1
+  </select>
+  <select id="queryByTypeValue" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sys_config
+    where status = 1
+    and type = #{type}
+    and value = #{value}
+  </select>
+
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.SysConfigPo" useGeneratedKeys="true">
     <!--@mbg.generated-->
     insert into sys_config
