@@ -32,15 +32,6 @@
     from student
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <select id="queryLike" resultMap="BaseResultMap">
-    <!--@mbg.generated-->
-    select
-    <include refid="Base_Column_List" />
-    from student
-    where status = 1
-    and name like concat(#{name},'%')
-      order by id desc limit 1
-  </select>
   <select id="queryFuzzy" resultMap="BaseResultMap">
     <!--@mbg.generated-->
     select
@@ -60,6 +51,12 @@
       and phone = #{phone}
     </if>
   </select>
+  <update id="invalidByPrimaryKey">
+    update student
+    set status = 0,operate_time =now(),operator = #{operator}
+    where id = #{id}
+
+  </update>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     <!--@mbg.generated-->
     delete from student

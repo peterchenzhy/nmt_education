@@ -223,12 +223,12 @@ public class TeacherService {
     public PageInfo<TeacherVo> search(Integer loginUser, TeacherSearchReqDto dto) {
         PageInfo<TeacherPo> pageInfo;
         if (StringUtils.hasLength(dto.getPhone())) {
-            pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSzie()).doSelectPageInfo(() -> this.queryByPhone(dto.getPhone()));
+            pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.queryByPhone(dto.getPhone()));
         } else {
             if (StringUtils.hasLength(dto.getName())) {
-                pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSzie()).doSelectPageInfo(() -> this.teacherPoMapper.queryFuzzy(dto.getName()));
+                pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.teacherPoMapper.queryFuzzy(dto.getName()));
             } else {
-                pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSzie()).doSelectPageInfo(() -> this.queryByPhone(null));
+                pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.queryByPhone(null));
             }
         }
         if (CollectionUtils.isEmpty(pageInfo.getList())) {

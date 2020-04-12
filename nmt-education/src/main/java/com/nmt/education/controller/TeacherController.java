@@ -55,7 +55,7 @@ public class TeacherController {
 
     @ApiOperation(value = "search", notes = "搜索老师")
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public PageInfo<TeacherVo> searchStudent(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
+    public PageInfo<TeacherVo> searchTeacher(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
                                              @RequestBody @Validated TeacherSearchReqDto dto, BindingResult bindingResult) {
         ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
         return teacherService.search(logInUser, dto);

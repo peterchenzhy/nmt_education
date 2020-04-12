@@ -2,14 +2,17 @@ package com.nmt.education.service.student;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.nmt.education.commmons.Enums;
 import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.pojo.dto.req.StudentReqDto;
 import com.nmt.education.pojo.dto.req.StudentSearchReqDto;
 import com.nmt.education.pojo.po.StudentPo;
 import com.nmt.education.pojo.vo.StudentVo;
 import com.nmt.education.service.CodeService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -24,6 +27,7 @@ import java.util.*;
  * @Version 1.0
  */
 @Service
+@Slf4j
 public class StudentService {
 
     @Resource
@@ -31,6 +35,45 @@ public class StudentService {
 
     @Autowired
     private CodeService codeService;
+
+    @Autowired
+    @Lazy
+    private StudentService self;
+
+
+    public Boolean studentManager(Integer operator, StudentReqDto dto) {
+        Enums.EditFlag editFlag = Enums.EditFlag.codeOf(dto.getEditFlag());
+        switch (editFlag) {
+            case 新增:
+                self.newStudent(operator, dto);
+                break;
+            case 修改:
+                self.editStudent(operator, dto);
+                break;
+            case 需要删除:
+                self.delStudent(operator, dto);
+                break;
+            default:
+                log.error("请求数据不合规，无法辨认editFlag！" + dto);
+                break;
+        }
+
+        return true;
+    }
+
+    private void delStudent(Integer operator, StudentReqDto dto) {
+        invalidByPrimaryKey(operator,dto.getId());
+    }
+
+    private void invalidByPrimaryKey(Integer operator, Long id) {
+        if(Objects.isNull(id)){
+            log.error("invalidByPrimaryKey id is null");
+            return ;
+        }
+        this.studentPoMapper.invalidByPrimaryKey(operator,id);
+        
+    }
+
 
     /**
      * 新增学生
@@ -43,7 +86,7 @@ public class StudentService {
      * @summary 新增学生
      * @since 2020/3/31 22:18
      */
-    public Boolean newStudent(Integer logInUser, StudentReqDto studentReqDto) {
+    public Boolean newStudent(Integer operator, StudentReqDto studentReqDto) {
         StudentPo studentPo = new StudentPo();
         studentPo.setStudentCode(codeService.generateNewStudentCode(studentReqDto.getCampus()));
         studentPo.setName(studentReqDto.getName());
@@ -55,9 +98,9 @@ public class StudentService {
         studentPo.setCampus(studentReqDto.getCampus());
         studentPo.setRemark(studentReqDto.getRemark());
         studentPo.setStatus(StatusEnum.VALID.getCode());
-        studentPo.setCreator(logInUser);
+        studentPo.setCreator(operator);
         studentPo.setCreateTime(new Date());
-        studentPo.setOperator(logInUser);
+        studentPo.setOperator(operator);
         studentPo.setOperateTime(new Date());
         return this.insertSelective(studentPo) > 0;
     }
@@ -66,7 +109,7 @@ public class StudentService {
     /**
      * 编辑学生
      *
-     * @param logInUser
+     * @param operator
      * @param dto
      * @return java.lang.Boolean
      * @author PeterChen
@@ -74,7 +117,7 @@ public class StudentService {
      * @version v1
      * @since 2020/4/5 19:59
      */
-    public Boolean editStudent(Integer logInUser, StudentReqDto dto) {
+    public Boolean editStudent(Integer operator, StudentReqDto dto) {
         Assert.notNull(dto.getId(),"编辑学生缺少id");
         StudentPo studentPo = selectByPrimaryKey(dto.getId());
         Assert.notNull(studentPo,"学生信息不存在"+dto.getId());
@@ -86,7 +129,7 @@ public class StudentService {
         studentPo.setSex(dto.getSex());
         studentPo.setCampus(dto.getCampus());
         studentPo.setRemark(dto.getRemark());
-        studentPo.setOperator(logInUser);
+        studentPo.setOperator(operator);
         studentPo.setOperateTime(new Date());
         return this.updateByPrimaryKeySelective(studentPo)>0 ;
     }
@@ -94,7 +137,7 @@ public class StudentService {
     /**
      * 搜索 学生
      *
-     * @param logInUser
+     * @param operator
      * @param dto
      * @return com.nmt.education.pojo.vo.StudentVo
      * @author PeterChen
@@ -102,15 +145,15 @@ public class StudentService {
      * @version v1
      * @since 2020/4/4 9:05
      */
-    public PageInfo<StudentVo> search(Integer logInUser, StudentSearchReqDto dto) {
+    public PageInfo<StudentVo> search(Integer operator, StudentSearchReqDto dto) {
         PageInfo<StudentPo> pageInfo;
         if (StringUtils.hasLength(dto.getPhone())) {
-            pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSzie()).doSelectPageInfo(() -> this.queryByPhone(dto.getPhone()));
+            pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.queryByPhone(dto.getPhone()));
         } else {
             if (StringUtils.hasLength(dto.getName())) {
-                pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSzie()).doSelectPageInfo(() -> this.searchFuzzy(dto.getName()));
+                pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.searchFuzzy(dto.getName()));
             } else {
-                pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSzie()).doSelectPageInfo(() -> this.queryByPhone(null));
+                pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.queryByPhone(null));
             }
         }
         if (CollectionUtils.isEmpty(pageInfo.getList())) {
@@ -180,6 +223,7 @@ public class StudentService {
         BeanUtils.copyProperties(po, vo);
         return vo;
     }
+
 
 
 }

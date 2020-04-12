@@ -1,7 +1,6 @@
 package com.nmt.education.controller;
 
 import com.github.pagehelper.PageInfo;
-import com.nmt.education.commmons.Consts;
 import com.nmt.education.commmons.utils.ReqDtoCheckUtil;
 import com.nmt.education.pojo.dto.req.StudentReqDto;
 import com.nmt.education.pojo.dto.req.StudentSearchReqDto;
@@ -11,7 +10,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,28 +33,21 @@ import static com.nmt.education.commmons.Consts.ROLE_ID_HEAD;
 public class StudentController {
 
     @Autowired
-    StudentService studentService;
+    private StudentService studentService;
 
-    @ApiOperation(value = "new", notes = "新增学生")
-    @RequestMapping(value = "/new", method = RequestMethod.POST)
-    public Boolean newStudent(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
+    @ApiOperation(value = "manager", notes = "新增学生")
+    @RequestMapping(value = "/manager", method = RequestMethod.POST)
+    public Boolean studentManager(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
                               @RequestBody @Validated StudentReqDto dto, BindingResult bindingResult) {
         ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
-        return studentService.newStudent(logInUser, dto);
+        return studentService.studentManager(logInUser, dto);
     }
 
-    @ApiOperation(value = "edit", notes = "修改学生")
-    @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public Boolean editStudent(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
-                              @RequestBody @Validated StudentReqDto dto, BindingResult bindingResult) {
-        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
-        return studentService.editStudent(logInUser, dto);
-    }
 
     @ApiOperation(value = "search", notes = "搜索学生")
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public PageInfo<StudentVo> searchStudent(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
-                                            @RequestBody @Validated StudentSearchReqDto dto, BindingResult bindingResult) {
+                                             @RequestBody @Validated StudentSearchReqDto dto, BindingResult bindingResult) {
         ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
         return studentService.search(logInUser, dto);
     }

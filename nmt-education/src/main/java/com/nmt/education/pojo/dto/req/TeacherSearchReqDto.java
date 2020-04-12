@@ -31,7 +31,7 @@ public class TeacherSearchReqDto {
     private Integer pageNo = 0;
 
     @ApiModelProperty(value = "分页 每页数量")
-    private Integer pageSzie = 10;
+    private Integer pageSize = 10;
 
 
 }
