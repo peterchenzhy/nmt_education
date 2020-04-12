@@ -1,4 +1,4 @@
-import { GENDER, RELATIONSHIP } from '@shared/constant/system.constant';
+import { GENDER, RELATIONSHIP, EDIT_FLAG } from '@shared/constant/system.constant';
 
 export interface Student {
     id?: string;
@@ -17,7 +17,7 @@ export interface Student {
     creator?: number;
     operateTime?: Date;
     operator?: number;
-    deleteFlg?: boolean;
+    editFlag?: EDIT_FLAG; 
 }
 
 export interface Parent {

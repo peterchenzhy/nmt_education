@@ -10,6 +10,7 @@ import { Buffer } from 'buffer';
 import { GlobalService } from '@shared/service/global.service';
 import { ResponseData, StudentQueryParam } from 'src/app/model/system.model';
 import { StudentService } from '@shared/service/student.service';
+import { StudentViewComponent } from '../student-view/student-view.component';
 
 @Component({
     selector: 'app-student-list',
@@ -36,7 +37,7 @@ export class StudentListComponent implements OnInit {
             buttons: [
                 {
                     text: '编辑',
-                    click: (item: any) => this.router.navigate([`/personnel/student/edit/${item.id}`,{msg:"ss"}])
+                    click: (item: any) => this.router.navigate([`/personnel/student/edit/${item.id}`, { student: JSON.stringify({ ...item, _values: undefined }) }])
                 },
                 {
                     text: '报名',
@@ -74,7 +75,7 @@ export class StudentListComponent implements OnInit {
             )
             .subscribe((res: ResponseData) => {
                 this.data = res;
-                this.data.list=this.data.list==null?[]:this.data.list;
+                this.data.list = this.data.list == null ? [] : this.data.list;
                 this.cdr.detectChanges();
             });
     }

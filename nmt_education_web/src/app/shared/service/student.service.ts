@@ -20,8 +20,8 @@ export class StudentService {
         return this.httpClient.post('nmt-education/student/search', T);
     }
 
-    public addStudent(T: Student): Observable<Object> {
+    public saveStudent(T: Student): Observable<Object> {
 
-        return this.httpClient.post('nmt-education/student/new', T);
+        return this.httpClient.post('nmt-education/student/manager', T);
     }
 }

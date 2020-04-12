@@ -13,10 +13,12 @@
             <nz-col [nzXl]="{ span: 6, offset: 2 }" [nzLg]="{ span: 8 }" [nzMd]="{ span: 12 }" nzSm="24">
                 <nz-form-item>
                     <nz-form-label>性别</nz-form-label>
-                    <nz-radio-group formControlName="sex">
-                        <label nz-radio [nzValue]="1">男</label>
-                        <label nz-radio [nzValue]="0">女</label>
-                    </nz-radio-group>
+                    <nz-form-control nzErrorTip="请选择性别">
+                        <nz-radio-group formControlName="sex">
+                            <label nz-radio [nzValue]="1">男</label>
+                            <label nz-radio [nzValue]="0">女</label>
+                        </nz-radio-group>
+                    </nz-form-control>
                 </nz-form-item>
             </nz-col>
             <nz-col [nzXl]="{ span: 6, offset: 2 }" [nzLg]="{ span: 8 }" [nzMd]="{ span: 12 }" nzSm="24">

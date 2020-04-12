@@ -9,6 +9,7 @@ import { STColumn, STComponent } from '@delon/abc';
 import { Student } from 'src/app/model/student.model';
 import { GlobalService } from '@shared/service/global.service';
 import { StudentService } from '@shared/service/student.service';
+import { EDIT_FLAG } from '@shared/constant/system.constant';
 
 @Component({
     selector: 'app-student-view',
@@ -16,13 +17,14 @@ import { StudentService } from '@shared/service/student.service';
 })
 export class StudentViewComponent implements OnInit {
     pageHeader: string = "学生信息编辑";
-    student: Student = {};
+    student: Student = { editFlag: EDIT_FLAG.NEW };
     editIndex = -1;
     editObj = {};
     form: FormGroup;
     @ViewChild('st', { static: true })
     st: STComponent;
     constructor(
+        private activaterRouter: ActivatedRoute,
         private globalService: GlobalService,
         private studentService: StudentService,
         private fb: FormBuilder,
@@ -71,26 +73,26 @@ export class StudentViewComponent implements OnInit {
     // { orderNo: 'order333', courseName: 'course333', campus: "二工大", courseStatus: 2, courseStatusText: "已结课", courseStatusType: "success", orderStatus: "1", orderStatusText: "完成", orderStatusType: "success" }];
     courses = [];
     ngOnInit() {
-        let id = this.routerinfo.snapshot.params['id'];
         this.form = this.fb.group({
             id: [null, []],
             name: [null, [Validators.required]],
-            sex: [null, []],
+            sex: [null, [Validators.required]],
             grade: [null, [Validators.required]],
-            school: [null, []],
+            school: [null, [Validators.required]],
             birthday: [null, []],
             campus: [null, [Validators.required]],
             remark: [null, []],
             phone: [null, [Validators.required]],
-            deleteFlg: [false, []],
+            editFlag: [false, []],
             parents: this.fb.array([])
         });
-        if (!id || id.toUpperCase() == "CREATE") {
-            this.form.patchValue(this.student);
-            return;
+        let studentStr = this.activaterRouter.snapshot.params.student;
+        if (studentStr) {
+            this.student = JSON.parse(studentStr);
+            this.student.editFlag = EDIT_FLAG.UPDATE;
+            this.pageHeader = `学生信息编辑 [${this.student.studentCode}]`;
         }
-        this.pageHeader = `学生信息编辑 [${id}]`;
-        this.http.get(`/student/${id}`).subscribe(res => { this.student = res; this.form.patchValue(res); });
+        this.form.patchValue(this.student);
 
         // const parentsList = [
         //     {
@@ -176,12 +178,12 @@ export class StudentViewComponent implements OnInit {
         });
         if (this.form.invalid) return;
 
-        this.studentService.addStudent(this.form.value).subscribe((res) => {
+        this.studentService.saveStudent(this.form.value).subscribe((res) => {
             this.goBack();
         });
     }
 
-    goBack(){
+    goBack() {
         this._location.back();
     }
 }
