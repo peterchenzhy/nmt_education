@@ -107,8 +107,9 @@ public interface Enums {
         public static EditFlag codeOf(Integer code) {
             EditFlag result = null;
             for (EditFlag e : EditFlag.values()) {
-                e.getCode().equals(code);
-                return e;
+                if( e.getCode().equals(code)){
+                    return e;
+                }
             }
             return result;
         }

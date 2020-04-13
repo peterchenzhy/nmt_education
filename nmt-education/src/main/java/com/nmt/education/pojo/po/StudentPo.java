@@ -1,5 +1,7 @@
 package com.nmt.education.pojo.po;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,7 +22,8 @@ public class StudentPo {
     /**
      * 学生编码
      */
-    @ApiModelProperty(value = "学生编码")
+    @JsonProperty("code")
+    @ApiModelProperty(value = "学生编码",name ="code")
     private String studentCode;
 
     /**

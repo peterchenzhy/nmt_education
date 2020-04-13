@@ -35,7 +35,7 @@ public class StudentController {
     @Autowired
     private StudentService studentService;
 
-    @ApiOperation(value = "manager", notes = "新增学生")
+    @ApiOperation(value = "manager", notes = "学生管理")
     @RequestMapping(value = "/manager", method = RequestMethod.POST)
     public Boolean studentManager(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
                               @RequestBody @Validated StudentReqDto dto, BindingResult bindingResult) {
