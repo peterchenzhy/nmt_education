@@ -7,7 +7,7 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="birthday" jdbcType="DATE" property="birthday" />
-    <result column="sex" jdbcType="BOOLEAN" property="sex" />
+    <result column="sex" jdbcType="INTEGER" property="sex" />
     <result column="school" jdbcType="VARCHAR" property="school" />
     <result column="phone" jdbcType="VARCHAR" property="phone" />
     <result column="status" jdbcType="INTEGER" property="status" />

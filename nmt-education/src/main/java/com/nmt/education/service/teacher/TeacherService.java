@@ -204,7 +204,7 @@ public class TeacherService {
         TeacherVo vo = new TeacherVo();
         BeanUtils.copyProperties(e, vo);
         //todo 老师的价格如果是敏感数据，那么这边需要做权限控制或者
-        vo.setTeacherSalaryConfigPoList(teacherSalaryConfigService.selectByTeacherId(vo.getId()));
+        vo.setSalaryConfigList(teacherSalaryConfigService.selectByTeacherId(vo.getId()));
         return vo;
     }
 

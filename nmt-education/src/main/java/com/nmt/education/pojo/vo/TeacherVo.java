@@ -14,5 +14,5 @@ import java.util.List;
 @ToString
 public class TeacherVo extends TeacherPo {
 
-    private List<TeacherSalaryConfigPo> teacherSalaryConfigPoList = Collections.emptyList();
+    private List<TeacherSalaryConfigPo> salaryConfigList = Collections.emptyList();
 }
