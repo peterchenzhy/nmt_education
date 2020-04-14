@@ -28,7 +28,6 @@ export class StudentViewComponent implements OnInit {
         private globalService: GlobalService,
         private studentService: StudentService,
         private fb: FormBuilder,
-        private routerinfo: ActivatedRoute,
         public msgSrv: NzMessageService,
         public http: _HttpClient,
         private _location: Location
@@ -90,7 +89,7 @@ export class StudentViewComponent implements OnInit {
         if (studentStr) {
             this.student = JSON.parse(studentStr);
             this.student.editFlag = EDIT_FLAG.UPDATE;
-            this.pageHeader = `学生信息编辑 [${this.student.studentCode}]`;
+            this.pageHeader = `学生信息编辑 [${this.student.code}]`;
         }
         this.form.patchValue(this.student);
 

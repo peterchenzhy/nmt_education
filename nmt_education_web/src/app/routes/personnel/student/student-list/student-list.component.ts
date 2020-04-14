@@ -28,7 +28,7 @@ export class StudentListComponent implements OnInit {
     st: STComponent;
     columns: STColumn[] = [
         { title: '', index: 'id', type: 'checkbox' },
-        { title: '学生编号', index: 'studentCode' },
+        { title: '学生编号', index: 'code' },
         { title: '姓名', index: 'name' },
         { title: '性别', index: 'sex', render: "genderRender" },
         { title: '联系电话', index: 'phone' },
@@ -92,13 +92,6 @@ export class StudentListComponent implements OnInit {
                 break;
         }
 
-    }
-
-    remove() {
-        this.http.delete('/course', { nos: this.selectedRows.map(i => i.no).join(',') }).subscribe(() => {
-            this.getData();
-            this.st.clearCheck();
-        });
     }
 
     addNewStudent() {

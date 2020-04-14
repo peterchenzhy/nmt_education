@@ -19,7 +19,9 @@ const routes: Routes = [
         path: 'teacher',
         children: [
             { path: 'list', component: TeacherListComponent },
-            { path: 'view/:code', component: TeacherViewComponent, data: { title: '教师信息' } }
+            { path: 'view/:id', component: TeacherViewComponent, data: { title: '教师信息' } },
+            { path: 'edit/:id', component: TeacherViewComponent, data: { title: '教师信息编辑' } },
+            { path: 'create', component: TeacherViewComponent, data: { title: '教师信息创建' } }
         ]
     }
     //{ path: 'view/:courseno', component: CourseViewComponent }

@@ -28,6 +28,13 @@ export interface StudentQueryParam {
     phone?: string;
 }
 
+export interface TeacherQueryParam {
+    name?: string;
+    pageNo?: number;
+    pageSize?: number;
+    phone?: string;
+}
+
 export interface ResponseData {
     endRow?: number;
     hasNextPage?: boolean;
