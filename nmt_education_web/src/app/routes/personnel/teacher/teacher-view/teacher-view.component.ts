@@ -1,41 +1,44 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NzModalRef } from 'ng-zorro-antd/modal';
+import { Location } from '@angular/common';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { _HttpClient } from '@delon/theme';
 import { ActivatedRoute } from '@angular/router';
 import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { STColumn, STComponent } from '@delon/abc';
-import { GRADE_LIST, CAMPUS_LIST, COURSE_SUBJECT_LIST, COURSE_TYPE_LIST, getGradeLabel, getCourseTypeLabel, getCourseSubjectLabel } from '@shared/constant/system.constant';
 import { Teacher } from 'src/app/model/teacher.model';
+import { GlobalService } from '@shared/service/global.service';
+import { TeacherService } from '@shared/service/teacher.service';
+import { EDIT_FLAG } from '@shared/constant/system.constant';
 
 @Component({
     selector: 'app-teacher-view',
     templateUrl: './teacher-view.component.html',
 })
 export class TeacherViewComponent implements OnInit {
-    getGradeLabel = getGradeLabel;
-    getCourseTypeLabel = getCourseTypeLabel;
-    getCourseSubjectLabel = getCourseSubjectLabel;
     pageHeader: string;
-    teacher: Teacher = {};
+    teacher: Teacher = { editFlag: EDIT_FLAG.NEW };
     @ViewChild('st', { static: true })
     st: STComponent;
     constructor(
+        private globalService: GlobalService,
+        private teacherService: TeacherService,
         private fb: FormBuilder,
-        private routerinfo: ActivatedRoute,
+        private activaterRouter: ActivatedRoute,
         public msgSrv: NzMessageService,
-        public http: _HttpClient
+        public http: _HttpClient,
+        private _location: Location
     ) {
     }
 
     editIndex = -1;
     editObj = {};
     form: FormGroup;
-    courseTypeList = COURSE_TYPE_LIST;
-    courseSubjectList: any[] = COURSE_SUBJECT_LIST;
-    campusList: any[] = CAMPUS_LIST;
-    gradeList: any[] = GRADE_LIST;
-    classroomList: any[] = [{ value: '101', label: '101' }, { value: '202', label: '202' }, { value: '303', label: '303' }];
+    courseTypeList = this.globalService.COURSE_TYPE_LIST;
+    courseSubjectList = this.globalService.COURSE_SUBJECT_LIST;
+    campusList = this.globalService.CAMPUS_LIST;
+    gradeList = this.globalService.GRADE_LIST;
+    classroomList = [{ value: '101', label: '101' }, { value: '202', label: '202' }, { value: '303', label: '303' }];
     coursesColumns: STColumn[] = [
         { title: '名称', index: 'courseName' },
         { title: '校区', index: 'campus' },
@@ -43,101 +46,93 @@ export class TeacherViewComponent implements OnInit {
         { title: '上课时间', index: 'startTime' },
         { title: '课程时长', index: 'duration' }
     ];
-    courses = [{ orderNo: 'order111', courseName: 'course111', campus: "二工大", classroom: "101", startTime: "2020-04-05 12:00:00", duration: "90", orderStatus: "0", orderStatusText: "续费", orderStatusType: "purple" },
-    { orderNo: 'order222', courseName: 'course222', campus: "二工大", classroom: "202", startTime: "2020-04-09 12:00:00", duration: "90", orderStatus: "2", orderStatusText: "冻结", orderStatusType: "error" },
-    { orderNo: 'order333', courseName: 'course333', campus: "二工大", classroom: "303", startTime: "2020-04-15 14:00:00", duration: "90", orderStatus: "1", orderStatusText: "完成", orderStatusType: "success" }];
 
     ngOnInit() {
-        this.teacher.code = this.routerinfo.snapshot.params['code'];
-        this.http.get(`/student/${this.teacher.code}`).subscribe(res => { this.teacher = res; this.form.patchValue(res); });
-        this.pageHeader = `教师信息编辑 [${this.teacher.code}]`;
         this.form = this.fb.group({
+            id: [null, []],
             name: [null, [Validators.required]],
-            gender: [null, []],
-            introduction: [null, []],
-            phone: [null, []],
-            salayConfig: this.fb.array([])
+            sex: [null, [Validators.required]],
+            school: [null, []],
+            birthday: [null, []],
+            remark: [null, []],
+            phone: [null, [Validators.required]],
+            editFlag: [EDIT_FLAG.NO_CHANGE, []],
+            teacherSalaryConfigList: this.fb.array([])
         });
-        const salaryList = [
-            {
-                id: '1',
-                grade: 4,
-                courseSubject: 2,
-                courseType: 1,
-                salary: '500'
-            },
-            {
-                id: '2',
-                grade: 4,
-                courseSubject: 3,
-                courseType: 3,
-                salary: '600'
-            }];
-        salaryList.forEach(i => {
+        let teacherStr = this.activaterRouter.snapshot.params.teacher;
+        if (teacherStr) {
+            this.teacher = JSON.parse(teacherStr);
+            this.teacher.editFlag = EDIT_FLAG.UPDATE;
+            this.pageHeader = `教师信息编辑 [${this.teacher.id}]`;
+        }
+        this.form.patchValue(this.teacher);
+
+        this.teacher.salaryConfigList.forEach(i => {
+            i.editFlag = EDIT_FLAG.NO_CHANGE;
             const field = this.createSalary();
             field.patchValue(i);
-            this.salayConfig.push(field);
+            this.teacherSalaryConfigList.push(field);
         });
     }
 
     createSalary(): FormGroup {
         return this.fb.group({
-            id: [null],
+            id: [null, []],
             grade: [null, [Validators.required]],
             courseSubject: [null, [Validators.required]],
             courseType: [null, [Validators.required]],
-            salary: [null, [Validators.required]]
+            teacherId: [this.teacher.id, []],
+            unitPrice: [0, [Validators.required]],
+            remark: ["", []],
+            editFlag: [EDIT_FLAG.NEW, [Validators.required]]
         });
     }
 
     //#region get form fields
-    get name() {
-        return this.form.controls.name;
-    }
-    get gender() {
-        return this.form.controls.gender;
-    }
-    get phone() {
-        return this.form.controls.phone;
-    }
-
-    get introduction() {
-        return this.form.controls.introduction;
-    }
-
-    get salayConfig() {
-        return this.form.controls.salayConfig as FormArray;
+    get teacherSalaryConfigList() {
+        return this.form.controls.teacherSalaryConfigList as FormArray;
     }
     //#endregion
 
-    add() {
-        this.salayConfig.push(this.createSalary());
-        this.edit(this.salayConfig.length - 1);
+    addSalary() {
+        this.teacherSalaryConfigList.push(this.createSalary());
+        this.editSalary(this.teacherSalaryConfigList.length - 1);
     }
 
-    del(index: number) {
-        this.salayConfig.removeAt(index);
-    }
-
-    edit(index: number) {
-        if (this.editIndex !== -1 && this.editObj) {
-            this.salayConfig.at(this.editIndex).patchValue(this.editObj);
+    delSalary(index: number) {
+        let salaryObj = this.teacherSalaryConfigList.at(index);
+        if (salaryObj.value.editFlag == EDIT_FLAG.NEW) {
+            this.teacherSalaryConfigList.removeAt(index);
         }
-        this.editObj = { ...this.salayConfig.at(index).value };
+        else {
+            salaryObj.value.editFlag = EDIT_FLAG.DELETE;
+        }
+    }
+
+    editSalary(index: number) {
+        if (this.editIndex !== -1 && this.editObj) {
+            this.teacherSalaryConfigList.at(this.editIndex).patchValue(this.editObj);
+        }
+        this.editObj = { ...this.teacherSalaryConfigList.at(index).value };
         this.editIndex = index;
     }
 
-    save(index: number) {
-        this.salayConfig.at(index).markAsDirty();
-        if (this.salayConfig.at(index).invalid) return;
+    saveSalary(index: number) {
+        let salaryObj = this.teacherSalaryConfigList.at(index);
+        salaryObj.markAsDirty();
+        if (salaryObj.invalid) return;
+        if (salaryObj.value.editFlag == EDIT_FLAG.NO_CHANGE) {
+            salaryObj.value.editFlag = EDIT_FLAG.UPDATE;
+        }
         this.editIndex = -1;
     }
 
-    cancel(index: number) {
-        if (!this.salayConfig.at(index).value.id) {
-            this.del(index);
+    cancelSalary(index: number) {
+        let salaryObj = this.teacherSalaryConfigList.at(index);
+        if (!salaryObj.value.id) {
+            this.delSalary(index);
         } else {
-            this.salayConfig.at(index).patchValue(this.editObj);
+            salaryObj.patchValue(this.editObj);
         }
         this.editIndex = -1;
     }
@@ -148,6 +143,14 @@ export class TeacherViewComponent implements OnInit {
             this.form.controls[key].updateValueAndValidity();
         });
         if (this.form.invalid) return;
+
+        this.teacherService.saveTeacher(this.form.value).subscribe((res) => {
+            this.goBack();
+        });
+    }
+
+    goBack() {
+        this._location.back();
     }
 
 }

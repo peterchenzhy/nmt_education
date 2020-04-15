@@ -5,15 +5,14 @@ import { tap, map } from 'rxjs/operators';
 import { STComponent, STColumn, STData, STChange } from '@delon/abc';
 import { FormGroup, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { COURSE_STATUS_LIST, CAMPUS_LIST, getCampusLabel } from '@shared/constant/system.constant';
 import { Course } from 'src/app/model/course.model';
+import { GlobalService } from '@shared/service/global.service';
 
 @Component({
   selector: 'app-course-list',
   templateUrl: './course-list.component.html',
 })
 export class CourseListComponent implements OnInit {
-  getCampusLabel = getCampusLabel;
   courseDate = new FormGroup({
     courseDate: new FormControl()
   });
@@ -28,8 +27,8 @@ export class CourseListComponent implements OnInit {
   };
   data: any[] = [];
   loading = false;
-  courseStatusList = COURSE_STATUS_LIST;
-  campusList = CAMPUS_LIST;
+  courseStatusList = this.globalService.COURSE_STATUS_LIST;
+  campusList = this.globalService.CAMPUS_LIST;
 
   @ViewChild('st', { static: true })
   st: STComponent;
@@ -71,6 +70,7 @@ export class CourseListComponent implements OnInit {
   expandForm = false;
 
   constructor(
+    private globalService: GlobalService,
     private router: Router,
     private http: _HttpClient,
     public msg: NzMessageService,
@@ -84,16 +84,12 @@ export class CourseListComponent implements OnInit {
 
   getData() {
     this.loading = true;
-    this.q.statusList = COURSE_STATUS_LIST.filter(w => w.checked).map(item => item.index);
-    if (this.q.status !== null && this.q.status > -1) {
-      this.q.statusList.push(this.q.status);
-    }
     this.http
       .get('/course', this.q)
       .pipe(
         map((list: Course[]) =>
           list.map(i => {
-            i.statusDetail = COURSE_STATUS_LIST[i.status];
+            i.statusDetail = this.globalService.COURSE_STATUS_LIST[i.status];
             //i.statusText = statusItem.text;
             //i.statusType = statusItem.type;
             return i;

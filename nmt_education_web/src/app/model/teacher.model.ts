@@ -1,18 +1,35 @@
-import { GENDER, COURSE_STATUS, COURSE_SUBJECT, COURSE_TYPE, GRADE } from '@shared/constant/system.constant';
+import { GENDER, COURSE_STATUS, COURSE_TYPE, EDIT_FLAG } from '@shared/constant/system.constant';
 
 export interface Teacher {
+    id?: number;
     code?: string;
     name?: string;
-    gender?: GENDER;
+    sex?: GENDER;
     phone?: string;
-    introduction?: string;
-    courseSalary?: CourseSalary[];
+    school?: string;
+    birthday?: Date;
+    remark?: string;
+    salaryConfigList?: CourseSalary[];
+    editFlag?: EDIT_FLAG;
+    status?: number;
+    createTime?: Date;
+    creator?: number;
+    operateTime?: Date;
+    operator?: number;
 }
 
 export interface CourseSalary {
-    id?: string;
-    grade?: GRADE;
-    courseSubject?: COURSE_SUBJECT;
+    id?: number;
+    grade?: number;
+    courseSubject?: number;
     courseType?: COURSE_TYPE;
-    salary?: number;
+    teacherId?: number;
+    unitPrice?: number;
+    remark?: string;
+    editFlag?: EDIT_FLAG;
+    status?: number;
+    createTime?: Date;
+    creator?: number;
+    operateTime?: Date;
+    operator?: number;
 }

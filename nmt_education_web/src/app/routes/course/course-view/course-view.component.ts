@@ -4,16 +4,16 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { _HttpClient } from '@delon/theme';
 import { ActivatedRoute } from '@angular/router';
 import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { COURSE_STATUS_LIST, COURSE_STATUS, COURSE_SUBJECT, COURSE_SUBJECT_LIST, GRADE_LIST, CAMPUS_LIST, SEASON_LIST, COURSE_TYPE_LIST, FEE_TYPE_LIST, getFeeTypeLabel } from '@shared/constant/system.constant';
+import { COURSE_STATUS } from '@shared/constant/system.constant';
 import { Course, CourseSession } from 'src/app/model/course.model';
 import { Session } from 'protractor';
+import { GlobalService } from '@shared/service/global.service';
 
 @Component({
   selector: 'app-course-view',
   templateUrl: './course-view.component.html',
 })
 export class CourseViewComponent implements OnInit {
-  getFeeTypeLabel = getFeeTypeLabel;
   pageHeader: string;
   course: Course = {};
   sessionParam: any = {
@@ -28,6 +28,7 @@ export class CourseViewComponent implements OnInit {
   };
 
   constructor(
+    private globalService: GlobalService,
     private fb: FormBuilder,
     private routerinfo: ActivatedRoute,
     public msgSrv: NzMessageService,
@@ -42,13 +43,13 @@ export class CourseViewComponent implements OnInit {
   editFeeIndex = -1;
   editFeeObj = {};
   form: FormGroup;
-  seasonList = SEASON_LIST;
-  courseTypeList = COURSE_TYPE_LIST;
-  courseSubjectList = COURSE_SUBJECT_LIST;
-  courseStatusList = COURSE_STATUS_LIST;
-  feeTypeList = FEE_TYPE_LIST;
-  gradeList = GRADE_LIST;
-  campusList = CAMPUS_LIST;
+  seasonList = this.globalService.SEASON_LIST;
+  courseTypeList = this.globalService.COURSE_TYPE_LIST;
+  courseSubjectList = this.globalService.COURSE_SUBJECT_LIST;
+  courseStatusList = this.globalService.COURSE_STATUS_LIST;
+  feeTypeList = this.globalService.FEE_TYPE_LIST;
+  gradeList = this.globalService.GRADE_LIST;
+  campusList = this.globalService.CAMPUS_LIST;
   teacherList: any[] = [{ value: 'myk', label: '毛永康' }, { value: 'czy', label: '陈志毅' }, { value: 'drw', label: '杜任伟' }];
   classroomList: any[] = [{ value: '101', label: '101' }, { value: '202', label: '202' }, { value: '303', label: '303' }];
 

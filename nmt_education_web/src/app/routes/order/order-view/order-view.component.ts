@@ -4,8 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { NzMessageService } from 'ng-zorro-antd';
 import { _HttpClient } from '@delon/theme';
 import { Order, Payment } from 'src/app/model/order.model';
-import { SysConstantUtil, FEE_TYPE_LIST, PAY_STATUS_LIST, PAY_METHOD_LIST } from '@shared/constant/system.constant';
 import { Course } from 'src/app/model/course.model';
+import { GlobalService } from '@shared/service/global.service';
 
 @Component({
     selector: 'app-order-view',
@@ -16,10 +16,9 @@ import { Course } from 'src/app/model/course.model';
     ::ng-deep .enroll-selector .ant-select-selection__rendered{line-height:20px;}`]
 })
 export class OrderViewComponent implements OnInit {
-    feeTypeList = FEE_TYPE_LIST;
-    payStatusList = PAY_STATUS_LIST;
-    payMethodList = PAY_METHOD_LIST;
-    sysConstUtil = SysConstantUtil;
+    feeTypeList = this.globalService.FEE_TYPE_LIST;
+    payStatusList = this.globalService.PAY_STATUS_LIST;
+    payMethodList = this.globalService.PAY_METHOD_LIST;
     form: FormGroup;
     editFeeIndex = -1;
     order: Order = {
@@ -28,6 +27,7 @@ export class OrderViewComponent implements OnInit {
     };
 
     constructor(
+        private globalService: GlobalService,
         private fb: FormBuilder,
         private activaterRouter: ActivatedRoute,
         public msgSrv: NzMessageService,
@@ -99,8 +99,8 @@ export class OrderViewComponent implements OnInit {
         });
     }
 
-    clearSelectedCourse(){
-        this.order.course={};
+    clearSelectedCourse() {
+        this.order.course = {};
         this.payList.clear();
     }
 }

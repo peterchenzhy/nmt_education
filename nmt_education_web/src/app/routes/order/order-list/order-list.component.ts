@@ -5,9 +5,9 @@ import { tap, map } from 'rxjs/operators';
 import { STComponent, STColumn, STData, STChange } from '@delon/abc';
 import { FormGroup, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { CAMPUS_LIST, ORDER_STATUS_LIST } from '@shared/constant/system.constant';
 import { Course } from 'src/app/model/course.model';
 import { Order } from 'src/app/model/order.model';
+import { GlobalService } from '@shared/service/global.service';
 
 @Component({
     selector: 'app-order-list',
@@ -30,7 +30,7 @@ export class OrderListComponent implements OnInit {
     };
     data: Order[] = [];
     loading = false;
-    orderStatusList = ORDER_STATUS_LIST;
+    orderStatusList = this.globalService.ORDER_STATUS_LIST;
 
     @ViewChild('st', { static: true })
     st: STComponent;
@@ -70,6 +70,7 @@ export class OrderListComponent implements OnInit {
     expandForm = false;
 
     constructor(
+        private globalService: GlobalService,
         private router: Router,
         private http: _HttpClient,
         public msg: NzMessageService,
@@ -83,16 +84,12 @@ export class OrderListComponent implements OnInit {
 
     getData() {
         this.loading = true;
-        this.q.statusList = ORDER_STATUS_LIST.filter(w => w.checked).map(item => item.index);
-        if (this.q.status !== null && this.q.status > -1) {
-            this.q.statusList.push(this.q.status);
-        }
         this.http
             .get('/order', this.q)
             .pipe(
                 map((list: Order[]) =>
                     list.map(i => {
-                        i.statusDetail = ORDER_STATUS_LIST[i.status];
+                        i.statusDetail = this.globalService.ORDER_STATUS_LIST[i.status];
                         //i.statusText = statusItem.text;
                         //i.statusType = statusItem.type;
                         return i;

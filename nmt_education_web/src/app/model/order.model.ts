@@ -1,12 +1,12 @@
 import { Course } from './course.model';
 import { Student } from './student.model';
-import { Status } from './system.model';
-import { FEE_TYPE, PAY_METHOD, PAY_STATUS, ORDER_STATUS } from '@shared/constant/system.constant';
+import { SysEnum } from './system.model';
+import { PAY_STATUS, ORDER_STATUS } from '@shared/constant/system.constant';
 
 export interface Order {
     id?: string;
     status?: ORDER_STATUS;
-    statusDetail?: Status;
+    statusDetail?: SysEnum;
     signInDate?: Date;
     course?: Course;
     student?: Student;
@@ -18,8 +18,8 @@ export interface Order {
 
 export interface Payment {
     id?: string;
-    type?: FEE_TYPE;
-    method?: PAY_METHOD;
+    type?: number;
+    method?: number;
     status?: PAY_STATUS;
     price?: number;
     discount?: number;

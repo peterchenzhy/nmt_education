@@ -22,10 +22,10 @@ for (let i = 0; i < 46; i += 1) {
             startDate: new Date(`2017-07-${i < 18 ? '0' + (Math.floor(i / 2) + 1) : Math.floor(i / 2) + 1}`)
         },
         student: {
-            code: `StudentCode ${i}`,
+            id: `StudentCode ${i}`,
             name: '学生名',
             phone: Math.floor(Math.random() * 1000).toString(),
-            gender: Math.floor(Math.random() * 10) % 2
+            sex: Math.floor(Math.random() * 10) % 2
         },
         payList: [],
         sessionList: [],

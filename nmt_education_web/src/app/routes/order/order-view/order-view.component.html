@@ -3,7 +3,7 @@
     <nz-card [nzHoverable]="true" [nzBordered]="false">
         <sv-container size="large" title="学生信息">
             <sv label="姓名">{{order.student.name}}</sv>
-            <sv label="性别">{{ sysConstUtil.getGenderLabel(order.student.gender)}}</sv>
+            <sv label="性别">{{ globalService.getGenderLabel(order.student.gender)}}</sv>
             <sv label="出生年月">{{order.student.birthday}}</sv>
             <sv label="联系电话">{{order.student.phone}}</sv>
             <sv label="学校">{{order.student.school}}</sv>
@@ -22,16 +22,16 @@
                     <nz-option *ngFor="let o of listOfOption" nzCustomContent [nzLabel]="o.name" [nzValue]="o.code">
                         <div style="width: 100px; float: left;">{{o.code}}</div>
                         <div style="width: 100px; float: left">{{o.name}}</div>
-                        <div style="width: 30px; float: left">{{sysConstUtil.getCourseSubjectLabel(o.subject)}}</div>
+                        <div style="width: 30px; float: left">{{globalService.getCourseSubjectLabel(o.subject)}}</div>
                     </nz-option>
                 </nz-select>
             </sv>
-            <sv label="科目">{{sysConstUtil.getCourseSubjectLabel(order.course.subject)}}</sv>
+            <sv label="科目">{{globalService.getCourseSubjectLabel(order.course.subject)}}</sv>
             <sv label="开课日期">{{order.course.startDate}}</sv>
-            <sv label="年级">{{sysConstUtil.getGradeLabel(order.course.grade)}}</sv>
-            <sv label="类型">{{sysConstUtil.getCourseTypeLabel(order.course.type)}}</sv>
+            <sv label="年级">{{globalService.getGradeLabel(order.course.grade)}}</sv>
+            <sv label="类型">{{globalService.getCourseTypeLabel(order.course.type)}}</sv>
             <sv label="助教老师">{{order.course.assistant}}</sv>
-            <sv label="校区">{{sysConstUtil.getCampusLabel(order.course.campus)}}</sv>
+            <sv label="校区">{{globalService.getCampusLabel(order.course.campus)}}</sv>
         </sv-container>
         <nz-divider></nz-divider>
         <div class="text-lg mb-md">支付信息</div>

@@ -134,7 +134,7 @@
       <tbody>
         <tr *ngFor="let item of feeList.controls; let i = index" [formGroupName]="i">
           <td>
-            <span *ngIf="editFeeIndex !== i">{{ getFeeTypeLabel(feeList.value[i].feeType) }}</span>
+            <span *ngIf="editFeeIndex !== i">{{ globalService.getFeeTypeLabel(feeList.value[i].feeType) }}</span>
             <span *ngIf="editFeeIndex === i" nz-form-control nzErrorTip="请选费用类型">
               <nz-select formControlName="feeType" [nzPlaceHolder]="'请选费用类型'" [nzShowSearch]="true">
                 <nz-option *ngFor="let i of feeTypeList" [nzLabel]="i.label" [nzValue]="i.value"> </nz-option>

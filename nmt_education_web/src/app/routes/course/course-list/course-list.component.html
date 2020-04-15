@@ -82,10 +82,10 @@
   </div>
   <st #st [columns]="columns" [data]="data" [loading]="loading" (change)="stChange($event)">
     <ng-template st-row="courseStatus" let-i>
-      <nz-badge [nzStatus]="i.statusDetail.type" [nzText]="i.statusDetail.text"></nz-badge>
+      <nz-badge [nzStatus]="i.statusDetail.icon" [nzText]="i.statusDetail.label"></nz-badge>
     </ng-template>
     <ng-template st-row="courseCampus" let-i>
-      {{getCampusLabel(i.campus)}}
+      {{globalService.getCampusLabel(i.campus)}}
     </ng-template>
   </st>
 </nz-card>

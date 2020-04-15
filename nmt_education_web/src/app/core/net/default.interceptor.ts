@@ -38,7 +38,7 @@ const CODEMESSAGE = {
  */
 @Injectable()
 export class DefaultInterceptor implements HttpInterceptor {
-  constructor(private injector: Injector) {}
+  constructor(private injector: Injector) { }
 
   private get notification(): NzNotificationService {
     return this.injector.get(NzNotificationService);
@@ -94,8 +94,10 @@ export class DefaultInterceptor implements HttpInterceptor {
         break;
       case 403:
       case 404:
-      case 500:
         this.goTo(`/exception/${ev.status}`);
+        break;
+      case 500:
+        //this.notification.error(`未登录或登录已过期，请重新登录。`, ``);
         break;
       default:
         if (ev instanceof HttpErrorResponse) {
@@ -116,8 +118,7 @@ export class DefaultInterceptor implements HttpInterceptor {
     if (!url.startsWith('https://') && !url.startsWith('http://')) {
       url = environment.SERVER_URL + url;
     }
-
-    const newReq = req.clone({ url });
+    const newReq = req.clone({ url, setHeaders: { loginUser: "1", roleId: "1" } });
     return next.handle(newReq).pipe(
       mergeMap((event: any) => {
         // 允许统一对请求错误处理

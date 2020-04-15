@@ -10,6 +10,7 @@ import { ACLService } from '@delon/acl';
 import { NzIconService } from 'ng-zorro-antd/icon';
 import { ICONS_AUTO } from '../../../style-icons-auto';
 import { ICONS } from '../../../style-icons';
+import { GlobalService } from '@shared/service/global.service';
 
 /**
  * Used for application startup
@@ -25,6 +26,7 @@ export class StartupService {
     private titleService: TitleService,
     @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
     private httpClient: HttpClient,
+    private globalService: GlobalService,
     private injector: Injector
   ) {
     iconSrv.addIcon(...ICONS_AUTO, ...ICONS);
@@ -146,7 +148,7 @@ export class StartupService {
       // this.viaHttp(resolve, reject);
       // mock：请勿在生产环境中这么使用，viaMock 单纯只是为了模拟一些数据使脚手架一开始能正常运行
       this.viaMock(resolve, reject);
-
+      this.globalService.loadSystemEnums();
     });
   }
 }
