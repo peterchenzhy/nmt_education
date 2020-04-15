@@ -137,6 +137,7 @@ public class TeacherService {
                 teacherPo.setBirthday(dto.getBirthday());
                 teacherPo.setSchool(dto.getSchool());
                 teacherPo.setPhone(dto.getPhone());
+                teacherPo.setSex(dto.getSex());
                 teacherPo.setRemark(dto.getRemark());
                 teacherPo.setOperator(operator);
                 teacherPo.setOperateTime(new Date());
