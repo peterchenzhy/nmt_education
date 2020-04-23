@@ -17,7 +17,7 @@ import { EDIT_FLAG } from '@shared/constant/system.constant';
 })
 export class TeacherViewComponent implements OnInit {
     pageHeader: string;
-    teacher: Teacher = { editFlag: EDIT_FLAG.NEW };
+    teacher: Teacher = { editFlag: EDIT_FLAG.NEW, salaryConfigList: [] };
     @ViewChild('st', { static: true })
     st: STComponent;
     constructor(

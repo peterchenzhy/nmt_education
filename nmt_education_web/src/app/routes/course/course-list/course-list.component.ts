@@ -127,16 +127,10 @@ export class CourseListComponent implements OnInit {
     this.msg.success(`审批了 ${this.selectedRows.length} 笔`);
   }
 
-  add(tpl: TemplateRef<{}>) {
-    this.modalSrv.create({
-      nzTitle: '新建规则',
-      nzContent: tpl,
-      nzOnOk: () => {
-        this.loading = true;
-        this.http.post('/course', { description: this.description }).subscribe(() => this.getData());
-      },
-    });
-  }
+  addNewCourse() {
+    this.router.navigate([`/course/create`]);
+}
+
 
   reset() {
     // wait form reset updated finished

@@ -95,7 +95,7 @@ export class StudentListComponent implements OnInit {
     }
 
     addNewStudent() {
-        this.router.navigate([`/personnel/student/edit/create`]);
+        this.router.navigate([`/personnel/student/create`]);
     }
 
     reset() {

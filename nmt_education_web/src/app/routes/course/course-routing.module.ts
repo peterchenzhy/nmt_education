@@ -5,7 +5,9 @@ import { CourseViewComponent } from './course-view/course-view.component';
 
 const routes: Routes = [
   { path: 'list', component: CourseListComponent },
-  { path: 'view/:courseno', component: CourseViewComponent, data: { title: '课程信息' } }
+  { path: 'view/:id', component: CourseViewComponent, data: { title: '课程信息' } },
+  { path: 'edit/:id', component: CourseViewComponent, data: { title: '课程信息' } },
+  { path: 'create', component: CourseViewComponent, data: { title: '课程信息' } }
 ];
 
 @NgModule({
