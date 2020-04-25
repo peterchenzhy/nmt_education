@@ -105,6 +105,7 @@ public class TeacherService {
         teacherPo.setName(dto.getName());
         teacherPo.setBirthday(dto.getBirthday());
         teacherPo.setSchool(dto.getSchool());
+        teacherPo.setSex(dto.getSex());
         teacherPo.setStatus(StatusEnum.VALID.getCode());
         teacherPo.setPhone(dto.getPhone());
         teacherPo.setRemark(dto.getRemark());
