@@ -61,8 +61,10 @@ public class TeacherService {
             case 需要删除:
                 self.editTeacher(loginUser, dto);
                 break;
+            case 无变化:
+                break;
             default:
-                log.error("请求数据不合规，无法辨认editFlag！" + dto);
+                log.error("teacherService请求数据不合规，无法辨认editFlag！" + dto);
                 break;
         }
 

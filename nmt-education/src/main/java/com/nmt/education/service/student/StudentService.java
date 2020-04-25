@@ -53,8 +53,10 @@ public class StudentService {
             case 需要删除:
                 self.delStudent(operator, dto);
                 break;
+            case 无变化:
+                break;
             default:
-                log.error("请求数据不合规，无法辨认editFlag！" + dto);
+                log.error("studentService请求数据不合规，无法辨认editFlag！" + dto);
                 break;
         }
 

@@ -32,27 +32,27 @@ public class CoursePo {
     /**
     * 班次 春季班秋季班
     */
-    private Byte season;
+    private Integer season;
 
     /**
     * 校区
     */
-    private Byte campus;
+    private Integer campus;
 
     /**
     * 课程类型
     */
-    private Byte courseType;
+    private Integer courseType;
 
     /**
     * 课程科目
     */
-    private Byte courseSubject;
+    private Integer courseSubject;
 
     /**
     * 课程归类
     */
-    private Byte courseClassification;
+    private Integer courseClassification;
 
     /**
     * 课程名称
@@ -62,12 +62,12 @@ public class CoursePo {
     /**
     * 年级
     */
-    private Byte grade;
+    private Integer grade;
 
     /**
     * 课程状态
     */
-    private Byte courseStatus;
+    private Integer courseStatus;
 
     /**
     * 教室id
@@ -87,7 +87,7 @@ public class CoursePo {
     /**
     * 设计课次
     */
-    private Byte times;
+    private Integer times;
 
     /**
     * 开始日期

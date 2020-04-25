@@ -1,5 +1,6 @@
 package com.nmt.education.service.course;
 
+import com.nmt.education.pojo.dto.req.CourseSearchDto;
 import com.nmt.education.pojo.po.CoursePo;
 
 import java.util.List;
@@ -8,7 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 @Mapper
-public interface CoursePoMapper {
+interface CoursePoMapper {
     int insertSelective(CoursePo record);
 
     CoursePo selectByPrimaryKey(Long id);
@@ -26,4 +27,6 @@ public interface CoursePoMapper {
     int insertOrUpdateSelective(CoursePo record);
 
     void invalidByPrimaryKey(@Param("id") Long id, @Param("operator") Integer operator);
+
+    void queryByDto(@Param("dto") CourseSearchDto dto);
 }

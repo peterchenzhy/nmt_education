@@ -1,19 +1,26 @@
 package com.nmt.education.service.course;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.Enums;
 import com.nmt.education.pojo.dto.req.CourseReqDto;
+import com.nmt.education.pojo.dto.req.CourseSearchDto;
 import com.nmt.education.pojo.po.CoursePo;
+import com.nmt.education.pojo.vo.CourseDetailVo;
 import com.nmt.education.service.CodeService;
+import com.nmt.education.service.course.expense.CourseExpenseService;
+import com.nmt.education.service.course.schedule.CourseScheduleService;
 import lombok.extern.slf4j.Slf4j;
-import org.omg.CORBA.CODESET_INCOMPATIBLE;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -21,6 +28,10 @@ public class CourseService {
 
     @Autowired
     private CodeService codeService;
+    @Autowired
+    private CourseScheduleService courseScheduleService;
+    @Autowired
+    private CourseExpenseService courseExpenseService;
     @Resource
     private CoursePoMapper coursePoMapper;
 
@@ -35,24 +46,52 @@ public class CourseService {
      * @version v1
      * @since 2020/4/11 21:48
      */
+    @Transactional(rollbackFor = Exception.class)
     public Boolean courseManager(Integer loginUser, CourseReqDto dto) {
         Enums.EditFlag editFlag = Enums.EditFlag.codeOf(dto.getEditFlag());
+        CoursePo po = null;
         switch (editFlag) {
             case 新增:
-                newCourse(loginUser, dto);
+                po = newCourse(loginUser, dto);
                 break;
             case 修改:
-                editCourse(loginUser, dto);
+                po = editCourse(loginUser, dto);
                 break;
             case 需要删除:
-                editCourse(loginUser, dto);
+                po = editCourse(loginUser, dto);
+                break;
+            case 无变化:
                 break;
             default:
-                log.error("请求数据不合规，无法辨认editFlag！" + dto);
+                log.error("courseService请求数据不合规，无法辨认editFlag！" + dto);
                 break;
+        }
+        if (Objects.nonNull(po)) {
+            courseScheduleService.manager(dto.getCourseScheduleList(), po.getId(), loginUser);
+            courseExpenseService.manager(dto.getCourseExpenseList(), po.getId(), loginUser);
         }
 
         return true;
+    }
+
+
+    /**
+     * 课程搜索
+     *
+     * @param dto
+     * @return com.github.pagehelper.PageInfo
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/4/25 20:16
+     */
+    public PageInfo search(CourseSearchDto dto) {
+        if (Objects.isNull(dto)) {
+            return new PageInfo();
+        }
+        return PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> {
+            this.coursePoMapper.queryByDto(dto);
+        });
     }
 
     /**
@@ -66,10 +105,10 @@ public class CourseService {
      * @summary
      * @since 2020/4/11 22:34
      */
-    private void editCourse(Integer operator, CourseReqDto dto) {
-        Assert.notNull(dto.getId(), "编辑老师缺少id");
+    private CoursePo editCourse(Integer operator, CourseReqDto dto) {
+        Assert.notNull(dto.getId(), "课程id不存在");
         CoursePo coursePo = selectByPrimaryKey(dto.getId());
-        Assert.notNull(coursePo, "老师信息不存在" + dto.getId());
+        Assert.notNull(coursePo, "课程信息不存在" + dto.getId());
         Enums.EditFlag editFlag = Enums.EditFlag.codeOf(dto.getEditFlag());
         switch (editFlag) {
             case 需要删除:
@@ -82,8 +121,10 @@ public class CourseService {
                 this.updateByPrimaryKeySelective(coursePo);
                 break;
             default:
+                log.error("次editflag无法识别" + dto.toString());
                 break;
         }
+        return coursePo;
     }
 
     /**
@@ -110,10 +151,10 @@ public class CourseService {
      * @version v1
      * @since 2020/4/11 22:08
      */
-    private void newCourse(Integer operator, CourseReqDto dto) {
+    private CoursePo newCourse(Integer operator, CourseReqDto dto) {
         CoursePo po = newCoursePo(operator, dto);
         this.coursePoMapper.insertSelective(po);
-        //todo 课程配置
+        return po;
     }
 
     /**
@@ -134,7 +175,7 @@ public class CourseService {
         po.setCreateTime(new Date());
         po.setOperator(operator);
         po.setOperateTime(new Date());
-        po.setCode(codeService.generateNewCourseCode(dto.getCampus(),dto.getCourseSubject()));
+        po.setCode(codeService.generateNewCourseCode(dto.getCampus(), dto.getCourseSubject()));
         return po;
     }
 
@@ -177,5 +218,23 @@ public class CourseService {
         return coursePoMapper.insertOrUpdateSelective(record);
     }
 
-
+    /**
+     * 课程明细
+     *
+     * @param id 课程数据id
+     * @return com.nmt.education.pojo.vo.CourseDetailVo
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/4/25 20:47
+     */
+    public CourseDetailVo detail(Long id) {
+        CoursePo po = selectByPrimaryKey(id);
+        Assert.notNull(po, "没有获取到课程信息，id:" + id);
+        CourseDetailVo vo = new CourseDetailVo();
+        BeanUtils.copyProperties(po, vo);
+        vo.getCourseExpenseList().addAll(courseExpenseService.queryByCourseId(id));
+        vo.getCourseScheduleList().addAll(courseScheduleService.queryByCourseId(id));
+        return vo;
+    }
 }

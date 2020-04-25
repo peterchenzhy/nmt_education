@@ -1,7 +1,10 @@
 package com.nmt.education.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.utils.ReqDtoCheckUtil;
 import com.nmt.education.pojo.dto.req.CourseReqDto;
+import com.nmt.education.pojo.dto.req.CourseSearchDto;
+import com.nmt.education.pojo.vo.CourseDetailVo;
 import com.nmt.education.service.course.CourseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,11 +35,28 @@ public class CourseController {
 
     @ApiOperation(value = "manager", notes = "课程编辑提交按钮")
     @RequestMapping(value = "/manager", method = RequestMethod.POST)
-    public Boolean newCourse(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
-                             @RequestBody @Validated CourseReqDto dto, BindingResult bindingResult) {
+    public Boolean courseManager(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
+                                 @RequestBody @Validated CourseReqDto dto, BindingResult bindingResult) {
         ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
         return courseService.courseManager(logInUser, dto);
     }
+
+
+    @ApiOperation(value = "search", notes = "课程查询")
+    @RequestMapping(value = "/search", method = RequestMethod.POST)
+    public PageInfo search(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
+                                  @RequestBody @Validated CourseSearchDto dto, BindingResult bindingResult) {
+        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
+        return courseService.search(dto);
+    }
+
+    @ApiOperation(value = "detail", notes = "课程明细")
+    @RequestMapping(value = "/detail/{courseId}", method = RequestMethod.POST)
+    public CourseDetailVo detail(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
+    ,@PathVariable Long courseId ) {
+        return courseService.detail(courseId);
+    }
+
 
 
 }

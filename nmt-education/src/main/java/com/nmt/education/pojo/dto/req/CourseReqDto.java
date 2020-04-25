@@ -7,6 +7,7 @@ import lombok.ToString;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Author: PeterChen
@@ -77,7 +78,7 @@ public class CourseReqDto {
      */
     @NotNull(message = "年级名称不能为空")
     @ApiModelProperty(value = "年级", required = true)
-    private String grade;
+    private Integer grade;
 
     /**
      * 教室  数据id
@@ -95,14 +96,14 @@ public class CourseReqDto {
      * 每节课时间 单位：分钟
      */
     @NotNull(message = "每节课时间不能为空")
-    @ApiModelProperty(value = "每节课时间 单位：分钟",required = true)
+    @ApiModelProperty(value = "每节课时间 单位：分钟", required = true)
     private Integer perTime;
 
     /**
      * 设计课次
      */
     @NotNull(message = "设计课次不能为空")
-    @ApiModelProperty(value = "设计课次",required = true)
+    @ApiModelProperty(value = "设计课次", required = true)
     private Integer times;
 
     /**
@@ -113,7 +114,7 @@ public class CourseReqDto {
     /**
      * 结束日期
      */
-    @ApiModelProperty(value = "开始日期")
+    @ApiModelProperty(value = "结束日期")
     private Date endDate;
 
     /**
@@ -128,4 +129,9 @@ public class CourseReqDto {
     @ApiModelProperty(value = "备注")
     private String remark;
 
+    @ApiModelProperty(value = "课时信息")
+    private List<CourseScheduleReqDto> courseScheduleList;
+
+    @ApiModelProperty(value = "费用列表")
+    private List<CourseExpenseReqDto> courseExpenseList;
 }
