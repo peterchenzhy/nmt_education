@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.Enums;
 import com.nmt.education.commmons.StatusEnum;
+import com.nmt.education.commmons.utils.DateUtil;
 import com.nmt.education.pojo.dto.req.TeacherReqDto;
 import com.nmt.education.pojo.dto.req.TeacherSearchReqDto;
 import com.nmt.education.pojo.po.TeacherPo;
@@ -206,6 +207,9 @@ public class TeacherService {
     private TeacherVo po2vo(TeacherPo e) {
         TeacherVo vo = new TeacherVo();
         BeanUtils.copyProperties(e, vo);
+        if(DateUtil.defaultDateTime().compareTo(vo.getBirthday())==0){
+            vo.setBirthday(null);
+        }
         //todo 老师的价格如果是敏感数据，那么这边需要做权限控制或者
         vo.setSalaryConfigList(teacherSalaryConfigService.selectByTeacherId(vo.getId()));
         return vo;
