@@ -220,6 +220,14 @@ public class StudentService {
         return Collections.emptyList();
     }
 
+
+    public StudentVo detail(Long id) {
+        Assert.notNull(id,"学生明细缺少学生,id:"+id);
+        StudentPo po = selectByPrimaryKey(id);
+        Assert.notNull(po,"学生明细不存在，id："+id);
+        return po2vo(po);
+    }
+
     private StudentVo po2vo(StudentPo po) {
         StudentVo vo = new StudentVo();
         BeanUtils.copyProperties(po, vo);

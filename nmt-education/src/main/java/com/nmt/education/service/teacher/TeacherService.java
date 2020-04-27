@@ -7,6 +7,7 @@ import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.commmons.utils.DateUtil;
 import com.nmt.education.pojo.dto.req.TeacherReqDto;
 import com.nmt.education.pojo.dto.req.TeacherSearchReqDto;
+import com.nmt.education.pojo.po.StudentPo;
 import com.nmt.education.pojo.po.TeacherPo;
 import com.nmt.education.pojo.vo.TeacherVo;
 import com.nmt.education.service.teacher.config.TeacherSalaryConfigService;
@@ -256,4 +257,10 @@ public class TeacherService {
     }
 
 
+    public TeacherVo detail(Long id) {
+        Assert.notNull(id,"老师明细缺少学生,id:"+id);
+        TeacherPo po = selectByPrimaryKey(id);
+        Assert.notNull(po,"老师明细不存在，id："+id);
+        return po2vo(po);
+    }
 }

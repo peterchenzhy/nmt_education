@@ -13,4 +13,5 @@ import java.util.List;
 public class StudentVo extends StudentPo {
 
     List<StudentContactVo> contractList = Collections.EMPTY_LIST;
+
 }

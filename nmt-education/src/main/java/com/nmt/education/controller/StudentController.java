@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.utils.ReqDtoCheckUtil;
 import com.nmt.education.pojo.dto.req.StudentReqDto;
 import com.nmt.education.pojo.dto.req.StudentSearchReqDto;
+import com.nmt.education.pojo.vo.CourseDetailVo;
 import com.nmt.education.pojo.vo.StudentVo;
 import com.nmt.education.service.student.StudentService;
 import io.swagger.annotations.Api;
@@ -59,5 +60,12 @@ public class StudentController {
         return studentService.searchFuzzy(name);
     }
 
+
+    @ApiOperation(value = "detail", notes = "学生明细")
+    @RequestMapping(value = "/detail/{studentId}", method = RequestMethod.POST)
+    public StudentVo detail(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
+            , @PathVariable Long studentId ) {
+        return studentService.detail(studentId);
+    }
 
 }
