@@ -258,7 +258,7 @@ public class TeacherService {
 
 
     public TeacherVo detail(Long id) {
-        Assert.notNull(id,"老师明细缺少学生,id:"+id);
+        Assert.notNull(id,"老师明细缺少id,id:"+id);
         TeacherPo po = selectByPrimaryKey(id);
         Assert.notNull(po,"老师明细不存在，id："+id);
         return po2vo(po);
