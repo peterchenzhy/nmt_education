@@ -86,7 +86,7 @@ function saveRule(description: string) {
 
 export const COURSES = {
     '/course': (req: MockRequest) => getRule(req.queryString),
-    '/course/:id': (req: MockRequest) => getRuleById(req.queryString),
-    'DELETE /course': (req: MockRequest) => removeRule(req.queryString.nos),
-    'POST /course': (req: MockRequest) => saveRule(req.body.description),
+    // '/course/query/:id': (req: MockRequest) => getRuleById(req.queryString),
+    // 'DELETE /course': (req: MockRequest) => removeRule(req.queryString.nos),
+    // 'POST /course': (req: MockRequest) => saveRule(req.body.description),
 };

@@ -1,5 +1,5 @@
 import { SysEnum } from './system.model';
-import { COURSE_STATUS, COURSE_TYPE } from '@shared/constant/system.constant';
+import { COURSE_STATUS, COURSE_TYPE, EDIT_FLAG } from '@shared/constant/system.constant';
 import { Teacher } from './teacher.model';
 
 export interface Course {
@@ -18,6 +18,11 @@ export interface Course {
     classroom?: Classroom;
     feeList?: CourseFee[];
     sessionList?: CourseSession[];
+    editFlag?: EDIT_FLAG;
+    createTime?: Date;
+    creator?: number;
+    operateTime?: Date;
+    operator?: number;
 }
 
 
@@ -26,13 +31,25 @@ export interface CourseSession {
     startDateTime?: Date;
     duration?: number;
     teacher?: string;
-    price?: number
+    price?: number;
+    editFlag?: EDIT_FLAG;
+    status?: number;
+    createTime?: Date;
+    creator?: number;
+    operateTime?: Date;
+    operator?: number;
 }
 
 export interface CourseFee {
-    code?: string;
+    id?: string;
     type?: number;
     price?: number;
+    editFlag?: EDIT_FLAG;
+    status?: number;
+    createTime?: Date;
+    creator?: number;
+    operateTime?: Date;
+    operator?: number;
 }
 
 export interface Campus {

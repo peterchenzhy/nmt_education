@@ -92,7 +92,7 @@ export class TeacherListComponent implements OnInit {
     }
 
     createTeacher() {
-        this.router.navigate([`/personnel/teacher/edit/create`]);
+        this.router.navigate([`/personnel/teacher/create`]);
     }
 
     reset() {

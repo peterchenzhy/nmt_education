@@ -4,33 +4,30 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { _HttpClient } from '@delon/theme';
 import { ActivatedRoute } from '@angular/router';
 import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { COURSE_STATUS } from '@shared/constant/system.constant';
+import { COURSE_STATUS, EDIT_FLAG } from '@shared/constant/system.constant';
 import { Course, CourseSession } from 'src/app/model/course.model';
 import { Session } from 'protractor';
 import { GlobalService } from '@shared/service/global.service';
+import { Teacher } from 'src/app/model/teacher.model';
 
 @Component({
   selector: 'app-course-view',
   templateUrl: './course-view.component.html',
 })
 export class CourseViewComponent implements OnInit {
-  pageHeader: string;
-  course: Course = {};
-  sessionParam: any = {
-    startDate: new Date(),
-    count: 0,
-    startTime: new Date("2020-01-01 00:00:00"),
-    duration: 0,
-    dayOfWeek: [{ label: '星期天', value: 0 }, { label: '星期一', value: 1 }, { label: '星期二', value: 2 },
-    { label: '星期三', value: 3 }, { label: '星期四', value: 4 }, { label: '星期五', value: 5 }, { label: '星期六', value: 6 }],
-    price: 0,
-    teacher: null
-  };
+  pageHeader: string = "课程信息编辑";
+  course: Course = { editFlag: EDIT_FLAG.NEW, sessionList: [], feeList: [] };
+  editSessionIndex = -1;
+  editSessionObj = {};
+  editFeeIndex = -1;
+  editFeeObj = {};
+  form: FormGroup;
+  sessionParam: any = { title: "新建课时" };
 
   constructor(
     private globalService: GlobalService,
     private fb: FormBuilder,
-    private routerinfo: ActivatedRoute,
+    private activaterRouter: ActivatedRoute,
     public msgSrv: NzMessageService,
     private modalSrv: NzModalService,
     public http: _HttpClient
@@ -38,82 +35,57 @@ export class CourseViewComponent implements OnInit {
 
   }
 
-  editSessionIndex = -1;
-  editSessionObj = {};
-  editFeeIndex = -1;
-  editFeeObj = {};
-  form: FormGroup;
   seasonList = this.globalService.SEASON_LIST;
   courseTypeList = this.globalService.COURSE_TYPE_LIST;
   courseSubjectList = this.globalService.COURSE_SUBJECT_LIST;
+  courseClassificationList = this.globalService.COURSE_CLASSIFICATION_LIST;
   courseStatusList = this.globalService.COURSE_STATUS_LIST;
   feeTypeList = this.globalService.FEE_TYPE_LIST;
   gradeList = this.globalService.GRADE_LIST;
   campusList = this.globalService.CAMPUS_LIST;
-  teacherList: any[] = [{ value: 'myk', label: '毛永康' }, { value: 'czy', label: '陈志毅' }, { value: 'drw', label: '杜任伟' }];
+  teacherList: Teacher[] = [];
   classroomList: any[] = [{ value: '101', label: '101' }, { value: '202', label: '202' }, { value: '303', label: '303' }];
 
   ngOnInit() {
-    this.course.code = this.routerinfo.snapshot.params['courseno'];
-    this.http.get(`/course/${this.course.code}`).subscribe(res => this.course = res);
-    this.pageHeader = `课程编辑 [${this.course.code}]`;
     this.form = this.fb.group({
+      id: [null, []],
       name: [null, [Validators.required]],
-      year: [null, []],
-      season: [null, []],
-      type: [null, [Validators.required]],
+      description: [null, []],
+      year: [null, [Validators.required]],
+      season: [null, [Validators.required]],
       startDate: [null, [Validators.required]],
-      status: [1, [Validators.required]],
-      teacher: ['myk', [Validators.required]],
-      subject: [null, [Validators.required]],
-      price: [null, [Validators.required]],
-      campus: [null, [Validators.required]],
+      endDate: [null, [Validators.required]],
       grade: [null, [Validators.required]],
-      classroom: [null, [Validators.required]],
+      courseType: [null, [Validators.required]],
+      courseSubject: [null, [Validators.required]],
+      courseClassification: [null, [Validators.required]],
+      status: [COURSE_STATUS.PENDING, []],
+      assistance: [null, [Validators.required]],
+      campus: [null, [Validators.required]],
+      classroom: [null, []],
+      times: [0, []],
+      recruit: [0, [Validators.required, Validators.min(1)]],
+      remark: [null, []],
+      editFlag: [EDIT_FLAG.NO_CHANGE, []],
       sessions: this.fb.array([]),
       feeList: this.fb.array([])
     });
-    const sessionList: CourseSession[] = [
-      {
-        id: "1",
-        teacher: "czy",
-        duration: 90,
-        startDateTime: new Date('2020-03-10 14:00:00'),
-        price: 200
-      },
-      {
-        id: '2',
-        teacher: "czy",
-        duration: 90,
-        startDateTime: new Date('2020-03-17 14:00:00'),
-        price: 100
-      },
-      {
-        id: '3',
-        teacher: "czy",
-        duration: 90,
-        startDateTime: new Date('2020-03-24 14:00:00'),
-        price: 100
-      },
-    ];
-    sessionList.forEach(i => {
+    let courseStr = this.activaterRouter.snapshot.params.course;
+    if (courseStr) {
+      this.course = JSON.parse(courseStr);
+      this.course.editFlag = EDIT_FLAG.UPDATE;
+      this.pageHeader = `课程信息编辑 [${this.course.code}]`;
+    }
+    this.form.patchValue(this.course);
+
+
+    this.course.sessionList.forEach(i => {
       const field = this.createSession();
       field.patchValue(i);
       this.sessions.push(field);
     });
 
-    const feeList = [
-      {
-        key: '1',
-        feeType: 2,
-        price: 200,
-      },
-      {
-        key: '2',
-        feeType: 3,
-        price: 100,
-      }];
-    feeList.forEach(i => {
+    this.course.feeList.forEach(i => {
       const field = this.createFee();
       field.patchValue(i);
       this.feeList.push(field);
@@ -123,60 +95,25 @@ export class CourseViewComponent implements OnInit {
   createSession(): FormGroup {
     return this.fb.group({
       id: [null],
-      teacher: [null, [Validators.required]],
+      teacher: [null, []],
       startDateTime: [null, [Validators.required]],
       duration: [null, [Validators.required]],
-      price: [null, [Validators.required]],
+      price: [0, [Validators.required]],
+      editFlag: [EDIT_FLAG.NEW, []]
     });
   }
 
 
   createFee(): FormGroup {
     return this.fb.group({
-      key: [null],
-      feeType: [null, [Validators.required]],
-      price: [null, [Validators.required]],
+      id: [null, []],
+      type: [null, [Validators.required]],
+      price: [0, [Validators.required, Validators.min(1)]],
+      editFlag: [EDIT_FLAG.NEW, []]
     });
   }
 
   //#region get form fields
-  get name() {
-    return this.form.controls.name;
-  }
-  get year() {
-    return this.form.controls.year;
-  }
-  get season() {
-    return this.form.controls.season;
-  }
-  get type() {
-    return this.form.controls.type;
-  }
-  get startDate() {
-    return this.form.controls.startDate;
-  }
-  get status() {
-    return this.form.controls.status;
-  }
-  get teacher() {
-    return this.form.controls.teacher;
-  }
-  get subject() {
-    return this.form.controls.subject;
-  }
-  get price() {
-    return this.form.controls.price;
-  }
-  get campus() {
-    return this.form.controls.campus;
-  }
-  get grade() {
-    return this.form.controls.grade;
-  }
-  get classroom() {
-    return this.form.controls.classroom;
-  }
-
   get sessions() {
     return this.form.controls.sessions as FormArray;
   }
@@ -191,15 +128,44 @@ export class CourseViewComponent implements OnInit {
   //   this.edit(this.sessions.length - 1);
   // }
 
-  add(tpl: TemplateRef<{}>) {
+  addSessions(tpl: TemplateRef<{}>) {
+    this.sessionParam = {
+      title: "新建课时",
+      startDate: new Date(),
+      count: 0,
+      startTime: new Date("2020-01-01 00:00:00"),
+      duration: 0,
+      dayOfWeek: [{ label: '星期天', value: 0 }, { label: '星期一', value: 1 }, { label: '星期二', value: 2 },
+      { label: '星期三', value: 3 }, { label: '星期四', value: 4 }, { label: '星期五', value: 5 }, { label: '星期六', value: 6 }],
+      price: 0,
+      teacher: null
+    };
+    let currentDate = new Date();
+    let activeSessions = this.sessions.value.filter(s => { return s.editFlag != EDIT_FLAG.DELETE && s.startDateTime > currentDate; });
+    if (activeSessions && activeSessions.length > 0) {
+      this.sessionParam.title = "更换课时";
+      this.sessionParam.count = activeSessions.length;
+      this.sessionParam.startDate = activeSessions[0].startDateTime;
+      this.sessionParam.startTime = activeSessions[0].startDateTime;
+      this.sessionParam.duration = activeSessions[0].duration;
+      this.sessionParam.teacher = activeSessions[0].teacher;
+      activeSessions.forEach(s => {
+        let day = s.startDateTime.getDay();
+        this.sessionParam.dayOfWeek.find(d => { return d.value == day; }).checked = true;
+      });
+    }
+
+    let singleFee = this.feeList.value.find(f => { return f.type == 1 && f.editFlag != EDIT_FLAG.DELETE; });
+    this.sessionParam.price = singleFee ? singleFee.price : 0;
     this.modalSrv.create({
-      nzTitle: '创建课时',
+      nzTitle: this.sessionParam.title,
       nzContent: tpl,
       nzWidth: 350,
       nzOnOk: () => {
         for (let i = 0; i < this.sessionParam.count;) {
           let day = this.sessionParam.startDate.getDay();
           if (this.sessionParam.dayOfWeek.find(d => { return d.checked && d.value == day; })) {
+            debugger;
             let newSession: CourseSession = {};
             newSession.id = (this.sessions.length + 1).toString();
             newSession.teacher = this.sessionParam.teacher;
@@ -253,6 +219,14 @@ export class CourseViewComponent implements OnInit {
   }
 
   delFee(index: number) {
+
+    let feeObj = this.feeList.at(index);
+    if (feeObj.value.editFlag == EDIT_FLAG.NEW) {
+      this.feeList.removeAt(index);
+    }
+    else {
+      feeObj.value.editFlag = EDIT_FLAG.DELETE;
+    }
     this.feeList.removeAt(index);
   }
 
@@ -265,16 +239,24 @@ export class CourseViewComponent implements OnInit {
   }
 
   saveFee(index: number) {
-    this.feeList.at(index).markAsDirty();
-    if (this.feeList.at(index).invalid) return;
+    let feeObj = this.feeList.at(index) as FormGroup;
+    Object.keys(feeObj.controls).forEach(key => {
+      feeObj.controls[key].markAsDirty();
+      feeObj.controls[key].updateValueAndValidity();
+    });
+    if (feeObj.invalid) return;
+    if (feeObj.value.editFlag == EDIT_FLAG.NO_CHANGE) {
+      feeObj.value.editFlag = EDIT_FLAG.UPDATE;
+    }
     this.editFeeIndex = -1;
   }
 
   cancelFee(index: number) {
-    if (!this.feeList.at(index).value.key) {
+    let feeObj = this.feeList.at(index);
+    if (!feeObj.value.id) {
       this.delFee(index);
     } else {
-      this.feeList.at(index).patchValue(this.editFeeObj);
+      feeObj.patchValue(this.editFeeObj);
     }
     this.editFeeIndex = -1;
   }
@@ -288,6 +270,7 @@ export class CourseViewComponent implements OnInit {
   }
 
   getTeacherName(code: string) {
-    return this.teacherList.find(t => { return t.value == code; }).label;
+    let teacher = this.teacherList.find(t => { return t.code == code; });
+    return teacher ? teacher.name : "";
   }
 }
