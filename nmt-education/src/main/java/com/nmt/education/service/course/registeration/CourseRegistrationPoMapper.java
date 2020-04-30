@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 @Mapper
-  interface CourseRegistrationPoMapper {
+ interface CourseRegistrationPoMapper {
     int insertSelective(CourseRegistrationPo record);
 
     CourseRegistrationPo selectByPrimaryKey(Long id);

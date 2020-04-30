@@ -5,6 +5,7 @@
     <!--@mbg.generated-->
     <!--@Table course_registration-->
     <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="registration_number" jdbcType="VARCHAR" property="registrationNumber" />
     <result column="course_id" jdbcType="BIGINT" property="courseId" />
     <result column="student_id" jdbcType="BIGINT" property="studentId" />
     <result column="times" jdbcType="TINYINT" property="times" />
@@ -22,9 +23,9 @@
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, course_id, student_id, times, registration_type, registration_status, fee_status, 
-    `status`, balance_amount, total_amount, remark, creator, create_time, `operator`, 
-    operate_time
+    id, registration_number, course_id, student_id, times, registration_type, registration_status, 
+    fee_status, `status`, balance_amount, total_amount, remark, creator, create_time, 
+    `operator`, operate_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     <!--@mbg.generated-->
@@ -37,6 +38,9 @@
     <!--@mbg.generated-->
     insert into course_registration
     <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="registrationNumber != null">
+        registration_number,
+      </if>
       <if test="courseId != null">
         course_id,
       </if>
@@ -81,6 +85,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="registrationNumber != null">
+        #{registrationNumber,jdbcType=VARCHAR},
+      </if>
       <if test="courseId != null">
         #{courseId,jdbcType=BIGINT},
       </if>
@@ -129,6 +136,9 @@
     <!--@mbg.generated-->
     update course_registration
     <set>
+      <if test="registrationNumber != null">
+        registration_number = #{registrationNumber,jdbcType=VARCHAR},
+      </if>
       <if test="courseId != null">
         course_id = #{courseId,jdbcType=BIGINT},
       </if>
@@ -178,6 +188,11 @@
     <!--@mbg.generated-->
     update course_registration
     <trim prefix="set" suffixOverrides=",">
+      <trim prefix="registration_number = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.registrationNumber,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
       <trim prefix="course_id = case" suffix="end,">
         <foreach collection="list" index="index" item="item">
           when id = #{item.id,jdbcType=BIGINT} then #{item.courseId,jdbcType=BIGINT}
@@ -258,6 +273,13 @@
     <!--@mbg.generated-->
     update course_registration
     <trim prefix="set" suffixOverrides=",">
+      <trim prefix="registration_number = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.registrationNumber != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.registrationNumber,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
       <trim prefix="course_id = case" suffix="end,">
         <foreach collection="list" index="index" item="item">
           <if test="item.courseId != null">
@@ -365,13 +387,13 @@
   <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
     <!--@mbg.generated-->
     insert into course_registration
-    (course_id, student_id, times, registration_type, registration_status, fee_status, 
-      `status`, balance_amount, total_amount, remark, creator, create_time, `operator`, 
-      operate_time)
+    (registration_number, course_id, student_id, times, registration_type, registration_status, 
+      fee_status, `status`, balance_amount, total_amount, remark, creator, create_time, 
+      `operator`, operate_time)
     values
     <foreach collection="list" item="item" separator=",">
-      (#{item.courseId,jdbcType=BIGINT}, #{item.studentId,jdbcType=BIGINT}, #{item.times,jdbcType=TINYINT}, 
-        #{item.registrationType,jdbcType=TINYINT}, #{item.registrationStatus,jdbcType=TINYINT}, 
+      (#{item.registrationNumber,jdbcType=VARCHAR}, #{item.courseId,jdbcType=BIGINT}, #{item.studentId,jdbcType=BIGINT}, 
+        #{item.times,jdbcType=TINYINT}, #{item.registrationType,jdbcType=TINYINT}, #{item.registrationStatus,jdbcType=TINYINT}, 
         #{item.feeStatus,jdbcType=TINYINT}, #{item.status,jdbcType=TINYINT}, #{item.balanceAmount,jdbcType=VARCHAR}, 
         #{item.totalAmount,jdbcType=VARCHAR}, #{item.remark,jdbcType=VARCHAR}, #{item.creator,jdbcType=INTEGER}, 
         #{item.createTime,jdbcType=TIMESTAMP}, #{item.operator,jdbcType=INTEGER}, #{item.operateTime,jdbcType=TIMESTAMP}
@@ -385,6 +407,7 @@
       <if test="id != null">
         id,
       </if>
+      registration_number,
       course_id,
       student_id,
       times,
@@ -405,6 +428,7 @@
       <if test="id != null">
         #{id,jdbcType=BIGINT},
       </if>
+      #{registrationNumber,jdbcType=VARCHAR},
       #{courseId,jdbcType=BIGINT},
       #{studentId,jdbcType=BIGINT},
       #{times,jdbcType=TINYINT},
@@ -425,6 +449,7 @@
       <if test="id != null">
         id = #{id,jdbcType=BIGINT},
       </if>
+      registration_number = #{registrationNumber,jdbcType=VARCHAR},
       course_id = #{courseId,jdbcType=BIGINT},
       student_id = #{studentId,jdbcType=BIGINT},
       times = #{times,jdbcType=TINYINT},
@@ -447,6 +472,9 @@
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
+      </if>
+      <if test="registrationNumber != null">
+        registration_number,
       </if>
       <if test="courseId != null">
         course_id,
@@ -496,6 +524,9 @@
       <if test="id != null">
         #{id,jdbcType=BIGINT},
       </if>
+      <if test="registrationNumber != null">
+        #{registrationNumber,jdbcType=VARCHAR},
+      </if>
       <if test="courseId != null">
         #{courseId,jdbcType=BIGINT},
       </if>
@@ -543,6 +574,9 @@
     <trim suffixOverrides=",">
       <if test="id != null">
         id = #{id,jdbcType=BIGINT},
+      </if>
+      <if test="registrationNumber != null">
+        registration_number = #{registrationNumber,jdbcType=VARCHAR},
       </if>
       <if test="courseId != null">
         course_id = #{courseId,jdbcType=BIGINT},

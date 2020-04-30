@@ -15,8 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import static com.nmt.education.commmons.Consts.学生编号长度;
-import static com.nmt.education.commmons.Consts.课程编号长度;
+import static com.nmt.education.commmons.Consts.*;
 
 @Service
 public class CodeService {
@@ -61,7 +60,7 @@ public class CodeService {
         List<String> strList = new ArrayList<>();
         strList.add(getPrefixByCampusCode(campus));
         strList.add(DateUtil.formatDate2(new Date()));
-        strList.add(getPrefixByCampusCode(courseSubject));
+        strList.add(getPrefixByCourseSubjectCode(courseSubject));
         strList.add(RandomStringUtils.random(7, true, true));
 
         String result = String.join("", strList);
@@ -71,6 +70,31 @@ public class CodeService {
             return result;
         }
     }
+
+    /**
+     * 生成 报名订单编号
+     *
+     * @param campus
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/4/11 22:35
+     */
+    public String generateNewRegistrationNumber(Integer campus) {
+        List<String> strList = new ArrayList<>();
+        strList.add(订单前缀);
+        strList.add(getPrefixByCampusCode(campus));
+        strList.add(DateUtil.formatDate2(new Date()));
+        strList.add(RandomStringUtils.random(7, true, true));
+
+        String result = String.join("", strList);
+        if (result.length() > 订单编号长度) {
+            return result.substring(0, 订单编号长度 - 1);
+        } else {
+            return result;
+        }
+    }
+
 
     /**
      * 获取 课程科目remark

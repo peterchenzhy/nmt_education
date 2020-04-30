@@ -7,6 +7,7 @@ import com.nmt.education.pojo.dto.req.RegisterExpenseDetailReqDto;
 import com.nmt.education.pojo.po.CourseRegistrationPo;
 import com.nmt.education.pojo.po.RegisterationSummaryPo;
 import com.nmt.education.pojo.po.RegistrationExpenseDetailPo;
+import com.nmt.education.service.CodeService;
 import com.nmt.education.service.course.CourseService;
 import com.nmt.education.service.course.registeration.summary.RegisterationSummaryService;
 import com.nmt.education.service.student.StudentService;
@@ -41,6 +42,8 @@ public class CourseRegistrationService {
     private CourseService courseService;
     @Autowired
     private StudentService studentService;
+    @Autowired
+    private CodeService codeService;
 
     /**
      * 课程报名
@@ -127,6 +130,7 @@ public class CourseRegistrationService {
     private CourseRegistrationPo generateCourseRegistrationPo(CourseRegisterReqDto dto, int updator) {
 
         CourseRegistrationPo courseRegistrationPo = new CourseRegistrationPo();
+        courseRegistrationPo.setRegistrationNumber(codeService.generateNewRegistrationNumber(dto.getCampus()));
         courseRegistrationPo.setCourseId(dto.getCourseId());
         courseRegistrationPo.setStudentId(dto.getStudentId());
         courseRegistrationPo.setTimes(dto.getTimes());
