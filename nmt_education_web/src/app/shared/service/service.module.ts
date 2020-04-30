@@ -4,6 +4,7 @@ import { GlobalService } from './global.service';
 import { CommonModule } from '@angular/common';
 import { StudentService } from './student.service';
 import { TeacherService } from './teacher.service';
+import { CourseService } from './course.service';
 
 const COMPONENTS = [
 
@@ -20,6 +21,7 @@ const COMPONENTS_NOROUNT = [];
         GlobalService,
         StudentService,
         TeacherService,
+        CourseService,
         HttpService],
     entryComponents: COMPONENTS_NOROUNT
 })

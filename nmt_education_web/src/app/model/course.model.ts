@@ -3,21 +3,30 @@ import { COURSE_STATUS, COURSE_TYPE, EDIT_FLAG } from '@shared/constant/system.c
 import { Teacher } from './teacher.model';
 
 export interface Course {
+
+    id?: number;
     code?: string;
     name?: string;
+    description?: string;
     year?: number;
     season?: number;
     startDate?: Date;
+    endDate?: Date;
+    perTime?: number;
+    courseClassification?: number;
     grade?: number;
-    subject?: number;
-    type?: COURSE_TYPE;
+    courseSubject?: number;
+    courseType?: COURSE_TYPE;
     status?: COURSE_STATUS;
     statusDetail?: SysEnum;
-    assistant?: Teacher;
+    teacherId?: Teacher;
+    totalStudent?: number;
+    times?: number;
     campus?: number;
-    classroom?: Classroom;
-    feeList?: CourseFee[];
-    sessionList?: CourseSession[];
+    classroom?: number;
+    courseExpenseList?: CourseFee[];
+    courseScheduleList?: CourseSession[];
+    remark?: string;
     editFlag?: EDIT_FLAG;
     createTime?: Date;
     creator?: number;
@@ -27,7 +36,8 @@ export interface Course {
 
 
 export interface CourseSession {
-    id?: string;
+    id?: number;
+    courseId?: number;
     startDateTime?: Date;
     duration?: number;
     teacher?: string;
@@ -41,7 +51,8 @@ export interface CourseSession {
 }
 
 export interface CourseFee {
-    id?: string;
+    id?: number;
+    courseId?: number;
     type?: number;
     price?: number;
     editFlag?: EDIT_FLAG;

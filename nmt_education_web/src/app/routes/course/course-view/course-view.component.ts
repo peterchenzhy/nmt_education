@@ -1,4 +1,5 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Location } from '@angular/common';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { _HttpClient } from '@delon/theme';
@@ -6,9 +7,9 @@ import { ActivatedRoute } from '@angular/router';
 import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { COURSE_STATUS, EDIT_FLAG } from '@shared/constant/system.constant';
 import { Course, CourseSession } from 'src/app/model/course.model';
-import { Session } from 'protractor';
 import { GlobalService } from '@shared/service/global.service';
 import { Teacher } from 'src/app/model/teacher.model';
+import { CourseService } from '@shared/service/course.service';
 
 @Component({
   selector: 'app-course-view',
@@ -16,7 +17,7 @@ import { Teacher } from 'src/app/model/teacher.model';
 })
 export class CourseViewComponent implements OnInit {
   pageHeader: string = "课程信息编辑";
-  course: Course = { editFlag: EDIT_FLAG.NEW, sessionList: [], feeList: [] };
+  course: Course = { editFlag: EDIT_FLAG.NEW, courseExpenseList: [], courseScheduleList: [] };
   editSessionIndex = -1;
   editSessionObj = {};
   editFeeIndex = -1;
@@ -26,11 +27,13 @@ export class CourseViewComponent implements OnInit {
 
   constructor(
     private globalService: GlobalService,
+    private courseService: CourseService,
     private fb: FormBuilder,
     private activaterRouter: ActivatedRoute,
     public msgSrv: NzMessageService,
     private modalSrv: NzModalService,
-    public http: _HttpClient
+    public http: _HttpClient,
+    private _location: Location
   ) {
 
   }
@@ -49,6 +52,7 @@ export class CourseViewComponent implements OnInit {
   ngOnInit() {
     this.form = this.fb.group({
       id: [null, []],
+      code: [null, []],
       name: [null, [Validators.required]],
       description: [null, []],
       year: [null, [Validators.required]],
@@ -60,15 +64,16 @@ export class CourseViewComponent implements OnInit {
       courseSubject: [null, [Validators.required]],
       courseClassification: [null, [Validators.required]],
       status: [COURSE_STATUS.PENDING, []],
-      assistance: [null, [Validators.required]],
+      perTime: [0, [Validators.required]],
+      teacherId: [null, [Validators.required]],
       campus: [null, [Validators.required]],
       classroom: [null, []],
       times: [0, []],
-      recruit: [0, [Validators.required, Validators.min(1)]],
+      totalStudent: [0, [Validators.required, Validators.min(1)]],
       remark: [null, []],
       editFlag: [EDIT_FLAG.NO_CHANGE, []],
-      sessions: this.fb.array([]),
-      feeList: this.fb.array([])
+      courseScheduleList: this.fb.array([]),
+      courseExpenseList: this.fb.array([])
     });
     let courseStr = this.activaterRouter.snapshot.params.course;
     if (courseStr) {
@@ -79,13 +84,13 @@ export class CourseViewComponent implements OnInit {
     this.form.patchValue(this.course);
 
 
-    this.course.sessionList.forEach(i => {
+    this.course.courseScheduleList.forEach(i => {
       const field = this.createSession();
       field.patchValue(i);
       this.sessions.push(field);
     });
 
-    this.course.feeList.forEach(i => {
+    this.course.courseExpenseList.forEach(i => {
       const field = this.createFee();
       field.patchValue(i);
       this.feeList.push(field);
@@ -95,6 +100,7 @@ export class CourseViewComponent implements OnInit {
   createSession(): FormGroup {
     return this.fb.group({
       id: [null],
+      courseId: [null, []],
       teacher: [null, []],
       startDateTime: [null, [Validators.required]],
       duration: [null, [Validators.required]],
@@ -107,6 +113,7 @@ export class CourseViewComponent implements OnInit {
   createFee(): FormGroup {
     return this.fb.group({
       id: [null, []],
+      courseId: [null, []],
       type: [null, [Validators.required]],
       price: [0, [Validators.required, Validators.min(1)]],
       editFlag: [EDIT_FLAG.NEW, []]
@@ -115,11 +122,11 @@ export class CourseViewComponent implements OnInit {
 
   //#region get form fields
   get sessions() {
-    return this.form.controls.sessions as FormArray;
+    return this.form.controls.courseScheduleList as FormArray;
   }
 
   get feeList() {
-    return this.form.controls.feeList as FormArray;
+    return this.form.controls.courseExpenseList as FormArray;
   }
   //#endregion
 
@@ -167,7 +174,7 @@ export class CourseViewComponent implements OnInit {
           if (this.sessionParam.dayOfWeek.find(d => { return d.checked && d.value == day; })) {
             debugger;
             let newSession: CourseSession = {};
-            newSession.id = (this.sessions.length + 1).toString();
+            newSession.courseId = this.course.id;
             newSession.teacher = this.sessionParam.teacher;
             newSession.duration = this.sessionParam.duration;
             newSession.price = this.sessionParam.price;
@@ -267,8 +274,14 @@ export class CourseViewComponent implements OnInit {
       this.form.controls[key].updateValueAndValidity();
     });
     if (this.form.invalid) return;
+    this.courseService.saveCourse(this.form.value).subscribe((res) => {
+      this.goBack();
+    });
   }
 
+  goBack() {
+    this._location.back();
+  }
   getTeacherName(code: string) {
     let teacher = this.teacherList.find(t => { return t.code == code; });
     return teacher ? teacher.name : "";
