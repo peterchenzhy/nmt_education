@@ -2,16 +2,21 @@ package com.nmt.education.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.utils.ReqDtoCheckUtil;
+import com.nmt.education.pojo.dto.req.CourseRegisterReqDto;
 import com.nmt.education.pojo.dto.req.CourseReqDto;
 import com.nmt.education.pojo.dto.req.CourseSearchDto;
+import com.nmt.education.pojo.po.CoursePo;
 import com.nmt.education.pojo.vo.CourseDetailVo;
 import com.nmt.education.service.course.CourseService;
+import com.nmt.education.service.course.registeration.CourseRegistrationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.nmt.education.commmons.Consts.LOGIN_USER_HEAD;
 import static com.nmt.education.commmons.Consts.ROLE_ID_HEAD;
@@ -32,6 +37,8 @@ public class CourseController {
 
     @Autowired
     private CourseService courseService;
+    @Autowired
+    private CourseRegistrationService courseRegistrationService;
 
     @ApiOperation(value = "manager", notes = "课程编辑提交按钮")
     @RequestMapping(value = "/manager", method = RequestMethod.POST)
@@ -44,19 +51,40 @@ public class CourseController {
 
     @ApiOperation(value = "search", notes = "课程查询")
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public PageInfo search(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
-                                  @RequestBody @Validated CourseSearchDto dto, BindingResult bindingResult) {
+    public PageInfo<CoursePo> search(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
+                                     @RequestBody @Validated CourseSearchDto dto, BindingResult bindingResult) {
         ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
         return courseService.search(dto);
+    }
+
+    @ApiOperation(value = "/search/fuzzy", notes = "根据课程编号或者课程名称，课程模糊查询")
+    @RequestMapping(value = "/search/fuzzy", method = RequestMethod.POST)
+    public List<CoursePo> searchFuzzy(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
+                                            @RequestParam String name, BindingResult bindingResult) {
+        return courseService.searchFuzzy(name);
     }
 
     @ApiOperation(value = "detail", notes = "课程明细")
     @RequestMapping(value = "/detail/{courseId}", method = RequestMethod.POST)
     public CourseDetailVo detail(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
-    ,@PathVariable Long courseId ) {
+            , @PathVariable Long courseId) {
         return courseService.detail(courseId);
     }
 
+
+    @ApiOperation(value = "register", notes = "报名")
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public void register(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
+            , @RequestBody @Validated CourseRegisterReqDto dto, BindingResult bindingResult) {
+        courseRegistrationService.register(dto,logInUser);
+    }
+
+    @ApiOperation(value = "register/delete", notes = "删除报名")
+    @RequestMapping(value = "/register/{id}", method = RequestMethod.DELETE)
+    public void register(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
+            , @PathVariable Long id) {
+        courseRegistrationService.registerDel(id,logInUser);
+    }
 
 
 }

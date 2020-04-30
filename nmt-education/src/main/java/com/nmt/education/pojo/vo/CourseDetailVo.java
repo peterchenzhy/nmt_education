@@ -15,4 +15,5 @@ public class CourseDetailVo extends CoursePo {
 
     private List<CourseExpensePo> courseExpenseList = new ArrayList<>();
     private List<CourseSchedulePo> courseScheduleList = new ArrayList<>();
+    private TeacherVo teacher;
 }

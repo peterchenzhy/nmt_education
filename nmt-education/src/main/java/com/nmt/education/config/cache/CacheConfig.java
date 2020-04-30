@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
  * Spring cache的一些配置，建议组件相关配置都放在相应的configuration类中
  *
  * @author
- * @copyright (c) 2018, Lianjia Group All Rights Reserved.
+ * @copyright (c) 2020, PeterChen Group All Rights Reserved.
  */
 @Configuration
 @ConditionalOnBean(CacheManagerConfig.class)

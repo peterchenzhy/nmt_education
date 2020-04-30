@@ -13,7 +13,7 @@ import org.springframework.core.io.Resource;
  * @author Stephen.Shi
  * @version v1
  * @summary CacheManager配置
- * @Copyright (c) 2018, Lianjia Group All Rights Reserved.
+ * @Copyright (c) 2020, PeterChen Group All Rights Reserved.
  * @since 2018/9/9
  */
 @Configuration

@@ -3,13 +3,16 @@ package com.nmt.education.service.course;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.Enums;
+import com.nmt.education.pojo.dto.req.CourseRegisterReqDto;
 import com.nmt.education.pojo.dto.req.CourseReqDto;
 import com.nmt.education.pojo.dto.req.CourseSearchDto;
 import com.nmt.education.pojo.po.CoursePo;
 import com.nmt.education.pojo.vo.CourseDetailVo;
 import com.nmt.education.service.CodeService;
 import com.nmt.education.service.course.expense.CourseExpenseService;
+import com.nmt.education.service.course.registeration.CourseRegistrationService;
 import com.nmt.education.service.course.schedule.CourseScheduleService;
+import com.nmt.education.service.teacher.TeacherService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,10 @@ public class CourseService {
     private CourseExpenseService courseExpenseService;
     @Resource
     private CoursePoMapper coursePoMapper;
+    @Autowired
+    private TeacherService teacherService;
+    @Autowired
+    private CourseRegistrationService courseRegistrationService;
 
     /**
      * 课程新增，修改，删除接口
@@ -85,7 +92,7 @@ public class CourseService {
      * @version v1
      * @since 2020/4/25 20:16
      */
-    public PageInfo search(CourseSearchDto dto) {
+    public PageInfo<CoursePo> search(CourseSearchDto dto) {
         if (Objects.isNull(dto)) {
             return new PageInfo();
         }
@@ -235,6 +242,25 @@ public class CourseService {
         BeanUtils.copyProperties(po, vo);
         vo.getCourseExpenseList().addAll(courseExpenseService.queryByCourseId(id));
         vo.getCourseScheduleList().addAll(courseScheduleService.queryByCourseId(id));
+        if (Objects.isNull(po.getTeacherId())) {
+            vo.setTeacher(teacherService.detail(po.getTeacherId()));
+        }
         return vo;
     }
+
+    /**
+     * 根据 课程编号或者 课程名称模糊搜索
+     *
+     * @param name
+     * @return java.util.List<com.nmt.education.pojo.po.CoursePo>
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/4/30 9:08
+     */
+    public List<CoursePo> searchFuzzy(String name) {
+        Assert.hasLength(name, "课程模糊搜索关键字不能为空");
+        return this.coursePoMapper.queryFuzzy(name);
+    }
+
 }

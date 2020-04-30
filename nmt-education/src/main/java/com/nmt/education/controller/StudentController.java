@@ -4,7 +4,6 @@ import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.utils.ReqDtoCheckUtil;
 import com.nmt.education.pojo.dto.req.StudentReqDto;
 import com.nmt.education.pojo.dto.req.StudentSearchReqDto;
-import com.nmt.education.pojo.vo.CourseDetailVo;
 import com.nmt.education.pojo.vo.StudentVo;
 import com.nmt.education.service.student.StudentService;
 import io.swagger.annotations.Api;

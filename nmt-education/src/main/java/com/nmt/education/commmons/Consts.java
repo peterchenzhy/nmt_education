@@ -18,5 +18,4 @@ public interface Consts {
     String X校区 = "XXQ";
     int 学生编号长度 = 15;
     int 课程编号长度 = 20;
-
 }

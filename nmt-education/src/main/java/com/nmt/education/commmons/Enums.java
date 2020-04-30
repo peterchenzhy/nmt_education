@@ -63,10 +63,10 @@ public interface Enums {
      * 报名状态
      */
     enum RegistrationStatus implements IEnum {
-        新报(1, "新报", "default"),
-        续报(2, "续报", "processing"),
+        正常(1, "正常", "default"),
+        已冻结(2, "已冻结", "processing"),
         退费中(3, "退费中", "success"),
-        已退费(4, "已退费", "error");
+        已退费(5, "已退费", "error");
 
         @Getter
         private Integer code;
@@ -76,6 +76,27 @@ public interface Enums {
         private String icon;
 
         RegistrationStatus(Integer code, String desc, String icon) {
+            this.desc = desc;
+            this.code = code;
+            this.icon = icon;
+        }
+    }
+    /**
+     * 报名类型
+     */
+    enum RegistrationType implements IEnum {
+        新报(1, "新报", "default"),
+        续报(2, "续报", "success"),
+        试听课(3, "试听课", "success");
+
+        @Getter
+        private Integer code;
+        @Getter
+        private String desc;
+        @Getter
+        private String icon;
+
+        RegistrationType(Integer code, String desc, String icon) {
             this.desc = desc;
             this.code = code;
             this.icon = icon;
@@ -112,6 +133,27 @@ public interface Enums {
                 }
             }
             return result;
+        }
+    }
+    /**
+     * 签到状态
+     */
+    enum signInType implements IEnum {
+        未签到(0, "未签到", null),
+        已签到(1, "已签到", null),
+        请假(2, "请假", null);
+
+        @Getter
+        private Integer code;
+        @Getter
+        private String desc;
+        @Getter
+        private String icon;
+
+        signInType(Integer code, String desc, String icon) {
+            this.desc = desc;
+            this.code = code;
+            this.icon = icon;
         }
     }
 }
