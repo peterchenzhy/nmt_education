@@ -71,7 +71,7 @@ export class OrderViewComponent implements OnInit {
     nzFilterOption = () => true;
     search(value: string): void {
         this.http
-            .get("/course")
+            .get("nmt-education/course/search/fuzzy?name="+value)
             .subscribe(data => {
                 const listOfOption: Array<Course> = [];
                 data.forEach(item => {
