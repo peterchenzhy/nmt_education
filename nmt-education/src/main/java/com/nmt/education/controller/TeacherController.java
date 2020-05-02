@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.utils.ReqDtoCheckUtil;
 import com.nmt.education.pojo.dto.req.TeacherReqDto;
 import com.nmt.education.pojo.dto.req.TeacherSearchReqDto;
+import com.nmt.education.pojo.vo.StudentVo;
 import com.nmt.education.pojo.vo.TeacherVo;
 import com.nmt.education.service.teacher.TeacherService;
 import io.swagger.annotations.Api;
@@ -44,30 +45,29 @@ public class TeacherController {
     }
 
 
-    @ApiOperation(value = "new", notes = "新增老师")
-    @RequestMapping(value = "/new", method = RequestMethod.POST)
+    @ApiOperation(value = "manager", notes = "教师管理")
+    @RequestMapping(value = "/manager", method = RequestMethod.POST)
     public Boolean newTeacher(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
                               @RequestBody @Validated TeacherReqDto dto, BindingResult bindingResult) {
         ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
-        return teacherService.newTeacher(logInUser, dto);
-    }
-
-    @ApiOperation(value = "edit", notes = "修改老师")
-    @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public Boolean editTeacher(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
-                               @RequestBody @Validated TeacherReqDto dto, BindingResult bindingResult) {
-        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
-        return teacherService.editTeacher(logInUser, dto);
+        return teacherService.teacherManager(logInUser, dto);
     }
 
 
     @ApiOperation(value = "search", notes = "搜索老师")
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public PageInfo<TeacherVo> searchStudent(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
+    public PageInfo<TeacherVo> searchTeacher(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
                                              @RequestBody @Validated TeacherSearchReqDto dto, BindingResult bindingResult) {
         ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
         return teacherService.search(logInUser, dto);
     }
 
+
+    @ApiOperation(value = "detail", notes = "老师明细")
+    @RequestMapping(value = "/detail/{teacherId}", method = RequestMethod.POST)
+    public TeacherVo detail(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
+            , @PathVariable Long teacherId ) {
+        return teacherService.detail(teacherId);
+    }
 
 }

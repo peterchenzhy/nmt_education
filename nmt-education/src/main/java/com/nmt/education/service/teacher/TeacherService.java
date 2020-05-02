@@ -2,14 +2,19 @@ package com.nmt.education.service.teacher;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.nmt.education.commmons.Enums;
 import com.nmt.education.commmons.StatusEnum;
+import com.nmt.education.commmons.utils.DateUtil;
 import com.nmt.education.pojo.dto.req.TeacherReqDto;
 import com.nmt.education.pojo.dto.req.TeacherSearchReqDto;
+import com.nmt.education.pojo.po.StudentPo;
 import com.nmt.education.pojo.po.TeacherPo;
 import com.nmt.education.pojo.vo.TeacherVo;
 import com.nmt.education.service.teacher.config.TeacherSalaryConfigService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -23,14 +28,50 @@ import java.util.Date;
 import java.util.List;
 
 @Service
+@Slf4j
 public class TeacherService {
 
 
     @Autowired
     private TeacherSalaryConfigService teacherSalaryConfigService;
+    @Autowired
+    @Lazy
+    private TeacherService self;
     @Resource
     private TeacherPoMapper teacherPoMapper;
 
+    /**
+     * 教师信息，修改，删除接口
+     * 编辑标志；0：无变化，1：新增，2：编辑，3：需要删除
+     *
+     * @param loginUser
+     * @param dto
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/4/11 21:48
+     */
+    public Boolean teacherManager(Integer loginUser, TeacherReqDto dto) {
+        Enums.EditFlag editFlag = Enums.EditFlag.codeOf(dto.getEditFlag());
+        switch (editFlag) {
+            case 新增:
+                self.newTeacher(loginUser, dto);
+                break;
+            case 修改:
+                self.editTeacher(loginUser, dto);
+                break;
+            case 需要删除:
+                self.editTeacher(loginUser, dto);
+                break;
+            case 无变化:
+                break;
+            default:
+                log.error("teacherService请求数据不合规，无法辨认editFlag！" + dto);
+                break;
+        }
+
+        return true;
+    }
 
     /**
      * 新增老师
@@ -65,6 +106,7 @@ public class TeacherService {
         teacherPo.setName(dto.getName());
         teacherPo.setBirthday(dto.getBirthday());
         teacherPo.setSchool(dto.getSchool());
+        teacherPo.setSex(dto.getSex());
         teacherPo.setStatus(StatusEnum.VALID.getCode());
         teacherPo.setPhone(dto.getPhone());
         teacherPo.setRemark(dto.getRemark());
@@ -90,18 +132,26 @@ public class TeacherService {
         Assert.notNull(dto.getId(), "编辑老师缺少id");
         TeacherPo teacherPo = selectByPrimaryKey(dto.getId());
         Assert.notNull(teacherPo, "老师信息不存在" + dto.getId());
-        if (dto.getDeleteFlg()) {
-            invalidByPrimaryKey(teacherPo.getId(), operator);
-        } else {
-            teacherPo.setName(dto.getName());
-            teacherPo.setBirthday(dto.getBirthday());
-            teacherPo.setSchool(dto.getSchool());
-            teacherPo.setPhone(dto.getPhone());
-            teacherPo.setRemark(dto.getRemark());
-            teacherPo.setOperator(operator);
-            teacherPo.setOperateTime(new Date());
-            this.updateByPrimaryKeySelective(teacherPo);
+        Enums.EditFlag editFlag = Enums.EditFlag.codeOf(dto.getEditFlag());
+        switch (editFlag) {
+            case 需要删除:
+                invalidByPrimaryKey(teacherPo.getId(), operator);
+                break;
+            case 修改:
+                teacherPo.setName(dto.getName());
+                teacherPo.setBirthday(dto.getBirthday());
+                teacherPo.setSchool(dto.getSchool());
+                teacherPo.setPhone(dto.getPhone());
+                teacherPo.setSex(dto.getSex());
+                teacherPo.setRemark(dto.getRemark());
+                teacherPo.setOperator(operator);
+                teacherPo.setOperateTime(new Date());
+                this.updateByPrimaryKeySelective(teacherPo);
+                break;
+            default:
+                break;
         }
+
         teacherSalaryConfigService.editSalayConfig(dto.getTeacherSalaryConfigList(), teacherPo.getId(), operator);
         return true;
     }
@@ -155,29 +205,46 @@ public class TeacherService {
         return Collections.emptyList();
     }
 
+
     private TeacherVo po2vo(TeacherPo e) {
         TeacherVo vo = new TeacherVo();
         BeanUtils.copyProperties(e, vo);
+        if(DateUtil.defaultDateTime().compareTo(vo.getBirthday())==0){
+            vo.setBirthday(null);
+        }
+        //todo 老师的价格如果是敏感数据，那么这边需要做权限控制或者
+        vo.setSalaryConfigList(teacherSalaryConfigService.selectByTeacherId(vo.getId()));
         return vo;
     }
 
-    //老师分页搜索
-    public PageInfo<TeacherVo> search(Integer logInUser, TeacherSearchReqDto dto) {
+    /**
+     * 老师分页搜索
+     *
+     * @param loginUser
+     * @param dto
+     * @return com.github.pagehelper.PageInfo<com.nmt.education.pojo.vo.TeacherVo>
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @summary
+     * @since 2020/4/11 22:50
+     */
+    public PageInfo<TeacherVo> search(Integer loginUser, TeacherSearchReqDto dto) {
         PageInfo<TeacherPo> pageInfo;
         if (StringUtils.hasLength(dto.getPhone())) {
-            pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSzie()).doSelectPageInfo(() -> this.queryByPhone(dto.getPhone()));
+            pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.queryByPhone(dto.getPhone()));
         } else {
             if (StringUtils.hasLength(dto.getName())) {
-                pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSzie()).doSelectPageInfo(() -> this.teacherPoMapper.queryFuzzy(dto.getName()));
+                pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.teacherPoMapper.queryFuzzy(dto.getName()));
             } else {
-                pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSzie()).doSelectPageInfo(() -> this.queryByPhone(null));
+                pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.queryByPhone(null));
             }
         }
         if (CollectionUtils.isEmpty(pageInfo.getList())) {
             return new PageInfo<>();
         }
         List<TeacherVo> voList = new ArrayList<>(pageInfo.getList().size());
-        pageInfo.getList().stream().forEach(e -> voList.add(po2vo(e)));
+        pageInfo.getList().forEach(e -> voList.add(po2vo(e)));
         PageInfo voPage = new PageInfo();
         BeanUtils.copyProperties(pageInfo, voPage);
         voPage.setList(voList);
@@ -190,4 +257,10 @@ public class TeacherService {
     }
 
 
+    public TeacherVo detail(Long id) {
+        Assert.notNull(id,"老师明细缺少id,id:"+id);
+        TeacherPo po = selectByPrimaryKey(id);
+        Assert.notNull(po,"老师明细不存在，id："+id);
+        return po2vo(po);
+    }
 }

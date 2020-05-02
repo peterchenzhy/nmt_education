@@ -21,7 +21,7 @@ import java.util.Objects;
  * @author DuKaijun
  * @modifier yemingxing
  * @summary 日期工具类
- * @Copyright (c) 2018, Lianjia Group All Rights Reserved.
+ * @Copyright (c) 2020, PeterChen Group All Rights Reserved.
  * @since 2018/5/23 10:41
  */
 @Slf4j

@@ -3,7 +3,7 @@
     <nz-card [nzHoverable]="true" [nzBordered]="false">
         <sv-container size="large" title="学生信息">
             <sv label="姓名">{{order.student.name}}</sv>
-            <sv label="性别">{{ globalService.getGenderLabel(order.student.gender)}}</sv>
+            <sv label="性别">{{ globalService.getGenderLabel(order.student.sex)}}</sv>
             <sv label="出生年月">{{order.student.birthday}}</sv>
             <sv label="联系电话">{{order.student.phone}}</sv>
             <sv label="学校">{{order.student.school}}</sv>

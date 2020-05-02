@@ -1,0 +1,975 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nmt.education.service.course.CoursePoMapper">
+    <resultMap id="BaseResultMap" type="com.nmt.education.pojo.po.CoursePo">
+        <!--@mbg.generated-->
+        <!--@Table course-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="teacher_id" jdbcType="BIGINT" property="teacherId"/>
+        <result column="code" jdbcType="VARCHAR" property="code"/>
+        <result column="year" jdbcType="INTEGER" property="year"/>
+        <result column="season" jdbcType="TINYINT" property="season"/>
+        <result column="campus" jdbcType="TINYINT" property="campus"/>
+        <result column="course_type" jdbcType="TINYINT" property="courseType"/>
+        <result column="course_subject" jdbcType="TINYINT" property="courseSubject"/>
+        <result column="course_classification" jdbcType="TINYINT" property="courseClassification"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="grade" jdbcType="TINYINT" property="grade"/>
+        <result column="course_status" jdbcType="TINYINT" property="courseStatus"/>
+        <result column="classroom" jdbcType="BIGINT" property="classroom"/>
+        <result column="total_student" jdbcType="INTEGER" property="totalStudent"/>
+        <result column="per_time" jdbcType="INTEGER" property="perTime"/>
+        <result column="times" jdbcType="TINYINT" property="times"/>
+        <result column="start_date" jdbcType="DATE" property="startDate"/>
+        <result column="end_date" jdbcType="DATE" property="endDate"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="creator" jdbcType="INTEGER" property="creator"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="operator" jdbcType="INTEGER" property="operator"/>
+        <result column="operate_time" jdbcType="TIMESTAMP" property="operateTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, teacher_id, code, `year`, season, campus, course_type, course_subject, course_classification,
+        `name`, grade, course_status, classroom, total_student, per_time, times, start_date,
+        end_date, description, remark, `status`, creator, create_time, `operator`, operate_time
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from course
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="queryFuzzy" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from course
+        where status = 1
+        and name like concat(#{name},'%')
+        or code like concat(#{name},'%')
+
+    </select>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.CoursePo" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into course
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="teacherId != null">
+                teacher_id,
+            </if>
+            <if test="code != null">
+                code,
+            </if>
+            <if test="year != null">
+                `year`,
+            </if>
+            <if test="season != null">
+                season,
+            </if>
+            <if test="campus != null">
+                campus,
+            </if>
+            <if test="courseType != null">
+                course_type,
+            </if>
+            <if test="courseSubject != null">
+                course_subject,
+            </if>
+            <if test="courseClassification != null">
+                course_classification,
+            </if>
+            <if test="name != null">
+                `name`,
+            </if>
+            <if test="grade != null">
+                grade,
+            </if>
+            <if test="courseStatus != null">
+                course_status,
+            </if>
+            <if test="classroom != null">
+                classroom,
+            </if>
+            <if test="totalStudent != null">
+                total_student,
+            </if>
+            <if test="perTime != null">
+                per_time,
+            </if>
+            <if test="times != null">
+                times,
+            </if>
+            <if test="startDate != null">
+                start_date,
+            </if>
+            <if test="endDate != null">
+                end_date,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="status != null">
+                `status`,
+            </if>
+            <if test="creator != null">
+                creator,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="operator != null">
+                `operator`,
+            </if>
+            <if test="operateTime != null">
+                operate_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="teacherId != null">
+                #{teacherId,jdbcType=BIGINT},
+            </if>
+            <if test="code != null">
+                #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="year != null">
+                #{year,jdbcType=INTEGER},
+            </if>
+            <if test="season != null">
+                #{season,jdbcType=TINYINT},
+            </if>
+            <if test="campus != null">
+                #{campus,jdbcType=TINYINT},
+            </if>
+            <if test="courseType != null">
+                #{courseType,jdbcType=TINYINT},
+            </if>
+            <if test="courseSubject != null">
+                #{courseSubject,jdbcType=TINYINT},
+            </if>
+            <if test="courseClassification != null">
+                #{courseClassification,jdbcType=TINYINT},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="grade != null">
+                #{grade,jdbcType=TINYINT},
+            </if>
+            <if test="courseStatus != null">
+                #{courseStatus,jdbcType=TINYINT},
+            </if>
+            <if test="classroom != null">
+                #{classroom,jdbcType=BIGINT},
+            </if>
+            <if test="totalStudent != null">
+                #{totalStudent,jdbcType=INTEGER},
+            </if>
+            <if test="perTime != null">
+                #{perTime,jdbcType=INTEGER},
+            </if>
+            <if test="times != null">
+                #{times,jdbcType=TINYINT},
+            </if>
+            <if test="startDate != null">
+                #{startDate,jdbcType=DATE},
+            </if>
+            <if test="endDate != null">
+                #{endDate,jdbcType=DATE},
+            </if>
+            <if test="description != null">
+                #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=BOOLEAN},
+            </if>
+            <if test="creator != null">
+                #{creator,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="operator != null">
+                #{operator,jdbcType=INTEGER},
+            </if>
+            <if test="operateTime != null">
+                #{operateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="invalidByPrimaryKey">
+    update course set status = 0 ,
+    `operator` = #{operator},
+    operate_time = now()
+    where id =#{id}
+  </update>
+    <select id="queryByDto" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from course
+        where status =1
+        <if test="dto.courseSubject != null">
+          and   course_subject = #{dto.courseSubject}
+        </if>
+        <if test="dto.courseType != null">
+            and   course_type = #{dto.courseType}
+        </if>
+        <if test="dto.grade != null">
+            and   grade = #{dto.grade}
+        </if>
+        <if test="dto.startDate != null">
+            <![CDATA[
+            and   start_date != "1970-01-02 00:00:00"
+            and start_date >= #{dto.startDate}
+        ]]></if>
+        <if test="dto.endDate != null">
+            <![CDATA[
+            and   end_date != "1970-01-02 00:00:00"
+            and start_date <= #{dto.endDate}  ]]>
+        </if>
+    </select>
+    <update id="updateByPrimaryKeySelective" parameterType="com.nmt.education.pojo.po.CoursePo">
+        <!--@mbg.generated-->
+        update course
+        <set>
+            <if test="teacherId != null">
+                teacher_id = #{teacherId,jdbcType=BIGINT},
+            </if>
+            <if test="code != null">
+                code = #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="year != null">
+                `year` = #{year,jdbcType=INTEGER},
+            </if>
+            <if test="season != null">
+                season = #{season,jdbcType=TINYINT},
+            </if>
+            <if test="campus != null">
+                campus = #{campus,jdbcType=TINYINT},
+            </if>
+            <if test="courseType != null">
+                course_type = #{courseType,jdbcType=TINYINT},
+            </if>
+            <if test="courseSubject != null">
+                course_subject = #{courseSubject,jdbcType=TINYINT},
+            </if>
+            <if test="courseClassification != null">
+                course_classification = #{courseClassification,jdbcType=TINYINT},
+            </if>
+            <if test="name != null">
+                `name` = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="grade != null">
+                grade = #{grade,jdbcType=TINYINT},
+            </if>
+            <if test="courseStatus != null">
+                course_status = #{courseStatus,jdbcType=TINYINT},
+            </if>
+            <if test="classroom != null">
+                classroom = #{classroom,jdbcType=BIGINT},
+            </if>
+            <if test="totalStudent != null">
+                total_student = #{totalStudent,jdbcType=INTEGER},
+            </if>
+            <if test="perTime != null">
+                per_time = #{perTime,jdbcType=INTEGER},
+            </if>
+            <if test="times != null">
+                times = #{times,jdbcType=TINYINT},
+            </if>
+            <if test="startDate != null">
+                start_date = #{startDate,jdbcType=DATE},
+            </if>
+            <if test="endDate != null">
+                end_date = #{endDate,jdbcType=DATE},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                `status` = #{status,jdbcType=BOOLEAN},
+            </if>
+            <if test="creator != null">
+                creator = #{creator,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="operator != null">
+                `operator` = #{operator,jdbcType=INTEGER},
+            </if>
+            <if test="operateTime != null">
+                operate_time = #{operateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateBatch" parameterType="java.util.List">
+        <!--@mbg.generated-->
+        update course
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="teacher_id = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.teacherId,jdbcType=BIGINT}
+                </foreach>
+            </trim>
+            <trim prefix="code = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.code,jdbcType=VARCHAR}
+                </foreach>
+            </trim>
+            <trim prefix="`year` = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.year,jdbcType=INTEGER}
+                </foreach>
+            </trim>
+            <trim prefix="season = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.season,jdbcType=TINYINT}
+                </foreach>
+            </trim>
+            <trim prefix="campus = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.campus,jdbcType=TINYINT}
+                </foreach>
+            </trim>
+            <trim prefix="course_type = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.courseType,jdbcType=TINYINT}
+                </foreach>
+            </trim>
+            <trim prefix="course_subject = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.courseSubject,jdbcType=TINYINT}
+                </foreach>
+            </trim>
+            <trim prefix="course_classification = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.courseClassification,jdbcType=TINYINT}
+                </foreach>
+            </trim>
+            <trim prefix="`name` = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.name,jdbcType=VARCHAR}
+                </foreach>
+            </trim>
+            <trim prefix="grade = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.grade,jdbcType=TINYINT}
+                </foreach>
+            </trim>
+            <trim prefix="course_status = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.courseStatus,jdbcType=TINYINT}
+                </foreach>
+            </trim>
+            <trim prefix="classroom = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.classroom,jdbcType=BIGINT}
+                </foreach>
+            </trim>
+            <trim prefix="total_student = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.totalStudent,jdbcType=INTEGER}
+                </foreach>
+            </trim>
+            <trim prefix="per_time = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.perTime,jdbcType=INTEGER}
+                </foreach>
+            </trim>
+            <trim prefix="times = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.times,jdbcType=TINYINT}
+                </foreach>
+            </trim>
+            <trim prefix="start_date = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.startDate,jdbcType=DATE}
+                </foreach>
+            </trim>
+            <trim prefix="end_date = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.endDate,jdbcType=DATE}
+                </foreach>
+            </trim>
+            <trim prefix="description = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.description,jdbcType=VARCHAR}
+                </foreach>
+            </trim>
+            <trim prefix="remark = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.remark,jdbcType=VARCHAR}
+                </foreach>
+            </trim>
+            <trim prefix="`status` = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.status,jdbcType=BOOLEAN}
+                </foreach>
+            </trim>
+            <trim prefix="creator = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.creator,jdbcType=INTEGER}
+                </foreach>
+            </trim>
+            <trim prefix="create_time = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.createTime,jdbcType=TIMESTAMP}
+                </foreach>
+            </trim>
+            <trim prefix="`operator` = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.operator,jdbcType=INTEGER}
+                </foreach>
+            </trim>
+            <trim prefix="operate_time = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=BIGINT} then #{item.operateTime,jdbcType=TIMESTAMP}
+                </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach close=")" collection="list" item="item" open="(" separator=", ">
+            #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </update>
+    <update id="updateBatchSelective" parameterType="java.util.List">
+        <!--@mbg.generated-->
+        update course
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="teacher_id = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.teacherId != null">
+                        when id = #{item.id,jdbcType=BIGINT} then #{item.teacherId,jdbcType=BIGINT}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="code = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.code != null">
+                        when id = #{item.id,jdbcType=BIGINT} then #{item.code,jdbcType=VARCHAR}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="`year` = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.year != null">
+                        when id = #{item.id,jdbcType=BIGINT} then #{item.year,jdbcType=INTEGER}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="season = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.season != null">
+                        when id = #{item.id,jdbcType=BIGINT} then #{item.season,jdbcType=TINYINT}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="campus = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.campus != null">
+                        when id = #{item.id,jdbcType=BIGINT} then #{item.campus,jdbcType=TINYINT}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="course_type = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.courseType != null">
+                        when id = #{item.id,jdbcType=BIGINT} then #{item.courseType,jdbcType=TINYINT}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="course_subject = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.courseSubject != null">
+                        when id = #{item.id,jdbcType=BIGINT} then #{item.courseSubject,jdbcType=TINYINT}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="course_classification = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.courseClassification != null">
+                        when id = #{item.id,jdbcType=BIGINT} then #{item.courseClassification,jdbcType=TINYINT}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="`name` = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.name != null">
+                        when id = #{item.id,jdbcType=BIGINT} then #{item.name,jdbcType=VARCHAR}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="grade = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.grade != null">
+                        when id = #{item.id,jdbcType=BIGINT} then #{item.grade,jdbcType=TINYINT}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="course_status = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.courseStatus != null">
+                        when id = #{item.id,jdbcType=BIGINT} then #{item.courseStatus,jdbcType=TINYINT}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="classroom = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.classroom != null">
+                        when id = #{item.id,jdbcType=BIGINT} then #{item.classroom,jdbcType=BIGINT}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="total_student = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.totalStudent != null">
+                        when id = #{item.id,jdbcType=BIGINT} then #{item.totalStudent,jdbcType=INTEGER}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="per_time = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.perTime != null">
+                        when id = #{item.id,jdbcType=BIGINT} then #{item.perTime,jdbcType=INTEGER}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="times = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.times != null">
+                        when id = #{item.id,jdbcType=BIGINT} then #{item.times,jdbcType=TINYINT}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="start_date = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.startDate != null">
+                        when id = #{item.id,jdbcType=BIGINT} then #{item.startDate,jdbcType=DATE}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="end_date = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.endDate != null">
+                        when id = #{item.id,jdbcType=BIGINT} then #{item.endDate,jdbcType=DATE}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="description = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.description != null">
+                        when id = #{item.id,jdbcType=BIGINT} then #{item.description,jdbcType=VARCHAR}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="remark = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.remark != null">
+                        when id = #{item.id,jdbcType=BIGINT} then #{item.remark,jdbcType=VARCHAR}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="`status` = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.status != null">
+                        when id = #{item.id,jdbcType=BIGINT} then #{item.status,jdbcType=BOOLEAN}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="creator = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.creator != null">
+                        when id = #{item.id,jdbcType=BIGINT} then #{item.creator,jdbcType=INTEGER}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="create_time = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.createTime != null">
+                        when id = #{item.id,jdbcType=BIGINT} then #{item.createTime,jdbcType=TIMESTAMP}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="`operator` = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.operator != null">
+                        when id = #{item.id,jdbcType=BIGINT} then #{item.operator,jdbcType=INTEGER}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="operate_time = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.operateTime != null">
+                        when id = #{item.id,jdbcType=BIGINT} then #{item.operateTime,jdbcType=TIMESTAMP}
+                    </if>
+                </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach close=")" collection="list" item="item" open="(" separator=", ">
+            #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </update>
+    <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into course
+        (teacher_id, code, `year`, season, campus, course_type, course_subject, course_classification,
+        `name`, grade, course_status, classroom, total_student, per_time, times, start_date,
+        end_date, description, remark, `status`, creator, create_time, `operator`, operate_time
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.teacherId,jdbcType=BIGINT}, #{item.code,jdbcType=VARCHAR}, #{item.year,jdbcType=INTEGER},
+            #{item.season,jdbcType=TINYINT}, #{item.campus,jdbcType=TINYINT}, #{item.courseType,jdbcType=TINYINT},
+            #{item.courseSubject,jdbcType=TINYINT}, #{item.courseClassification,jdbcType=TINYINT},
+            #{item.name,jdbcType=VARCHAR}, #{item.grade,jdbcType=TINYINT}, #{item.courseStatus,jdbcType=TINYINT},
+            #{item.classroom,jdbcType=BIGINT}, #{item.totalStudent,jdbcType=INTEGER}, #{item.perTime,jdbcType=INTEGER},
+            #{item.times,jdbcType=TINYINT}, #{item.startDate,jdbcType=DATE}, #{item.endDate,jdbcType=DATE},
+            #{item.description,jdbcType=VARCHAR}, #{item.remark,jdbcType=VARCHAR}, #{item.status,jdbcType=BOOLEAN},
+            #{item.creator,jdbcType=INTEGER}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.operator,jdbcType=INTEGER},
+            #{item.operateTime,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+    <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.CoursePo" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into course
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            teacher_id,
+            code,
+            `year`,
+            season,
+            campus,
+            course_type,
+            course_subject,
+            course_classification,
+            `name`,
+            grade,
+            course_status,
+            classroom,
+            total_student,
+            per_time,
+            times,
+            start_date,
+            end_date,
+            description,
+            remark,
+            `status`,
+            creator,
+            create_time,
+            `operator`,
+            operate_time,
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            #{teacherId,jdbcType=BIGINT},
+            #{code,jdbcType=VARCHAR},
+            #{year,jdbcType=INTEGER},
+            #{season,jdbcType=TINYINT},
+            #{campus,jdbcType=TINYINT},
+            #{courseType,jdbcType=TINYINT},
+            #{courseSubject,jdbcType=TINYINT},
+            #{courseClassification,jdbcType=TINYINT},
+            #{name,jdbcType=VARCHAR},
+            #{grade,jdbcType=TINYINT},
+            #{courseStatus,jdbcType=TINYINT},
+            #{classroom,jdbcType=BIGINT},
+            #{totalStudent,jdbcType=INTEGER},
+            #{perTime,jdbcType=INTEGER},
+            #{times,jdbcType=TINYINT},
+            #{startDate,jdbcType=DATE},
+            #{endDate,jdbcType=DATE},
+            #{description,jdbcType=VARCHAR},
+            #{remark,jdbcType=VARCHAR},
+            #{status,jdbcType=BOOLEAN},
+            #{creator,jdbcType=INTEGER},
+            #{createTime,jdbcType=TIMESTAMP},
+            #{operator,jdbcType=INTEGER},
+            #{operateTime,jdbcType=TIMESTAMP},
+        </trim>
+        on duplicate key update
+        <trim suffixOverrides=",">
+            <if test="id != null">
+                id = #{id,jdbcType=BIGINT},
+            </if>
+            teacher_id = #{teacherId,jdbcType=BIGINT},
+            code = #{code,jdbcType=VARCHAR},
+            `year` = #{year,jdbcType=INTEGER},
+            season = #{season,jdbcType=TINYINT},
+            campus = #{campus,jdbcType=TINYINT},
+            course_type = #{courseType,jdbcType=TINYINT},
+            course_subject = #{courseSubject,jdbcType=TINYINT},
+            course_classification = #{courseClassification,jdbcType=TINYINT},
+            `name` = #{name,jdbcType=VARCHAR},
+            grade = #{grade,jdbcType=TINYINT},
+            course_status = #{courseStatus,jdbcType=TINYINT},
+            classroom = #{classroom,jdbcType=BIGINT},
+            total_student = #{totalStudent,jdbcType=INTEGER},
+            per_time = #{perTime,jdbcType=INTEGER},
+            times = #{times,jdbcType=TINYINT},
+            start_date = #{startDate,jdbcType=DATE},
+            end_date = #{endDate,jdbcType=DATE},
+            description = #{description,jdbcType=VARCHAR},
+            remark = #{remark,jdbcType=VARCHAR},
+            `status` = #{status,jdbcType=BOOLEAN},
+            creator = #{creator,jdbcType=INTEGER},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            `operator` = #{operator,jdbcType=INTEGER},
+            operate_time = #{operateTime,jdbcType=TIMESTAMP},
+        </trim>
+    </insert>
+    <insert id="insertOrUpdateSelective" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.CoursePo" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into course
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="teacherId != null">
+                teacher_id,
+            </if>
+            <if test="code != null">
+                code,
+            </if>
+            <if test="year != null">
+                `year`,
+            </if>
+            <if test="season != null">
+                season,
+            </if>
+            <if test="campus != null">
+                campus,
+            </if>
+            <if test="courseType != null">
+                course_type,
+            </if>
+            <if test="courseSubject != null">
+                course_subject,
+            </if>
+            <if test="courseClassification != null">
+                course_classification,
+            </if>
+            <if test="name != null">
+                `name`,
+            </if>
+            <if test="grade != null">
+                grade,
+            </if>
+            <if test="courseStatus != null">
+                course_status,
+            </if>
+            <if test="classroom != null">
+                classroom,
+            </if>
+            <if test="totalStudent != null">
+                total_student,
+            </if>
+            <if test="perTime != null">
+                per_time,
+            </if>
+            <if test="times != null">
+                times,
+            </if>
+            <if test="startDate != null">
+                start_date,
+            </if>
+            <if test="endDate != null">
+                end_date,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="status != null">
+                `status`,
+            </if>
+            <if test="creator != null">
+                creator,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="operator != null">
+                `operator`,
+            </if>
+            <if test="operateTime != null">
+                operate_time,
+            </if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="teacherId != null">
+                #{teacherId,jdbcType=BIGINT},
+            </if>
+            <if test="code != null">
+                #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="year != null">
+                #{year,jdbcType=INTEGER},
+            </if>
+            <if test="season != null">
+                #{season,jdbcType=TINYINT},
+            </if>
+            <if test="campus != null">
+                #{campus,jdbcType=TINYINT},
+            </if>
+            <if test="courseType != null">
+                #{courseType,jdbcType=TINYINT},
+            </if>
+            <if test="courseSubject != null">
+                #{courseSubject,jdbcType=TINYINT},
+            </if>
+            <if test="courseClassification != null">
+                #{courseClassification,jdbcType=TINYINT},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="grade != null">
+                #{grade,jdbcType=TINYINT},
+            </if>
+            <if test="courseStatus != null">
+                #{courseStatus,jdbcType=TINYINT},
+            </if>
+            <if test="classroom != null">
+                #{classroom,jdbcType=BIGINT},
+            </if>
+            <if test="totalStudent != null">
+                #{totalStudent,jdbcType=INTEGER},
+            </if>
+            <if test="perTime != null">
+                #{perTime,jdbcType=INTEGER},
+            </if>
+            <if test="times != null">
+                #{times,jdbcType=TINYINT},
+            </if>
+            <if test="startDate != null">
+                #{startDate,jdbcType=DATE},
+            </if>
+            <if test="endDate != null">
+                #{endDate,jdbcType=DATE},
+            </if>
+            <if test="description != null">
+                #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=BOOLEAN},
+            </if>
+            <if test="creator != null">
+                #{creator,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="operator != null">
+                #{operator,jdbcType=INTEGER},
+            </if>
+            <if test="operateTime != null">
+                #{operateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+        on duplicate key update
+        <trim suffixOverrides=",">
+            <if test="id != null">
+                id = #{id,jdbcType=BIGINT},
+            </if>
+            <if test="teacherId != null">
+                teacher_id = #{teacherId,jdbcType=BIGINT},
+            </if>
+            <if test="code != null">
+                code = #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="year != null">
+                `year` = #{year,jdbcType=INTEGER},
+            </if>
+            <if test="season != null">
+                season = #{season,jdbcType=TINYINT},
+            </if>
+            <if test="campus != null">
+                campus = #{campus,jdbcType=TINYINT},
+            </if>
+            <if test="courseType != null">
+                course_type = #{courseType,jdbcType=TINYINT},
+            </if>
+            <if test="courseSubject != null">
+                course_subject = #{courseSubject,jdbcType=TINYINT},
+            </if>
+            <if test="courseClassification != null">
+                course_classification = #{courseClassification,jdbcType=TINYINT},
+            </if>
+            <if test="name != null">
+                `name` = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="grade != null">
+                grade = #{grade,jdbcType=TINYINT},
+            </if>
+            <if test="courseStatus != null">
+                course_status = #{courseStatus,jdbcType=TINYINT},
+            </if>
+            <if test="classroom != null">
+                classroom = #{classroom,jdbcType=BIGINT},
+            </if>
+            <if test="totalStudent != null">
+                total_student = #{totalStudent,jdbcType=INTEGER},
+            </if>
+            <if test="perTime != null">
+                per_time = #{perTime,jdbcType=INTEGER},
+            </if>
+            <if test="times != null">
+                times = #{times,jdbcType=TINYINT},
+            </if>
+            <if test="startDate != null">
+                start_date = #{startDate,jdbcType=DATE},
+            </if>
+            <if test="endDate != null">
+                end_date = #{endDate,jdbcType=DATE},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                `status` = #{status,jdbcType=BOOLEAN},
+            </if>
+            <if test="creator != null">
+                creator = #{creator,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="operator != null">
+                `operator` = #{operator,jdbcType=INTEGER},
+            </if>
+            <if test="operateTime != null">
+                operate_time = #{operateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+</mapper>

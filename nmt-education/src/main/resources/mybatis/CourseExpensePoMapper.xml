@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nmt.education.service.course.expense.CourseExpensePoMapper">
+  <resultMap id="BaseResultMap" type="com.nmt.education.pojo.po.CourseExpensePo">
+    <!--@mbg.generated-->
+    <!--@Table course_expense-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="course_id" jdbcType="BIGINT" property="courseId" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="prop" jdbcType="INTEGER" property="prop" />
+    <result column="value" jdbcType="VARCHAR" property="value" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="BOOLEAN" property="status" />
+    <result column="creator" jdbcType="INTEGER" property="creator" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="operator" jdbcType="INTEGER" property="operator" />
+    <result column="operate_time" jdbcType="TIMESTAMP" property="operateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, course_id, `type`, prop, `value`, remark, `status`, creator, create_time, `operator`, 
+    operate_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from course_expense
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="queryByCourseId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from course_expense
+    where status = 1
+    and course_id = #{id}
+  </select>
+
+
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.CourseExpensePo" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into course_expense
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="courseId != null">
+        course_id,
+      </if>
+      <if test="type != null">
+        `type`,
+      </if>
+      <if test="prop != null">
+        prop,
+      </if>
+      <if test="value != null">
+        `value`,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="creator != null">
+        creator,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="operator != null">
+        `operator`,
+      </if>
+      <if test="operateTime != null">
+        operate_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="courseId != null">
+        #{courseId,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="prop != null">
+        #{prop,jdbcType=INTEGER},
+      </if>
+      <if test="value != null">
+        #{value,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=BOOLEAN},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operator != null">
+        #{operator,jdbcType=INTEGER},
+      </if>
+      <if test="operateTime != null">
+        #{operateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.nmt.education.pojo.po.CourseExpensePo">
+    <!--@mbg.generated-->
+    update course_expense
+    <set>
+      <if test="courseId != null">
+        course_id = #{courseId,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        `type` = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="prop != null">
+        prop = #{prop,jdbcType=INTEGER},
+      </if>
+      <if test="value != null">
+        `value` = #{value,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=BOOLEAN},
+      </if>
+      <if test="creator != null">
+        creator = #{creator,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operator != null">
+        `operator` = #{operator,jdbcType=INTEGER},
+      </if>
+      <if test="operateTime != null">
+        operate_time = #{operateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update course_expense
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="course_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.courseId,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="`type` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.type,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+      <trim prefix="prop = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.prop,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+      <trim prefix="`value` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.value,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="remark = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.remark,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="`status` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.status,jdbcType=BOOLEAN}
+        </foreach>
+      </trim>
+      <trim prefix="creator = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.creator,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+      <trim prefix="create_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.createTime,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+      <trim prefix="`operator` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.operator,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+      <trim prefix="operate_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.operateTime,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+  <update id="updateBatchSelective" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update course_expense
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="course_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.courseId != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.courseId,jdbcType=BIGINT}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="`type` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.type != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.type,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="prop = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.prop != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.prop,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="`value` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.value != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.value,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="remark = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.remark != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.remark,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="`status` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.status != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.status,jdbcType=BOOLEAN}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="creator = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.creator != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.creator,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="create_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.createTime != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.createTime,jdbcType=TIMESTAMP}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="`operator` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.operator != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.operator,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="operate_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.operateTime != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.operateTime,jdbcType=TIMESTAMP}
+          </if>
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into course_expense
+    (course_id, `type`, prop, `value`, remark, `status`, creator, create_time, `operator`, 
+      operate_time)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.courseId,jdbcType=BIGINT}, #{item.type,jdbcType=INTEGER}, #{item.prop,jdbcType=INTEGER}, 
+        #{item.value,jdbcType=VARCHAR}, #{item.remark,jdbcType=VARCHAR}, #{item.status,jdbcType=BOOLEAN}, 
+        #{item.creator,jdbcType=INTEGER}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.operator,jdbcType=INTEGER}, 
+        #{item.operateTime,jdbcType=TIMESTAMP})
+    </foreach>
+  </insert>
+  <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.CourseExpensePo" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into course_expense
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      course_id,
+      `type`,
+      prop,
+      `value`,
+      remark,
+      `status`,
+      creator,
+      create_time,
+      `operator`,
+      operate_time,
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      #{courseId,jdbcType=BIGINT},
+      #{type,jdbcType=INTEGER},
+      #{prop,jdbcType=INTEGER},
+      #{value,jdbcType=VARCHAR},
+      #{remark,jdbcType=VARCHAR},
+      #{status,jdbcType=BOOLEAN},
+      #{creator,jdbcType=INTEGER},
+      #{createTime,jdbcType=TIMESTAMP},
+      #{operator,jdbcType=INTEGER},
+      #{operateTime,jdbcType=TIMESTAMP},
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      course_id = #{courseId,jdbcType=BIGINT},
+      `type` = #{type,jdbcType=INTEGER},
+      prop = #{prop,jdbcType=INTEGER},
+      `value` = #{value,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      `status` = #{status,jdbcType=BOOLEAN},
+      creator = #{creator,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      `operator` = #{operator,jdbcType=INTEGER},
+      operate_time = #{operateTime,jdbcType=TIMESTAMP},
+    </trim>
+  </insert>
+  <insert id="insertOrUpdateSelective" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.CourseExpensePo" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into course_expense
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="courseId != null">
+        course_id,
+      </if>
+      <if test="type != null">
+        `type`,
+      </if>
+      <if test="prop != null">
+        prop,
+      </if>
+      <if test="value != null">
+        `value`,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="creator != null">
+        creator,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="operator != null">
+        `operator`,
+      </if>
+      <if test="operateTime != null">
+        operate_time,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="courseId != null">
+        #{courseId,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="prop != null">
+        #{prop,jdbcType=INTEGER},
+      </if>
+      <if test="value != null">
+        #{value,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=BOOLEAN},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operator != null">
+        #{operator,jdbcType=INTEGER},
+      </if>
+      <if test="operateTime != null">
+        #{operateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      <if test="courseId != null">
+        course_id = #{courseId,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        `type` = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="prop != null">
+        prop = #{prop,jdbcType=INTEGER},
+      </if>
+      <if test="value != null">
+        `value` = #{value,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=BOOLEAN},
+      </if>
+      <if test="creator != null">
+        creator = #{creator,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operator != null">
+        `operator` = #{operator,jdbcType=INTEGER},
+      </if>
+      <if test="operateTime != null">
+        operate_time = #{operateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+</mapper>

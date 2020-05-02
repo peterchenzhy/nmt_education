@@ -1,11 +1,17 @@
 package com.nmt.education.controller;
 
+import com.nmt.education.commmons.utils.ReqDtoCheckUtil;
+import com.nmt.education.pojo.dto.req.UserLoginDto;
 import com.nmt.education.pojo.vo.UserVo;
+import com.nmt.education.service.user.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -14,10 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
 
-    @ApiOperation(value = "login", notes = "登录服务，mock数据不做校验")
+    @Autowired
+    private UserService userService;
+
+    @ApiOperation(value = "login", notes = "登录服务")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public UserVo searchFuzzy(@RequestParam(value = "userName") String name,
-                              @RequestParam(value = "password") String password) {
-        return new UserVo();
+    public UserVo login(@RequestBody @Validated UserLoginDto dto, BindingResult bindingResult) {
+        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
+        return userService.login(dto);
     }
 }

@@ -22,8 +22,8 @@ public class StudentReqDto {
     @ApiModelProperty(value = "数据id,仅编辑使用")
     private Long id;
 
-    @ApiModelProperty(value = "数据是否删除标志，默认false")
-    private Boolean deleteFlg = false ;
+    @ApiModelProperty(value = "编辑标志；0：无变化，1：新增，2：编辑，3：需要删除")
+    private Integer editFlag = 0;
     /**
      * 学生姓名
      */
