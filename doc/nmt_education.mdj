@@ -4474,13 +4474,28 @@
 											"top": 1531,
 											"width": 75.61181640625,
 											"height": 13
+										},
+										{
+											"_type": "ERDColumnView",
+											"_id": "AAAAAAFxzfK9YQAZJH4=",
+											"_parent": {
+												"$ref": "AAAAAAFxxkcSe+idtjU="
+											},
+											"model": {
+												"$ref": "AAAAAAFxzfK9AgAW8Ks="
+											},
+											"font": "Arial;13;0",
+											"left": 181,
+											"top": 1546,
+											"width": 75.61181640625,
+											"height": 13
 										}
 									],
 									"font": "Arial;13;0",
 									"left": 176,
 									"top": 1391,
 									"width": 85.61181640625,
-									"height": 158
+									"height": 173
 								}
 							],
 							"font": "Arial;13;0",
@@ -7426,6 +7441,15 @@
 								"$ref": "AAAAAAFxxkcSeuiZSa8="
 							},
 							"name": "订单总额",
+							"length": 0
+						},
+						{
+							"_type": "ERDColumn",
+							"_id": "AAAAAAFxzfK9AgAW8Ks=",
+							"_parent": {
+								"$ref": "AAAAAAFxxkcSeuiZSa8="
+							},
+							"name": "剩余次数",
 							"length": 0
 						}
 					]
