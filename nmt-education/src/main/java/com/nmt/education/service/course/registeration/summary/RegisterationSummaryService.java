@@ -3,7 +3,9 @@ package com.nmt.education.service.course.registeration.summary;
 import com.nmt.education.commmons.Enums;
 import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.pojo.dto.req.CourseRegisterReqDto;
+import com.nmt.education.pojo.dto.req.RegisterSummarySearchDto;
 import com.nmt.education.pojo.po.CourseRegistrationPo;
+import com.nmt.education.pojo.vo.RegisterSummaryVo;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.Date;
@@ -71,4 +73,7 @@ public class RegisterationSummaryService {
         return registerationSummaryPoMapper.insertOrUpdateSelective(record);
     }
 
+    public List<RegisterSummaryVo> queryBySearchDto(RegisterSummarySearchDto dto) {
+        return this.registerationSummaryPoMapper.queryBySearchDto(dto);
+    }
 }

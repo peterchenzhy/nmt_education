@@ -1,13 +1,15 @@
 package com.nmt.education.service.course.registeration.summary;
 
+import com.nmt.education.pojo.dto.req.RegisterSummarySearchDto;
 import com.nmt.education.pojo.po.RegisterationSummaryPo;
-import java.util.List;
-
+import com.nmt.education.pojo.vo.RegisterSummaryVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 @Mapper
-  interface RegisterationSummaryPoMapper {
+interface RegisterationSummaryPoMapper {
     int insertSelective(RegisterationSummaryPo record);
 
     RegisterationSummaryPo selectByPrimaryKey(Long id);
@@ -23,4 +25,6 @@ import org.apache.ibatis.annotations.Param;
     int insertOrUpdate(RegisterationSummaryPo record);
 
     int insertOrUpdateSelective(RegisterationSummaryPo record);
+
+    List<RegisterSummaryVo> queryBySearchDto(@Param("dto") RegisterSummarySearchDto dto);
 }

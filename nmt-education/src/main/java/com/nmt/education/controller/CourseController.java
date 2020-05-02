@@ -5,8 +5,10 @@ import com.nmt.education.commmons.utils.ReqDtoCheckUtil;
 import com.nmt.education.pojo.dto.req.CourseRegisterReqDto;
 import com.nmt.education.pojo.dto.req.CourseReqDto;
 import com.nmt.education.pojo.dto.req.CourseSearchDto;
+import com.nmt.education.pojo.dto.req.RegisterSummarySearchDto;
 import com.nmt.education.pojo.po.CoursePo;
 import com.nmt.education.pojo.vo.CourseDetailVo;
+import com.nmt.education.pojo.vo.RegisterSummaryVo;
 import com.nmt.education.service.course.CourseService;
 import com.nmt.education.service.course.registeration.CourseRegistrationService;
 import io.swagger.annotations.Api;
@@ -79,12 +81,19 @@ public class CourseController {
         courseRegistrationService.register(dto,logInUser);
     }
 
-    @ApiOperation(value = "register/delete", notes = "删除报名")
+    @ApiOperation(value = "register/delete", notes = "退费")
     @RequestMapping(value = "/register/{id}", method = RequestMethod.DELETE)
-    public void register(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
+    public void registerDel(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
             , @PathVariable Long id) {
         courseRegistrationService.registerDel(id,logInUser);
     }
 
+
+    @ApiOperation(value = "register/summary", notes = "课程汇总--消耗")
+    @RequestMapping(value = "/register/summary", method = RequestMethod.POST)
+    public PageInfo<RegisterSummaryVo> registerSummary(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
+                                                       @RequestBody @Validated RegisterSummarySearchDto dto, BindingResult bindingResult)  {
+       return courseRegistrationService.registerSummary(dto,logInUser);
+    }
 
 }

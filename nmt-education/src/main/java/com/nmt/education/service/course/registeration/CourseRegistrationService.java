@@ -1,12 +1,17 @@
 package com.nmt.education.service.course.registeration;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.NumberUtil;
 import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.pojo.dto.req.CourseRegisterReqDto;
 import com.nmt.education.pojo.dto.req.RegisterExpenseDetailReqDto;
+import com.nmt.education.pojo.dto.req.RegisterSummarySearchDto;
+import com.nmt.education.pojo.po.CoursePo;
 import com.nmt.education.pojo.po.CourseRegistrationPo;
 import com.nmt.education.pojo.po.RegisterationSummaryPo;
 import com.nmt.education.pojo.po.RegistrationExpenseDetailPo;
+import com.nmt.education.pojo.vo.RegisterSummaryVo;
 import com.nmt.education.service.CodeService;
 import com.nmt.education.service.course.CourseService;
 import com.nmt.education.service.course.registeration.summary.RegisterationSummaryService;
@@ -173,7 +178,7 @@ public class CourseRegistrationService {
     }
 
     /**
-     * 删除课程报名
+     * 退费
      *
      * @param id
      * @author PeterChen
@@ -182,6 +187,28 @@ public class CourseRegistrationService {
      * @since 2020/4/30 10:53
      */
     public void registerDel(Long id, int updator) {
+
+        // TODO: 2020/5/2 逻辑有问题  待定
+
+        CourseRegistrationPo courseRegistrationPo = selectByPrimaryKey(id);
+        Assert.notNull(courseRegistrationPo, "报名信息不存在，id：" + id);
+        CoursePo coursePo = courseService.selectByPrimaryKey(courseRegistrationPo.getCourseId());
+        Assert.notNull(coursePo, "课程信息不存在，id：" + courseRegistrationPo.getCourseId());
+        //无效报名记录
+
+        //无效课程消耗
+
+        //无效费用信息
+    }
+
+
+    public PageInfo<RegisterSummaryVo> registerSummary(RegisterSummarySearchDto dto, Integer logInUser) {
+        PageInfo<RegisterSummaryVo> pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> queryBySearchDto(dto));
+        return pageInfo;
+    }
+
+    private List<RegisterSummaryVo> queryBySearchDto(RegisterSummarySearchDto dto) {
+        return this.registerationSummaryService.queryBySearchDto(dto);
     }
 
 
@@ -223,4 +250,5 @@ public class CourseRegistrationService {
     public int insertOrUpdateSelective(CourseRegistrationPo record) {
         return courseRegistrationPoMapper.insertOrUpdateSelective(record);
     }
+
 }

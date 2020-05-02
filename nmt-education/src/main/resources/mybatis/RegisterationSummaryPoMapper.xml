@@ -16,17 +16,62 @@
     <result column="operator" jdbcType="INTEGER" property="operator" />
     <result column="operate_time" jdbcType="TIMESTAMP" property="operateTime" />
   </resultMap>
+
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, student_id, course_id, course_schedule_id, course_registration_id, sign_in, `status`, 
+    id, student_id, course_id, course_schedule_id, course_registration_id, sign_in, `status`,
     creator, create_time, `operator`, operate_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     <!--@mbg.generated-->
-    select 
+    select
     <include refid="Base_Column_List" />
     from registeration_summary
     where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="queryBySearchDto" parameterType="com.nmt.education.pojo.dto.req.RegisterSummarySearchDto"
+          resultType="com.nmt.education.pojo.vo.RegisterSummaryVo">
+    <!--@mbg.generated-->
+    select
+    rs.id as id , rs.student_id as studentId, rs.course_id as courseId , rs.course_schedule_id as courseScheduleId,
+    rs.course_registration_id as courseRegistrationId, rs.sign_in as signIn, rs.status as status ,
+    rs.creator as creator, rs.create_time as createTime, rs.operator as operator, rs.operate_time as operateTime
+    ,c.name as courseName,s.name as studentName , rs.create_time as  registerTime
+    from registeration_summary rs
+    inner join course c on c.id= rs.course_id
+    inner join student s on rs.student_id = s.id
+    inner join course_schedule cs on c.id = cs.course_id
+    where rs.status = 1
+    <if test="dto.signIn != null">
+      and rs.sign_in = #{dto.signIn}
+    </if>
+    <if test="dto.registerStartDate != null">
+      <![CDATA[
+      and rs.create_time >= dto.registerStartDate ]]>
+    </if>
+    <if test="dto.registerEndDate != null">
+      <![CDATA[
+      and rs.create_time <= dto.registerEndDate  ]]>
+    </if>
+    <if test="dto.grade != null">
+      and c.grade = #{dto.grade}
+    </if>
+    <if test="dto.courseSubject != null">
+      and c.course_subject = #{dto.courseSubject}
+    </if>
+    <if test="dto.courseType != null">
+      and c.course_type = #{dto.courseType}
+    </if>
+    <if test="dto.startDate != null">
+      <![CDATA[
+      and cs.course_datetime >= dto.startDate ]]>
+    </if>
+    <if test="dto.endDate != null">
+      <![CDATA[
+      and cs.course_datetime <= dto.endDate  ]]>
+    </if>
+
   </select>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.RegisterationSummaryPo" useGeneratedKeys="true">
     <!--@mbg.generated-->
@@ -276,13 +321,13 @@
   <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
     <!--@mbg.generated-->
     insert into registeration_summary
-    (student_id, course_id, course_schedule_id, course_registration_id, sign_in, `status`, 
+    (student_id, course_id, course_schedule_id, course_registration_id, sign_in, `status`,
       creator, create_time, `operator`, operate_time)
     values
     <foreach collection="list" item="item" separator=",">
-      (#{item.studentId,jdbcType=BIGINT}, #{item.courseId,jdbcType=BIGINT}, #{item.courseScheduleId,jdbcType=BIGINT}, 
-        #{item.courseRegistrationId,jdbcType=BIGINT}, #{item.signIn,jdbcType=TINYINT}, 
-        #{item.status,jdbcType=TINYINT}, #{item.creator,jdbcType=INTEGER}, #{item.createTime,jdbcType=TIMESTAMP}, 
+      (#{item.studentId,jdbcType=BIGINT}, #{item.courseId,jdbcType=BIGINT}, #{item.courseScheduleId,jdbcType=BIGINT},
+        #{item.courseRegistrationId,jdbcType=BIGINT}, #{item.signIn,jdbcType=TINYINT},
+        #{item.status,jdbcType=TINYINT}, #{item.creator,jdbcType=INTEGER}, #{item.createTime,jdbcType=TIMESTAMP},
         #{item.operator,jdbcType=INTEGER}, #{item.operateTime,jdbcType=TIMESTAMP})
     </foreach>
   </insert>
@@ -320,7 +365,7 @@
       #{operator,jdbcType=INTEGER},
       #{operateTime,jdbcType=TIMESTAMP},
     </trim>
-    on duplicate key update 
+    on duplicate key update
     <trim suffixOverrides=",">
       <if test="id != null">
         id = #{id,jdbcType=BIGINT},
@@ -411,7 +456,7 @@
         #{operateTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
-    on duplicate key update 
+    on duplicate key update
     <trim suffixOverrides=",">
       <if test="id != null">
         id = #{id,jdbcType=BIGINT},
