@@ -7,6 +7,8 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Course } from 'src/app/model/course.model';
 import { GlobalService } from '@shared/service/global.service';
+import { AppContextService } from '@shared/service/appcontext.service';
+import { CourseQueryParam, ResponseData } from 'src/app/model/system.model';
 
 @Component({
   selector: 'app-course-list',
@@ -16,19 +18,18 @@ export class CourseListComponent implements OnInit {
   courseDate = new FormGroup({
     courseDate: new FormControl()
   });
-  q: any = {
-    pi: 1,
-    ps: 10,
-    sorter: '',
-    courseNo: '',
-    status: null,
-    campus: null,
-    startDate: '',
-  };
-  data: any[] = [];
   loading = false;
-  courseStatusList = this.globalService.COURSE_STATUS_LIST;
-  campusList = this.globalService.CAMPUS_LIST;
+  pager = {
+    front: false
+  };
+  queryParam: CourseQueryParam = { pageNo: 1, pageSize: 10 };
+  data: ResponseData = { list: [], total: 0 };
+  courseTypeList = this.appCtx.globalService.COURSE_TYPE_LIST;
+  courseSubjectList = this.appCtx.globalService.COURSE_SUBJECT_LIST;
+  courseClassificationList = this.appCtx.globalService.COURSE_CLASSIFICATION_LIST;
+  courseStatusList = this.appCtx.globalService.COURSE_STATUS_LIST;
+  feeTypeList = this.appCtx.globalService.FEE_TYPE_LIST;
+  gradeList = this.appCtx.globalService.GRADE_LIST;
 
   @ViewChild('st', { static: true })
   st: STComponent;
@@ -55,7 +56,7 @@ export class CourseListComponent implements OnInit {
       buttons: [
         {
           text: '编辑',
-          click: (item: any) => this.router.navigate([`/course/view/${item.courseNo}`]),
+          click: (item: any) => this.router.navigate([`/course/edit/${item.id}`]),
         },
         {
           text: '报名',
@@ -70,7 +71,7 @@ export class CourseListComponent implements OnInit {
   expandForm = false;
 
   constructor(
-    private globalService: GlobalService,
+    private appCtx: AppContextService,
     private router: Router,
     private http: _HttpClient,
     public msg: NzMessageService,
@@ -82,22 +83,21 @@ export class CourseListComponent implements OnInit {
     this.getData();
   }
 
+  startQueryData() {
+    this.queryParam.pageNo = 1;
+    this.getData();
+  }
   getData() {
     this.loading = true;
-    this.http
-      .get('/course', this.q)
+    this.appCtx.courseService.queryCourses(this.queryParam)
       .pipe(
-        map((list: Course[]) =>
-          list.map(i => {
-            i.statusDetail = this.globalService.COURSE_STATUS_LIST[i.status];
-            //i.statusText = statusItem.text;
-            //i.statusType = statusItem.type;
-            return i;
-          }),
-        ),
         tap(() => (this.loading = false)),
       )
-      .subscribe(res => {
+      .subscribe((res: ResponseData) => {
+        res.list = res.list || [];
+        res.list.forEach(element => {
+          element.statusDetail = this.appCtx.globalService.COURSE_STATUS_LIST[element.status];
+        });
         this.data = res;
         this.cdr.detectChanges();
       });
@@ -107,33 +107,34 @@ export class CourseListComponent implements OnInit {
     switch (e.type) {
       case 'checkbox':
         this.selectedRows = e.checkbox!;
-        this.totalCallNo = this.selectedRows.reduce((total, cv) => total + cv.callNo, 0);
         this.cdr.detectChanges();
         break;
-      case 'filter':
+      case 'pi':
+        this.queryParam.pageNo = e.pi;
         this.getData();
         break;
     }
+
   }
 
-  remove() {
-    this.http.delete('/course', { nos: this.selectedRows.map(i => i.no).join(',') }).subscribe(() => {
-      this.getData();
-      this.st.clearCheck();
-    });
+  reset() {
+    // wait form reset updated finished
+    this.queryParam.courseSubject = null;
+    this.queryParam.courseType = null;
+    this.queryParam.grade = null;
+    this.queryParam.startDate = null;
+    this.queryParam.endDate = null;
+    this.queryParam.pageNo = 1;
+    setTimeout(() => this.getData());
   }
 
-  approval() {
-    this.msg.success(`审批了 ${this.selectedRows.length} 笔`);
+  onDateRangeChanged(result: Date): void {
+    this.queryParam.startDate = result[0];
+    this.queryParam.endDate = result[1];
   }
 
   addNewCourse() {
     this.router.navigate([`/course/create`]);
-}
-
-
-  reset() {
-    // wait form reset updated finished
-    setTimeout(() => this.getData());
   }
+
 }

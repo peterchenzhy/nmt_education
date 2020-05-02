@@ -35,6 +35,16 @@ export interface TeacherQueryParam {
     phone?: string;
 }
 
+export interface CourseQueryParam {
+    courseSubject?: number;
+    courseType?: number;
+    grade?: number;
+    startDate?: Date;
+    endDate?: Date;
+    pageNo?: number;
+    pageSize?: number;
+}
+
 export interface ResponseData {
     endRow?: number;
     hasNextPage?: boolean;

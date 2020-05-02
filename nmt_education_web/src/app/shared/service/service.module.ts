@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { StudentService } from './student.service';
 import { TeacherService } from './teacher.service';
 import { CourseService } from './course.service';
+import { AppContextService } from './appcontext.service';
 
 const COMPONENTS = [
 
@@ -18,6 +19,7 @@ const COMPONENTS_NOROUNT = [];
         ...COMPONENTS_NOROUNT
     ],
     providers: [
+        AppContextService,
         GlobalService,
         StudentService,
         TeacherService,

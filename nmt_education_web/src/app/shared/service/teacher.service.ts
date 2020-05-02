@@ -19,6 +19,10 @@ export class TeacherService {
         return this.httpClient.post('nmt-education/teacher/search', T);
     }
 
+    public fuzzyQueryTeachers(query: String): Observable<Object> {
+        return this.httpClient.get('nmt-education/teacher/search/fuzzy?name=' + query);
+    }
+
     public saveTeacher(T: Teacher): Observable<Object> {
         return this.httpClient.post('nmt-education/teacher/manager', T);
     }

@@ -8,7 +8,7 @@ export interface Course {
     code?: string;
     name?: string;
     description?: string;
-    year?: number;
+    year?: Date | number;
     season?: number;
     startDate?: Date;
     endDate?: Date;
@@ -19,7 +19,8 @@ export interface Course {
     courseType?: COURSE_TYPE;
     status?: COURSE_STATUS;
     statusDetail?: SysEnum;
-    teacherId?: Teacher;
+    teacher?: Teacher;
+    teacherId?: Teacher | number;
     totalStudent?: number;
     times?: number;
     campus?: number;
@@ -38,11 +39,13 @@ export interface Course {
 export interface CourseSession {
     id?: number;
     courseId?: number;
-    startDateTime?: Date;
-    duration?: number;
-    teacher?: string;
-    price?: number;
+    courseDatetime?: Date;
+    perTime?: number;
+    signIn?: number;
+    teacherId?: number;
+    teacherPrice?: number;
     editFlag?: EDIT_FLAG;
+    courseTimes?: number;
     status?: number;
     createTime?: Date;
     creator?: number;

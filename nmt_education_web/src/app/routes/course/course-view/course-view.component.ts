@@ -10,6 +10,8 @@ import { Course, CourseSession } from 'src/app/model/course.model';
 import { GlobalService } from '@shared/service/global.service';
 import { Teacher } from 'src/app/model/teacher.model';
 import { CourseService } from '@shared/service/course.service';
+import { AppContextService } from '@shared/service/appcontext.service';
+import { ResponseData } from 'src/app/model/system.model';
 
 @Component({
   selector: 'app-course-view',
@@ -26,8 +28,7 @@ export class CourseViewComponent implements OnInit {
   sessionParam: any = { title: "新建课时" };
 
   constructor(
-    private globalService: GlobalService,
-    private courseService: CourseService,
+    private appCtx: AppContextService,
     private fb: FormBuilder,
     private activaterRouter: ActivatedRoute,
     public msgSrv: NzMessageService,
@@ -38,27 +39,27 @@ export class CourseViewComponent implements OnInit {
 
   }
 
-  seasonList = this.globalService.SEASON_LIST;
-  courseTypeList = this.globalService.COURSE_TYPE_LIST;
-  courseSubjectList = this.globalService.COURSE_SUBJECT_LIST;
-  courseClassificationList = this.globalService.COURSE_CLASSIFICATION_LIST;
-  courseStatusList = this.globalService.COURSE_STATUS_LIST;
-  feeTypeList = this.globalService.FEE_TYPE_LIST;
-  gradeList = this.globalService.GRADE_LIST;
-  campusList = this.globalService.CAMPUS_LIST;
+  seasonList = this.appCtx.globalService.SEASON_LIST;
+  courseTypeList = this.appCtx.globalService.COURSE_TYPE_LIST;
+  courseSubjectList = this.appCtx.globalService.COURSE_SUBJECT_LIST;
+  courseClassificationList = this.appCtx.globalService.COURSE_CLASSIFICATION_LIST;
+  courseStatusList = this.appCtx.globalService.COURSE_STATUS_LIST;
+  feeTypeList = this.appCtx.globalService.FEE_TYPE_LIST;
+  gradeList = this.appCtx.globalService.GRADE_LIST;
+  campusList = this.appCtx.globalService.CAMPUS_LIST;
   teacherList: Teacher[] = [];
   classroomList: any[] = [{ value: '101', label: '101' }, { value: '202', label: '202' }, { value: '303', label: '303' }];
 
   ngOnInit() {
     this.form = this.fb.group({
-      id: [null, []],
+      id: [0, []],
       code: [null, []],
       name: [null, [Validators.required]],
       description: [null, []],
       year: [null, [Validators.required]],
       season: [null, [Validators.required]],
       startDate: [null, [Validators.required]],
-      endDate: [null, [Validators.required]],
+      endDate: [null, []],
       grade: [null, [Validators.required]],
       courseType: [null, [Validators.required]],
       courseSubject: [null, [Validators.required]],
@@ -75,36 +76,43 @@ export class CourseViewComponent implements OnInit {
       courseScheduleList: this.fb.array([]),
       courseExpenseList: this.fb.array([])
     });
-    let courseStr = this.activaterRouter.snapshot.params.course;
-    if (courseStr) {
-      this.course = JSON.parse(courseStr);
-      this.course.editFlag = EDIT_FLAG.UPDATE;
-      this.pageHeader = `课程信息编辑 [${this.course.code}]`;
-    }
     this.form.patchValue(this.course);
+    let courseId = this.activaterRouter.snapshot.params.id;
+    if (courseId) {
+      this.appCtx.courseService.getCourseDetails(courseId)
+        .subscribe(res => {
+          this.course = res;
+          this.course.editFlag = EDIT_FLAG.UPDATE;
+          this.pageHeader = `课程信息编辑 [${this.course.code}]`;
+          this.teacherList.push(this.course.teacher);
+          this.form.patchValue(this.course);
+          this.course.courseScheduleList.forEach(i => {
+            const field = this.createSession();
+            field.patchValue(i);
+            this.sessions.push(field);
+          });
 
+          this.course.courseExpenseList.forEach(i => {
+            const field = this.createFee();
+            field.patchValue(i);
+            this.feeList.push(field);
+          });
+        });
 
-    this.course.courseScheduleList.forEach(i => {
-      const field = this.createSession();
-      field.patchValue(i);
-      this.sessions.push(field);
-    });
+    }
 
-    this.course.courseExpenseList.forEach(i => {
-      const field = this.createFee();
-      field.patchValue(i);
-      this.feeList.push(field);
-    });
   }
 
   createSession(): FormGroup {
     return this.fb.group({
-      id: [null],
-      courseId: [null, []],
-      teacher: [null, []],
-      startDateTime: [null, [Validators.required]],
-      duration: [null, [Validators.required]],
-      price: [0, [Validators.required]],
+      id: [0, []],
+      courseId: [this.course.id, []],
+      teacherId: [null, []],
+      courseDatetime: [null, [Validators.required]],
+      perTime: [null, [Validators.required]],
+      teacherPrice: [0, [Validators.required]],
+      courseTimes: [0, [Validators.required]],
+      signIn: [0, []],
       editFlag: [EDIT_FLAG.NEW, []]
     });
   }
@@ -112,10 +120,11 @@ export class CourseViewComponent implements OnInit {
 
   createFee(): FormGroup {
     return this.fb.group({
-      id: [null, []],
-      courseId: [null, []],
+      id: [0, []],
+      courseId: [this.course.id, []],
       type: [null, [Validators.required]],
-      price: [0, [Validators.required, Validators.min(1)]],
+      price: [0, []],
+      //price: [0, [Validators.required, Validators.min(1)]],
       editFlag: [EDIT_FLAG.NEW, []]
     });
   }
@@ -141,23 +150,23 @@ export class CourseViewComponent implements OnInit {
       startDate: new Date(),
       count: 0,
       startTime: new Date("2020-01-01 00:00:00"),
-      duration: 0,
+      perTime: this.form.value.perTime,
       dayOfWeek: [{ label: '星期天', value: 0 }, { label: '星期一', value: 1 }, { label: '星期二', value: 2 },
       { label: '星期三', value: 3 }, { label: '星期四', value: 4 }, { label: '星期五', value: 5 }, { label: '星期六', value: 6 }],
       price: 0,
-      teacher: null
+      teacherId: this.form.value.teacherId
     };
     let currentDate = new Date();
-    let activeSessions = this.sessions.value.filter(s => { return s.editFlag != EDIT_FLAG.DELETE && s.startDateTime > currentDate; });
+    let activeSessions = this.sessions.value.filter(s => { return s.editFlag != EDIT_FLAG.DELETE && s.courseDatetime > currentDate; });
     if (activeSessions && activeSessions.length > 0) {
       this.sessionParam.title = "更换课时";
       this.sessionParam.count = activeSessions.length;
-      this.sessionParam.startDate = activeSessions[0].startDateTime;
-      this.sessionParam.startTime = activeSessions[0].startDateTime;
-      this.sessionParam.duration = activeSessions[0].duration;
-      this.sessionParam.teacher = activeSessions[0].teacher;
+      this.sessionParam.startDate = activeSessions[0].courseDatetime;
+      this.sessionParam.startTime = activeSessions[0].courseDatetime;
+      this.sessionParam.perTime = this.form.value.perTime,
+        this.sessionParam.teacherId = activeSessions[0].teacherId;
       activeSessions.forEach(s => {
-        let day = s.startDateTime.getDay();
+        let day = s.courseDatetime.getDay();
         this.sessionParam.dayOfWeek.find(d => { return d.value == day; }).checked = true;
       });
     }
@@ -172,15 +181,14 @@ export class CourseViewComponent implements OnInit {
         for (let i = 0; i < this.sessionParam.count;) {
           let day = this.sessionParam.startDate.getDay();
           if (this.sessionParam.dayOfWeek.find(d => { return d.checked && d.value == day; })) {
-            debugger;
             let newSession: CourseSession = {};
-            newSession.courseId = this.course.id;
-            newSession.teacher = this.sessionParam.teacher;
-            newSession.duration = this.sessionParam.duration;
-            newSession.price = this.sessionParam.price;
+            newSession.courseId = this.form.value.id;
+            newSession.teacherId = this.sessionParam.teacherId;
+            newSession.perTime = this.sessionParam.perTime;
+            newSession.teacherPrice = this.sessionParam.price;
             let dateStr = this.sessionParam.startDate.toLocaleDateString();
             let timeStr = this.sessionParam.startTime.toTimeString();
-            newSession.startDateTime = new Date(dateStr + " " + timeStr);
+            newSession.courseDatetime = new Date(dateStr + " " + timeStr);
             const sessionObj = this.createSession();
             sessionObj.patchValue(newSession);
             this.sessions.push(sessionObj);
@@ -188,7 +196,7 @@ export class CourseViewComponent implements OnInit {
           }
           this.sessionParam.startDate.setDate(this.sessionParam.startDate.getDate() + 1);
         }
-
+        this.form.patchValue({ times: this.sessions.value.filter(s => { return s.editFlag != EDIT_FLAG.DELETE; }).length });
       },
     });
   }
@@ -274,7 +282,12 @@ export class CourseViewComponent implements OnInit {
       this.form.controls[key].updateValueAndValidity();
     });
     if (this.form.invalid) return;
-    this.courseService.saveCourse(this.form.value).subscribe((res) => {
+    this.course = { ...this.form.value };
+    this.course.year = new Date(this.course.year).getFullYear();
+    this.course.courseScheduleList.filter(s => { return s.editFlag != EDIT_FLAG.DELETE; }).forEach((d, i) => {
+      d.courseTimes = i + 1;
+    });
+    this.appCtx.courseService.saveCourse(this.course).subscribe((res) => {
       this.goBack();
     });
   }
@@ -282,8 +295,36 @@ export class CourseViewComponent implements OnInit {
   goBack() {
     this._location.back();
   }
-  getTeacherName(code: string) {
-    let teacher = this.teacherList.find(t => { return t.code == code; });
+  getTeacherName(id: number) {
+    let teacher = this.teacherList.find(t => { return t.id == id; });
     return teacher ? teacher.name : "";
+  }
+
+  nzFilterOption = () => true;
+  searchTeacher(value: string): void {
+    if (!value || value == "") {
+      return;
+    }
+    this.appCtx.teacherService.fuzzyQueryTeachers(value).subscribe((data: Teacher[]) => {
+      this.teacherList = data;
+    });
+  }
+
+  teacherSelected(value: number) {
+    //this.course.teacherId = this.teacherList.find(c => { return c.id == value; });
+    // const payList: Payment[] = [
+    //   {
+    //     id: "1", type: 1, method: 4, status: 1,
+    //     price: 1000, discount: 1, receivable: 400, paied: 400, comment: ""
+    //   },
+    //   {
+    //     id: "2", type: 3, method: 4, status: 1, price: 1000,
+    //     discount: 0.9, receivable: 900, deduction: 200, paied: 700, comment: ""
+    //   }];
+    // payList.forEach(i => {
+    //   const field = this.createPay();
+    //   field.patchValue(i);
+    //   this.payList.push(field);
+    // });
   }
 }

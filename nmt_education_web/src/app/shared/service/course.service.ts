@@ -23,4 +23,8 @@ export class CourseService {
     public saveCourse(T: Course): Observable<Object> {
         return this.httpClient.post('nmt-education/course/manager', T);
     }
+
+    public getCourseDetails(id: number): Observable<Object> {
+        return this.httpClient.post(`nmt-education/course/detail/${id}`, id);
+    }
 }
