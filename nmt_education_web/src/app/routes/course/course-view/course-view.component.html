@@ -94,7 +94,7 @@
         <nz-form-item>
           <nz-form-label>招生数量</nz-form-label>
           <nz-form-control nzErrorTip="请输入招生数量">
-            <nz-input-number formControlName="recruit"></nz-input-number>
+            <nz-input-number formControlName="totalStudent"></nz-input-number>
           </nz-form-control>
         </nz-form-item>
       </nz-col>
@@ -131,7 +131,7 @@
         <nz-form-item>
           <nz-form-label>班主任</nz-form-label>
           <nz-form-control nzErrorTip="请选择班主任">
-            <nz-select formControlName="assistance" [nzPlaceHolder]="'请选择班主任'" [nzShowSearch]="true">
+            <nz-select formControlName="teacherId" [nzPlaceHolder]="'请选择班主任'" [nzShowSearch]="true">
               <nz-option *ngFor="let i of teacherList" [nzLabel]="i.label" [nzValue]="i.value"> </nz-option>
             </nz-select>
           </nz-form-control>
@@ -150,7 +150,7 @@
     </nz-row>
   </nz-card>
   <nz-card [nzBordered]="false" nzTitle="费用列表" [nzExtra]="feeButtonsTemplate">
-    <nz-table formArrayName="feeList" [nzData]="feeList.value" [nzShowPagination]="false">
+    <nz-table formArrayName="courseExpenseList" [nzData]="feeList.value" [nzShowPagination]="false">
       <thead>
         <tr>
           <th>费用类型</th>
@@ -197,7 +197,7 @@
     </nz-table>
   </nz-card>
   <nz-card [nzBordered]="false" nzTitle="课时信息" [nzExtra]="sessionButtonsTemplate">
-    <nz-table formArrayName="sessions" [nzData]="sessions.value" [nzShowPagination]="false">
+    <nz-table formArrayName="courseScheduleList" [nzData]="sessions.value" [nzShowPagination]="false">
       <thead>
         <tr>
           <th>课时</th>

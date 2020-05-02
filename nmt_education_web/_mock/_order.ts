@@ -15,8 +15,8 @@ for (let i = 0; i < 46; i += 1) {
             year: 2020,
             season: Math.floor(Math.random() * 10) % 4,
             grade: Math.floor(Math.random() * 10) % 8,
-            subject: Math.floor(Math.random() * 10) % 5,
-            type: Math.floor(Math.random() * 10) % 4,
+            courseSubject: Math.floor(Math.random() * 10) % 5,
+            courseType: Math.floor(Math.random() * 10) % 4,
             campus: (Math.floor(Math.random() * 10) % 4) + 1,
             status: Math.floor(Math.random() * 10) % 3,
             startDate: new Date(`2017-07-${i < 18 ? '0' + (Math.floor(i / 2) + 1) : Math.floor(i / 2) + 1}`)
