@@ -12,6 +12,7 @@ public interface Consts {
 
     String LOGIN_USER_HEAD = "loginUser";
     String ROLE_ID_HEAD = "roleId";
+    int SYSTEM_USER = 0 ;
 
     String 分号 = ";";
 
