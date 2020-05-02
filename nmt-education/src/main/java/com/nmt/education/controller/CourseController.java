@@ -60,9 +60,9 @@ public class CourseController {
     }
 
     @ApiOperation(value = "/search/fuzzy", notes = "根据课程编号或者课程名称，课程模糊查询")
-    @RequestMapping(value = "/search/fuzzy", method = RequestMethod.POST)
+    @RequestMapping(value = "/search/fuzzy", method = RequestMethod.GET)
     public List<CoursePo> searchFuzzy(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
-                                            @RequestParam String name, BindingResult bindingResult) {
+                                            @RequestParam String name) {
         return courseService.searchFuzzy(name);
     }
 

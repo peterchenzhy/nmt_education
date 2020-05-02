@@ -135,7 +135,7 @@ public class CoursePo {
     * 有效：1 无效：0
     */
     @ApiModelProperty(value = "有效：1 无效：0")
-    private Boolean status;
+    private Integer status;
 
     /**
     * 创建人

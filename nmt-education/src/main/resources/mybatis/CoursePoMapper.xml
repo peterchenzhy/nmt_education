@@ -24,7 +24,7 @@
         <result column="end_date" jdbcType="DATE" property="endDate"/>
         <result column="description" jdbcType="VARCHAR" property="description"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
-        <result column="status" jdbcType="BOOLEAN" property="status"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
         <result column="creator" jdbcType="INTEGER" property="creator"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="operator" jdbcType="INTEGER" property="operator"/>
