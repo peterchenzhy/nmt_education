@@ -89,7 +89,7 @@ public class CourseController {
     }
 
 
-    @ApiOperation(value = "register/summary", notes = "课程汇总--消耗")
+    @ApiOperation(value = "register/summary", notes = "课程汇总--消耗查询")
     @RequestMapping(value = "/register/summary", method = RequestMethod.POST)
     public PageInfo<RegisterSummaryVo> registerSummary(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
                                                        @RequestBody @Validated RegisterSummarySearchDto dto, BindingResult bindingResult)  {
