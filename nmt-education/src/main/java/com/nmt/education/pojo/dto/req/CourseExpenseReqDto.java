@@ -35,5 +35,5 @@ public class CourseExpenseReqDto {
      * 费用
      */
     @ApiModelProperty(value = "费用")
-    private String value;
+    private String price;
 }

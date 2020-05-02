@@ -242,7 +242,7 @@ public class CourseService {
         BeanUtils.copyProperties(po, vo);
         vo.getCourseExpenseList().addAll(courseExpenseService.queryByCourseId(id));
         vo.getCourseScheduleList().addAll(courseScheduleService.queryByCourseId(id));
-        if (Objects.isNull(po.getTeacherId())) {
+        if (Objects.nonNull(po.getTeacherId())) {
             vo.setTeacher(teacherService.detail(po.getTeacherId()));
         }
         return vo;

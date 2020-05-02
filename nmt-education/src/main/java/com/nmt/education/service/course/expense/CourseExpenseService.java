@@ -59,6 +59,7 @@ public class CourseExpenseService {
     private CourseExpensePo newExpense(Integer operator, CourseExpenseReqDto dto,Long courseId) {
         CourseExpensePo po = new CourseExpensePo();
         BeanUtils.copyProperties(dto, po);
+        po.setValue(dto.getPrice());
         po.setCourseId(courseId);
         po.setStatus(StatusEnum.VALID.getCode());
         po.setCreator(operator);
