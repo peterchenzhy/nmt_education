@@ -108,6 +108,7 @@ public class CourseRegistrationService {
     private void registerCheck(CourseRegisterReqDto dto) {
         Assert.notNull(studentService.selectByPrimaryKey(dto.getStudentId()), "学生信息不存在！id:" + dto.getStudentId());
         Assert.notNull(courseService.selectByPrimaryKey(dto.getCourseId()), "学生信息不存在！id:" + dto.getCourseId());
+        Assert.notEmpty(dto.getCourseScheduleIds()), "报名时间必填！id:" + dto.getCourseId());
     }
 
     private List<RegistrationExpenseDetailPo> generateRegisterExpenseDetail(List<RegisterExpenseDetailReqDto> expenseDetailList, int updator,
@@ -138,7 +139,7 @@ public class CourseRegistrationService {
         courseRegistrationPo.setRegistrationNumber(codeService.generateNewRegistrationNumber(dto.getCampus()));
         courseRegistrationPo.setCourseId(dto.getCourseId());
         courseRegistrationPo.setStudentId(dto.getStudentId());
-        courseRegistrationPo.setTimes(dto.getTimes());
+        courseRegistrationPo.setTimes(dto.getCourseScheduleIds().size());
         courseRegistrationPo.setRegistrationType(dto.getRegistrationType());
         courseRegistrationPo.setRegistrationStatus(dto.getRegistrationStatus());
         courseRegistrationPo.setFeeStatus(dto.getFeeStatus());

@@ -37,10 +37,6 @@ public class CourseRegisterReqDto {
     @ApiModelProperty(value="校区")
     private Integer campus;
 
-    @NotNull(message = "报名次数不能为空")
-    @Range(min = 1, message = "报名次数必须大于0")
-    @ApiModelProperty(value = "报名次数")
-    private Integer times;
     @ApiModelProperty(value = "备注")
     private String remark;
 
