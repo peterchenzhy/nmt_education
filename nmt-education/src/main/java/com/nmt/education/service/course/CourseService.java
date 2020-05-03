@@ -82,9 +82,7 @@ public class CourseService {
             courseScheduleService.manager(dto.getCourseScheduleList(), po.getId(), loginUser);
             courseExpenseService.manager(dto.getCourseExpenseList(), po.getId(), loginUser);
         }
-        eventList.get().stream().forEach(e->{
-            SpringContextUtil.getApplicationContext().publishEvent(e);
-        });
+        eventList.get().stream().forEach(e -> SpringContextUtil.getApplicationContext().publishEvent(e));
         eventList.remove();
         return true;
     }
