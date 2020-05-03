@@ -12,6 +12,7 @@ import { Teacher } from 'src/app/model/teacher.model';
 import { CourseService } from '@shared/service/course.service';
 import { AppContextService } from '@shared/service/appcontext.service';
 import { ResponseData } from 'src/app/model/system.model';
+import { toNumber } from 'ng-zorro-antd';
 
 @Component({
   selector: 'app-course-view',
@@ -82,17 +83,21 @@ export class CourseViewComponent implements OnInit {
       this.appCtx.courseService.getCourseDetails(courseId)
         .subscribe(res => {
           this.course = res;
+          let year: number = toNumber(this.course.year.toString());
+          this.course.year = new Date().setFullYear(year);
           this.course.editFlag = EDIT_FLAG.UPDATE;
           this.pageHeader = `课程信息编辑 [${this.course.code}]`;
           this.teacherList.push(this.course.teacher);
           this.form.patchValue(this.course);
           this.course.courseScheduleList.forEach(i => {
+            i.editFlag = EDIT_FLAG.NO_CHANGE;
             const field = this.createSession();
             field.patchValue(i);
             this.sessions.push(field);
           });
 
           this.course.courseExpenseList.forEach(i => {
+            i.editFlag = EDIT_FLAG.NO_CHANGE;
             const field = this.createFee();
             field.patchValue(i);
             this.feeList.push(field);
@@ -202,7 +207,13 @@ export class CourseViewComponent implements OnInit {
   }
 
   del(index: number) {
-    this.sessions.removeAt(index);
+    let sessionObj = this.sessions.at(index);
+    if (sessionObj.value.editFlag == EDIT_FLAG.NEW) {
+      this.sessions.removeAt(index);
+    }
+    else {
+      sessionObj.value.editFlag = EDIT_FLAG.DELETE;
+    }
   }
 
   edit(index: number) {
@@ -234,7 +245,6 @@ export class CourseViewComponent implements OnInit {
   }
 
   delFee(index: number) {
-
     let feeObj = this.feeList.at(index);
     if (feeObj.value.editFlag == EDIT_FLAG.NEW) {
       this.feeList.removeAt(index);
@@ -242,7 +252,6 @@ export class CourseViewComponent implements OnInit {
     else {
       feeObj.value.editFlag = EDIT_FLAG.DELETE;
     }
-    this.feeList.removeAt(index);
   }
 
   editFee(index: number) {

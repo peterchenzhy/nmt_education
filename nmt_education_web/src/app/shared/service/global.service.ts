@@ -2,7 +2,7 @@ import { Injectable, Injector } from '@angular/core'
 import { BehaviorSubject } from 'rxjs';
 import { HttpService } from './http.service';
 import { SysEnums, SysEnum } from 'src/app/model/system.model';
-import { COURSE_STATUS, COURSE_TYPE, GENDER, ORDER_STATUS, PAY_STATUS, RELATIONSHIP } from '@shared/constant/system.constant';
+import { COURSE_STATUS, COURSE_TYPE, GENDER, ORDER_STATUS, PAY_STATUS, RELATIONSHIP, ORDER_TYPE } from '@shared/constant/system.constant';
 
 @Injectable()
 export class GlobalService {
@@ -51,6 +51,11 @@ export class GlobalService {
     public getGenderLabel(gender: GENDER) {
         let obj = this.GENDER_LIST.find(i => { return i.value == gender });
         return obj ? obj.label : "";
+    }
+
+    public ORDER_TYPE_LIST = [{ value: 1, label: '新报' }, { value: 2, label: '续报' }, { value: 3, label: '试听课' }];
+    public getOrderType(type: ORDER_TYPE) {
+        return this.ORDER_TYPE_LIST.find(i => { return i.value == type });
     }
 
     public ORDER_STATUS_LIST: SysEnum[] = [];

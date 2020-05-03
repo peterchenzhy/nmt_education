@@ -89,7 +89,7 @@ export class OrderListComponent implements OnInit {
             .pipe(
                 map((list: Order[]) =>
                     list.map(i => {
-                        i.statusDetail = this.globalService.ORDER_STATUS_LIST[i.status];
+                        i.statusDetail = this.globalService.ORDER_STATUS_LIST[i.registrationStatus];
                         //i.statusText = statusItem.text;
                         //i.statusType = statusItem.type;
                         return i;

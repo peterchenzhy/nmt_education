@@ -1,38 +1,60 @@
 import { Course } from './course.model';
 import { Student } from './student.model';
 import { SysEnum } from './system.model';
-import { PAY_STATUS, ORDER_STATUS } from '@shared/constant/system.constant';
+import { PAY_STATUS, ORDER_STATUS, EDIT_FLAG, ORDER_TYPE } from '@shared/constant/system.constant';
 
 export interface Order {
-    id?: string;
-    status?: ORDER_STATUS;
+    id?: number;
+    registrationStatus?: ORDER_STATUS;
     statusDetail?: SysEnum;
-    signInDate?: Date;
+    registrationType?: ORDER_TYPE;
+    times?: number;
+    courseId?: number;
     course?: Course;
+    studentId?: number;
     student?: Student;
-    payList?: Payment[];
-    sessionList?: OrderSession[];
+    registerExpenseDetail?: Payment[];
+    courseScheduleList?: OrderSession[];
+    courseScheduleIds?: number[];
+    feeStatus?: PAY_STATUS;
     totalPrice?: number;
     balance?: number;
+    campus?: number;
+    remark?: string;
+    editFlag?: EDIT_FLAG;
+    createTime?: Date;
+    creator?: number;
+    operateTime?: Date;
+    operator?: number;
 }
 
 export interface Payment {
     id?: string;
-    type?: number;
-    method?: number;
-    status?: PAY_STATUS;
-    price?: number;
+    feeType?: number;
+    payment?: number;
+    feeStatus?: PAY_STATUS;
+    perAmount?: number;
+    count?:number;
     discount?: number;
     receivable?: number;
     deduction?: number;
-    paied?: number;
-    comment?: string;
+    amount?: number;
+    remark?: string;
 }
 
 export interface OrderSession {
-    id?: string;
-    startDateTime?: Date;
-    duration?: number;
-    teacher?: string;
-    price?: number
+    id?: number;
+    courseId?: number;
+    courseDatetime?: Date;
+    perTime?: number;
+    signIn?: number;
+    teacherId?: number;
+    teacherPrice?: number;
+    editFlag?: EDIT_FLAG;
+    courseTimes?: number;
+    status?: number;
+    createTime?: Date;
+    creator?: number;
+    operateTime?: Date;
+    operator?: number;
 }

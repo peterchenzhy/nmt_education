@@ -1,11 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef, ChangeDetectorRef } from '@angular/core';
+import { Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { NzMessageService } from 'ng-zorro-antd';
+import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { _HttpClient } from '@delon/theme';
 import { Order, Payment } from 'src/app/model/order.model';
 import { Course } from 'src/app/model/course.model';
-import { GlobalService } from '@shared/service/global.service';
+import { AppContextService } from '@shared/service/appcontext.service';
+import { ORDER_STATUS, EDIT_FLAG, PAY_STATUS, ORDER_TYPE } from '@shared/constant/system.constant';
+import { STData, STComponent, STColumn, STChange } from '@delon/abc';
 
 @Component({
     selector: 'app-order-view',
@@ -16,91 +19,187 @@ import { GlobalService } from '@shared/service/global.service';
     ::ng-deep .enroll-selector .ant-select-selection__rendered{line-height:20px;}`]
 })
 export class OrderViewComponent implements OnInit {
-    feeTypeList = this.globalService.FEE_TYPE_LIST;
-    payStatusList = this.globalService.PAY_STATUS_LIST;
-    payMethodList = this.globalService.PAY_METHOD_LIST;
+    feeTypeList = this.appCtx.globalService.FEE_TYPE_LIST;
+    payStatusList = this.appCtx.globalService.PAY_STATUS_LIST;
+    payMethodList = this.appCtx.globalService.PAY_METHOD_LIST;
+    registrationTypeList = this.appCtx.globalService.ORDER_TYPE_LIST;
+    registrationStatusList = this.appCtx.globalService.ORDER_STATUS_LIST;
     form: FormGroup;
     editFeeIndex = -1;
     order: Order = {
         course: {},
-        payList: []
+        courseScheduleIds: [],
+        registerExpenseDetail: [],
+        editFlag: EDIT_FLAG.NEW
     };
 
     constructor(
-        private globalService: GlobalService,
+        private appCtx: AppContextService,
+        private modalSrv: NzModalService,
         private fb: FormBuilder,
         private activaterRouter: ActivatedRoute,
         public msgSrv: NzMessageService,
-        public http: _HttpClient
+        private cdr: ChangeDetectorRef,
+        private _location: Location
     ) {
     }
+
+    @ViewChild('st', { static: true })
+    st: STComponent;
+    sessionColumns: STColumn[] = [
+        { title: '', index: 'id', type: 'checkbox' },
+        { title: '课时', index: 'courseTimes' },
+        { title: '任课教师', index: 'teacherId', render: "showTeacher" },
+        { title: '上课时间', index: 'courseDatetime', type: 'date', },
+        { title: '时长', index: 'perTime' }
+    ];
+    sessionsSTData: STData[] = [];
+    selectedSessions: STData[] = [];
     ngOnInit(): void {
         let studentStr = this.activaterRouter.snapshot.params.student;
         if (studentStr) {
             this.order.student = JSON.parse(studentStr);
+            this.order.studentId = this.order.student.id;
         }
         let courseStr = this.activaterRouter.snapshot.params.course;
         if (courseStr) {
             this.order.course = JSON.parse(courseStr);
+            this.order.courseId = this.order.course.id;
         }
         this.form = this.fb.group({
-            studentCode: [null, [Validators.required]],
-            courseCode: [null, [Validators.required]],
-            payList: this.fb.array([])
+            id: [null, []],
+            registrationStatus: [ORDER_STATUS.NORMAL, [Validators.required]],
+            registrationType: [ORDER_TYPE.NEW, [Validators.required]],
+            courseScheduleIds: [, [Validators.required]],
+            feeStatus: [PAY_STATUS.PAIED, [Validators.required]],
+            campus: [null, [Validators.required]],
+            remark: [null, []],
+            editFlag: [EDIT_FLAG.NO_CHANGE, [Validators.required]],
+            studentId: [null, [Validators.required]],
+            courseId: [null, [Validators.required]],
+            registerExpenseDetail: this.fb.array([])
         });
+        this.form.patchValue(this.order);
     }
     createPay(): FormGroup {
         return this.fb.group({
             id: [null],
-            type: [null, [Validators.required]],
-            method: [null, [Validators.required]],
-            status: [1, [Validators.required]],
-            price: [null, [Validators.required]],
+            feeType: [null, [Validators.required]],
+            payment: [null, [Validators.required]],
+            feeStatus: [PAY_STATUS.PAIED, [Validators.required]],
+            perAmount: [0, [Validators.required]],
+            count: [0, [Validators.required]],
             discount: [1, [Validators.required]],
-            receivable: [null, [Validators.required]],
-            deduction: [0, [Validators.required]],
-            paied: [0, [Validators.required]],
-            comment: [null, [Validators.required]]
+            receivable: [0, []],
+            deduction: [0, []],
+            amount: [0, [Validators.required]],
+            remark: ["", []],
+            editFlag: [EDIT_FLAG.NEW, []]
         });
     }
-    get payList() {
-        return this.form.controls.payList as FormArray;
+    get registerExpenseDetail() {
+        return this.form.controls.registerExpenseDetail as FormArray;
     }
 
-    listOfOption: Array<Course> = [];
+    coursesOfOption: Array<Course> = [];
     nzFilterOption = () => true;
     search(value: string): void {
-        this.http
-            .get("nmt-education/course/search/fuzzy?name="+value)
-            .subscribe(data => {
-                const listOfOption: Array<Course> = [];
-                data.forEach(item => {
-                    listOfOption.push(item);
-                });
-                this.listOfOption = listOfOption;
+        if (!value || value == "") {
+            return;
+        }
+        this.appCtx.courseService.fuzzyQueryCourses(value)
+            .subscribe((data: Course[]) => {
+                this.coursesOfOption = data;
             });
     }
 
-    courseSelected(value: string) {
-        this.order.course = this.listOfOption.find(c => { return c.code == value; });
-        const payList: Payment[] = [
-            {
-                id: "1", type: 1, method: 4, status: 1,
-                price: 1000, discount: 1, receivable: 400, paied: 400, comment: ""
-            },
-            {
-                id: "2", type: 3, method: 4, status: 1, price: 1000,
-                discount: 0.9, receivable: 900, deduction: 200, paied: 700, comment: ""
-            }];
-        payList.forEach(i => {
-            const field = this.createPay();
-            field.patchValue(i);
-            this.payList.push(field);
-        });
+    courseSelected(value: number) {
+        this.appCtx.courseService.getCourseDetails(value)
+            .subscribe((res: Course) => {
+                this.order.courseId = res.id;
+                this.order.course = res;
+                this.order.course.courseExpenseList.forEach(i => {
+                    let pay: Payment = {};
+                    pay.feeType = i.type;
+                    pay.perAmount = i.price;
+                    const field = this.createPay();
+                    field.patchValue(pay);
+                    this.registerExpenseDetail.push(field);
+                });
+                this.form.patchValue({ campus: this.order.course.campus });
+            });
+
     }
 
     clearSelectedCourse() {
         this.order.course = {};
-        this.payList.clear();
+        this.form.patchValue({ courseScheduleIds: [] });
+        this.selectedSessions = [];
+        this.registerExpenseDetail.clear();
+    }
+
+    onPayInfoChanged(index: number) {
+        let payObject = this.registerExpenseDetail.at(index);
+        this.calPayAmount(payObject.value);
+        payObject.markAsDirty();
+    }
+    calPayAmount(payVal: any): any {
+        let perAmount = payVal.perAmount || 0;
+        let count = payVal.count || 0;
+        let discount = payVal.discount || 1;
+        payVal.receivable = (perAmount * count * discount).toFixed(2);
+        if (payVal.editFlag == EDIT_FLAG.NO_CHANGE) {
+            payVal.editFlag = EDIT_FLAG.UPDATE;
+        }
+        return payVal;
+    }
+    stChange(e: STChange) {
+        switch (e.type) {
+            case 'checkbox':
+                this.selectedSessions = e.checkbox!;
+                this.cdr.detectChanges();
+                break;
+        }
+    }
+    selectSessions(tpl: TemplateRef<{}>) {
+        this.sessionsSTData = this.order.course.courseScheduleList;
+        this.selectedSessions = [];
+        this.sessionsSTData.forEach(s => {
+            s.checked = this.form.value.courseScheduleIds.find(id => { return id == s.id; }) != null;
+            if (s.checked) {
+                this.selectedSessions.push(s);
+            }
+        });
+        this.modalSrv.create({
+            nzTitle: "选择报名课时",
+            nzContent: tpl,
+            nzWidth: 700,
+            nzOnOk: () => {
+                let sessionIds = this.selectedSessions.map(d => { return d.id; });
+                this.form.patchValue({ courseScheduleIds: sessionIds });
+                let feeIndex = this.registerExpenseDetail.value.findIndex(function (fee) { return fee.feeType == 1; });
+                if (feeIndex > -1) {
+                    let payObject = this.registerExpenseDetail.at(feeIndex);
+                    payObject.value.count = sessionIds.length;
+                    let newValue = this.calPayAmount(payObject.value);
+                    payObject.patchValue(newValue, { emitEvent: true });
+                    payObject.markAsDirty();
+                    // this.onPayInfoChanged(feeIndex);
+                }
+            },
+        });
+    }
+    goBack() {
+        this._location.back();
+    }
+    _submitForm() {
+        Object.keys(this.form.controls).forEach(key => {
+            this.form.controls[key].markAsDirty();
+            this.form.controls[key].updateValueAndValidity();
+        });
+        if (this.form.invalid) return;
+        this.appCtx.courseService.registerCourse(this.form.value).subscribe((res) => {
+            this.goBack();
+        });
     }
 }

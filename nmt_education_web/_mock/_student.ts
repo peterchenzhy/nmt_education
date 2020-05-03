@@ -13,7 +13,7 @@ for (let i = 0; i < 46; i += 1) {
         //     'https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png',
         //     'https://gw.alipayobjects.com/zos/rmsportal/udxAbMEhpwthVVcjLXik.png',
         // ][i % 2],
-        id: `StudentCode ${i}`,
+        id: i,
         name: '学生名',
         phone: Math.floor(Math.random() * 1000).toString(),
         sex: Math.floor(Math.random() * 10) % 2
@@ -32,7 +32,7 @@ function getRule(params: any) {
         });
     }
     if (params.no) {
-        ret = ret.filter(data => data.id.indexOf(params.no) > -1);
+        ret = ret.filter(data => data.id == params.no);
     }
     return ret;
 }
@@ -49,23 +49,21 @@ function getRuleById(params: any) {
         });
     }
     if (params.no) {
-        ret = ret.filter(data => data.id.indexOf(params.no) > -1);
+        ret = ret.filter(data => data.id == params.no);
     }
     return ret[0];
 }
 
-function removeRule(nos: string): boolean {
-    nos.split(',').forEach(no => {
-        const idx = list.findIndex(w => w.id === no);
-        if (idx !== -1) list.splice(idx, 1);
-    });
+function removeRule(nos: number): boolean {
+    const idx = list.findIndex(w => w.id === nos);
+    if (idx !== -1) list.splice(idx, 1);
     return true;
 }
 
 function saveRule(description: string) {
     const i = Math.ceil(Math.random() * 10000);
     list.unshift({
-        id: `StudentCode ${i}`,
+        id: i,
         name: '学生名',
         phone: Math.floor(Math.random() * 1000).toString(),
         sex: Math.floor(Math.random() * 10) % 2

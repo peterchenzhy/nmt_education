@@ -225,11 +225,11 @@
       <tbody>
         <tr *ngFor="let item of sessions.controls; let i = index" [formGroupName]="i">
           <td>
-            <span>{{ i+1 }}</span>
+            <span>{{ sessions.value[i].courseTimes }}</span>
           </td>
           <td>
             <span *ngIf="editSessionIndex !== i">{{ getTeacherName(sessions.value[i].teacherId) }}</span>
-            <span *ngIf="editSessionIndex === i" nz-form-control nzErrorTip="请选择教师">
+            <span *ngIf="editSessionIndex === i" nz-form-control nzErrorTip="请选择任课教师">
               <nz-select formControlName="teacherId" class="enroll-selector" nzShowSearch nzServerSearch
                 nzPlaceHolder="请选择任课教师" [nzShowArrow]="false" [nzFilterOption]="nzFilterOption"
                 [nzDropdownMatchSelectWidth]="false" (nzOnSearch)="searchTeacher($event)"
