@@ -96,7 +96,7 @@ export class CourseListComponent implements OnInit {
       .subscribe((res: ResponseData) => {
         res.list = res.list || [];
         res.list.forEach(element => {
-          element.statusDetail = this.appCtx.globalService.COURSE_STATUS_LIST[element.status];
+          element.statusDetail = this.appCtx.globalService.COURSE_STATUS_LIST[element.courseStatus];
         });
         this.data = res;
         this.cdr.detectChanges();
