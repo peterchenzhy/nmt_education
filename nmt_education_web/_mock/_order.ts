@@ -6,9 +6,8 @@ const list: Order[] = [];
 
 for (let i = 0; i < 46; i += 1) {
     list.push({
-        id: `Order ${i}`,
-        status: Math.floor(Math.random() * 10) % 5,
-        signInDate: new Date(`2017-07-${i < 18 ? '0' + (Math.floor(i / 2) + 1) : Math.floor(i / 2) + 1}`),
+        id:i,
+        registrationStatus: Math.floor(Math.random() * 10) % 5,
         course: {
             code: `CourseCode ${i}`,
             name: '课程名',
@@ -22,13 +21,13 @@ for (let i = 0; i < 46; i += 1) {
             startDate: new Date(`2017-07-${i < 18 ? '0' + (Math.floor(i / 2) + 1) : Math.floor(i / 2) + 1}`)
         },
         student: {
-            id: `StudentCode ${i}`,
+            id: i,
             name: '学生名',
             phone: Math.floor(Math.random() * 1000).toString(),
             sex: Math.floor(Math.random() * 10) % 2
         },
-        payList: [],
-        sessionList: [],
+        registerExpenseDetail: [],
+        courseScheduleIds: [],
         totalPrice: 1000,
         balance: 300
     });

@@ -1,7 +1,7 @@
 import { GENDER, RELATIONSHIP, EDIT_FLAG } from '@shared/constant/system.constant';
 
 export interface Student {
-    id?: string;
+    id?: number;
     code?: string;
     name?: string;
     sex?: GENDER;
