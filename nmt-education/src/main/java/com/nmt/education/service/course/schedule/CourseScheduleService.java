@@ -5,6 +5,7 @@ import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.pojo.dto.req.CourseScheduleReqDto;
 import com.nmt.education.pojo.po.CourseSchedulePo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -25,10 +26,15 @@ public class CourseScheduleService {
 
     public boolean manager(List<CourseScheduleReqDto> dtoList, Long courseId, Integer operator) {
         if (CollectionUtils.isEmpty(dtoList)) {
+              invalidByCourseId(courseId,operator);
             return true;
         }
         dtoList.stream().forEach(e -> manager(e, courseId, operator));
         return true;
+    }
+
+    private void invalidByCourseId(Long courseId, Integer operator) {
+        this.courseSchedulePoMapper.invalidByCourseId(courseId,operator);
     }
 
     private void manager(CourseScheduleReqDto dto, Long courseId, Integer operator) {
@@ -158,4 +164,6 @@ public class CourseScheduleService {
         Assert.notNull(po,"课表信息为空，id："+id);
         return this.courseSchedulePoMapper.signIn(id,operator)>0;
     }
+
+
 }

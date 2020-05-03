@@ -25,10 +25,16 @@ public class CourseExpenseService {
 
     public Boolean manager(List<CourseExpenseReqDto> dtoList, Long courseId, Integer operator) {
         if (CollectionUtils.isEmpty(dtoList)) {
-            return true ;
+            //无效所有数据
+            invalidByCourseId(courseId,operator);
+        }else {
+            dtoList.stream().forEach(e -> manager(e, courseId, operator));
         }
-        dtoList.stream().forEach(e -> manager(e, courseId, operator));
         return true;
+    }
+
+    private void invalidByCourseId(Long courseId, Integer operator) {
+        this.courseExpensePoMapper.invalidByCourseId(courseId,operator);
     }
 
 

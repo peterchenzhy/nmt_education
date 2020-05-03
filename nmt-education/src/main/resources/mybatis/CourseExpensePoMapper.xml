@@ -36,6 +36,11 @@
     and course_id = #{id}
   </select>
 
+  <update id="invalidByCourseId">
+    update course_expense
+    set status = 0 ,operator =#{operator},operate_time = now()
+    where status =1  and course_id = #{courseId}
+  </update>
 
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.CourseExpensePo" useGeneratedKeys="true">
     <!--@mbg.generated-->

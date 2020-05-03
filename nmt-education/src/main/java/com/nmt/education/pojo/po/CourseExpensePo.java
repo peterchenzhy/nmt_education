@@ -1,6 +1,8 @@
 package com.nmt.education.pojo.po;
 
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -33,6 +35,7 @@ public class CourseExpensePo {
     /**
      * 值
      */
+    @JsonProperty("price")
     private String value;
 
     /**

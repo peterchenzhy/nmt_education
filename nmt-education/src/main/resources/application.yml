@@ -5,7 +5,9 @@ spring:
     type: ehcache
     ehcache:
       config: classpath:ehcache.xml
-#tomcat
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
 server:
   tomcat:
     max-threads: 60
@@ -47,3 +49,4 @@ mybatis:
 
 #日志配置
 logging.level.com.nmt.education.service: debug
+

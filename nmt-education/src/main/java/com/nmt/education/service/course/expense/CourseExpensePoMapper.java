@@ -26,4 +26,6 @@ interface CourseExpensePoMapper {
     int insertOrUpdateSelective(CourseExpensePo record);
 
     List<CourseExpensePo> queryByCourseId(@Param("id") Long id);
+
+    void invalidByCourseId(@Param("courseId") Long courseId, @Param("operator") Integer operator);
 }
