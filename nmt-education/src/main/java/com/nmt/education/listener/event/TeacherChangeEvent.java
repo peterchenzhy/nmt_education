@@ -1,5 +1,6 @@
 package com.nmt.education.listener.event;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -7,7 +8,8 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class TeacherChangeEvent {
+@AllArgsConstructor
+public class TeacherChangeEvent  extends  BaseEvent{
     /**
      * 课程id
      */
