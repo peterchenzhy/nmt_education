@@ -76,6 +76,14 @@
                   "with": "src/environments/environment.hmr.ts"
                 }
               ]
+            },
+            "uat": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.uat.ts"
+                }
+              ]
             }
           }
         },
