@@ -37,7 +37,10 @@
           <nz-form-item>
             <nz-form-label nzFor="startDate">开课日期</nz-form-label>
             <nz-form-control >
-              <nz-range-picker (ngModelChange)="onDateRangeChanged($event)"></nz-range-picker>
+              <nz-range-picker
+                [ngModel]="searchDate" name="searchDate" [nzFormat]="dateformat"
+                (ngModelChange)="onDateRangeChanged($event)">
+              </nz-range-picker>
             </nz-form-control>
           </nz-form-item>
         </div>

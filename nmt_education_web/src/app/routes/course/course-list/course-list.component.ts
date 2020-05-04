@@ -1,14 +1,13 @@
-import { Component, OnInit, ViewChild, TemplateRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { _HttpClient } from '@delon/theme';
-import { tap, map } from 'rxjs/operators';
-import { STComponent, STColumn, STData, STChange } from '@delon/abc';
-import { FormGroup, FormControl } from '@angular/forms';
-import { Router } from '@angular/router';
-import { Course } from 'src/app/model/course.model';
-import { GlobalService } from '@shared/service/global.service';
-import { AppContextService } from '@shared/service/appcontext.service';
-import { CourseQueryParam, ResponseData } from 'src/app/model/system.model';
+import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {NzMessageService, NzModalService} from 'ng-zorro-antd';
+import {_HttpClient} from '@delon/theme';
+import {tap} from 'rxjs/operators';
+import {STChange, STColumn, STComponent, STData} from '@delon/abc';
+import {FormControl, FormGroup} from '@angular/forms';
+import {Router} from '@angular/router';
+import {AppContextService} from '@shared/service/appcontext.service';
+import {CourseQueryParam, ResponseData} from 'src/app/model/system.model';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-course-list',
@@ -18,12 +17,13 @@ export class CourseListComponent implements OnInit {
   courseDate = new FormGroup({
     courseDate: new FormControl()
   });
+  searchDate: Date[];
   loading = false;
   pager = {
     front: false
   };
-  queryParam: CourseQueryParam = { pageNo: 1, pageSize: 10 };
-  data: ResponseData = { list: [], total: 0 };
+  queryParam: CourseQueryParam = {pageNo: 1, pageSize: 10};
+  data: ResponseData = {list: [], total: 0};
   courseTypeList = this.appCtx.globalService.COURSE_TYPE_LIST;
   courseSubjectList = this.appCtx.globalService.COURSE_SUBJECT_LIST;
   courseClassificationList = this.appCtx.globalService.COURSE_CLASSIFICATION_LIST;
@@ -31,13 +31,13 @@ export class CourseListComponent implements OnInit {
   feeTypeList = this.appCtx.globalService.FEE_TYPE_LIST;
   gradeList = this.appCtx.globalService.GRADE_LIST;
 
-  @ViewChild('st', { static: true })
+  @ViewChild('st', {static: true})
   st: STComponent;
   columns: STColumn[] = [
-    { title: '', index: 'key', type: 'checkbox' },
-    { title: '课程编号', index: 'code' },
-    { title: '名称', index: 'name' },
-    { title: '校区', index: 'campus', render: "courseCampus" },
+    {title: '', index: 'key', type: 'checkbox'},
+    {title: '课程编号', index: 'code'},
+    {title: '名称', index: 'name'},
+    {title: '校区', index: 'campus', render: "courseCampus"},
     {
       title: '状态',
       index: 'status',
@@ -71,13 +71,15 @@ export class CourseListComponent implements OnInit {
   expandForm = false;
 
   constructor(
+    private datePipe: DatePipe,
     private appCtx: AppContextService,
     private router: Router,
     private http: _HttpClient,
     public msg: NzMessageService,
     private modalSrv: NzModalService,
     private cdr: ChangeDetectorRef
-  ) { }
+  ) {
+  }
 
   ngOnInit() {
     this.getData();
@@ -87,6 +89,7 @@ export class CourseListComponent implements OnInit {
     this.queryParam.pageNo = 1;
     this.getData();
   }
+
   getData() {
     this.loading = true;
     this.appCtx.courseService.queryCourses(this.queryParam)
@@ -129,8 +132,10 @@ export class CourseListComponent implements OnInit {
   }
 
   onDateRangeChanged(result: Date): void {
-    this.queryParam.startDate = result[0];
-    this.queryParam.endDate = result[1];
+
+    this.queryParam.startDate = this.datePipe.transform(result[0],'yyyy-MM-dd');
+    this.queryParam.endDate = this.datePipe.transform(result[1],'yyyy-MM-dd');
+
   }
 
   addNewCourse() {

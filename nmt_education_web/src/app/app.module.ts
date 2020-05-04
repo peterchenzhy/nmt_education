@@ -16,7 +16,7 @@ const LANG = {
   delon: delonLang,
 };
 // register angular
-import { registerLocaleData } from '@angular/common';
+import {DatePipe, registerLocaleData} from '@angular/common';
 registerLocaleData(LANG.ng, LANG.abbr);
 const LANG_PROVIDES = [
   { provide: LOCALE_ID, useValue: LANG.abbr },
@@ -90,7 +90,8 @@ import { ServiceModule } from '@shared/service/service.module';
   providers: [
     ...LANG_PROVIDES,
     ...INTERCEPTOR_PROVIDES,
-    ...APPINIT_PROVIDES
+    ...APPINIT_PROVIDES,
+    DatePipe
   ],
   bootstrap: [AppComponent]
 })

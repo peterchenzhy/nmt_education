@@ -1,7 +1,7 @@
 import { Injectable, Injector } from '@angular/core'
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpService } from './http.service';
-import { TeacherQueryParam } from 'src/app/model/system.model';
+import {CourseQueryParam, RegisterSummaryQueryParam, TeacherQueryParam} from 'src/app/model/system.model';
 import { HttpClient } from '@angular/common/http';
 import { SettingsService } from '@delon/theme';
 import { Teacher } from 'src/app/model/teacher.model';
@@ -17,7 +17,7 @@ export class CourseService {
     ) {
     }
 
-    public queryCourses(T: TeacherQueryParam): Observable<Object> {
+    public queryCourses(T: CourseQueryParam): Observable<Object> {
         return this.httpClient.post('nmt-education/course/search', T);
     }
 
@@ -36,4 +36,7 @@ export class CourseService {
     public registerCourse(T: Order): Observable<Object> {
         return this.httpClient.post('nmt-education/course/register', T);
     }
+  public registerSummary(T: RegisterSummaryQueryParam): Observable<Object> {
+    return this.httpClient.post('nmt-education/course/register/summary', T);
+  }
 }
