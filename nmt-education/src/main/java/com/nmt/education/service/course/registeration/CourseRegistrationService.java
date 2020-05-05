@@ -6,6 +6,7 @@ import com.nmt.education.commmons.NumberUtil;
 import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.pojo.dto.req.CourseRegisterReqDto;
 import com.nmt.education.pojo.dto.req.RegisterExpenseDetailReqDto;
+import com.nmt.education.pojo.dto.req.RegisterSearchReqDto;
 import com.nmt.education.pojo.dto.req.RegisterSummarySearchDto;
 import com.nmt.education.pojo.po.CoursePo;
 import com.nmt.education.pojo.po.CourseRegistrationPo;
@@ -121,6 +122,20 @@ public class CourseRegistrationService {
         return resultList;
     }
 
+
+    /**
+     * 报名记录搜索
+     *
+     * @param dto
+     * @param logInUser
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/5/5 15:45
+     */
+    public PageInfo<CourseRegistrationPo> registerSearch(RegisterSearchReqDto dto, Integer logInUser) {
+        return PageHelper.startPage(dto.getPageNo(),dto.getPageSize()).doSelectPageInfo(()->this.courseRegistrationPoMapper.queryByDto(dto));
+    }
 
     /**
      * 生成 报名记录po
@@ -251,5 +266,6 @@ public class CourseRegistrationService {
     public int insertOrUpdateSelective(CourseRegistrationPo record) {
         return courseRegistrationPoMapper.insertOrUpdateSelective(record);
     }
+
 
 }
