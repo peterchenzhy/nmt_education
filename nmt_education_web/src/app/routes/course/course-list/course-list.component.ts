@@ -37,6 +37,8 @@ export class CourseListComponent implements OnInit {
     {title: '', index: 'key', type: 'checkbox'},
     {title: '课程编号', index: 'code'},
     {title: '名称', index: 'name'},
+    {title: '课程科目', index: 'courseSubject', render: "courseSubject"},
+    {title: '课程类型', index: 'courseType', render: "courseType"},
     {title: '校区', index: 'campus', render: "courseCampus"},
     {
       title: '状态',
@@ -132,10 +134,8 @@ export class CourseListComponent implements OnInit {
   }
 
   onDateRangeChanged(result: Date): void {
-
     this.queryParam.startDate = this.datePipe.transform(result[0],'yyyy-MM-dd');
     this.queryParam.endDate = this.datePipe.transform(result[1],'yyyy-MM-dd');
-
   }
 
   addNewCourse() {

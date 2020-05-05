@@ -40,7 +40,7 @@ public class CourseScheduleReqDto {
     * 上课时间
     */
     @ApiModelProperty(value = "上课时间")
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "GMT+8")
     private Date courseDatetime;
 
     /**

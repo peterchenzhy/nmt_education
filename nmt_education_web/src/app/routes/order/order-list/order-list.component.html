@@ -12,6 +12,14 @@
       </div>
       <div nz-col nzMd="8" nzSm="24">
         <nz-form-item>
+          <nz-form-label nzFor="studentCode">学生编号</nz-form-label>
+          <nz-form-control>
+            <input nz-input [(ngModel)]="q.studentCode" name="studentCode" placeholder="请输入" id="studentCode" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzMd="8" nzSm="24">
+        <nz-form-item>
             <nz-form-label nzFor="signInDate">报名日期</nz-form-label>
             <nz-form-control [formGroup]="signInDate">
               <nz-range-picker formControlName="signInDate"></nz-range-picker>
@@ -20,32 +28,56 @@
       </div>
       <div nz-col nzMd="8" nzSm="24">
         <nz-form-item>
-          <nz-form-label nzFor="status">订单状态</nz-form-label>
-          <nz-form-control>
-            <nz-select [(ngModel)]="q.status" name="status" id="status" [nzPlaceHolder]="'请选择'" [nzShowSearch]="true">
-              <nz-option *ngFor="let i of orderStatusList; let idx = index" [nzLabel]="i.text" [nzValue]="i.value">
-              </nz-option>
+          <nz-form-label nzFor="courseSubject">课程科目</nz-form-label>
+          <nz-form-control nzErrorTip="请输入课程科目">
+            <nz-select [(ngModel)]="queryParam.courseSubject" name="courseSubject" [nzPlaceHolder]="'请选择课程科目'" [nzShowSearch]="true">
+              <nz-option *ngFor="let i of courseSubjectList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
             </nz-select>
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div nz-col nzMd="24" nzSm="24"></div>
-      <div nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
+      <div nz-col nzMd="8" nzSm="24">
         <nz-form-item>
-            <nz-form-label nzFor="studentCode">学生编号</nz-form-label>
-            <nz-form-control>
-              <input nz-input [(ngModel)]="q.studentCode" name="studentCode" placeholder="请输入" id="studentCode" />
-            </nz-form-control>
-          </nz-form-item>
-      </div>
-      <div nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
-        <nz-form-item>
-          <nz-form-label nzFor="courseCode">课程编号</nz-form-label>
-          <nz-form-control>
-            <input nz-input [(ngModel)]="q.courseCode" name="courseCode" placeholder="请输入" id="courseCode" />
+          <nz-form-label nzFor="courseType">课程类型</nz-form-label>
+          <nz-form-control nzErrorTip="请输入课程类型">
+            <nz-select [(ngModel)]="queryParam.courseType" name="courseType"  [nzPlaceHolder]="'请选择课程类型'" [nzShowSearch]="true">
+              <nz-option *ngFor="let i of courseTypeList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+            </nz-select>
           </nz-form-control>
         </nz-form-item>
       </div>
+      <div nz-col nzMd="8" nzSm="24">
+        <nz-form-item>
+          <nz-form-label>年级</nz-form-label>
+          <nz-form-control nzErrorTip="年级">
+            <nz-select [(ngModel)]="queryParam.grade" name="grade"  [nzPlaceHolder]="'请选择年级'" [nzShowSearch]="true">
+              <nz-option *ngFor="let i of gradeList" [nzLabel]="i.label" [nzValue]="i.value"> </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+<!--      <div nz-col nzMd="8" nzSm="24">-->
+<!--        <nz-form-item>-->
+<!--          <nz-form-label nzFor="status">订单状态</nz-form-label>-->
+<!--          <nz-form-control>-->
+<!--            <nz-select [(ngModel)]="q.status" name="status" id="status" [nzPlaceHolder]="'请选择'" [nzShowSearch]="true">-->
+<!--              <nz-option *ngFor="let i of orderStatusList; let idx = index" [nzLabel]="i.text" [nzValue]="i.value">-->
+<!--              </nz-option>-->
+<!--            </nz-select>-->
+<!--          </nz-form-control>-->
+<!--        </nz-form-item>-->
+<!--      </div>-->
+<!--      <div nz-col nzMd="24" nzSm="24"></div>-->
+<!--      <div nz-col nzMd="8" nzSm="24" *ngIf="expandForm">-->
+
+<!--      <div nz-col nzMd="8" nzSm="24" *ngIf="expandForm">-->
+<!--        <nz-form-item>-->
+<!--          <nz-form-label nzFor="courseCode">课程编号</nz-form-label>-->
+<!--          <nz-form-control>-->
+<!--            <input nz-input [(ngModel)]="q.courseCode" name="courseCode" placeholder="请输入" id="courseCode" />-->
+<!--          </nz-form-control>-->
+<!--        </nz-form-item>-->
+<!--      </div>-->
       <div nz-col [nzSpan]="24" class="text-right">
         <button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
         <button nz-button type="reset" (click)="reset()" class="mx-sm">重置</button>
@@ -82,16 +114,17 @@
       </ng-template>
     </nz-alert>
   </div> -->
-  <st #st [columns]="columns" [data]="data" [loading]="loading" (change)="stChange($event)">
-    <ng-template st-row="orderStatus" let-i>
-      <nz-badge [nzStatus]="i.statusDetail.type" [nzText]="i.statusDetail.text"></nz-badge>
-    </ng-template>
-    <ng-template st-row="studentName" let-i>
-      <span>{{i.student.name}}</span>
-    </ng-template>
-    <ng-template st-row="courseName" let-i>
-      <span>{{i.course.name}}</span>
-    </ng-template>
+  <st #st [columns]="columns" [data]="data.list" [total]="data.total" [ps]="queryParam.pageSize"
+      [pi]="queryParam.pageNo" [page]="pager" [loading]="loading" (change)="stChange($event)">
+<!--    <ng-template st-row="orderStatus" let-i>-->
+<!--      <nz-badge [nzStatus]="i.statusDetail.type" [nzText]="i.statusDetail.text"></nz-badge>-->
+<!--    </ng-template>-->
+<!--    <ng-template st-row="studentName" let-i>-->
+<!--      <span>{{i.student.name}}</span>-->
+<!--    </ng-template>-->
+<!--    <ng-template st-row="courseName" let-i>-->
+<!--      <span>{{i.course.name}}</span>-->
+<!--    </ng-template>-->
   </st>
 </nz-card>
 <ng-template #modalContent>

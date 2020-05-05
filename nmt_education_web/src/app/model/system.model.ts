@@ -39,10 +39,31 @@ export interface CourseQueryParam {
     courseSubject?: number;
     courseType?: number;
     grade?: number;
-    startDate?: Date;
-    endDate?: Date;
+    startDate?: string;
+    endDate?: string;
     pageNo?: number;
     pageSize?: number;
+}
+
+export interface RegisterSummaryQueryParam {
+  courseSubject?: number;
+  courseType?: number;
+  grade?: number;
+  startDate?: Date;
+  endDate?: Date;
+  registerStartDate?: Date;
+  registerEndDate?: Date;
+  signIn?: number;
+  pageNo?: number;
+  pageSize?: number;
+}
+export interface RegisterQueryParam {
+  studentId?: number;
+  courseSubject?: number;
+  courseType?: number;
+  grade?: number;
+  pageNo?: number;
+  pageSize?: number;
 }
 
 export interface ResponseData {

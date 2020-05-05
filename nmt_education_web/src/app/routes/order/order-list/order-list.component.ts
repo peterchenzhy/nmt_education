@@ -8,6 +8,8 @@ import { Router } from '@angular/router';
 import { Course } from 'src/app/model/course.model';
 import { Order } from 'src/app/model/order.model';
 import { GlobalService } from '@shared/service/global.service';
+import {CourseQueryParam, RegisterQueryParam, RegisterSummaryQueryParam, ResponseData} from "../../../model/system.model";
+import {AppContextService} from "@shared/service/appcontext.service";
 
 @Component({
     selector: 'app-order-list',
@@ -18,6 +20,19 @@ export class OrderListComponent implements OnInit {
     signInDate = new FormGroup({
         signInDate: new FormControl()
     });
+  courseDate = new FormGroup({
+    courseDate: new FormControl()
+  });
+  pager = {
+    front: false
+  };
+  queryParam: RegisterQueryParam = { pageNo: 1, pageSize: 10 };
+  courseTypeList = this.appCtx.globalService.COURSE_TYPE_LIST;
+  courseSubjectList = this.appCtx.globalService.COURSE_SUBJECT_LIST;
+  courseClassificationList = this.appCtx.globalService.COURSE_CLASSIFICATION_LIST;
+  courseStatusList = this.appCtx.globalService.COURSE_STATUS_LIST;
+  feeTypeList = this.appCtx.globalService.FEE_TYPE_LIST;
+  gradeList = this.appCtx.globalService.GRADE_LIST;
     q: any = {
         pi: 1,
         ps: 10,
@@ -28,7 +43,7 @@ export class OrderListComponent implements OnInit {
         studentCode: '',
         signInDate: ''
     };
-    data: Order[] = [];
+    data: ResponseData = { list: [], total: 0 };
     loading = false;
     orderStatusList = this.globalService.ORDER_STATUS_LIST;
 
@@ -36,12 +51,12 @@ export class OrderListComponent implements OnInit {
     st: STComponent;
     columns: STColumn[] = [
         { title: '', index: 'key', type: 'checkbox' },
-        { title: '订单编号', index: 'id' },
-        { title: '姓名', index: 'student', render: "studentName" },
-        { title: '课程名', index: 'course', render: "courseName" },
+        { title: '订单编号', index: 'registrationNumber'},
+        { title: '姓名', index: 'studentName' },
+        { title: '课程名', index: 'courseName' },
         {
             title: '报名时间',
-            index: 'signInDate',
+            index: 'registerTime',
             type: 'date',
             sort: {
                 compare: (a: any, b: any) => a.updatedAt - b.updatedAt,
@@ -52,8 +67,8 @@ export class OrderListComponent implements OnInit {
             index: 'status',
             render: 'orderStatus'
         },
-        { title: '总金额', index: 'totalPrice' },
-        { title: '余额', index: 'balance' },
+        { title: '总金额', index: 'totalAmount' },
+        { title: '余额', index: 'balanceAmount' },
         {
             title: '操作',
             buttons: [
@@ -70,6 +85,7 @@ export class OrderListComponent implements OnInit {
     expandForm = false;
 
     constructor(
+        private appCtx: AppContextService,
         private globalService: GlobalService,
         private router: Router,
         private http: _HttpClient,
@@ -85,19 +101,15 @@ export class OrderListComponent implements OnInit {
     getData() {
         this.loading = true;
         this.http
-            .get('/order', this.q)
+        this.appCtx.courseService.registerSearch(this.queryParam)
             .pipe(
-                map((list: Order[]) =>
-                    list.map(i => {
-                        i.statusDetail = this.globalService.ORDER_STATUS_LIST[i.registrationStatus];
-                        //i.statusText = statusItem.text;
-                        //i.statusType = statusItem.type;
-                        return i;
-                    }),
-                ),
                 tap(() => (this.loading = false)),
             )
-            .subscribe(res => {
+            .subscribe((res: ResponseData) => {
+                res.list = res.list || [];
+                // res.list.forEach(element => {
+                //   element.statusDetail = this.appCtx.globalService.COURSE_STATUS_LIST[element.courseStatus];
+                // });
                 this.data = res;
                 this.cdr.detectChanges();
             });
