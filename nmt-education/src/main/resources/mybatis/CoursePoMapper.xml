@@ -231,7 +231,7 @@
         ]]></if>
         <if test="dto.endDate != null">
             <![CDATA[
-            and   end_date != "1970-01-02 00:00:00"
+            and   start_date != "1970-01-02 00:00:00"
             and start_date <= #{dto.endDate}  ]]>
         </if>
     </select>
