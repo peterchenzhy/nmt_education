@@ -4,7 +4,7 @@
         <sv-container size="large" title="学生信息">
             <sv label="姓名">{{order.student.name}}</sv>
             <sv label="性别">{{ appCtx.globalService.getGenderLabel(order.student.sex)}}</sv>
-            <sv label="出生年月">{{order.student.birthday}}</sv>
+            <sv label="出生年月">{{order.student.birthday | date:'yyyy-MM-dd'}}</sv>
             <sv label="联系电话">{{order.student.phone}}</sv>
             <sv label="学校">{{order.student.school}}</sv>
             <sv label="备注" col="1">{{order.student.remark}}</sv>
@@ -31,7 +31,7 @@
                 </nz-select>
             </sv>
             <sv label="科目">{{appCtx.globalService.getCourseSubjectLabel(order.course.courseSubject)}}</sv>
-            <sv label="开课日期">{{order.course.startDate}}</sv>
+            <sv label="开课日期">{{order.course.startDate| date:'yyyy-MM-dd'}}</sv>
             <sv label="年级">{{appCtx.globalService.getGradeLabel(order.course.grade)}}</sv>
             <sv label="类型">{{appCtx.globalService.getCourseTypeLabel(order.course.courseType)}}</sv>
             <sv label="任课教师">{{order.course.teacher&&order.course.teacher.name}}</sv>

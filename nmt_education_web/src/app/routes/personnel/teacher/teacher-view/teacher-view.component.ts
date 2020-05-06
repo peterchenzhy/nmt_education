@@ -63,7 +63,7 @@ export class TeacherViewComponent implements OnInit {
         if (teacherStr) {
             this.teacher = JSON.parse(teacherStr);
             this.teacher.editFlag = EDIT_FLAG.UPDATE;
-            this.pageHeader = `教师信息编辑 [${this.teacher.id}]`;
+            this.pageHeader = `教师信息编辑 -- [${this.teacher.name}]`;
         }
         this.form.patchValue(this.teacher);
 

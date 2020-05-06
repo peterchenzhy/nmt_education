@@ -242,7 +242,7 @@
             </span>
           </td>
           <td>
-            <span *ngIf="editSessionIndex !== i">{{ sessions.value[i].courseDatetime.toLocaleString() }}</span>
+            <span *ngIf="editSessionIndex !== i">{{ sessions.value[i].courseDatetime.toLocaleString()  | date:'yyyy-MM-dd HH:mm:ss' }}</span>
             <span *ngIf="editSessionIndex === i" nz-form-control nzErrorTip="请输入上课时间">
               <nz-date-picker nzShowTime nzFormat="yyyy-MM-dd HH:mm:ss" nzPlaceHolder="Select Time"
                 formControlName="courseDatetime"></nz-date-picker>

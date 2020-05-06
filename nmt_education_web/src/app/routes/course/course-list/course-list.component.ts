@@ -60,10 +60,10 @@ export class CourseListComponent implements OnInit {
           text: '编辑',
           click: (item: any) => this.router.navigate([`/course/edit/${item.id}`]),
         },
-        {
-          text: '报名',
-          click: (item: any) => this.msg.success(`报名${item.courseName}`),
-        },
+        // {
+        //   text: '报名',
+        //   click: (item: any) => this.msg.success(`报名${item.courseName}`),
+        // },
       ],
     },
   ];

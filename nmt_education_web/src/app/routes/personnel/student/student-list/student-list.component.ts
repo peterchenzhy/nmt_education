@@ -32,6 +32,8 @@ export class StudentListComponent implements OnInit {
         { title: '姓名', index: 'name' },
         { title: '性别', index: 'sex', render: "genderRender" },
         { title: '联系电话', index: 'phone' },
+        { title: '所在学校', index: 'school' },
+        { title: '年级', index: 'grade',render:"gradeRender" },
         {
             title: '操作',
             buttons: [
