@@ -132,6 +132,7 @@ public class CourseService {
                     eventList.get().add(new TeacherChangeEvent(coursePo.getId(), dto.getTeacherId()));
                 }
                 BeanUtils.copyProperties(dto, coursePo);
+                coursePo.setTimes(dto.getCourseScheduleList().size());
                 coursePo.setOperator(operator);
                 coursePo.setOperateTime(new Date());
                 this.updateByPrimaryKeySelective(coursePo);
