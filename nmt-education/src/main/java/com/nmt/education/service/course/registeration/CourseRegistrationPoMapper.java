@@ -5,6 +5,7 @@ import com.nmt.education.pojo.po.CourseRegistrationPo;
 
 import java.util.List;
 
+import com.nmt.education.pojo.vo.CourseRegistrationVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -27,4 +28,6 @@ interface CourseRegistrationPoMapper {
     int insertOrUpdateSelective(CourseRegistrationPo record);
 
     List<CourseRegistrationPo> queryByDto(@Param("dto") RegisterSearchReqDto dto);
+
+    CourseRegistrationVo queryVoById(@Param("id") Long id);
 }

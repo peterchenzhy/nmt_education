@@ -6,6 +6,7 @@ import com.nmt.education.pojo.dto.req.*;
 import com.nmt.education.pojo.po.CoursePo;
 import com.nmt.education.pojo.po.CourseRegistrationPo;
 import com.nmt.education.pojo.vo.CourseDetailVo;
+import com.nmt.education.pojo.vo.CourseRegistrationVo;
 import com.nmt.education.pojo.vo.RegisterSummaryVo;
 import com.nmt.education.service.course.CourseService;
 import com.nmt.education.service.course.registeration.CourseRegistrationService;
@@ -38,38 +39,6 @@ public class CourseRegisterController {
     @Autowired
     private CourseRegistrationService courseRegistrationService;
 
-//    @ApiOperation(value = "manager", notes = "课程编辑提交按钮")
-//    @RequestMapping(value = "/manager", method = RequestMethod.POST)
-//    public Boolean courseManager(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
-//                                 @RequestBody @Validated CourseReqDto dto, BindingResult bindingResult) {
-//        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
-//        return courseService.courseManager(logInUser, dto);
-//    }
-//
-//
-//    @ApiOperation(value = "search", notes = "课程查询")
-//    @RequestMapping(value = "/search", method = RequestMethod.POST)
-//    public PageInfo<CoursePo> search(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
-//                                     @RequestBody @Validated CourseSearchDto dto, BindingResult bindingResult) {
-//        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
-//        return courseService.search(dto);
-//    }
-//
-//    @ApiOperation(value = "/search/fuzzy", notes = "根据课程编号或者课程名称，课程模糊查询")
-//    @RequestMapping(value = "/search/fuzzy", method = RequestMethod.GET)
-//    public List<CoursePo> searchFuzzy(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
-//                                      @RequestParam String name) {
-//        return courseService.searchFuzzy(name);
-//    }
-//
-//    @ApiOperation(value = "detail", notes = "课程明细")
-//    @RequestMapping(value = "/detail/{courseId}", method = RequestMethod.POST)
-//    public CourseDetailVo detail(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
-//            , @PathVariable Long courseId) {
-//        return courseService.detail(courseId);
-//    }
-
-
     @ApiOperation(value = "register", notes = "报名")
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public void register(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
@@ -82,6 +51,13 @@ public class CourseRegisterController {
     public PageInfo<CourseRegistrationPo> registerSearch(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
             , @RequestBody @Validated RegisterSearchReqDto dto) {
        return  courseRegistrationService.registerSearch(dto, logInUser);
+    }
+
+    @ApiOperation(value = "register/detail/{id}", notes = "报名记录查询")
+    @RequestMapping(value = "/register/detail/{id}", method = RequestMethod.POST)
+    public CourseRegistrationVo registerDetail(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
+            , @PathVariable Long id ) {
+        return  courseRegistrationService.registerDetail(id, logInUser);
     }
 
 

@@ -12,6 +12,7 @@ import com.nmt.education.pojo.po.CoursePo;
 import com.nmt.education.pojo.po.CourseRegistrationPo;
 import com.nmt.education.pojo.po.RegisterationSummaryPo;
 import com.nmt.education.pojo.po.RegistrationExpenseDetailPo;
+import com.nmt.education.pojo.vo.CourseRegistrationVo;
 import com.nmt.education.pojo.vo.RegisterSummaryVo;
 import com.nmt.education.service.CodeService;
 import com.nmt.education.service.course.CourseService;
@@ -29,6 +30,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CourseRegistrationService {
@@ -267,5 +269,12 @@ public class CourseRegistrationService {
         return courseRegistrationPoMapper.insertOrUpdateSelective(record);
     }
 
+
+    public CourseRegistrationVo registerDetail(Long id, Integer logInUser) {
+        if(Objects.isNull(id)){
+            return null ;
+        }
+        return this.courseRegistrationPoMapper.queryVoById(id);
+    }
 
 }
