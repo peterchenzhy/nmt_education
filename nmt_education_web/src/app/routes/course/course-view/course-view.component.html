@@ -94,7 +94,7 @@
         <nz-form-item>
           <nz-form-label>开课日期</nz-form-label>
           <nz-form-control>
-            <nz-date-picker formControlName="startDate" nzShowTime nzFormat="yyyy-MM-dd" [nzStyle]="{ width: '100%' }">
+            <nz-date-picker formControlName="startDate" [nzStyle]="{ width: '100%' }">
             </nz-date-picker>
           </nz-form-control>
         </nz-form-item>
@@ -242,7 +242,7 @@
             </span>
           </td>
           <td>
-            <span *ngIf="editSessionIndex !== i">{{ sessions.value[i].courseDatetime.toLocaleString()  | date:'yyyy-MM-dd HH:mm:ss' }}</span>
+            <span *ngIf="editSessionIndex !== i">{{ sessions.value[i].courseDatetime|date:"yyyy-MM-dd HH:mm" }}</span>
             <span *ngIf="editSessionIndex === i" nz-form-control nzErrorTip="请输入上课时间">
               <nz-date-picker nzShowTime nzFormat="yyyy-MM-dd HH:mm:ss" nzPlaceHolder="Select Time"
                 formControlName="courseDatetime"></nz-date-picker>
