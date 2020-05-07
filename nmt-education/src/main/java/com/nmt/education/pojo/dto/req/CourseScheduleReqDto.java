@@ -1,5 +1,6 @@
 package com.nmt.education.pojo.dto.req;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,6 +40,7 @@ public class CourseScheduleReqDto {
     * 上课时间
     */
     @ApiModelProperty(value = "上课时间")
+//    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "GMT+8")
     private Date courseDatetime;
 
     /**

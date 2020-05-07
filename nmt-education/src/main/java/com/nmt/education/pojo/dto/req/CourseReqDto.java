@@ -1,11 +1,13 @@
 package com.nmt.education.pojo.dto.req;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -110,11 +112,13 @@ public class CourseReqDto {
      * 开始日期
      */
     @ApiModelProperty(value = "开始日期")
+    @JsonFormat(pattern="yyyy-MM-dd", timezone = "GMT+8")
     private Date startDate;
     /**
      * 结束日期
      */
     @ApiModelProperty(value = "结束日期")
+    @JsonFormat(pattern="yyyy-MM-dd", timezone = "GMT+8")
     private Date endDate;
 
     /**
@@ -129,9 +133,11 @@ public class CourseReqDto {
     @ApiModelProperty(value = "备注")
     private String remark;
 
-    @ApiModelProperty(value = "课时信息")
-    private List<CourseScheduleReqDto> courseScheduleList;
+    @ApiModelProperty(value = "课时信息",required = true)
+    @NotNull(message = "课时信息不能为空")
+    private List<CourseScheduleReqDto> courseScheduleList = Collections.emptyList();
 
-    @ApiModelProperty(value = "费用列表")
-    private List<CourseExpenseReqDto> courseExpenseList;
+    @ApiModelProperty(value = "费用列表",required = true)
+    @NotNull(message = "费用列表不能为空")
+    private List<CourseExpenseReqDto> courseExpenseList=Collections.emptyList();
 }

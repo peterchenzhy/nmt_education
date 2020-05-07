@@ -23,7 +23,6 @@ class CourseRegistrationServiceTest extends BaseTest {
         dto.setRegistrationType(Enums.RegistrationType.新报.getCode());
         dto.setRegistrationStatus(Enums.RegistrationStatus.正常.getCode());
         dto.setFeeStatus(Enums.FeeStatus.已缴费.getCode());
-        dto.setTimes(10);
         dto.setRemark("remark 123455");
         dto.setCourseScheduleIds(Lists.newArrayList(25L));
         RegisterExpenseDetailReqDto detailReqDto = new RegisterExpenseDetailReqDto();

@@ -27,6 +27,27 @@ export interface Order {
     operateTime?: Date;
     operator?: number;
 }
+export interface RegisterSummary {
+  balanceAmount?: string;
+  courseId?: number;
+  courseName?: string
+  createTime?: string;
+  creator?: number;
+  feeStatus?: PAY_STATUS;
+  id?: number;
+  operateTime?: string;
+  operator?: number;
+  registerTime?: string;
+  registrationNumber?: string
+  registrationStatus?: ORDER_STATUS;
+  registrationType?: ORDER_TYPE;
+  remark?: string;
+  status?: number;
+  studentId?: number;
+  studentName?: string;
+  times?: number;
+  totalAmount?: string;
+}
 
 export interface Payment {
     id?: string;

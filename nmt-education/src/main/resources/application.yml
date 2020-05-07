@@ -7,7 +7,6 @@ spring:
       config: classpath:ehcache.xml
   jackson:
     time-zone: GMT+8
-    date-format: yyyy-MM-dd HH:mm:ss
 server:
   tomcat:
     max-threads: 60

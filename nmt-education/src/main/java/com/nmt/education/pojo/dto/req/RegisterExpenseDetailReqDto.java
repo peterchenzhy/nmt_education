@@ -55,5 +55,5 @@ public class RegisterExpenseDetailReqDto {
     private Integer payment;
 
     @ApiModelProperty(value = "备注")
-    private String remark;
+    private String remark="";
 }

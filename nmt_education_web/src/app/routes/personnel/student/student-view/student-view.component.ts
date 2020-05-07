@@ -89,7 +89,7 @@ export class StudentViewComponent implements OnInit {
         if (studentStr) {
             this.student = JSON.parse(studentStr);
             this.student.editFlag = EDIT_FLAG.UPDATE;
-            this.pageHeader = `学生信息编辑 [${this.student.code}]`;
+            this.pageHeader = `学生信息编辑 -- [${this.student.name}] -- [${this.student.code}] `;
         }
         this.form.patchValue(this.student);
 

@@ -29,4 +29,6 @@ interface CourseSchedulePoMapper {
     int signIn(@Param("id") Long id, @Param("operator") Integer operator);
 
     void invalidByCourseId(@Param("courseId") Long courseId, @Param("operator") Integer operator);
+
+    void changeTeacher(@Param("newTeacherId") Long newTeacherId);
 }

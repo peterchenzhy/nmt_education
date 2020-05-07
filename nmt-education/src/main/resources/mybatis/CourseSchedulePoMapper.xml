@@ -48,6 +48,11 @@
     set status = 0 ,operator =#{operator},operate_time = now()
     where status =1  and course_id = #{courseId}
   </update>
+  <update id="changeTeacher">
+    update course_schedule
+    set operator =0,operate_time = now(),teacher_id = #{newTeacherId}
+    where status =1  and course_id = #{courseId}
+  </update>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.CourseSchedulePo" useGeneratedKeys="true">
     <!--@mbg.generated-->
     insert into course_schedule

@@ -2,11 +2,9 @@ package com.nmt.education.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.utils.ReqDtoCheckUtil;
-import com.nmt.education.pojo.dto.req.CourseRegisterReqDto;
-import com.nmt.education.pojo.dto.req.CourseReqDto;
-import com.nmt.education.pojo.dto.req.CourseSearchDto;
-import com.nmt.education.pojo.dto.req.RegisterSummarySearchDto;
+import com.nmt.education.pojo.dto.req.*;
 import com.nmt.education.pojo.po.CoursePo;
+import com.nmt.education.pojo.po.CourseRegistrationPo;
 import com.nmt.education.pojo.vo.CourseDetailVo;
 import com.nmt.education.pojo.vo.RegisterSummaryVo;
 import com.nmt.education.service.course.CourseService;
@@ -39,8 +37,6 @@ public class CourseController {
 
     @Autowired
     private CourseService courseService;
-    @Autowired
-    private CourseRegistrationService courseRegistrationService;
 
     @ApiOperation(value = "manager", notes = "课程编辑提交按钮")
     @RequestMapping(value = "/manager", method = RequestMethod.POST)
@@ -62,7 +58,7 @@ public class CourseController {
     @ApiOperation(value = "/search/fuzzy", notes = "根据课程编号或者课程名称，课程模糊查询")
     @RequestMapping(value = "/search/fuzzy", method = RequestMethod.GET)
     public List<CoursePo> searchFuzzy(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
-                                            @RequestParam String name) {
+                                      @RequestParam String name) {
         return courseService.searchFuzzy(name);
     }
 
@@ -74,26 +70,34 @@ public class CourseController {
     }
 
 
-    @ApiOperation(value = "register", notes = "报名")
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public void register(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
-            , @RequestBody @Validated CourseRegisterReqDto dto, BindingResult bindingResult) {
-        courseRegistrationService.register(dto,logInUser);
-    }
-
-    @ApiOperation(value = "register/delete", notes = "退费")
-    @RequestMapping(value = "/register/{id}", method = RequestMethod.DELETE)
-    public void registerDel(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
-            , @PathVariable Long id) {
-        courseRegistrationService.registerDel(id,logInUser);
-    }
-
-
-    @ApiOperation(value = "register/summary", notes = "课程汇总--消耗查询")
-    @RequestMapping(value = "/register/summary", method = RequestMethod.POST)
-    public PageInfo<RegisterSummaryVo> registerSummary(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
-                                                       @RequestBody @Validated RegisterSummarySearchDto dto, BindingResult bindingResult)  {
-       return courseRegistrationService.registerSummary(dto,logInUser);
-    }
+//    @ApiOperation(value = "register", notes = "报名")
+//    @RequestMapping(value = "/register", method = RequestMethod.POST)
+//    public void register(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
+//            , @RequestBody @Validated CourseRegisterReqDto dto, BindingResult bindingResult) {
+//        courseRegistrationService.register(dto, logInUser);
+//    }
+//
+//    @ApiOperation(value = "register/search", notes = "报名记录查询")
+//    @RequestMapping(value = "/register/search", method = RequestMethod.POST)
+//    public PageInfo<CourseRegistrationPo> registerSearch(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
+//            , @RequestBody @Validated RegisterSearchReqDto dto) {
+//       return  courseRegistrationService.registerSearch(dto, logInUser);
+//    }
+//
+//
+//    @ApiOperation(value = "register/delete", notes = "退费")
+//    @RequestMapping(value = "/register/{id}", method = RequestMethod.DELETE)
+//    public void registerDel(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
+//            , @PathVariable Long id) {
+//        courseRegistrationService.registerDel(id, logInUser);
+//    }
+//
+//
+//    @ApiOperation(value = "register/summary", notes = "课程汇总--消耗查询")
+//    @RequestMapping(value = "/register/summary", method = RequestMethod.POST)
+//    public PageInfo<RegisterSummaryVo> registerSummary(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
+//                                                       @RequestBody @Validated RegisterSummarySearchDto dto, BindingResult bindingResult) {
+//        return courseRegistrationService.registerSummary(dto, logInUser);
+//    }
 
 }

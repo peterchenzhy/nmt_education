@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, TemplateRef, ChangeDetectorRef } from '@angular/core';
-import { Location, DatePipe } from '@angular/common';
+import { Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
@@ -50,7 +50,7 @@ export class OrderViewComponent implements OnInit {
         { title: '', index: 'id', type: 'checkbox' },
         { title: '课时', index: 'courseTimes' },
         { title: '任课教师', index: 'teacherId', render: "showTeacher" },
-        { title: '上课时间', index: 'courseDatetime', type: 'date' },
+        { title: '上课时间', index: 'courseDatetime', type: 'date' ,dateFormat: 'YYYY-MM-DD HH:mm' },
         { title: '时长', index: 'perTime' }
     ];
     sessionsSTData: STData[] = [];

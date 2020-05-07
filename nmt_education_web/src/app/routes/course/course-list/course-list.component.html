@@ -37,7 +37,10 @@
           <nz-form-item>
             <nz-form-label nzFor="startDate">开课日期</nz-form-label>
             <nz-form-control >
-              <nz-range-picker (ngModelChange)="onDateRangeChanged($event)"></nz-range-picker>
+              <nz-range-picker
+                [ngModel]="searchDate" name="searchDate"
+                (ngModelChange)="onDateRangeChanged($event)">
+              </nz-range-picker>
             </nz-form-control>
           </nz-form-item>
         </div>
@@ -63,6 +66,12 @@
     </ng-template>
     <ng-template st-row="courseCampus" let-i>
       {{appCtx.globalService.getCampusLabel(i.campus)}}
+    </ng-template>
+    <ng-template st-row="courseSubject" let-i>
+      {{appCtx.globalService.getCourseSubjectLabel(i.courseSubject)}}
+    </ng-template>
+    <ng-template st-row="courseType" let-i>
+      {{appCtx.globalService.getCourseTypeLabel(i.courseType)}}
     </ng-template>
   </st>
 </nz-card>

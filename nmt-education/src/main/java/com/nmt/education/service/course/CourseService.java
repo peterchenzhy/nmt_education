@@ -3,7 +3,9 @@ package com.nmt.education.service.course;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.Enums;
-import com.nmt.education.pojo.dto.req.CourseRegisterReqDto;
+import com.nmt.education.commmons.utils.SpringContextUtil;
+import com.nmt.education.listener.event.BaseEvent;
+import com.nmt.education.listener.event.TeacherChangeEvent;
 import com.nmt.education.pojo.dto.req.CourseReqDto;
 import com.nmt.education.pojo.dto.req.CourseSearchDto;
 import com.nmt.education.pojo.po.CoursePo;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -41,6 +44,8 @@ public class CourseService {
     private TeacherService teacherService;
     @Autowired
     private CourseRegistrationService courseRegistrationService;
+
+    private final static ThreadLocal<List<BaseEvent>> eventList = ThreadLocal.withInitial(() -> new ArrayList<>(5));
 
     /**
      * 课程新增，修改，删除接口
@@ -77,7 +82,8 @@ public class CourseService {
             courseScheduleService.manager(dto.getCourseScheduleList(), po.getId(), loginUser);
             courseExpenseService.manager(dto.getCourseExpenseList(), po.getId(), loginUser);
         }
-
+        eventList.get().stream().forEach(e -> SpringContextUtil.getApplicationContext().publishEvent(e));
+        eventList.remove();
         return true;
     }
 
@@ -122,7 +128,11 @@ public class CourseService {
                 invalidByPrimaryKey(coursePo.getId(), operator);
                 break;
             case 修改:
+                if (!coursePo.getTeacherId().equals(dto.getTeacherId())) {
+                    eventList.get().add(new TeacherChangeEvent(coursePo.getId(), dto.getTeacherId()));
+                }
                 BeanUtils.copyProperties(dto, coursePo);
+                coursePo.setTimes(dto.getCourseScheduleList().size());
                 coursePo.setOperator(operator);
                 coursePo.setOperateTime(new Date());
                 this.updateByPrimaryKeySelective(coursePo);

@@ -37,9 +37,11 @@
     rs.id as id , rs.student_id as studentId, rs.course_id as courseId , rs.course_schedule_id as courseScheduleId,
     rs.course_registration_id as courseRegistrationId, rs.sign_in as signIn, rs.status as status ,
     rs.creator as creator, rs.create_time as createTime, rs.operator as operator, rs.operate_time as operateTime
-    ,c.name as courseName,s.name as studentName , rs.create_time as  registerTime
+    ,c.name as courseName,s.name as studentName , rs.create_time as  registerTime,cr.registration_number as registrationNumber
+    ,cr.balance_amount as balanceAmount ,cr.total_amount as totalAmount
     from registeration_summary rs
     inner join course c on c.id= rs.course_id
+    inner join course_registration cr on cr.id=rs.course_registration_id
     inner join student s on rs.student_id = s.id
     inner join course_schedule cs on c.id = cs.course_id
     where rs.status = 1

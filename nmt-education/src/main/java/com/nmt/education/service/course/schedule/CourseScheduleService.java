@@ -3,13 +3,18 @@ package com.nmt.education.service.course.schedule;
 import com.nmt.education.commmons.Enums;
 import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.pojo.dto.req.CourseScheduleReqDto;
+import com.nmt.education.pojo.po.CoursePo;
 import com.nmt.education.pojo.po.CourseSchedulePo;
+import com.nmt.education.service.course.CourseService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -23,6 +28,9 @@ public class CourseScheduleService {
 
     @Resource
     private CourseSchedulePoMapper courseSchedulePoMapper;
+    @Autowired
+    @Lazy
+    private CourseService courseService;
 
     public boolean manager(List<CourseScheduleReqDto> dtoList, Long courseId, Integer operator) {
         if (CollectionUtils.isEmpty(dtoList)) {
@@ -166,4 +174,10 @@ public class CourseScheduleService {
     }
 
 
+
+    public void changeTeacher(long courseId, long newTeacherId) {
+        CoursePo coursePo = courseService.selectByPrimaryKey(courseId);
+        Assert.notNull(coursePo,"课程不存在，id："+courseId);
+        this.courseSchedulePoMapper.changeTeacher(newTeacherId);
+    }
 }

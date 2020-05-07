@@ -6,11 +6,13 @@ import com.nmt.education.commmons.NumberUtil;
 import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.pojo.dto.req.CourseRegisterReqDto;
 import com.nmt.education.pojo.dto.req.RegisterExpenseDetailReqDto;
+import com.nmt.education.pojo.dto.req.RegisterSearchReqDto;
 import com.nmt.education.pojo.dto.req.RegisterSummarySearchDto;
 import com.nmt.education.pojo.po.CoursePo;
 import com.nmt.education.pojo.po.CourseRegistrationPo;
 import com.nmt.education.pojo.po.RegisterationSummaryPo;
 import com.nmt.education.pojo.po.RegistrationExpenseDetailPo;
+import com.nmt.education.pojo.vo.CourseRegistrationVo;
 import com.nmt.education.pojo.vo.RegisterSummaryVo;
 import com.nmt.education.service.CodeService;
 import com.nmt.education.service.course.CourseService;
@@ -28,6 +30,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CourseRegistrationService {
@@ -108,6 +111,7 @@ public class CourseRegistrationService {
     private void registerCheck(CourseRegisterReqDto dto) {
         Assert.notNull(studentService.selectByPrimaryKey(dto.getStudentId()), "学生信息不存在！id:" + dto.getStudentId());
         Assert.notNull(courseService.selectByPrimaryKey(dto.getCourseId()), "学生信息不存在！id:" + dto.getCourseId());
+        Assert.notEmpty(dto.getCourseScheduleIds(), "报名时间必填！id:" + dto.getCourseId());
     }
 
     private List<RegistrationExpenseDetailPo> generateRegisterExpenseDetail(List<RegisterExpenseDetailReqDto> expenseDetailList, int updator,
@@ -120,6 +124,20 @@ public class CourseRegistrationService {
         return resultList;
     }
 
+
+    /**
+     * 报名记录搜索
+     *
+     * @param dto
+     * @param logInUser
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/5/5 15:45
+     */
+    public PageInfo<CourseRegistrationPo> registerSearch(RegisterSearchReqDto dto, Integer logInUser) {
+        return PageHelper.startPage(dto.getPageNo(),dto.getPageSize()).doSelectPageInfo(()->this.courseRegistrationPoMapper.queryByDto(dto));
+    }
 
     /**
      * 生成 报名记录po
@@ -138,7 +156,7 @@ public class CourseRegistrationService {
         courseRegistrationPo.setRegistrationNumber(codeService.generateNewRegistrationNumber(dto.getCampus()));
         courseRegistrationPo.setCourseId(dto.getCourseId());
         courseRegistrationPo.setStudentId(dto.getStudentId());
-        courseRegistrationPo.setTimes(dto.getTimes());
+        courseRegistrationPo.setTimes(dto.getCourseScheduleIds().size());
         courseRegistrationPo.setRegistrationType(dto.getRegistrationType());
         courseRegistrationPo.setRegistrationStatus(dto.getRegistrationStatus());
         courseRegistrationPo.setFeeStatus(dto.getFeeStatus());
@@ -249,6 +267,14 @@ public class CourseRegistrationService {
 
     public int insertOrUpdateSelective(CourseRegistrationPo record) {
         return courseRegistrationPoMapper.insertOrUpdateSelective(record);
+    }
+
+
+    public CourseRegistrationVo registerDetail(Long id, Integer logInUser) {
+        if(Objects.isNull(id)){
+            return null ;
+        }
+        return this.courseRegistrationPoMapper.queryVoById(id);
     }
 
 }
