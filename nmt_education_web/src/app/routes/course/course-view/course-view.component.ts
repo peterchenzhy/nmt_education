@@ -102,6 +102,12 @@ export class CourseViewComponent implements OnInit {
             field.patchValue(i);
             this.feeList.push(field);
           });
+
+          let currentDate = new Date();
+          let activeSessions = this.course.courseScheduleList.filter(s => { return s.editFlag != EDIT_FLAG.DELETE && new Date(s.courseDatetime) > currentDate; });
+          if (activeSessions && activeSessions.length > 0) {
+            this.sessionParam.title = "更换课时";
+          }
         });
 
     }
@@ -162,16 +168,16 @@ export class CourseViewComponent implements OnInit {
       teacherId: this.form.value.teacherId
     };
     let currentDate = new Date();
-    let activeSessions = this.sessions.value.filter(s => { return s.editFlag != EDIT_FLAG.DELETE && s.courseDatetime > currentDate; });
+    let activeSessions = this.sessions.value.filter(s => { return s.editFlag != EDIT_FLAG.DELETE && new Date(s.courseDatetime) > currentDate; });
     if (activeSessions && activeSessions.length > 0) {
       this.sessionParam.title = "更换课时";
       this.sessionParam.count = activeSessions.length;
-      this.sessionParam.startDate = activeSessions[0].courseDatetime;
-      this.sessionParam.startTime = activeSessions[0].courseDatetime;
-      this.sessionParam.perTime = this.form.value.perTime,
-        this.sessionParam.teacherId = activeSessions[0].teacherId;
+      this.sessionParam.startDate = new Date(activeSessions[0].courseDatetime);
+      this.sessionParam.startTime = new Date(activeSessions[0].courseDatetime);
+      this.sessionParam.perTime = this.form.value.perTime;
+      // this.sessionParam.teacherId = activeSessions[0].teacherId;
       activeSessions.forEach(s => {
-        let day = s.courseDatetime.getDay();
+        let day = new Date(s.courseDatetime).getDay();
         this.sessionParam.dayOfWeek.find(d => { return d.value == day; }).checked = true;
       });
     }
@@ -183,6 +189,38 @@ export class CourseViewComponent implements OnInit {
       nzContent: tpl,
       nzWidth: 350,
       nzOnOk: () => {
+        let currentDate = new Date();
+        let delIndex = [];
+        this.sessions.value.forEach((v, i) => {
+          let session = this.sessions.at(i);
+          if (session.value.editFlag != EDIT_FLAG.DELETE && new Date(session.value.courseDatetime) > currentDate) {
+            if (this.sessionParam.count == 0) {
+              delIndex.push(i);
+            }
+            else {
+              for (let di = 0; di < 7; di++) {
+                let day = this.sessionParam.startDate.getDay();
+                if (this.sessionParam.dayOfWeek.find(d => { return d.checked && d.value == day; })) {
+                  session.value.perTime = this.sessionParam.perTime;
+                  //session.value.teacherPrice = this.sessionParam.price;
+                  let dateStr = this.sessionParam.startDate.toLocaleDateString();
+                  let timeStr = this.sessionParam.startTime.toTimeString();
+                  session.value.courseDatetime = new Date(dateStr + " " + timeStr);
+                  if (session.value.editFlag != EDIT_FLAG.NEW) {
+                    session.value.editFlag = EDIT_FLAG.UPDATE;
+                  }
+                  this.sessionParam.count--;
+                  this.sessionParam.startDate.setDate(this.sessionParam.startDate.getDate() + 1);
+                  break;
+                }
+                this.sessionParam.startDate.setDate(this.sessionParam.startDate.getDate() + 1);
+              }
+            }
+            session.patchValue(session.value, { emitEvent: true });
+            session.markAsDirty();
+          }
+        });
+        delIndex.forEach((v, i) => this.del(this.sessions.length - 1));
         for (let i = 0; i < this.sessionParam.count;) {
           let day = this.sessionParam.startDate.getDay();
           if (this.sessionParam.dayOfWeek.find(d => { return d.checked && d.value == day; })) {
