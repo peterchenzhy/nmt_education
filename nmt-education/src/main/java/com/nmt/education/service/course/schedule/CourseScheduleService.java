@@ -91,7 +91,7 @@ public class CourseScheduleService {
         Assert.notNull(dto.getId(), "编辑课程信息缺少id");
         CourseSchedulePo po = selectByPrimaryKey(dto.getId());
         Assert.notNull(po, "课程信息不存在" + dto.getId());
-        Assert.isTrue(po.getSignIn() == 1,"课表已经签到，无法进行修改或者删除,id:"+dto.getId() );
+        Assert.isTrue(po.getSignIn() == 0,"课表已经签到，无法进行修改或者删除,id:"+dto.getId() );
         return po;
     }
 

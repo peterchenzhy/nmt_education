@@ -39,4 +39,9 @@ class CourseRegistrationServiceTest extends BaseTest {
 
         registrationService.startRegisterTransaction(dto,10086);
     }
+
+    @Test
+    void queryByCourseStudent() {
+        registrationService.queryByCourseStudent(1L,1L);
+    }
 }

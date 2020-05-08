@@ -112,6 +112,22 @@ public class CourseRegistrationService {
         Assert.notNull(studentService.selectByPrimaryKey(dto.getStudentId()), "学生信息不存在！id:" + dto.getStudentId());
         Assert.notNull(courseService.selectByPrimaryKey(dto.getCourseId()), "学生信息不存在！id:" + dto.getCourseId());
         Assert.notEmpty(dto.getCourseScheduleIds(), "报名时间必填！id:" + dto.getCourseId());
+        Assert.isNull(queryByCourseStudent(dto.getCourseId(), dto.getStudentId()), "报名记录已经存在！id:" + dto.getCourseId());
+    }
+
+    /**
+     * 根据课程和学生查找报名记录
+     *
+     * @param courseId
+     * @param studentId
+     * @return com.nmt.education.pojo.po.CourseRegistrationPo
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/5/8 22:38
+     */
+    public CourseRegistrationPo queryByCourseStudent(Long courseId, Long studentId) {
+        return this.courseRegistrationPoMapper.queryByCourseStudent(courseId, studentId);
     }
 
     private List<RegistrationExpenseDetailPo> generateRegisterExpenseDetail(List<RegisterExpenseDetailReqDto> expenseDetailList, int updator,
@@ -136,7 +152,7 @@ public class CourseRegistrationService {
      * @since 2020/5/5 15:45
      */
     public PageInfo<CourseRegistrationPo> registerSearch(RegisterSearchReqDto dto, Integer logInUser) {
-        return PageHelper.startPage(dto.getPageNo(),dto.getPageSize()).doSelectPageInfo(()->this.courseRegistrationPoMapper.queryByDto(dto));
+        return PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.courseRegistrationPoMapper.queryByDto(dto));
     }
 
     /**
@@ -271,8 +287,8 @@ public class CourseRegistrationService {
 
 
     public CourseRegistrationVo registerDetail(Long id, Integer logInUser) {
-        if(Objects.isNull(id)){
-            return null ;
+        if (Objects.isNull(id)) {
+            return null;
         }
         return this.courseRegistrationPoMapper.queryVoById(id);
     }

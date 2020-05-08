@@ -30,4 +30,6 @@ interface CourseRegistrationPoMapper {
     List<CourseRegistrationPo> queryByDto(@Param("dto") RegisterSearchReqDto dto);
 
     CourseRegistrationVo queryVoById(@Param("id") Long id);
+
+    CourseRegistrationPo queryByCourseStudent(@Param("courseId") Long courseId, @Param("studentId") Long studentId);
 }
