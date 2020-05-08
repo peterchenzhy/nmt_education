@@ -1,0 +1,6 @@
+{
+    "/nmt-education": {
+        "target": "http://47.100.242.85:5201",
+        "secure": false
+    }
+}
