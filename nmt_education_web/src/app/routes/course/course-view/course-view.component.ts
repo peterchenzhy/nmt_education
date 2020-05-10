@@ -114,6 +114,10 @@ export class CourseViewComponent implements OnInit {
 
   }
 
+  get isEditCourse() {
+    return this.form.value.editFlag != EDIT_FLAG.NEW;
+  }
+
   createSession(): FormGroup {
     return this.fb.group({
       id: [0, []],
@@ -191,11 +195,18 @@ export class CourseViewComponent implements OnInit {
       nzOnOk: () => {
         let currentDate = new Date();
         let delIndex = [];
-        this.sessions.value.forEach((v, i) => {
+        for (let i = 0; i < this.sessions.length;) {
           let session = this.sessions.at(i);
           if (session.value.editFlag != EDIT_FLAG.DELETE && new Date(session.value.courseDatetime) > currentDate) {
             if (this.sessionParam.count == 0) {
-              delIndex.push(i);
+              if (session.value.editFlag == EDIT_FLAG.NEW) {
+                this.sessions.removeAt(i);
+              }
+              else {
+                session.value.editFlag = EDIT_FLAG.DELETE;
+                i++;
+              }
+              continue;
             }
             else {
               for (let di = 0; di < 7; di++) {
@@ -218,9 +229,9 @@ export class CourseViewComponent implements OnInit {
             }
             session.patchValue(session.value, { emitEvent: true });
             session.markAsDirty();
+            i++;
           }
-        });
-        delIndex.forEach((v, i) => this.del(this.sessions.length - 1));
+        }
         for (let i = 0; i < this.sessionParam.count;) {
           let day = this.sessionParam.startDate.getDay();
           if (this.sessionParam.dayOfWeek.find(d => { return d.checked && d.value == day; })) {
@@ -239,7 +250,12 @@ export class CourseViewComponent implements OnInit {
           }
           this.sessionParam.startDate.setDate(this.sessionParam.startDate.getDate() + 1);
         }
-        this.form.patchValue({ times: this.sessions.value.filter(s => { return s.editFlag != EDIT_FLAG.DELETE; }).length });
+        let existsSessions = this.sessions.value.filter(s => { return s.editFlag != EDIT_FLAG.DELETE; });
+        let courseStartDate = null;
+        if (existsSessions.length > 0) {
+          courseStartDate = existsSessions.sort((a, b) => a.courseDatetime.getTime() - b.courseDatetime.getTime())[0].courseDatetime;
+        }
+        this.form.patchValue({ times: existsSessions.length, startDate: courseStartDate });
       },
     });
   }
@@ -263,13 +279,20 @@ export class CourseViewComponent implements OnInit {
   }
 
   save(index: number) {
-    this.sessions.at(index).markAsDirty();
-    if (this.sessions.at(index).invalid) return;
+    let sessionObj = this.sessions.at(index) as FormGroup;
+    Object.keys(sessionObj.controls).forEach(key => {
+      sessionObj.controls[key].markAsDirty();
+      sessionObj.controls[key].updateValueAndValidity();
+    });
+    if (sessionObj.invalid) return;
+    if (sessionObj.value.editFlag == EDIT_FLAG.NO_CHANGE) {
+      sessionObj.value.editFlag = EDIT_FLAG.UPDATE;
+    }
     this.editSessionIndex = -1;
   }
 
   cancel(index: number) {
-    if (!this.sessions.at(index).value.key) {
+    if (!this.sessions.at(index).value.id) {
       this.del(index);
     } else {
       this.sessions.at(index).patchValue(this.editSessionObj);
@@ -331,9 +354,11 @@ export class CourseViewComponent implements OnInit {
     if (this.form.invalid) return;
     this.course = { ...this.form.value };
     this.course.year = new Date(this.course.year).getFullYear();
-    this.course.courseScheduleList.filter(s => { return s.editFlag != EDIT_FLAG.DELETE; }).forEach((d, i) => {
-      d.courseTimes = i + 1;
-    });
+    this.course.courseScheduleList.filter(s => { return s.editFlag != EDIT_FLAG.DELETE; })
+      .sort((a, b) => a.courseDatetime.getTime() - b.courseDatetime.getTime())
+      .forEach((d, i) => {
+        d.courseTimes = i + 1;
+      });
     this.appCtx.courseService.saveCourse(this.course).subscribe((res) => {
       this.goBack();
     });
