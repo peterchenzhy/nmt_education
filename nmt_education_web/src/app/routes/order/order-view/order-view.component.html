@@ -13,7 +13,7 @@
         <sv-container size="large" title="课程信息">
             <sv *ngIf="order.courseId != null" label="课程名">{{order.course.name}}
                 [{{order.course.year+" "+appCtx.globalService.getSeasonLabel(order.course.season)}}]
-                <i nz-icon nzType="swap" nzTheme="outline" style="color:blue;margin-left:15px;" title="重新选择课程"
+                <i *ngIf="order.editFlag!=2" nz-icon nzType="swap" nzTheme="outline" style="color:blue;margin-left:15px;" title="重新选择课程"
                     (click)="clearSelectedCourse()"></i>
             </sv>
             <sv *ngIf="order.courseId == null" label="课程名" nz-form-control nzErrorTip="请选择课程">

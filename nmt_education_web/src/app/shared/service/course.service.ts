@@ -1,7 +1,7 @@
 import { Injectable, Injector } from '@angular/core'
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpService } from './http.service';
-import {CourseQueryParam, RegisterQueryParam, RegisterSummaryQueryParam, TeacherQueryParam} from 'src/app/model/system.model';
+import { CourseQueryParam, RegisterQueryParam, RegisterSummaryQueryParam, TeacherQueryParam } from 'src/app/model/system.model';
 import { HttpClient } from '@angular/common/http';
 import { SettingsService } from '@delon/theme';
 import { Teacher } from 'src/app/model/teacher.model';
@@ -36,10 +36,13 @@ export class CourseService {
     public registerCourse(T: Order): Observable<Object> {
         return this.httpClient.post('nmt-education/course/register', T);
     }
-  public registerSearch(T: RegisterQueryParam): Observable<Object> {
-    return this.httpClient.post('nmt-education/course/register/search', T);
-  }
-  public registerSummary(T: RegisterSummaryQueryParam): Observable<Object> {
-    return this.httpClient.post('nmt-education/course/register/summary', T);
-  }
+    public registerSearch(T: RegisterQueryParam): Observable<Object> {
+        return this.httpClient.post('nmt-education/course/register/search', T);
+    }
+    public registerSummary(T: RegisterSummaryQueryParam): Observable<Object> {
+        return this.httpClient.post('nmt-education/course/register/summary', T);
+    }
+    public getRegisterDetails(id: number): Observable<Object> {
+        return this.httpClient.post(`nmt-education/course/register/detail/${id}`, id);
+    }
 }

@@ -27,6 +27,7 @@ export class OrderViewComponent implements OnInit {
     form: FormGroup;
     editFeeIndex = -1;
     order: Order = {
+        student: {},
         course: {},
         courseScheduleIds: [],
         registerExpenseDetail: [],
@@ -56,16 +57,6 @@ export class OrderViewComponent implements OnInit {
     sessionsSTData: STData[] = [];
     selectedSessions: STData[] = [];
     ngOnInit(): void {
-        let studentStr = this.activaterRouter.snapshot.params.student;
-        if (studentStr) {
-            this.order.student = JSON.parse(studentStr);
-            this.order.studentId = this.order.student.id;
-        }
-        let courseStr = this.activaterRouter.snapshot.params.course;
-        if (courseStr) {
-            this.order.course = JSON.parse(courseStr);
-            this.order.courseId = this.order.course.id;
-        }
         this.form = this.fb.group({
             id: [null, []],
             registrationStatus: [ORDER_STATUS.NORMAL, [Validators.required]],
@@ -79,6 +70,32 @@ export class OrderViewComponent implements OnInit {
             courseId: [null, [Validators.required]],
             registerExpenseDetail: this.fb.array([])
         });
+        let orderId = this.activaterRouter.snapshot.params.id;
+        if (orderId) {
+            this.appCtx.courseService.getRegisterDetails(orderId)
+                .subscribe(res => {
+                    debugger;
+                    this.order = res;
+                    this.order.editFlag = EDIT_FLAG.UPDATE;
+                    this.form.patchValue(this.order);
+                    this.order.registerExpenseDetail.forEach(i => {
+                        const field = this.createPay();
+                        field.patchValue(i);
+                        this.registerExpenseDetail.push(field);
+                    });
+                });
+            return;
+        }
+        let studentStr = this.activaterRouter.snapshot.params.student;
+        if (studentStr) {
+            this.order.student = JSON.parse(studentStr);
+            this.order.studentId = this.order.student.id;
+        }
+        let courseStr = this.activaterRouter.snapshot.params.course;
+        if (courseStr) {
+            this.order.course = JSON.parse(courseStr);
+            this.order.courseId = this.order.course.id;
+        }
         this.form.patchValue(this.order);
     }
     createPay(): FormGroup {
@@ -119,19 +136,22 @@ export class OrderViewComponent implements OnInit {
     }
 
     courseSelected(value: number) {
+        debugger;
         this.appCtx.courseService.getCourseDetails(value)
             .subscribe((res: Course) => {
                 this.order.courseId = res.id;
                 this.order.course = res;
-                this.order.course.courseExpenseList.forEach(i => {
-                    let pay: Payment = {};
-                    pay.feeType = i.type;
-                    pay.perAmount = i.price;
-                    const field = this.createPay();
-                    field.patchValue(pay);
-                    this.registerExpenseDetail.push(field);
-                });
-                this.form.patchValue({ campus: this.order.course.campus });
+                if (this.order.editFlag == EDIT_FLAG.NEW) {
+                    this.order.course.courseExpenseList.forEach(i => {
+                        let pay: Payment = {};
+                        pay.feeType = i.type;
+                        pay.perAmount = i.price;
+                        const field = this.createPay();
+                        field.patchValue(pay);
+                        this.registerExpenseDetail.push(field);
+                    });
+                    this.form.patchValue({ campus: this.order.course.campus });
+                }
             });
 
     }

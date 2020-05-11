@@ -1,4 +1,4 @@
-import { Injectable, Injector } from '@angular/core';
+import { Injectable, Injector, Inject } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   HttpInterceptor,
@@ -38,7 +38,8 @@ const CODEMESSAGE = {
  */
 @Injectable()
 export class DefaultInterceptor implements HttpInterceptor {
-  constructor(private injector: Injector) { }
+  constructor(private injector: Injector,
+    @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService, ) { }
 
   private get notification(): NzNotificationService {
     return this.injector.get(NzNotificationService);
@@ -118,7 +119,10 @@ export class DefaultInterceptor implements HttpInterceptor {
     if (!url.startsWith('https://') && !url.startsWith('http://')) {
       url = environment.SERVER_URL + url;
     }
-    const newReq = req.clone({ url, setHeaders: { loginUser: "1", roleId: "1" } });
+    let user = this.tokenService.get();
+    let userId = user ? user.logInUser : "";
+    let roleId = user ? user.roleId : "";
+    const newReq = req.clone({ url, setHeaders: { loginUser: userId + "", roleId: roleId } });
     return next.handle(newReq).pipe(
       mergeMap((event: any) => {
         // 允许统一对请求错误处理

@@ -48,7 +48,7 @@ export function fnPageHeaderConfig(): PageHeaderConfig {
   };
 }
 
-import { DelonAuthConfig } from '@delon/auth';
+import { DelonAuthConfig, DA_STORE_TOKEN, MemoryStore, SessionStorageStore } from '@delon/auth';
 export function fnDelonAuthConfig(): DelonAuthConfig {
   return {
     ...new DelonAuthConfig(),
@@ -70,6 +70,7 @@ const GLOBAL_CONFIG_PROVIDES = [
   { provide: STConfig, useFactory: fnSTConfig },
   { provide: PageHeaderConfig, useFactory: fnPageHeaderConfig },
   { provide: DelonAuthConfig, useFactory: fnDelonAuthConfig },
+  { provide: DA_STORE_TOKEN, useClass: SessionStorageStore },
 ];
 
 // #endregion
