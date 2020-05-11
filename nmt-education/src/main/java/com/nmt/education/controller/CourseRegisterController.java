@@ -53,7 +53,7 @@ public class CourseRegisterController {
        return  courseRegistrationService.registerSearch(dto, logInUser);
     }
 
-    @ApiOperation(value = "register/detail/{id}", notes = "报名记录查询")
+    @ApiOperation(value = "register/detail/{id}", notes = "报名记录详情")
     @RequestMapping(value = "/register/detail/{id}", method = RequestMethod.POST)
     public CourseRegistrationVo registerDetail(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
             , @PathVariable Long id ) {

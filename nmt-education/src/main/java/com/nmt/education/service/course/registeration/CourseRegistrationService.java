@@ -241,7 +241,18 @@ public class CourseRegistrationService {
         return pageInfo;
     }
 
+    /**
+     * 报名记录详情
+     *
+     * @param dto
+     * @return java.util.List<com.nmt.education.pojo.vo.RegisterSummaryVo>
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/5/11 22:02
+     */
     private List<RegisterSummaryVo> queryBySearchDto(RegisterSummarySearchDto dto) {
+
         return this.registerationSummaryService.queryBySearchDto(dto);
     }
 
