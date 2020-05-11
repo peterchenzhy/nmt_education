@@ -12,11 +12,13 @@ import com.nmt.education.pojo.po.CoursePo;
 import com.nmt.education.pojo.po.CourseRegistrationPo;
 import com.nmt.education.pojo.po.RegisterationSummaryPo;
 import com.nmt.education.pojo.po.RegistrationExpenseDetailPo;
+import com.nmt.education.pojo.vo.CourseRegistrationListVo;
 import com.nmt.education.pojo.vo.CourseRegistrationVo;
 import com.nmt.education.pojo.vo.RegisterSummaryVo;
 import com.nmt.education.service.CodeService;
 import com.nmt.education.service.course.CourseService;
 import com.nmt.education.service.course.registeration.summary.RegisterationSummaryService;
+import com.nmt.education.service.course.schedule.CourseScheduleService;
 import com.nmt.education.service.student.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -31,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseRegistrationService {
@@ -52,6 +55,9 @@ public class CourseRegistrationService {
     private StudentService studentService;
     @Autowired
     private CodeService codeService;
+    @Autowired
+    private CourseScheduleService courseScheduleService;
+
 
     /**
      * 课程报名
@@ -112,6 +118,22 @@ public class CourseRegistrationService {
         Assert.notNull(studentService.selectByPrimaryKey(dto.getStudentId()), "学生信息不存在！id:" + dto.getStudentId());
         Assert.notNull(courseService.selectByPrimaryKey(dto.getCourseId()), "学生信息不存在！id:" + dto.getCourseId());
         Assert.notEmpty(dto.getCourseScheduleIds(), "报名时间必填！id:" + dto.getCourseId());
+        Assert.isNull(queryByCourseStudent(dto.getCourseId(), dto.getStudentId()), "报名记录已经存在！id:" + dto.getCourseId());
+    }
+
+    /**
+     * 根据课程和学生查找报名记录
+     *
+     * @param courseId
+     * @param studentId
+     * @return com.nmt.education.pojo.po.CourseRegistrationPo
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/5/8 22:38
+     */
+    public CourseRegistrationListVo queryByCourseStudent(Long courseId, Long studentId) {
+        return this.courseRegistrationPoMapper.queryByCourseStudent(courseId, studentId);
     }
 
     private List<RegistrationExpenseDetailPo> generateRegisterExpenseDetail(List<RegisterExpenseDetailReqDto> expenseDetailList, int updator,
@@ -135,8 +157,8 @@ public class CourseRegistrationService {
      * @version v1
      * @since 2020/5/5 15:45
      */
-    public PageInfo<CourseRegistrationPo> registerSearch(RegisterSearchReqDto dto, Integer logInUser) {
-        return PageHelper.startPage(dto.getPageNo(),dto.getPageSize()).doSelectPageInfo(()->this.courseRegistrationPoMapper.queryByDto(dto));
+    public PageInfo<CourseRegistrationListVo> registerSearch(RegisterSearchReqDto dto, Integer logInUser) {
+        return PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.courseRegistrationPoMapper.queryByDto(dto));
     }
 
     /**
@@ -225,7 +247,18 @@ public class CourseRegistrationService {
         return pageInfo;
     }
 
+    /**
+     * 报名记录详情
+     *
+     * @param dto
+     * @return java.util.List<com.nmt.education.pojo.vo.RegisterSummaryVo>
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/5/11 22:02
+     */
     private List<RegisterSummaryVo> queryBySearchDto(RegisterSummarySearchDto dto) {
+
         return this.registerationSummaryService.queryBySearchDto(dto);
     }
 
@@ -271,10 +304,17 @@ public class CourseRegistrationService {
 
 
     public CourseRegistrationVo registerDetail(Long id, Integer logInUser) {
-        if(Objects.isNull(id)){
-            return null ;
+        if (Objects.isNull(id)) {
+            return null;
         }
-        return this.courseRegistrationPoMapper.queryVoById(id);
+        CourseRegistrationVo vo = this.courseRegistrationPoMapper.queryVoById(id);
+        Assert.notNull(vo, "无法查询到报名记录，id:" + id);
+        vo.setCourse(courseService.selectByPrimaryKey(vo.getCourseId()));
+        vo.setStudent(studentService.detail(vo.getStudentId()));
+        List<RegisterationSummaryPo> registerationSummaryPoList = registerationSummaryService.queryByRegisterId(id);
+        vo.setCourseScheduleList(courseScheduleService.queryByIds(registerationSummaryPoList.stream().map(e -> e.getCourseScheduleId()).collect(Collectors.toList())));
+        vo.setRegistrationExpenseDetailList(registrationExpenseDetailService.queryRegisterId(id));
+        return vo ;
     }
 
 }

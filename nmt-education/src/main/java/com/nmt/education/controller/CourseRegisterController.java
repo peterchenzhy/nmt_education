@@ -6,6 +6,7 @@ import com.nmt.education.pojo.dto.req.*;
 import com.nmt.education.pojo.po.CoursePo;
 import com.nmt.education.pojo.po.CourseRegistrationPo;
 import com.nmt.education.pojo.vo.CourseDetailVo;
+import com.nmt.education.pojo.vo.CourseRegistrationListVo;
 import com.nmt.education.pojo.vo.CourseRegistrationVo;
 import com.nmt.education.pojo.vo.RegisterSummaryVo;
 import com.nmt.education.service.course.CourseService;
@@ -48,12 +49,12 @@ public class CourseRegisterController {
 
     @ApiOperation(value = "register/search", notes = "报名记录查询")
     @RequestMapping(value = "/register/search", method = RequestMethod.POST)
-    public PageInfo<CourseRegistrationPo> registerSearch(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
+    public PageInfo<CourseRegistrationListVo> registerSearch(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
             , @RequestBody @Validated RegisterSearchReqDto dto) {
        return  courseRegistrationService.registerSearch(dto, logInUser);
     }
 
-    @ApiOperation(value = "register/detail/{id}", notes = "报名记录查询")
+    @ApiOperation(value = "register/detail/{id}", notes = "报名记录详情")
     @RequestMapping(value = "/register/detail/{id}", method = RequestMethod.POST)
     public CourseRegistrationVo registerDetail(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
             , @PathVariable Long id ) {
