@@ -32,6 +32,14 @@
     from registration_expense_detail
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="queryRegisterId" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select
+    <include refid="Base_Column_List" />
+    from registration_expense_detail
+    where status = 1
+    and registration_id = #{registerId}
+  </select>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.RegistrationExpenseDetailPo" useGeneratedKeys="true">
     <!--@mbg.generated-->
     insert into registration_expense_detail

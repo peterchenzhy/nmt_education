@@ -17,6 +17,7 @@ import com.nmt.education.pojo.vo.RegisterSummaryVo;
 import com.nmt.education.service.CodeService;
 import com.nmt.education.service.course.CourseService;
 import com.nmt.education.service.course.registeration.summary.RegisterationSummaryService;
+import com.nmt.education.service.course.schedule.CourseScheduleService;
 import com.nmt.education.service.student.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseRegistrationService {
@@ -52,6 +54,8 @@ public class CourseRegistrationService {
     private StudentService studentService;
     @Autowired
     private CodeService codeService;
+    @Autowired
+    private CourseScheduleService courseScheduleService;
 
     /**
      * 课程报名
@@ -301,7 +305,13 @@ public class CourseRegistrationService {
         if (Objects.isNull(id)) {
             return null;
         }
-        return this.courseRegistrationPoMapper.queryVoById(id);
+        CourseRegistrationVo vo = this.courseRegistrationPoMapper.queryVoById(id);
+        Assert.notNull(vo, "无法查询到报名记录，id:" + id);
+        List<RegisterationSummaryPo> registerationSummaryPoList = registerationSummaryService.queryByRegisterId(id);
+        vo.setCourseScheduleList(courseScheduleService.queryByIds(registerationSummaryPoList.stream().map(e -> e.getCourseScheduleId()).collect(Collectors.toList())));
+        vo.setRegistrationExpenseDetailList(registrationExpenseDetailService.queryRegisterId(id));
+        return vo ;
+
     }
 
 }

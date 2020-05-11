@@ -20,12 +20,12 @@
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, teacher_id, course_id, course_times, course_datetime, teacher_price, per_time, 
+    id, teacher_id, course_id, course_times, course_datetime, teacher_price, per_time,
     sign_in, `status`, creator, create_time, `operator`, operate_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     <!--@mbg.generated-->
-    select 
+    select
     <include refid="Base_Column_List" />
     from course_schedule
     where id = #{id,jdbcType=BIGINT}
@@ -38,6 +38,17 @@
     where status= 1
     and course_id = #{id}
   </select>
+  <select id="queryByIds"  resultMap="BaseResultMap">
+  <!--@mbg.generated-->
+  select
+  <include refid="Base_Column_List" />
+  from course_schedule
+  where status= 1
+  and id in
+    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
+</select>
   <update id="signIn">
     update course_schedule
     set operator = #{operator} , operate_time = now() ,sign_in = 1
@@ -343,14 +354,14 @@
   <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
     <!--@mbg.generated-->
     insert into course_schedule
-    (teacher_id, course_id, course_times, course_datetime, teacher_price, per_time, sign_in, 
+    (teacher_id, course_id, course_times, course_datetime, teacher_price, per_time, sign_in,
       `status`, creator, create_time, `operator`, operate_time)
     values
     <foreach collection="list" item="item" separator=",">
-      (#{item.teacherId,jdbcType=BIGINT}, #{item.courseId,jdbcType=BIGINT}, #{item.courseTimes,jdbcType=INTEGER}, 
-        #{item.courseDatetime,jdbcType=TIMESTAMP}, #{item.teacherPrice,jdbcType=VARCHAR}, 
-        #{item.perTime,jdbcType=INTEGER}, #{item.signIn,jdbcType=TINYINT}, #{item.status,jdbcType=TINYINT}, 
-        #{item.creator,jdbcType=INTEGER}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.operator,jdbcType=INTEGER}, 
+      (#{item.teacherId,jdbcType=BIGINT}, #{item.courseId,jdbcType=BIGINT}, #{item.courseTimes,jdbcType=INTEGER},
+        #{item.courseDatetime,jdbcType=TIMESTAMP}, #{item.teacherPrice,jdbcType=VARCHAR},
+        #{item.perTime,jdbcType=INTEGER}, #{item.signIn,jdbcType=TINYINT}, #{item.status,jdbcType=TINYINT},
+        #{item.creator,jdbcType=INTEGER}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.operator,jdbcType=INTEGER},
         #{item.operateTime,jdbcType=TIMESTAMP})
     </foreach>
   </insert>
@@ -392,7 +403,7 @@
       #{operator,jdbcType=INTEGER},
       #{operateTime,jdbcType=TIMESTAMP},
     </trim>
-    on duplicate key update 
+    on duplicate key update
     <trim suffixOverrides=",">
       <if test="id != null">
         id = #{id,jdbcType=BIGINT},
@@ -497,7 +508,7 @@
         #{operateTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
-    on duplicate key update 
+    on duplicate key update
     <trim suffixOverrides=",">
       <if test="id != null">
         id = #{id,jdbcType=BIGINT},

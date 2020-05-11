@@ -27,4 +27,6 @@ interface RegisterationSummaryPoMapper {
     int insertOrUpdateSelective(RegisterationSummaryPo record);
 
     List<RegisterSummaryVo> queryBySearchDto(@Param("dto") RegisterSummarySearchDto dto);
+
+    List<RegisterationSummaryPo> queryByRegisterId(@Param("registerId") Long registerId);
 }

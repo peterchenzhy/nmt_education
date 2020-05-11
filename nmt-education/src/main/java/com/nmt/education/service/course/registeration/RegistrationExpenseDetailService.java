@@ -76,4 +76,7 @@ public class RegistrationExpenseDetailService {
         return detailPo;
     }
 
+    public List<RegistrationExpenseDetailPo> queryRegisterId(Long registerId) {
+        return this.registrationExpenseDetailPoMapper.queryRegisterId(registerId);
+    }
 }

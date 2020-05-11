@@ -7,20 +7,15 @@ import com.nmt.education.pojo.po.CoursePo;
 import com.nmt.education.pojo.po.CourseSchedulePo;
 import com.nmt.education.service.course.CourseService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -34,7 +29,7 @@ public class CourseScheduleService {
 
     public boolean manager(List<CourseScheduleReqDto> dtoList, Long courseId, Integer operator) {
         if (CollectionUtils.isEmpty(dtoList)) {
-              invalidByCourseId(courseId,operator);
+            invalidByCourseId(courseId, operator);
             return true;
         }
         dtoList.stream().forEach(e -> manager(e, courseId, operator));
@@ -42,7 +37,7 @@ public class CourseScheduleService {
     }
 
     private void invalidByCourseId(Long courseId, Integer operator) {
-        this.courseSchedulePoMapper.invalidByCourseId(courseId,operator);
+        this.courseSchedulePoMapper.invalidByCourseId(courseId, operator);
     }
 
     private void manager(CourseScheduleReqDto dto, Long courseId, Integer operator) {
@@ -51,7 +46,7 @@ public class CourseScheduleService {
         List<CourseSchedulePo> editList = new ArrayList<>();
         switch (editFlag) {
             case 新增:
-                addList.add(newSchedule(operator, dto,courseId));
+                addList.add(newSchedule(operator, dto, courseId));
                 break;
             case 修改:
                 editList.add(editSchedule(operator, dto));
@@ -91,7 +86,7 @@ public class CourseScheduleService {
         Assert.notNull(dto.getId(), "编辑课程信息缺少id");
         CourseSchedulePo po = selectByPrimaryKey(dto.getId());
         Assert.notNull(po, "课程信息不存在" + dto.getId());
-        Assert.isTrue(po.getSignIn() == 0,"课表已经签到，无法进行修改或者删除,id:"+dto.getId() );
+        Assert.isTrue(po.getSignIn() == 0, "课表已经签到，无法进行修改或者删除,id:" + dto.getId());
         return po;
     }
 
@@ -105,7 +100,7 @@ public class CourseScheduleService {
      * @version v1
      * @since 2020/4/24 10:54
      */
-    private CourseSchedulePo newSchedule(Integer operator, CourseScheduleReqDto dto,Long courseId) {
+    private CourseSchedulePo newSchedule(Integer operator, CourseScheduleReqDto dto, Long courseId) {
         CourseSchedulePo po = new CourseSchedulePo();
         BeanUtils.copyProperties(dto, po);
         po.setCourseId(courseId);
@@ -139,10 +134,10 @@ public class CourseScheduleService {
 
 
     public void updateBatchSelective(List<CourseSchedulePo> list) {
-        if(CollectionUtils.isEmpty(list )){
-            return ;
+        if (CollectionUtils.isEmpty(list)) {
+            return;
         }
-          courseSchedulePoMapper.updateBatchSelective(list);
+        courseSchedulePoMapper.updateBatchSelective(list);
     }
 
 
@@ -163,21 +158,37 @@ public class CourseScheduleService {
         return courseSchedulePoMapper.insertOrUpdateSelective(record);
     }
 
-    public List< CourseSchedulePo> queryByCourseId(Long id) {
+    public List<CourseSchedulePo> queryByCourseId(Long id) {
         return this.courseSchedulePoMapper.queryByCourseId(id);
     }
 
-    public Boolean signIn(Long id,Integer operator) {
+    public Boolean signIn(Long id, Integer operator) {
         CourseSchedulePo po = selectByPrimaryKey(id);
-        Assert.notNull(po,"课表信息为空，id："+id);
-        return this.courseSchedulePoMapper.signIn(id,operator)>0;
+        Assert.notNull(po, "课表信息为空，id：" + id);
+        return this.courseSchedulePoMapper.signIn(id, operator) > 0;
     }
-
 
 
     public void changeTeacher(long courseId, long newTeacherId) {
         CoursePo coursePo = courseService.selectByPrimaryKey(courseId);
-        Assert.notNull(coursePo,"课程不存在，id："+courseId);
+        Assert.notNull(coursePo, "课程不存在，id：" + courseId);
         this.courseSchedulePoMapper.changeTeacher(newTeacherId);
+    }
+
+    /**
+     * 根据ids 查询课程时间
+     *
+     * @param ids
+     * @return java.util.List<com.nmt.education.pojo.po.CourseSchedulePo>
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/5/11 22:54
+     */
+    public List<CourseSchedulePo> queryByIds(List<Long> ids) {
+        if(CollectionUtils.isEmpty(ids)){
+            return Collections.emptyList();
+        }
+        return this.courseSchedulePoMapper.queryByIds(ids);
     }
 }

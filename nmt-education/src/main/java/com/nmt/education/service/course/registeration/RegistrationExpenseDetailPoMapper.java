@@ -1,13 +1,14 @@
 package com.nmt.education.service.course.registeration;
 
 import com.nmt.education.pojo.po.RegistrationExpenseDetailPo;
+
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 @Mapper
-  interface RegistrationExpenseDetailPoMapper {
+interface RegistrationExpenseDetailPoMapper {
     int insertSelective(RegistrationExpenseDetailPo record);
 
     RegistrationExpenseDetailPo selectByPrimaryKey(Integer id);
@@ -23,4 +24,6 @@ import org.apache.ibatis.annotations.Param;
     int insertOrUpdate(RegistrationExpenseDetailPo record);
 
     int insertOrUpdateSelective(RegistrationExpenseDetailPo record);
+
+    List<RegistrationExpenseDetailPo> queryRegisterId(@Param("registerId") Long registerId);
 }
