@@ -136,7 +136,7 @@ public class CourseRegistrationService {
      * @since 2020/5/5 15:45
      */
     public PageInfo<CourseRegistrationPo> registerSearch(RegisterSearchReqDto dto, Integer logInUser) {
-        return PageHelper.startPage(dto.getPageNo(),dto.getPageSize()).doSelectPageInfo(()->this.courseRegistrationPoMapper.queryByDto(dto));
+        return PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.courseRegistrationPoMapper.queryByDto(dto));
     }
 
     /**
@@ -225,7 +225,18 @@ public class CourseRegistrationService {
         return pageInfo;
     }
 
+    /**
+     * 报名记录详情
+     *
+     * @param dto
+     * @return java.util.List<com.nmt.education.pojo.vo.RegisterSummaryVo>
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/5/11 22:02
+     */
     private List<RegisterSummaryVo> queryBySearchDto(RegisterSummarySearchDto dto) {
+
         return this.registerationSummaryService.queryBySearchDto(dto);
     }
 
@@ -271,8 +282,8 @@ public class CourseRegistrationService {
 
 
     public CourseRegistrationVo registerDetail(Long id, Integer logInUser) {
-        if(Objects.isNull(id)){
-            return null ;
+        if (Objects.isNull(id)) {
+            return null;
         }
         return this.courseRegistrationPoMapper.queryVoById(id);
     }
