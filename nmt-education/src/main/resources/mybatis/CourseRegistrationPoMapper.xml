@@ -23,6 +23,9 @@
     </resultMap>
 
     <resultMap id="CourseRegistrationVoResultMap" extends="BaseResultMap" type="com.nmt.education.pojo.vo.CourseRegistrationVo">
+        <result column="cr_registerTime" jdbcType="DATE" property="registerTime"/>
+    </resultMap>
+    <resultMap id="CourseRegistrationListVoResultMap" extends="BaseResultMap" type="com.nmt.education.pojo.vo.CourseRegistrationListVo">
         <result column="s_name" jdbcType="VARCHAR" property="studentName"/>
         <result column="c_name" jdbcType="VARCHAR" property="courseName"/>
         <result column="cr_registerTime" jdbcType="DATE" property="registerTime"/>
@@ -41,7 +44,7 @@
         where id = #{id,jdbcType=BIGINT}
     </select>
     <select id="queryByDto" parameterType="com.nmt.education.pojo.dto.req.RegisterSearchReqDto"
-            resultMap="CourseRegistrationVoResultMap">
+            resultMap="CourseRegistrationListVoResultMap">
         select cr.*,s.name as s_name,c.name as c_name,cr.create_time as cr_registerTime
         from course_registration cr
         inner join course c on c.id= cr.course_id
@@ -68,7 +71,7 @@
         where cr.status = 1 and cr.id = #{id}
     </select>
     <select id="queryByCourseStudent"
-            resultMap="CourseRegistrationVoResultMap">
+            resultMap="CourseRegistrationListVoResultMap">
         select cr.*,s.name as s_name,c.name as c_name,cr.create_time as cr_registerTime
         from course_registration cr
         inner join course c on c.id= cr.course_id and cr.course_id = #{courseId}

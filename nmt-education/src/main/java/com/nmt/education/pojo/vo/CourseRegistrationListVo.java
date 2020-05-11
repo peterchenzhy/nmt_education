@@ -1,6 +1,5 @@
 package com.nmt.education.pojo.vo;
 
-import com.nmt.education.pojo.po.CoursePo;
 import com.nmt.education.pojo.po.CourseRegistrationPo;
 import com.nmt.education.pojo.po.CourseSchedulePo;
 import com.nmt.education.pojo.po.RegistrationExpenseDetailPo;
@@ -17,14 +16,14 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class CourseRegistrationVo extends CourseRegistrationPo {
+public class CourseRegistrationListVo extends CourseRegistrationPo {
 
 
-    @ApiModelProperty(value = "课程对象")
-    private CoursePo course;
+    @ApiModelProperty(value = "课程名字")
+    private String courseName;
 
-    @ApiModelProperty(value = "学生对象")
-    private StudentVo student;
+    @ApiModelProperty(value = "学生姓名")
+    private String studentName;
 
     @ApiModelProperty(value = "报名时间")
     private Date registerTime;
@@ -32,5 +31,5 @@ public class CourseRegistrationVo extends CourseRegistrationPo {
     private List<CourseSchedulePo> courseScheduleList = Collections.emptyList();
 
     @ApiModelProperty(value = "缴费信息")
-    private List<RegistrationExpenseDetailPo> registrationExpenseDetailList =Collections.emptyList();
+    private List<RegistrationExpenseDetailPo> registrationExpenseDetailList = Collections.emptyList();
 }

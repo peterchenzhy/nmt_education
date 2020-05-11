@@ -12,6 +12,7 @@ import com.nmt.education.pojo.po.CoursePo;
 import com.nmt.education.pojo.po.CourseRegistrationPo;
 import com.nmt.education.pojo.po.RegisterationSummaryPo;
 import com.nmt.education.pojo.po.RegistrationExpenseDetailPo;
+import com.nmt.education.pojo.vo.CourseRegistrationListVo;
 import com.nmt.education.pojo.vo.CourseRegistrationVo;
 import com.nmt.education.pojo.vo.RegisterSummaryVo;
 import com.nmt.education.service.CodeService;
@@ -131,7 +132,7 @@ public class CourseRegistrationService {
      * @version v1
      * @since 2020/5/8 22:38
      */
-    public CourseRegistrationPo queryByCourseStudent(Long courseId, Long studentId) {
+    public CourseRegistrationListVo queryByCourseStudent(Long courseId, Long studentId) {
         return this.courseRegistrationPoMapper.queryByCourseStudent(courseId, studentId);
     }
 
@@ -156,7 +157,7 @@ public class CourseRegistrationService {
      * @version v1
      * @since 2020/5/5 15:45
      */
-    public PageInfo<CourseRegistrationPo> registerSearch(RegisterSearchReqDto dto, Integer logInUser) {
+    public PageInfo<CourseRegistrationListVo> registerSearch(RegisterSearchReqDto dto, Integer logInUser) {
         return PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.courseRegistrationPoMapper.queryByDto(dto));
     }
 
@@ -308,8 +309,8 @@ public class CourseRegistrationService {
         }
         CourseRegistrationVo vo = this.courseRegistrationPoMapper.queryVoById(id);
         Assert.notNull(vo, "无法查询到报名记录，id:" + id);
-        vo.setCoursePo(courseService.selectByPrimaryKey(vo.getCourseId()));
-        vo.setStudentVo(studentService.detail(vo.getStudentId()));
+        vo.setCourse(courseService.selectByPrimaryKey(vo.getCourseId()));
+        vo.setStudent(studentService.detail(vo.getStudentId()));
         List<RegisterationSummaryPo> registerationSummaryPoList = registerationSummaryService.queryByRegisterId(id);
         vo.setCourseScheduleList(courseScheduleService.queryByIds(registerationSummaryPoList.stream().map(e -> e.getCourseScheduleId()).collect(Collectors.toList())));
         vo.setRegistrationExpenseDetailList(registrationExpenseDetailService.queryRegisterId(id));
