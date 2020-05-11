@@ -63,10 +63,8 @@
 
     <select id="queryVoById"
             resultMap="CourseRegistrationVoResultMap">
-        select cr.*,s.name as s_name,c.name as c_name,cr.create_time as cr_registerTime
+        select cr.*,cr.create_time as cr_registerTime
         from course_registration cr
-        inner join course c on c.id= cr.course_id
-        inner join student s on s.id =cr.student_id
         where cr.status = 1 and cr.id = #{id}
     </select>
     <select id="queryByCourseStudent"

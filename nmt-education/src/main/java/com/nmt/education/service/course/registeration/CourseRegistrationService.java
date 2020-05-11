@@ -57,6 +57,7 @@ public class CourseRegistrationService {
     @Autowired
     private CourseScheduleService courseScheduleService;
 
+
     /**
      * 课程报名
      *
@@ -307,11 +308,12 @@ public class CourseRegistrationService {
         }
         CourseRegistrationVo vo = this.courseRegistrationPoMapper.queryVoById(id);
         Assert.notNull(vo, "无法查询到报名记录，id:" + id);
+        vo.setCoursePo(courseService.selectByPrimaryKey(vo.getCourseId()));
+        vo.setStudentVo(studentService.detail(vo.getStudentId()));
         List<RegisterationSummaryPo> registerationSummaryPoList = registerationSummaryService.queryByRegisterId(id);
         vo.setCourseScheduleList(courseScheduleService.queryByIds(registerationSummaryPoList.stream().map(e -> e.getCourseScheduleId()).collect(Collectors.toList())));
         vo.setRegistrationExpenseDetailList(registrationExpenseDetailService.queryRegisterId(id));
         return vo ;
-
     }
 
 }

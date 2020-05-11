@@ -1,5 +1,6 @@
 package com.nmt.education.pojo.vo;
 
+import com.nmt.education.pojo.po.CoursePo;
 import com.nmt.education.pojo.po.CourseRegistrationPo;
 import com.nmt.education.pojo.po.CourseSchedulePo;
 import com.nmt.education.pojo.po.RegistrationExpenseDetailPo;
@@ -19,11 +20,11 @@ import java.util.List;
 public class CourseRegistrationVo extends CourseRegistrationPo {
 
 
-    @ApiModelProperty(value = "课程名字")
-    private String courseName;
+    @ApiModelProperty(value = "课程对象")
+    private CoursePo coursePo;
 
-    @ApiModelProperty(value = "学生姓名")
-    private String studentName;
+    @ApiModelProperty(value = "学生对象")
+    private StudentVo studentVo;
 
     @ApiModelProperty(value = "报名时间")
     private Date registerTime;
