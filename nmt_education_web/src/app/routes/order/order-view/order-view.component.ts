@@ -50,7 +50,7 @@ export class OrderViewComponent implements OnInit {
         { title: '', index: 'id', type: 'checkbox' },
         { title: '课时', index: 'courseTimes' },
         { title: '任课教师', index: 'teacherId', render: "showTeacher" },
-        { title: '上课时间', index: 'courseDatetime', type: 'date' ,dateFormat: 'YYYY-MM-DD HH:mm' },
+        { title: '上课时间', index: 'courseDatetime', type: 'date', dateFormat: 'YYYY-MM-DD HH:mm' },
         { title: '时长', index: 'perTime' }
     ];
     sessionsSTData: STData[] = [];
@@ -97,6 +97,11 @@ export class OrderViewComponent implements OnInit {
             editFlag: [EDIT_FLAG.NEW, []]
         });
     }
+
+    get isEditOrder() {
+        return this.form.value.editFlag != EDIT_FLAG.NEW;
+    }
+
     get registerExpenseDetail() {
         return this.form.controls.registerExpenseDetail as FormArray;
     }
@@ -138,16 +143,22 @@ export class OrderViewComponent implements OnInit {
         this.registerExpenseDetail.clear();
     }
 
-    onPayInfoChanged(index: number) {
-        let payObject = this.registerExpenseDetail.at(index);
-        this.calPayAmount(payObject.value);
+    onPayInfoChanged(index: number, event: any) {
+        let payObject = this.registerExpenseDetail.at(index) as FormGroup;
+        let newValue = this.calPayAmount(payObject.value);
+        payObject.get("receivable").setValue(newValue.receivable);
+        payObject.get("amount").setValue(newValue.amount);
         payObject.markAsDirty();
+
+
     }
     calPayAmount(payVal: any): any {
         let perAmount = payVal.perAmount || 0;
         let count = payVal.count || 0;
         let discount = payVal.discount || 1;
-        payVal.receivable = (perAmount * count * discount).toFixed(2);
+        payVal.receivable = (perAmount * count).toFixed(2);
+        payVal.amount = (perAmount * count * discount).toFixed(2);
+
         if (payVal.editFlag == EDIT_FLAG.NO_CHANGE) {
             payVal.editFlag = EDIT_FLAG.UPDATE;
         }

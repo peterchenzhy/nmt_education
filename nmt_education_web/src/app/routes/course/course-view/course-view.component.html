@@ -1,6 +1,6 @@
 <page-header [title]="pageHeader"></page-header>
 <form nz-form [formGroup]="form" [nzLayout]="'vertical'">
-  <nz-card [nzBordered]="false" nzTitle="课程信息">
+  <nz-card [nzBordered]="false" nzTitle="课程信息" [nzExtra]="courseStatusTemplate">
     <nz-row nzGutter="16">
       <nz-col nzLg="5" nzMd="12" nzSm="24">
         <nz-form-item>
@@ -82,28 +82,10 @@
     <nz-row nzGutter="16">
       <nz-col nzLg="5" nzMd="12" nzSm="24">
         <nz-form-item>
-          <nz-form-label>课程状态</nz-form-label>
-          <nz-form-control nzErrorTip="请选择课程状态">
-            <nz-select formControlName="status" [nzPlaceHolder]="'请选择课程状态'" [nzShowSearch]="true">
-              <nz-option *ngFor="let i of courseStatusList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
-            </nz-select>
-          </nz-form-control>
-        </nz-form-item>
-      </nz-col>
-      <nz-col [nzXl]="{ span: 5, offset: 1 }" [nzLg]="{ span: 6 }" [nzMd]="{ span: 12 }" nzSm="24">
-        <nz-form-item>
           <nz-form-label>开课日期</nz-form-label>
           <nz-form-control>
-            <nz-date-picker formControlName="startDate" [nzStyle]="{ width: '100%' }">
+            <nz-date-picker [nzDisabled]=true formControlName="startDate" [nzStyle]="{ width: '100%' }">
             </nz-date-picker>
-          </nz-form-control>
-        </nz-form-item>
-      </nz-col>
-      <nz-col [nzXl]="{ span: 5, offset: 1 }" [nzLg]="{ span: 6 }" [nzMd]="{ span: 12 }" nzSm="24">
-        <nz-form-item>
-          <nz-form-label>单节课时长(分钟)</nz-form-label>
-          <nz-form-control nzErrorTip="请输入招生数量">
-            <nz-input-number formControlName="perTime"></nz-input-number>
           </nz-form-control>
         </nz-form-item>
       </nz-col>
@@ -115,9 +97,16 @@
           </nz-form-control>
         </nz-form-item>
       </nz-col>
-    </nz-row>
-    <nz-row nzGutter="16">
-      <nz-col nzLg="5" nzMd="12" nzSm="24">
+      <nz-col [nzXl]="{ span: 5, offset: 1 }" [nzLg]="{ span: 6 }" [nzMd]="{ span: 12 }" nzSm="24">
+        <nz-form-item>
+          <nz-form-label>单节课时长(分钟)</nz-form-label>
+          <nz-form-control nzErrorTip="请输入招生数量">
+            <nz-input-number formControlName="perTime"></nz-input-number>
+          </nz-form-control>
+        </nz-form-item>
+
+      </nz-col>
+      <nz-col [nzXl]="{ span: 5, offset: 1 }" [nzLg]="{ span: 6 }" [nzMd]="{ span: 12 }" nzSm="24">
         <nz-form-item>
           <nz-form-label>招生数量</nz-form-label>
           <nz-form-control nzErrorTip="请输入招生数量">
@@ -125,7 +114,9 @@
           </nz-form-control>
         </nz-form-item>
       </nz-col>
-      <nz-col [nzXl]="{ span: 5, offset: 1 }" [nzLg]="{ span: 6 }" [nzMd]="{ span: 12 }" nzSm="24">
+    </nz-row>
+    <nz-row nzGutter="16">
+      <nz-col nzLg="5" nzMd="12" nzSm="24">
         <nz-form-item>
           <nz-form-label>任课教师</nz-form-label>
           <nz-form-control nzErrorTip="请选择任课教师">
@@ -152,14 +143,17 @@
         </nz-form-item>
       </nz-col>
       <nz-col [nzXl]="{ span: 5, offset: 1 }" [nzLg]="{ span: 6 }" [nzMd]="{ span: 12 }" nzSm="24">
-        <nz-form-item>
+        <!-- <nz-form-item>
           <nz-form-label>教室</nz-form-label>
           <nz-form-control>
             <nz-select formControlName="classroom" [nzPlaceHolder]="'请选择教室'" [nzShowSearch]="true">
               <nz-option *ngFor="let i of classroomList" [nzLabel]="i.label" [nzValue]="i.value"> </nz-option>
             </nz-select>
           </nz-form-control>
-        </nz-form-item>
+        </nz-form-item> -->
+      </nz-col>
+      <nz-col [nzXl]="{ span: 5, offset: 1 }" [nzLg]="{ span: 6 }" [nzMd]="{ span: 12 }" nzSm="24">
+
       </nz-col>
     </nz-row>
   </nz-card>
@@ -283,6 +277,15 @@
   <footer-toolbar errorCollect>
     <button nz-button type="primary" nzType="primary" (click)="_submitForm()">提交</button>
   </footer-toolbar>
+  <ng-template #courseStatusTemplate>
+    <nz-form-item *ngIf="isEditCourse" style="padding: 0; margin: 0;">
+      <nz-form-control nzErrorTip="请选择课程状态">
+        <nz-select formControlName="status" [nzPlaceHolder]="'请选择课程状态'" [nzShowSearch]="true">
+          <nz-option *ngFor="let i of courseStatusList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+  </ng-template>
 </form>
 
 <ng-template #modalCreateSession>
@@ -333,14 +336,15 @@
   </div>
 </ng-template>
 <ng-template #sessionButtonsTemplate>
-  <button [disabled]="editSessionIndex > -1" nz-button [nzType]="'primary'" (click)="addSessions(modalCreateSession)"
-    nzBlock class="mt-md">
+  <button style="margin: 0 !important;" [disabled]="editSessionIndex > -1" nz-button [nzType]="'primary'"
+    (click)="addSessions(modalCreateSession)" nzBlock class="mt-md">
     <i nz-icon nzType="plus"></i>
     <span>{{sessionParam.title}}</span>
   </button>
 </ng-template>
 <ng-template #feeButtonsTemplate>
-  <button [disabled]="editFeeIndex > -1" nz-button [nzType]="'primary'" (click)="addFee()" nzBlock class="mt-md">
+  <button style="margin: 0 !important;" [disabled]="editFeeIndex > -1" nz-button [nzType]="'primary'" (click)="addFee()"
+    nzBlock class="mt-md">
     <i nz-icon nzType="plus"></i>
     <span>新增费用</span>
   </button>
