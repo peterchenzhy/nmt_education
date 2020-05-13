@@ -313,7 +313,7 @@ public class CourseRegistrationService {
         vo.setStudent(studentService.detail(vo.getStudentId()));
         List<RegisterationSummaryPo> registerationSummaryPoList = registerationSummaryService.queryByRegisterId(id);
         vo.setCourseScheduleList(courseScheduleService.queryByIds(registerationSummaryPoList.stream().map(e -> e.getCourseScheduleId()).collect(Collectors.toList())));
-        vo.setRegistrationExpenseDetailList(registrationExpenseDetailService.queryRegisterId(id));
+        vo.setRegistrationExpenseDetail(registrationExpenseDetailService.queryRegisterId(id));
         return vo ;
     }
 
