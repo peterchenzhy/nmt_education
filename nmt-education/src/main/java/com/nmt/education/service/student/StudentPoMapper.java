@@ -23,4 +23,6 @@ public interface StudentPoMapper {
     List<StudentPo> query(@Param("phone") String phone);
 
     void invalidByPrimaryKey(@Param("operator") Integer operator, @Param("id") Long id);
+
+    List<StudentPo> queryByIds(@Param("ids") List<Long> ids);
 }

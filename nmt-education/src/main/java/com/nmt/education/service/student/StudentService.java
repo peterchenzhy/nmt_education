@@ -228,12 +228,17 @@ public class StudentService {
         return po2vo(po);
     }
 
-    private StudentVo po2vo(StudentPo po) {
+    public StudentVo po2vo(StudentPo po) {
         StudentVo vo = new StudentVo();
         BeanUtils.copyProperties(po, vo);
         return vo;
     }
 
 
-
+    public List<StudentPo> queryByIds(List<Long> ids) {
+        if(CollectionUtils.isEmpty(ids)){
+            return Collections.emptyList();
+        }
+        return this.studentPoMapper.queryByIds(ids);
+    }
 }

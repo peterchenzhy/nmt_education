@@ -1,15 +1,13 @@
 package com.nmt.education.controller;
 
 import com.github.pagehelper.PageInfo;
-import com.nmt.education.commmons.utils.ReqDtoCheckUtil;
-import com.nmt.education.pojo.dto.req.*;
-import com.nmt.education.pojo.po.CoursePo;
-import com.nmt.education.pojo.po.CourseRegistrationPo;
-import com.nmt.education.pojo.vo.CourseDetailVo;
+import com.nmt.education.pojo.dto.req.CourseRegisterReqDto;
+import com.nmt.education.pojo.dto.req.RegisterSearchReqDto;
+import com.nmt.education.pojo.dto.req.RegisterSummarySearchDto;
 import com.nmt.education.pojo.vo.CourseRegistrationListVo;
 import com.nmt.education.pojo.vo.CourseRegistrationVo;
 import com.nmt.education.pojo.vo.RegisterSummaryVo;
-import com.nmt.education.service.course.CourseService;
+import com.nmt.education.pojo.vo.StudentVo;
 import com.nmt.education.service.course.registeration.CourseRegistrationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -51,14 +49,14 @@ public class CourseRegisterController {
     @RequestMapping(value = "/register/search", method = RequestMethod.POST)
     public PageInfo<CourseRegistrationListVo> registerSearch(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
             , @RequestBody @Validated RegisterSearchReqDto dto) {
-       return  courseRegistrationService.registerSearch(dto, logInUser);
+        return courseRegistrationService.registerSearch(dto, logInUser);
     }
 
     @ApiOperation(value = "register/detail/{id}", notes = "报名记录详情")
     @RequestMapping(value = "/register/detail/{id}", method = RequestMethod.POST)
     public CourseRegistrationVo registerDetail(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
-            , @PathVariable Long id ) {
-        return  courseRegistrationService.registerDetail(id, logInUser);
+            , @PathVariable Long id) {
+        return courseRegistrationService.registerDetail(id, logInUser);
     }
 
 
@@ -75,6 +73,14 @@ public class CourseRegisterController {
     public PageInfo<RegisterSummaryVo> registerSummary(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
                                                        @RequestBody @Validated RegisterSummarySearchDto dto, BindingResult bindingResult) {
         return courseRegistrationService.registerSummary(dto, logInUser);
+    }
+
+
+    @ApiOperation(value = "register/student/{id}", notes = "课程报名情况--学生情况")
+    @RequestMapping(value = "register/student/{courseId}", method = RequestMethod.GET)
+    public List<StudentVo> registerStudent(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
+                                           @PathVariable(name = "courseId") Long courseId) {
+        return courseRegistrationService.registerStudent(courseId);
     }
 
 }

@@ -13,6 +13,7 @@ public interface Consts {
     String LOGIN_USER_HEAD = "loginUser";
     String ROLE_ID_HEAD = "roleId";
     int SYSTEM_USER = 0 ;
+    long DEFAULT_LONG = -1l;
 
     String 分号 = ";";
 

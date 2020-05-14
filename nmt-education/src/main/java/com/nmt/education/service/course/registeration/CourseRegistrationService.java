@@ -8,13 +8,11 @@ import com.nmt.education.pojo.dto.req.CourseRegisterReqDto;
 import com.nmt.education.pojo.dto.req.RegisterExpenseDetailReqDto;
 import com.nmt.education.pojo.dto.req.RegisterSearchReqDto;
 import com.nmt.education.pojo.dto.req.RegisterSummarySearchDto;
-import com.nmt.education.pojo.po.CoursePo;
-import com.nmt.education.pojo.po.CourseRegistrationPo;
-import com.nmt.education.pojo.po.RegisterationSummaryPo;
-import com.nmt.education.pojo.po.RegistrationExpenseDetailPo;
+import com.nmt.education.pojo.po.*;
 import com.nmt.education.pojo.vo.CourseRegistrationListVo;
 import com.nmt.education.pojo.vo.CourseRegistrationVo;
 import com.nmt.education.pojo.vo.RegisterSummaryVo;
+import com.nmt.education.pojo.vo.StudentVo;
 import com.nmt.education.service.CodeService;
 import com.nmt.education.service.course.CourseService;
 import com.nmt.education.service.course.registeration.summary.RegisterationSummaryService;
@@ -248,7 +246,7 @@ public class CourseRegistrationService {
     }
 
     /**
-     * 报名记录详情
+     * 报名记录查询 ，课时消耗查询
      *
      * @param dto
      * @return java.util.List<com.nmt.education.pojo.vo.RegisterSummaryVo>
@@ -313,8 +311,26 @@ public class CourseRegistrationService {
         vo.setStudent(studentService.detail(vo.getStudentId()));
         List<RegisterationSummaryPo> registerationSummaryPoList = registerationSummaryService.queryByRegisterId(id);
         vo.setCourseScheduleList(courseScheduleService.queryByIds(registerationSummaryPoList.stream().map(e -> e.getCourseScheduleId()).collect(Collectors.toList())));
-        vo.setRegistrationExpenseDetail(registrationExpenseDetailService.queryRegisterId(id));
-        return vo ;
+        vo.setRegisterExpenseDetail(registrationExpenseDetailService.queryRegisterId(id));
+        return vo;
     }
 
+    /**
+     * 根据课程id 查询学生报名情况
+     *
+     * @param courseId 课程id
+     * @return java.util.List<com.nmt.education.pojo.vo.StudentVo>
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/5/14 23:36
+     */
+    public List<StudentVo> registerStudent(Long courseId) {
+        List<CourseRegistrationPo> registrationList = this.courseRegistrationPoMapper.queryByCourseId(courseId);
+        Assert.isTrue(!CollectionUtils.isEmpty(registrationList), "未找到课程相关报名信息，课程id:" + courseId);
+        List<StudentPo> studentPoList = studentService.queryByIds(registrationList.stream().map(e -> e.getStudentId()).collect(Collectors.toList()));
+        List<StudentVo> voList = new ArrayList<>(studentPoList.size());
+        studentPoList.stream().forEach(e -> voList.add(studentService.po2vo(e)));
+        return voList;
+    }
 }

@@ -24,4 +24,7 @@ public class RegisterSummaryVo extends CourseRegistrationPo {
     @ApiModelProperty(value = "报名时间")
     private Date registerTime ;
 
+    @ApiModelProperty(value = "签到状态")
+    private Integer signIn ;
+
 }

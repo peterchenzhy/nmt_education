@@ -43,6 +43,14 @@
         from course_registration
         where id = #{id,jdbcType=BIGINT}
     </select>
+    <select id="queryByCourseId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from course_registration
+        where status = 1
+        and course_id = #{courseId}
+    </select>
     <select id="queryByDto" parameterType="com.nmt.education.pojo.dto.req.RegisterSearchReqDto"
             resultMap="CourseRegistrationListVoResultMap">
         select cr.*,s.name as s_name,c.name as c_name,cr.create_time as cr_registerTime
