@@ -1,22 +1,22 @@
 <form nz-form [formGroup]="form" (ngSubmit)="submit()" role="form">
-  <nz-tabset [nzAnimated]="false" class="tabs" (nzSelectChange)="switch($event)">
-    <nz-tab [nzTitle]="'账户密码登录'">
+  <!-- <nz-tabset [nzAnimated]="false" class="tabs" (nzSelectChange)="switch($event)">
+    <nz-tab [nzTitle]="'账户密码登录'"> -->
       <nz-alert *ngIf="error" [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true" class="mb-lg"></nz-alert>
       <nz-form-item>
-        <nz-form-control [nzErrorTip]="'Please enter mobile number!'">
+        <nz-form-control [nzErrorTip]="'请输入用户名!'">
           <nz-input-group nzSize="large" nzPrefixIcon="user">
             <input nz-input formControlName="userName" placeholder="username: admin or user" />
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>
       <nz-form-item>
-        <nz-form-control nzErrorTip="'Please enter password!'">
+        <nz-form-control nzErrorTip="'请输入密码!'">
           <nz-input-group nzSize="large" nzPrefixIcon="lock">
             <input nz-input type="password" formControlName="password" placeholder="password: ng-alain.com" />
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>
-    </nz-tab>
+    <!-- </nz-tab>
     <nz-tab [nzTitle]="'手机号登录'">
       <nz-form-item>
         <nz-form-control [nzErrorTip]="mobileErrorTip">
@@ -58,13 +58,13 @@
         </nz-form-control>
       </nz-form-item>
     </nz-tab>
-  </nz-tabset>
+  </nz-tabset> -->
   <nz-form-item>
     <nz-col [nzSpan]="12">
       <label nz-checkbox formControlName="remember">自动登录</label>
     </nz-col>
     <nz-col [nzSpan]="12" class="text-right">
-      <a class="forgot" (click)="msg.error('请找欧阳锋')">忘记密码</a>
+      <!-- <a class="forgot" (click)="msg.error('请找欧阳锋')">忘记密码</a> -->
     </nz-col>
   </nz-form-item>
   <nz-form-item>
@@ -73,7 +73,7 @@
     </button>
   </nz-form-item>
 </form>
-<div class="other">
+<!-- <div class="other">
   其他登录方式
   <i
     nz-tooltip="in fact Auth0 via window"
@@ -85,4 +85,4 @@
   <i nz-tooltip="in fact Github via redirect" (click)="open('github')" nz-icon nzType="taobao-circle" class="icon"></i>
   <i (click)="open('weibo', 'window')" nz-icon nzType="weibo-circle" class="icon"></i>
   <a class="register" routerLink="/passport/register">注册账户</a>
-</div>
+</div> -->
