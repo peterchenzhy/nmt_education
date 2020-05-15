@@ -13,8 +13,8 @@
         <sv-container size="large" title="课程信息">
             <sv *ngIf="order.courseId != null" label="课程名">{{order.course.name}}
                 [{{order.course.year+" "+appCtx.globalService.getSeasonLabel(order.course.season)}}]
-                <i *ngIf="order.editFlag!=2" nz-icon nzType="swap" nzTheme="outline" style="color:blue;margin-left:15px;" title="重新选择课程"
-                    (click)="clearSelectedCourse()"></i>
+                <i *ngIf="order.editFlag!=2" nz-icon nzType="swap" nzTheme="outline"
+                    style="color:blue;margin-left:15px;" title="重新选择课程" (click)="clearSelectedCourse()"></i>
             </sv>
             <sv *ngIf="order.courseId == null" label="课程名" nz-form-control nzErrorTip="请选择课程">
                 <nz-select formControlName="courseId" class="enroll-selector" nzShowSearch nzServerSearch
@@ -22,7 +22,7 @@
                     [nzDropdownMatchSelectWidth]="false" (nzOnSearch)="search($event)"
                     (ngModelChange)="courseSelected($event)">
                     <nz-option *ngFor="let o of coursesOfOption" nzCustomContent [nzLabel]="o.name" [nzValue]="o.id">
-                        <div style="width: 150px; float: left;">{{o.code}}</div>
+                        <div style="width: 200px; float: left;">{{o.code}}</div>
                         <div style="width: 100px; float: left">{{o.name}}</div>
                         <div style="width: 30px; float: left">
                             {{appCtx.globalService.getCourseSubjectLabel(o.courseSubject)}}
@@ -86,13 +86,13 @@
                     </td>
                     <td>
                         <span nz-form-control>
-                            <nz-input-number formControlName="perAmount" (ngModelChange)="onPayInfoChanged(i)">
+                            <nz-input-number style="width: 80px;" formControlName="perAmount" (ngModelChange)="onPayInfoChanged(i)">
                             </nz-input-number>
                         </span>
                     </td>
                     <td>
                         <span nz-form-control>
-                            <nz-input-number [nzDisabled]="registerExpenseDetail.value[i].feeType == 1"
+                            <nz-input-number style="width: 80px;" [nzDisabled]="registerExpenseDetail.value[i].feeType == 1"
                                 formControlName="count" (ngModelChange)="onPayInfoChanged(i)">
                             </nz-input-number>
                             <i *ngIf="registerExpenseDetail.value[i].feeType == 1" nz-icon nzType="edit"
@@ -101,7 +101,7 @@
                     </td>
                     <td>
                         <span nz-form-control>
-                            <nz-input-number formControlName="discount" (ngModelChange)="onPayInfoChanged(i,$event)">
+                            <nz-input-number style="width: 80px;" formControlName="discount" (ngModelChange)="onPayInfoChanged(i,$event)">
                             </nz-input-number>
                         </span>
                     </td>
@@ -114,17 +114,19 @@
                         </span>
                     </td>
                     <td>
-                        <span nz-form-control nzErrorTip="请选支付方式">
-                            <nz-select formControlName="payment" [nzPlaceHolder]="'请选支付方式'" [nzShowSearch]="true"
-                                (ngModelChange)="onPayInfoChanged(i)">
-                                <nz-option *ngFor="let i of payMethodList" [nzLabel]="i.label" [nzValue]="i.value">
-                                </nz-option>
-                            </nz-select>
-                        </span>
+                        <nz-form-item style="padding-bottom: 0px;margin-bottom: 0px;">
+                            <nz-form-control nzErrorTip="">
+                                <nz-select style="width: 100px;" formControlName="payment" [nzPlaceHolder]="'请选支付方式'" [nzShowSearch]="true"
+                                    (ngModelChange)="onPayInfoChanged(i)">
+                                    <nz-option *ngFor="let i of payMethodList" [nzLabel]="i.label" [nzValue]="i.value">
+                                    </nz-option>
+                                </nz-select>
+                            </nz-form-control>
+                        </nz-form-item>
                     </td>
                     <td>
                         <span nz-form-control>
-                            <nz-select formControlName="feeStatus" [nzPlaceHolder]="'请选支付状态'" [nzShowSearch]="true"
+                            <nz-select style="width: 100px;" formControlName="feeStatus" [nzPlaceHolder]="'请选支付状态'" [nzShowSearch]="true"
                                 (ngModelChange)="onPayInfoChanged(i)">
                                 <nz-option *ngFor="let i of payStatusList" [nzLabel]="i.label" [nzValue]="i.value">
                                 </nz-option>

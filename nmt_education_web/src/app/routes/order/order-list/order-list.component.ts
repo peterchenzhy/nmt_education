@@ -88,7 +88,6 @@ export class OrderListComponent implements OnInit {
         private appCtx: AppContextService,
         private globalService: GlobalService,
         private router: Router,
-        private http: _HttpClient,
         public msg: NzMessageService,
         private modalSrv: NzModalService,
         private cdr: ChangeDetectorRef
@@ -100,7 +99,6 @@ export class OrderListComponent implements OnInit {
 
     getData() {
         this.loading = true;
-        this.http
         this.appCtx.courseService.registerSearch(this.queryParam)
             .pipe(
                 tap(() => (this.loading = false)),
@@ -126,28 +124,6 @@ export class OrderListComponent implements OnInit {
                 this.getData();
                 break;
         }
-    }
-
-    remove() {
-        this.http.delete('/course', { nos: this.selectedRows.map(i => i.no).join(',') }).subscribe(() => {
-            this.getData();
-            this.st.clearCheck();
-        });
-    }
-
-    approval() {
-        this.msg.success(`审批了 ${this.selectedRows.length} 笔`);
-    }
-
-    add(tpl: TemplateRef<{}>) {
-        this.modalSrv.create({
-            nzTitle: '新建规则',
-            nzContent: tpl,
-            nzOnOk: () => {
-                this.loading = true;
-                this.http.post('/course', { description: this.description }).subscribe(() => this.getData());
-            },
-        });
     }
 
     reset() {

@@ -61,7 +61,7 @@ export class OrderViewComponent implements OnInit {
             id: [null, []],
             registrationStatus: [ORDER_STATUS.NORMAL, [Validators.required]],
             registrationType: [ORDER_TYPE.NEW, [Validators.required]],
-            courseScheduleIds: [, [Validators.required]],
+            courseScheduleIds: [, []],
             feeStatus: [PAY_STATUS.PAIED, [Validators.required]],
             campus: [null, [Validators.required]],
             remark: [null, []],
@@ -74,7 +74,6 @@ export class OrderViewComponent implements OnInit {
         if (orderId) {
             this.appCtx.courseService.getRegisterDetails(orderId)
                 .subscribe(res => {
-                    debugger;
                     this.order = res;
                     this.order.editFlag = EDIT_FLAG.UPDATE;
                     this.form.patchValue(this.order);
@@ -136,7 +135,6 @@ export class OrderViewComponent implements OnInit {
     }
 
     courseSelected(value: number) {
-        debugger;
         this.appCtx.courseService.getCourseDetails(value)
             .subscribe((res: Course) => {
                 this.order.courseId = res.id;
@@ -227,6 +225,15 @@ export class OrderViewComponent implements OnInit {
         Object.keys(this.form.controls).forEach(key => {
             this.form.controls[key].markAsDirty();
             this.form.controls[key].updateValueAndValidity();
+            if (key == "registerExpenseDetail") {
+                let feeDetailCtrl: any = this.form.controls[key];
+                feeDetailCtrl.controls.forEach(fee => {
+                    Object.keys(fee.controls).forEach(key => {
+                        fee.controls[key].markAsDirty();
+                        fee.controls[key].updateValueAndValidity();
+                    });
+                });
+            }
         });
         if (this.form.invalid) return;
         this.appCtx.courseService.registerCourse(this.form.value).subscribe((res) => {

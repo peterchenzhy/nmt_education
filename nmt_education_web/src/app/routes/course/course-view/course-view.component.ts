@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnInit, TemplateRef, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { Location, DatePipe } from '@angular/common';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -13,6 +13,8 @@ import { CourseService } from '@shared/service/course.service';
 import { AppContextService } from '@shared/service/appcontext.service';
 import { ResponseData } from 'src/app/model/system.model';
 import { toNumber } from 'ng-zorro-antd';
+import { tap } from 'rxjs/operators';
+import { STComponent, STColumn } from '@delon/abc';
 
 @Component({
   selector: 'app-course-view',
@@ -35,6 +37,7 @@ export class CourseViewComponent implements OnInit {
     public msgSrv: NzMessageService,
     private modalSrv: NzModalService,
     public http: _HttpClient,
+    private cdr: ChangeDetectorRef,
     private _location: Location
   ) {
 
@@ -67,7 +70,7 @@ export class CourseViewComponent implements OnInit {
       courseClassification: [null, [Validators.required]],
       status: [COURSE_STATUS.PENDING, []],
       perTime: [0, [Validators.required]],
-      teacherId: [null, [Validators.required]],
+      teacherId: [null, []],
       campus: [null, [Validators.required]],
       classroom: [null, []],
       times: [0, []],
@@ -87,7 +90,9 @@ export class CourseViewComponent implements OnInit {
           this.course.year = new Date().setFullYear(year);
           this.course.editFlag = EDIT_FLAG.UPDATE;
           this.pageHeader = `课程信息编辑 [${this.course.code}]`;
-          this.teacherList.push(this.course.teacher);
+          if (this.course.teacher) {
+            this.teacherList.push(this.course.teacher);
+          }
           this.form.patchValue(this.course);
           this.course.courseScheduleList.forEach(i => {
             i.editFlag = EDIT_FLAG.NO_CHANGE;
@@ -398,5 +403,38 @@ export class CourseViewComponent implements OnInit {
     //   field.patchValue(i);
     //   this.payList.push(field);
     // });
+  }
+
+  onSelectedTabChanged(event: any) {
+    if (!this.studentLoaded && event.index == 1) {
+      this.getRegisteredStudents();
+    }
+  }
+  studentLoaded = false;
+  loading = false;
+  studentList = [];
+  @ViewChild('st', { static: true })
+  st: STComponent;
+  columns: STColumn[] = [
+    { title: '学生姓名', index: 'name' },
+    { title: '性别', index: 'sex', render: "sex" },
+    { title: '学校', index: 'school' },
+    { title: '年级', index: 'grade', render: "grade" },
+    { title: '电话', index: 'phone' }];
+  getRegisteredStudents() {
+    this.loading = true;
+    this.appCtx.courseService.getRegisteredStudents(this.course.id)
+      .pipe(
+        tap(() => (this.loading = false)),
+      )
+      .subscribe((res: any) => {
+        res = res || [];
+        // res.list.forEach(element => {
+        //   element.statusDetail = this.appCtx.globalService.COURSE_STATUS_LIST[element.courseStatus];
+        // });
+        this.studentList = res;
+        this.studentLoaded = true;
+        this.cdr.detectChanges();
+      });
   }
 }

@@ -45,4 +45,7 @@ export class CourseService {
     public getRegisterDetails(id: number): Observable<Object> {
         return this.httpClient.post(`nmt-education/course/register/detail/${id}`, id);
     }
+    public getRegisteredStudents(id: number): Observable<Object> {
+        return this.httpClient.get('nmt-education/course/register/student/' + id);
+    }
 }
