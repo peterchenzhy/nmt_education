@@ -51,7 +51,7 @@
     inner join course c on c.id= rs.course_id
     inner join course_registration cr on cr.id=rs.course_registration_id
     inner join student s on rs.student_id = s.id
-    inner join course_schedule cs on c.id = cs.course_id
+    inner join course_schedule cs on rs.course_schedule_id = cs.id
     where rs.status = 1
     <if test="dto.signIn != null">
       and rs.sign_in = #{dto.signIn}
