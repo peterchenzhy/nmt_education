@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.NumberUtil;
 import com.nmt.education.commmons.StatusEnum;
+import com.nmt.education.commmons.utils.DateUtil;
 import com.nmt.education.pojo.dto.req.CourseRegisterReqDto;
 import com.nmt.education.pojo.dto.req.RegisterExpenseDetailReqDto;
 import com.nmt.education.pojo.dto.req.RegisterSearchReqDto;
@@ -27,10 +28,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -241,6 +239,12 @@ public class CourseRegistrationService {
 
 
     public PageInfo<RegisterSummaryVo> registerSummary(RegisterSummarySearchDto dto, Integer logInUser) {
+        if (Objects.nonNull(dto.getEndDate())) {
+            dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
+        }
+        if (Objects.nonNull(dto.getRegisterEndDate())) {
+            dto.setRegisterEndDate(DateUtil.parseCloseDate(dto.getRegisterEndDate()));
+        }
         PageInfo<RegisterSummaryVo> pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> queryBySearchDto(dto));
         return pageInfo;
     }
@@ -327,7 +331,9 @@ public class CourseRegistrationService {
      */
     public List<StudentVo> registerStudent(Long courseId) {
         List<CourseRegistrationPo> registrationList = this.courseRegistrationPoMapper.queryByCourseId(courseId);
-        Assert.isTrue(!CollectionUtils.isEmpty(registrationList), "未找到课程相关报名信息，课程id:" + courseId);
+        if (CollectionUtils.isEmpty(registrationList)) {
+            return Collections.emptyList();
+        }
         List<StudentPo> studentPoList = studentService.queryByIds(registrationList.stream().map(e -> e.getStudentId()).collect(Collectors.toList()));
         List<StudentVo> voList = new ArrayList<>(studentPoList.size());
         studentPoList.stream().forEach(e -> voList.add(studentService.po2vo(e)));
