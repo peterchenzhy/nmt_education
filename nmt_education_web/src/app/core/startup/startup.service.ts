@@ -127,6 +127,16 @@ export class StartupService {
               }]
           },
           {
+            text: '报表',
+            group: true,
+            children: [
+              {
+                text: "单日课时报表",
+                link: '/report/dailysession',
+                icon: { type: 'icon', value: 'appstore' }
+              }]
+          },
+          {
             text: 'Quick Menu',
             icon: { type: 'icon', value: 'rocket' },
             shortcutRoot: true

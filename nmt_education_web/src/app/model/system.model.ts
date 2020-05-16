@@ -46,24 +46,24 @@ export interface CourseQueryParam {
 }
 
 export interface RegisterSummaryQueryParam {
-  courseSubject?: number;
-  courseType?: number;
-  grade?: number;
-  startDate?: Date;
-  endDate?: Date;
-  registerStartDate?: Date;
-  registerEndDate?: Date;
-  signIn?: number;
-  pageNo?: number;
-  pageSize?: number;
+    courseSubject?: number;
+    courseType?: number;
+    grade?: number;
+    startDate?: string;
+    endDate?: string;
+    registerStartDate?: string;
+    registerEndDate?: string;
+    signIn?: number;
+    pageNo?: number;
+    pageSize?: number;
 }
 export interface RegisterQueryParam {
-  studentId?: number;
-  courseSubject?: number;
-  courseType?: number;
-  grade?: number;
-  pageNo?: number;
-  pageSize?: number;
+    studentId?: number;
+    courseSubject?: number;
+    courseType?: number;
+    grade?: number;
+    pageNo?: number;
+    pageSize?: number;
 }
 
 export interface ResponseData {

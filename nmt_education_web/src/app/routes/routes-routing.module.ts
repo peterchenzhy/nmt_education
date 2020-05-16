@@ -26,6 +26,7 @@ const routes: Routes = [
       { path: 'course', loadChildren: () => import('./course/course.module').then(m => m.CourseModule) },
       { path: 'personnel', loadChildren: () => import('./personnel/personnel.module').then(m => m.PersonnelModule) },
       { path: 'order', loadChildren: () => import('./order/order.module').then(m => m.OrderModule) },
+      { path: 'report', loadChildren: () => import('./report/report.module').then(m => m.ReportModule) },
       //{ path: 'dashboard', component: DashboardComponent, data: { title: '仪表盘', titleI18n: 'dashboard' } },
       { path: 'exception', loadChildren: () => import('./exception/exception.module').then(m => m.ExceptionModule) },
       // 业务子模块

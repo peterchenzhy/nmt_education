@@ -1,0 +1,103 @@
+<page-header [title]="'课程管理'"></page-header>
+<nz-card [nzBordered]="false">
+  <form nz-form [nzLayout]="'inline'" (ngSubmit)="startQueryData()" class="search__form">
+    <div nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 24, xl: 48, xxl: 48 }">
+      <div nz-col nzMd="8" nzSm="24">
+        <div>
+          <nz-form-item>
+            <nz-form-label nzFor="startDate">开课日期</nz-form-label>
+            <nz-form-control>
+              <nz-range-picker [ngModel]="startDate" name="startDate" (ngModelChange)="onDateRangeChanged($event)">
+              </nz-range-picker>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <div nz-col nzMd="8" nzSm="24">
+        <nz-form-item>
+          <nz-form-label nzFor="courseSubject">课程科目</nz-form-label>
+          <nz-form-control nzErrorTip="请输入课程科目">
+            <nz-select [(ngModel)]="queryParam.courseSubject" name="courseSubject" [nzPlaceHolder]="'请选择课程科目'"
+              [nzShowSearch]="true">
+              <nz-option *ngFor="let i of courseSubjectList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzMd="8" nzSm="24">
+        <nz-form-item>
+          <nz-form-label nzFor="courseType">课程类型</nz-form-label>
+          <nz-form-control nzErrorTip="请输入课程类型">
+            <nz-select [(ngModel)]="queryParam.courseType" name="courseType" [nzPlaceHolder]="'请选择课程类型'"
+              [nzShowSearch]="true">
+              <nz-option *ngFor="let i of courseTypeList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzMd="24" nzSm="24"></div>
+      <div nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
+        <nz-form-item>
+          <nz-form-label>针对年级</nz-form-label>
+          <nz-form-control nzErrorTip="请选择年级">
+            <nz-select [(ngModel)]="queryParam.grade" name="grade" [nzPlaceHolder]="'请选择年级'" [nzShowSearch]="true">
+              <nz-option *ngFor="let i of gradeList" [nzLabel]="i.label" [nzValue]="i.value"> </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
+        <nz-form-item>
+          <nz-form-label>签到状态</nz-form-label>
+          <nz-form-control nzErrorTip="请选择签到状态">
+            <nz-select [(ngModel)]="queryParam.signIn" name="signIn" [nzPlaceHolder]="'请选择签到状态'" [nzShowSearch]="true">
+              <nz-option *ngFor="let i of signInList" [nzLabel]="i.label" [nzValue]="i.value"> </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
+        <div>
+          <nz-form-item>
+            <nz-form-label nzFor="registerDate">报名日期</nz-form-label>
+            <nz-form-control>
+              <nz-range-picker [ngModel]="registerDate" name="registerDate"
+                (ngModelChange)="onRegisterDateRangeChanged($event)">
+              </nz-range-picker>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <div nz-col [nzSpan]="24" class="text-right">
+        <button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
+        <button nz-button type="reset" (click)="reset()" class="mx-sm">重置</button>
+        <a (click)="expandForm = !expandForm">
+          {{ expandForm ? '收起' : '展开' }}
+          <i nz-icon [nzType]="expandForm ? 'up' : 'down'"></i>
+        </a>
+      </div>
+    </div>
+  </form>
+</nz-card>
+<nz-card [nzBordered]="false">
+  <sv-container size="large" title="课时统计">
+    <sv label="总共报名">{{total}}</sv>
+    <sv label="签到人数">{{signInCount}}</sv>
+    <sv label="未签到人数">{{unSignInCount}}</sv>
+  </sv-container>
+  <nz-divider></nz-divider>
+  <st #st [columns]="columns" [data]="data" [loading]="loading" (change)="stChange($event)">
+    <ng-template st-row="registrationStatus" let-i>
+      <nz-badge [nzStatus]="i.statusDetail.icon" [nzText]="i.statusDetail.label"></nz-badge>
+    </ng-template>
+    <ng-template st-row="registrationType" let-i>
+      {{appCtx.globalService.getOrderTypeLabel(i.registrationType)}}
+    </ng-template>
+    <ng-template st-row="feeStatus" let-i>
+      {{appCtx.globalService.getPayStatusLabel(i.feeStatus)}}
+    </ng-template>
+    <ng-template st-row="signIn" let-i>
+      {{appCtx.globalService.getSignInStatusLabel(i.signIn)}}
+    </ng-template>
+  </st>
+</nz-card>
