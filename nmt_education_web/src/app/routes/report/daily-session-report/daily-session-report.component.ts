@@ -91,7 +91,7 @@ export class DailySessionReportComponent implements OnInit {
       .subscribe((res: ResponseData) => {
         res.list = res.list || [];
         res.list.forEach(element => {
-          element.statusDetail = this.appCtx.globalService.ORDER_STATUS_LIST[element.registrationStatus];
+          element.statusDetail = this.appCtx.globalService.getOrderStatus(element.registrationStatus);
         });
         this.data = res.list;
         this.total = res.list.length;
