@@ -218,6 +218,7 @@ export class CourseViewComponent implements OnInit {
                 let day = this.sessionParam.startDate.getDay();
                 if (this.sessionParam.dayOfWeek.find(d => { return d.checked && d.value == day; })) {
                   session.value.perTime = this.sessionParam.perTime;
+                  session.value.teacherId = this.sessionParam.teacherId;
                   //session.value.teacherPrice = this.sessionParam.price;
                   let dateStr = this.sessionParam.startDate.toLocaleDateString();
                   let timeStr = this.sessionParam.startTime.toTimeString();
@@ -258,7 +259,7 @@ export class CourseViewComponent implements OnInit {
         let existsSessions = this.sessions.value.filter(s => { return s.editFlag != EDIT_FLAG.DELETE; });
         let courseStartDate = null;
         if (existsSessions.length > 0) {
-          courseStartDate = existsSessions.sort((a, b) => a.courseDatetime.getTime() - b.courseDatetime.getTime())[0].courseDatetime;
+          courseStartDate = existsSessions.sort((a, b) => new Date(a.courseDatetime).getTime() - new Date(b.courseDatetime).getTime())[0].courseDatetime;
         }
         this.form.patchValue({ times: existsSessions.length, startDate: courseStartDate });
       },
@@ -360,7 +361,7 @@ export class CourseViewComponent implements OnInit {
     this.course = { ...this.form.value };
     this.course.year = new Date(this.course.year).getFullYear();
     this.course.courseScheduleList.filter(s => { return s.editFlag != EDIT_FLAG.DELETE; })
-      .sort((a, b) => a.courseDatetime.getTime() - b.courseDatetime.getTime())
+      .sort((a, b) => new Date(a.courseDatetime).getTime() - new Date(b.courseDatetime).getTime())
       .forEach((d, i) => {
         d.courseTimes = i + 1;
       });

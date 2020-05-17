@@ -39,6 +39,10 @@
         </sv-container>
         <nz-divider></nz-divider>
         <sv-container size="large" title="报名信息">
+            <sv label="报名日期" nz-form-control nzErrorTip="请输入报名日期">
+                <nz-date-picker formControlName="startDate">
+                </nz-date-picker>
+            </sv>
             <sv label="报名类型" nz-form-control nzErrorTip="请选择报名类型">
                 <nz-select formControlName="registrationType" [nzPlaceHolder]="'请选择报名类型'" [nzShowSearch]="true">
                     <nz-option *ngFor="let i of registrationTypeList" [nzLabel]="i.label" [nzValue]="i.value">
@@ -86,14 +90,16 @@
                     </td>
                     <td>
                         <span nz-form-control>
-                            <nz-input-number style="width: 80px;" formControlName="perAmount" (ngModelChange)="onPayInfoChanged(i)">
+                            <nz-input-number style="width: 80px;" formControlName="perAmount"
+                                (ngModelChange)="onPayInfoChanged(i)">
                             </nz-input-number>
                         </span>
                     </td>
                     <td>
                         <span nz-form-control>
-                            <nz-input-number style="width: 80px;" [nzDisabled]="registerExpenseDetail.value[i].feeType == 1"
-                                formControlName="count" (ngModelChange)="onPayInfoChanged(i)">
+                            <nz-input-number style="width: 80px;"
+                                [nzDisabled]="registerExpenseDetail.value[i].feeType == 1" formControlName="count"
+                                (ngModelChange)="onPayInfoChanged(i)">
                             </nz-input-number>
                             <i *ngIf="registerExpenseDetail.value[i].feeType == 1" nz-icon nzType="edit"
                                 nzTheme="outline" title="选择报名课程" (click)="selectSessions(modalSessionSelection)"></i>
@@ -101,7 +107,8 @@
                     </td>
                     <td>
                         <span nz-form-control>
-                            <nz-input-number style="width: 80px;" formControlName="discount" (ngModelChange)="onPayInfoChanged(i,$event)">
+                            <nz-input-number style="width: 80px;" formControlName="discount"
+                                (ngModelChange)="onPayInfoChanged(i,$event)">
                             </nz-input-number>
                         </span>
                     </td>
@@ -116,8 +123,8 @@
                     <td>
                         <nz-form-item style="padding-bottom: 0px;margin-bottom: 0px;">
                             <nz-form-control nzErrorTip="">
-                                <nz-select style="width: 100px;" formControlName="payment" [nzPlaceHolder]="'请选支付方式'" [nzShowSearch]="true"
-                                    (ngModelChange)="onPayInfoChanged(i)">
+                                <nz-select style="width: 100px;" formControlName="payment" [nzPlaceHolder]="'请选支付方式'"
+                                    [nzShowSearch]="true" (ngModelChange)="onPayInfoChanged(i)">
                                     <nz-option *ngFor="let i of payMethodList" [nzLabel]="i.label" [nzValue]="i.value">
                                     </nz-option>
                                 </nz-select>
@@ -126,8 +133,8 @@
                     </td>
                     <td>
                         <span nz-form-control>
-                            <nz-select style="width: 100px;" formControlName="feeStatus" [nzPlaceHolder]="'请选支付状态'" [nzShowSearch]="true"
-                                (ngModelChange)="onPayInfoChanged(i)">
+                            <nz-select style="width: 100px;" formControlName="feeStatus" [nzPlaceHolder]="'请选支付状态'"
+                                [nzShowSearch]="true" (ngModelChange)="onPayInfoChanged(i)">
                                 <nz-option *ngFor="let i of payStatusList" [nzLabel]="i.label" [nzValue]="i.value">
                                 </nz-option>
                             </nz-select>
