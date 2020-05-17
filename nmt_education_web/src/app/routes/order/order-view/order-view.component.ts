@@ -148,7 +148,7 @@ export class OrderViewComponent implements OnInit {
                         field.patchValue(pay);
                         this.registerExpenseDetail.push(field);
                     });
-                    this.form.patchValue({ campus: this.order.course.campus });
+                    this.form.get("campus").setValue(this.order.course.campus);
                 }
             });
 
