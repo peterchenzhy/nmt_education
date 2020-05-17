@@ -70,34 +70,6 @@ public class CourseController {
     }
 
 
-//    @ApiOperation(value = "register", notes = "报名")
-//    @RequestMapping(value = "/register", method = RequestMethod.POST)
-//    public void register(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
-//            , @RequestBody @Validated CourseRegisterReqDto dto, BindingResult bindingResult) {
-//        courseRegistrationService.register(dto, logInUser);
-//    }
-//
-//    @ApiOperation(value = "register/search", notes = "报名记录查询")
-//    @RequestMapping(value = "/register/search", method = RequestMethod.POST)
-//    public PageInfo<CourseRegistrationPo> registerSearch(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
-//            , @RequestBody @Validated RegisterSearchReqDto dto) {
-//       return  courseRegistrationService.registerSearch(dto, logInUser);
-//    }
-//
-//
-//    @ApiOperation(value = "register/delete", notes = "退费")
-//    @RequestMapping(value = "/register/{id}", method = RequestMethod.DELETE)
-//    public void registerDel(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
-//            , @PathVariable Long id) {
-//        courseRegistrationService.registerDel(id, logInUser);
-//    }
-//
-//
-//    @ApiOperation(value = "register/summary", notes = "课程汇总--消耗查询")
-//    @RequestMapping(value = "/register/summary", method = RequestMethod.POST)
-//    public PageInfo<RegisterSummaryVo> registerSummary(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
-//                                                       @RequestBody @Validated RegisterSummarySearchDto dto, BindingResult bindingResult) {
-//        return courseRegistrationService.registerSummary(dto, logInUser);
-//    }
+
 
 }

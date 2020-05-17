@@ -2,6 +2,7 @@ package com.nmt.education.service.course;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.nmt.education.commmons.Consts;
 import com.nmt.education.commmons.Enums;
 import com.nmt.education.commmons.utils.SpringContextUtil;
 import com.nmt.education.listener.event.BaseEvent;
@@ -252,7 +253,7 @@ public class CourseService {
         BeanUtils.copyProperties(po, vo);
         vo.getCourseExpenseList().addAll(courseExpenseService.queryByCourseId(id));
         vo.getCourseScheduleList().addAll(courseScheduleService.queryByCourseId(id));
-        if (Objects.nonNull(po.getTeacherId())) {
+        if (Objects.nonNull(po.getTeacherId()) && Consts.DEFAULT_LONG != po.getTeacherId()) {
             vo.setTeacher(teacherService.detail(po.getTeacherId()));
         }
         return vo;

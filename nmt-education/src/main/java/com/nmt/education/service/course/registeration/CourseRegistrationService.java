@@ -4,17 +4,16 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.NumberUtil;
 import com.nmt.education.commmons.StatusEnum;
+import com.nmt.education.commmons.utils.DateUtil;
 import com.nmt.education.pojo.dto.req.CourseRegisterReqDto;
 import com.nmt.education.pojo.dto.req.RegisterExpenseDetailReqDto;
 import com.nmt.education.pojo.dto.req.RegisterSearchReqDto;
 import com.nmt.education.pojo.dto.req.RegisterSummarySearchDto;
-import com.nmt.education.pojo.po.CoursePo;
-import com.nmt.education.pojo.po.CourseRegistrationPo;
-import com.nmt.education.pojo.po.RegisterationSummaryPo;
-import com.nmt.education.pojo.po.RegistrationExpenseDetailPo;
+import com.nmt.education.pojo.po.*;
 import com.nmt.education.pojo.vo.CourseRegistrationListVo;
 import com.nmt.education.pojo.vo.CourseRegistrationVo;
 import com.nmt.education.pojo.vo.RegisterSummaryVo;
+import com.nmt.education.pojo.vo.StudentVo;
 import com.nmt.education.service.CodeService;
 import com.nmt.education.service.course.CourseService;
 import com.nmt.education.service.course.registeration.summary.RegisterationSummaryService;
@@ -29,10 +28,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -243,12 +239,18 @@ public class CourseRegistrationService {
 
 
     public PageInfo<RegisterSummaryVo> registerSummary(RegisterSummarySearchDto dto, Integer logInUser) {
+        if (Objects.nonNull(dto.getEndDate())) {
+            dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
+        }
+        if (Objects.nonNull(dto.getRegisterEndDate())) {
+            dto.setRegisterEndDate(DateUtil.parseCloseDate(dto.getRegisterEndDate()));
+        }
         PageInfo<RegisterSummaryVo> pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> queryBySearchDto(dto));
         return pageInfo;
     }
 
     /**
-     * 报名记录详情
+     * 报名记录查询 ，课时消耗查询
      *
      * @param dto
      * @return java.util.List<com.nmt.education.pojo.vo.RegisterSummaryVo>
@@ -313,8 +315,28 @@ public class CourseRegistrationService {
         vo.setStudent(studentService.detail(vo.getStudentId()));
         List<RegisterationSummaryPo> registerationSummaryPoList = registerationSummaryService.queryByRegisterId(id);
         vo.setCourseScheduleList(courseScheduleService.queryByIds(registerationSummaryPoList.stream().map(e -> e.getCourseScheduleId()).collect(Collectors.toList())));
-        vo.setRegistrationExpenseDetail(registrationExpenseDetailService.queryRegisterId(id));
-        return vo ;
+        vo.setRegisterExpenseDetail(registrationExpenseDetailService.queryRegisterId(id));
+        return vo;
     }
 
+    /**
+     * 根据课程id 查询学生报名情况
+     *
+     * @param courseId 课程id
+     * @return java.util.List<com.nmt.education.pojo.vo.StudentVo>
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/5/14 23:36
+     */
+    public List<StudentVo> registerStudent(Long courseId) {
+        List<CourseRegistrationPo> registrationList = this.courseRegistrationPoMapper.queryByCourseId(courseId);
+        if (CollectionUtils.isEmpty(registrationList)) {
+            return Collections.emptyList();
+        }
+        List<StudentPo> studentPoList = studentService.queryByIds(registrationList.stream().map(e -> e.getStudentId()).collect(Collectors.toList()));
+        List<StudentVo> voList = new ArrayList<>(studentPoList.size());
+        studentPoList.stream().forEach(e -> voList.add(studentService.po2vo(e)));
+        return voList;
+    }
 }

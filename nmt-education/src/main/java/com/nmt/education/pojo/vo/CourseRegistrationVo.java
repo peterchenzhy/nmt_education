@@ -32,5 +32,5 @@ public class CourseRegistrationVo extends CourseRegistrationPo {
     private List<CourseSchedulePo> courseScheduleList = Collections.emptyList();
 
     @ApiModelProperty(value = "缴费信息")
-    private List<RegistrationExpenseDetailPo> registrationExpenseDetail =Collections.emptyList();
+    private List<RegistrationExpenseDetailPo> registerExpenseDetail =Collections.emptyList();
 }

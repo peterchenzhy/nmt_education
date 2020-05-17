@@ -292,6 +292,24 @@ public class DateUtil {
 	 * @modifier 戴志强
 	 * @since 2018-11-14 10:45:58
 	 */
+	public static Date parseCloseDate(Date date) {
+		if(Objects.isNull(date)){
+			return null ;
+		}
+		return new DateTime(date).withTimeAtStartOfDay()
+				.plusDays(1).plusMillis(-1).toDate();
+	}
+
+	/**
+	 * 解析右关闭时间，如果传递事件为2018-09-01,解析为2018-09-01 23:59:59
+	 *
+	 * @param dateString
+	 *            日期时间
+	 * @return 日期
+	 * @author 戴志强
+	 * @modifier 戴志强
+	 * @since 2018-11-14 10:45:58
+	 */
 	public static Date parseCloseDate2(String dateString) {
 		if (!org.springframework.util.StringUtils.hasText(dateString) || "null".equals(dateString)) {
 			return null;

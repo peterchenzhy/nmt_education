@@ -131,7 +131,7 @@ export class StartupService {
             group: true,
             children: [
               {
-                text: "单日课时报表",
+                text: "科目统计",
                 link: '/report/dailysession',
                 icon: { type: 'icon', value: 'appstore' }
               }]

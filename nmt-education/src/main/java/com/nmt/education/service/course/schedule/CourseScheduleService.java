@@ -1,5 +1,6 @@
 package com.nmt.education.service.course.schedule;
 
+import com.nmt.education.commmons.Consts;
 import com.nmt.education.commmons.Enums;
 import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.pojo.dto.req.CourseScheduleReqDto;
@@ -145,6 +146,11 @@ public class CourseScheduleService {
         if (CollectionUtils.isEmpty(list)) {
             return;
         }
+        list.stream().forEach(e -> {
+            if (Objects.isNull(e.getTeacherId())) {
+                e.setTeacherId(Consts.DEFAULT_LONG);
+            }
+        });
         courseSchedulePoMapper.batchInsert(list);
     }
 
@@ -186,7 +192,7 @@ public class CourseScheduleService {
      * @since 2020/5/11 22:54
      */
     public List<CourseSchedulePo> queryByIds(List<Long> ids) {
-        if(CollectionUtils.isEmpty(ids)){
+        if (CollectionUtils.isEmpty(ids)) {
             return Collections.emptyList();
         }
         return this.courseSchedulePoMapper.queryByIds(ids);

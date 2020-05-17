@@ -40,6 +40,17 @@
     where status = 1
     and name like concat(#{name},'%')
   </select>
+  <select id="queryByIds" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select
+    <include refid="Base_Column_List" />
+    from student
+    where status = 1
+    and id in
+    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
+  </select>
 
   <select id="query" resultMap="BaseResultMap">
     <!--@mbg.generated-->

@@ -1,11 +1,11 @@
-<page-header [title]="'课程管理'"></page-header>
+<page-header [title]="'科目统计'"></page-header>
 <nz-card [nzBordered]="false">
   <form nz-form [nzLayout]="'inline'" (ngSubmit)="startQueryData()" class="search__form">
     <div nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 24, xl: 48, xxl: 48 }">
       <div nz-col nzMd="8" nzSm="24">
         <div>
           <nz-form-item>
-            <nz-form-label nzFor="startDate">开课日期</nz-form-label>
+            <nz-form-label nzFor="startDate">上课日期</nz-form-label>
             <nz-form-control>
               <nz-range-picker [ngModel]="startDate" name="startDate" (ngModelChange)="onDateRangeChanged($event)">
               </nz-range-picker>
@@ -81,9 +81,9 @@
 </nz-card>
 <nz-card [nzBordered]="false">
   <sv-container size="large" title="课时统计">
-    <sv label="总共报名">{{total}}</sv>
-    <sv label="签到人数">{{signInCount}}</sv>
-    <sv label="未签到人数">{{unSignInCount}}</sv>
+    <sv label="总科目">{{total}}</sv>
+    <sv label="消耗科目">{{signInCount}}</sv>
+    <sv label="未消耗科目">{{unSignInCount}}</sv>
   </sv-container>
   <nz-divider></nz-divider>
   <st #st [columns]="columns" [data]="data" [loading]="loading" (change)="stChange($event)">
