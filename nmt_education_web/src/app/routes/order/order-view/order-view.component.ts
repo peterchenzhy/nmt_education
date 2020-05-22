@@ -61,7 +61,7 @@ export class OrderViewComponent implements OnInit {
             id: [null, []],
             registrationStatus: [ORDER_STATUS.NORMAL, [Validators.required]],
             registrationType: [ORDER_TYPE.NEW, [Validators.required]],
-            courseScheduleIds: [, []],
+            courseScheduleIds: [[], []],
             feeStatus: [PAY_STATUS.PAIED, [Validators.required]],
             campus: [null, [Validators.required]],
             remark: [null, []],
