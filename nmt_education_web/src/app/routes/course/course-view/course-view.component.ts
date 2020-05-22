@@ -52,6 +52,7 @@ export class CourseViewComponent implements OnInit {
   gradeList = this.appCtx.globalService.GRADE_LIST;
   campusList = this.appCtx.globalService.CAMPUS_LIST;
   teacherList: Teacher[] = [];
+  selectedTeacherList: Teacher[] = [];
   classroomList: any[] = [{ value: '101', label: '101' }, { value: '202', label: '202' }, { value: '303', label: '303' }];
 
   ngOnInit() {
@@ -92,6 +93,7 @@ export class CourseViewComponent implements OnInit {
           this.pageHeader = `课程信息编辑 [${this.course.code}]`;
           if (this.course.teacher) {
             this.teacherList.push(this.course.teacher);
+            this.selectedTeacherList.push(this.course.teacher);
           }
           this.form.patchValue(this.course);
           this.course.courseScheduleList.forEach(i => {
@@ -199,7 +201,6 @@ export class CourseViewComponent implements OnInit {
       nzWidth: 350,
       nzOnOk: () => {
         let currentDate = new Date();
-        let delIndex = [];
         for (let i = 0; i < this.sessions.length;) {
           let session = this.sessions.at(i);
           if (session.value.editFlag != EDIT_FLAG.DELETE && new Date(session.value.courseDatetime) > currentDate) {
@@ -374,7 +375,7 @@ export class CourseViewComponent implements OnInit {
     this._location.back();
   }
   getTeacherName(id: number) {
-    let teacher = this.teacherList.find(t => { return t.id == id; });
+    let teacher = this.selectedTeacherList.find(t => { return t.id == id; });
     return teacher ? teacher.name : "";
   }
 
@@ -388,7 +389,14 @@ export class CourseViewComponent implements OnInit {
     });
   }
 
+  coursePerTimeChanged() {
+    this.updateSessionByCourseProperties();
+  }
+
   teacherSelected(value: number) {
+    let selectedTeacher = this.teacherList.find(c => { return c.id == value; });
+    this.selectedTeacherList.push(selectedTeacher);
+    this.updateSessionByCourseProperties();
     //this.course.teacherId = this.teacherList.find(c => { return c.id == value; });
     // const payList: Payment[] = [
     //   {
@@ -404,6 +412,23 @@ export class CourseViewComponent implements OnInit {
     //   field.patchValue(i);
     //   this.payList.push(field);
     // });
+  }
+
+  updateSessionByCourseProperties(): void {
+    let currentDate = new Date();
+    for (let i = 0; i < this.sessions.length; i++) {
+      let session = this.sessions.at(i);
+      if (session.value.editFlag == EDIT_FLAG.DELETE || new Date(session.value.courseDatetime) < currentDate) {
+        return;
+      }
+      session.value.perTime = this.form.value.perTime;
+      session.value.teacherId = this.form.value.teacherId;
+      if (session.value.editFlag == EDIT_FLAG.NO_CHANGE) {
+        session.value.editFlag = EDIT_FLAG.UPDATE;
+      }
+      session.patchValue(session.value, { emitEvent: true });
+      session.markAsDirty();
+    }
   }
 
   onSelectedTabChanged(event: any) {
@@ -423,6 +448,9 @@ export class CourseViewComponent implements OnInit {
     { title: '年级', index: 'grade', render: "grade" },
     { title: '电话', index: 'phone' }];
   getRegisteredStudents() {
+    if (!this.course.id) {
+      return;
+    }
     this.loading = true;
     this.appCtx.courseService.getRegisteredStudents(this.course.id)
       .pipe(
