@@ -30,7 +30,7 @@ interface CourseSchedulePoMapper {
 
     void invalidByCourseId(@Param("courseId") Long courseId, @Param("operator") Integer operator);
 
-    void changeTeacher(@Param("newTeacherId") Long newTeacherId);
+    void changeTeacher(@Param("courseId") Long courseId, @Param("newTeacherId") Long newTeacherId);
 
     List<CourseSchedulePo> queryByIds(@Param("ids") List<Long> ids);
 }

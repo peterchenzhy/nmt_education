@@ -178,7 +178,7 @@ public class CourseScheduleService {
     public void changeTeacher(long courseId, long newTeacherId) {
         CoursePo coursePo = courseService.selectByPrimaryKey(courseId);
         Assert.notNull(coursePo, "课程不存在，id：" + courseId);
-        this.courseSchedulePoMapper.changeTeacher(newTeacherId);
+        this.courseSchedulePoMapper.changeTeacher(courseId,newTeacherId);
     }
 
     /**
