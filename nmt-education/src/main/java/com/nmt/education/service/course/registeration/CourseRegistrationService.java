@@ -113,7 +113,7 @@ public class CourseRegistrationService {
     private void registerCheck(CourseRegisterReqDto dto) {
         Assert.notNull(studentService.selectByPrimaryKey(dto.getStudentId()), "学生信息不存在！id:" + dto.getStudentId());
         Assert.notNull(courseService.selectByPrimaryKey(dto.getCourseId()), "学生信息不存在！id:" + dto.getCourseId());
-        Assert.notEmpty(dto.getCourseScheduleIds(), "报名时间必填！id:" + dto.getCourseId());
+        Assert.notEmpty(dto.getCourseScheduleIds(), "报名课时必填！id:" + dto.getCourseId());
         Assert.isNull(queryByCourseStudent(dto.getCourseId(), dto.getStudentId()), "报名记录已经存在！id:" + dto.getCourseId());
     }
 
