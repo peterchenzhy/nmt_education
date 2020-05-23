@@ -61,7 +61,7 @@ export class OrderViewComponent implements OnInit {
             id: [null, []],
             registrationStatus: [ORDER_STATUS.NORMAL, [Validators.required]],
             registrationType: [ORDER_TYPE.NEW, [Validators.required]],
-            courseScheduleIds: [, []],
+            courseScheduleIds: [[], []],
             feeStatus: [PAY_STATUS.PAIED, [Validators.required]],
             campus: [null, [Validators.required]],
             remark: [null, []],
@@ -148,7 +148,7 @@ export class OrderViewComponent implements OnInit {
                         field.patchValue(pay);
                         this.registerExpenseDetail.push(field);
                     });
-                    this.form.patchValue({ campus: this.order.course.campus });
+                    this.form.get("campus").setValue(this.order.course.campus);
                 }
             });
 

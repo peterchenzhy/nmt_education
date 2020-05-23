@@ -104,7 +104,7 @@ export class GlobalService {
 
     public loadSystemEnums() {
         this.httpService.loadSystemEnums()
-            .subscribe((res: SysEnums) => {debugger;
+            .subscribe((res: SysEnums) => {
                 this.SEASON_LIST = res.season;
                 this.COURSE_TYPE_LIST = res.courseType;
                 this.COURSE_SUBJECT_LIST = res.courseSubject;

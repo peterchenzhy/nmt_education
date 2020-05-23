@@ -58,7 +58,7 @@ export class TeacherListComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        //this.getData();
+        this.getData();
     }
     startQueryData() {
         this.queryParam.pageNo = 1;
