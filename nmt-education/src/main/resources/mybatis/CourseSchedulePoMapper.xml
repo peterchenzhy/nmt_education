@@ -37,6 +37,7 @@
     from course_schedule
     where status= 1
     and course_id = #{id}
+    order by id
   </select>
   <select id="queryByIds"  resultMap="BaseResultMap">
   <!--@mbg.generated-->

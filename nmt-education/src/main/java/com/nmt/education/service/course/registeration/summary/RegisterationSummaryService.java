@@ -6,12 +6,16 @@ import com.nmt.education.pojo.dto.req.CourseRegisterReqDto;
 import com.nmt.education.pojo.dto.req.RegisterSummarySearchDto;
 import com.nmt.education.pojo.po.CourseRegistrationPo;
 import com.nmt.education.pojo.po.RegisterationSummaryPo;
+import com.nmt.education.pojo.vo.CourseSignInItem;
 import com.nmt.education.pojo.vo.RegisterSummaryVo;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class RegisterationSummaryService {
@@ -82,7 +86,7 @@ public class RegisterationSummaryService {
      * 根据报名id 查询报名汇总信息
      *
      * @param id
-     * @return   java.util.List<com.nmt.education.pojo.po.RegisterationSummaryPo>
+     * @return java.util.List<com.nmt.education.pojo.po.RegisterationSummaryPo>
      * @author PeterChen
      * @modifier PeterChen
      * @version v1
@@ -90,5 +94,37 @@ public class RegisterationSummaryService {
      */
     public List<RegisterationSummaryPo> queryByRegisterId(Long id) {
         return this.registerationSummaryPoMapper.queryByRegisterId(id);
+    }
+
+    /**
+     * 根据 课程日期id 查询报名记录
+     *
+     * @param courseScheduleId
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/5/28 22:45
+     */
+    public List<CourseSignInItem> queryByCourseScheduleId(Long courseScheduleId) {
+        if (Objects.isNull(courseScheduleId)) {
+            return Collections.emptyList();
+        }
+        return this.registerationSummaryPoMapper.queryByCourseScheduleId(courseScheduleId);
+    }
+
+    /**
+     * 批量签到
+     *
+     * @param list
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/5/28 23:09
+     */
+    public void signIn(List<CourseSignInItem> list,Integer operator) {
+        if(CollectionUtils.isEmpty(list)){
+            return ;
+        }
+        this.registerationSummaryPoMapper.signIn(list,operator);
     }
 }

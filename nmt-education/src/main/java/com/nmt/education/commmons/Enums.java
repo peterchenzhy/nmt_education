@@ -141,7 +141,9 @@ public interface Enums {
     enum signInType implements IEnum {
         未签到(0, "未签到", null),
         已签到(1, "已签到", null),
-        请假(2, "请假", null);
+        请假(2, "请假", null),
+//        锁定(3, "锁定", null),
+        ;
 
         @Getter
         private Integer code;
