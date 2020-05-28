@@ -1,6 +1,7 @@
 package com.nmt.education.controller;
 
 import com.nmt.education.pojo.dto.req.CourseScheduleReqDto;
+import com.nmt.education.pojo.po.CourseSchedulePo;
 import com.nmt.education.pojo.vo.CourseSignInItem;
 import com.nmt.education.pojo.vo.CourseSignInVo;
 import com.nmt.education.service.course.schedule.CourseScheduleService;
@@ -38,22 +39,19 @@ public class CourseScheduleController {
         return courseScheduleService.signInDefault(courseId, logInUser);
     }
 
-
-
     @ApiOperation(value = "signin/select", notes = "课程签到页面--选择上课时间下拉列表")
     @RequestMapping(value = "/signIn/select/{courseId}", method = RequestMethod.GET)
-    public List signInSelect(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
-                          @PathVariable Long courseId) {
+    public  List<CourseSchedulePo> signInSelect(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
+                                                @PathVariable Long courseId) {
         return courseScheduleService.signInSelect(courseId, logInUser);
     }
 
     @ApiOperation(value = "signin/page", notes = "签到列表数据")
-    @RequestMapping(value = "/signIn/page/{courseScheduleId}", method = RequestMethod.GET)
-    public List signInList(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
+    @RequestMapping(value = "/signIn/list/{courseScheduleId}", method = RequestMethod.GET)
+    public List<CourseSignInItem> signInList(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
                         @PathVariable Long courseScheduleId) {
         return courseScheduleService.signInList(courseScheduleId, logInUser);
     }
-
 
     @ApiOperation(value = "signIn", notes = "签到")
     @RequestMapping(value = "/signIn", method = RequestMethod.POST)

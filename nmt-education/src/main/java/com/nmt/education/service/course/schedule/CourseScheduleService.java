@@ -242,7 +242,7 @@ public class CourseScheduleService {
      * @version v1
      * @since 2020/5/28 22:18
      */
-    public List signInSelect(Long id, Integer logInUser) {
+    public  List<CourseSchedulePo> signInSelect(Long id, Integer logInUser) {
         CourseSchedulePo po = selectByPrimaryKey(id);
         Assert.notNull(po, "课表信息为空，id：" + id);
         return this.courseSchedulePoMapper.queryByCourseId(id);
@@ -258,7 +258,7 @@ public class CourseScheduleService {
      * @version v1
      * @since 2020/5/28 22:18
      */
-    public List signInList(Long courseScheduleId, Integer logInUser) {
+    public List<CourseSignInItem> signInList(Long courseScheduleId, Integer logInUser) {
         return registerationSummaryService.queryByCourseScheduleId(courseScheduleId);
     }
 
@@ -279,7 +279,8 @@ public class CourseScheduleService {
         Assert.notNull(coursePo, "课程不存在，id：" + courseId);
         vo.setCourseName(coursePo.getName());
         List<CourseSchedulePo> courseSchedulePoList = courseSchedulePoMapper.queryByCourseId(courseId);
-        vo.setCourseSchedule(courseSchedulePoList.stream().filter(e -> Enums.signInType.未签到.getCode().equals(e.getSignIn()))
+        vo.setCourseSchedule(courseSchedulePoList.stream().
+                filter(e -> Enums.signInType.已签到.getCode().equals(e.getSignIn())).sorted(Comparator.comparing(CourseSchedulePo::getId).reversed())
                 .findFirst().orElse(null));
         vo.setSignInVos(Objects.nonNull(vo.getCourseSchedule()) ? signInList(vo.getCourseSchedule().getId(), Consts.SYSTEM_USER) : Collections.EMPTY_LIST);
         return vo;
