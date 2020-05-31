@@ -49,4 +49,9 @@ class CourseRegistrationServiceTest extends BaseTest {
     void registerDetail() {
         System.out.println(registrationService.registerDetail(1L,1));
     }
+
+    @Test
+    void registerSummaryByRegisterId1() {
+        System.out.println(registrationService.registerSummaryByRegisterId(2L,1,1,5));
+    }
 }

@@ -1,5 +1,7 @@
 package com.nmt.education.service.course.registeration.summary;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.Enums;
 import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.pojo.dto.req.CourseRegisterReqDto;
@@ -97,6 +99,20 @@ public class RegisterationSummaryService {
     }
 
     /**
+     * 根据报名id 查询报名汇总信息page
+     *
+     * @param id
+     * @return java.util.List<com.nmt.education.pojo.po.RegisterationSummaryPo>
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/5/11 22:50
+     */
+    public PageInfo<RegisterationSummaryPo> queryPageByRegisterId(Long id, Integer pageNo, Integer pageSize) {
+        return PageHelper.startPage(pageNo,pageSize).doSelectPageInfo(()->this.registerationSummaryPoMapper.queryByRegisterId(id));
+    }
+
+    /**
      * 根据 课程日期id 查询报名记录
      *
      * @param courseScheduleId
@@ -121,10 +137,10 @@ public class RegisterationSummaryService {
      * @version v1
      * @since 2020/5/28 23:09
      */
-    public void signIn(List<CourseSignInItem> list,Integer operator) {
-        if(CollectionUtils.isEmpty(list)){
-            return ;
+    public void signIn(List<CourseSignInItem> list, Integer operator) {
+        if (CollectionUtils.isEmpty(list)) {
+            return;
         }
-        this.registerationSummaryPoMapper.signIn(list,operator);
+        this.registerationSummaryPoMapper.signIn(list, operator);
     }
 }

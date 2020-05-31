@@ -339,4 +339,21 @@ public class CourseRegistrationService {
         studentPoList.stream().forEach(e -> voList.add(studentService.po2vo(e)));
         return voList;
     }
+
+    /**
+     * 根据报名id 查询summary记录
+     *
+     * @param registerId
+     * @param pageNo
+     * @return com.github.pagehelper.PageInfo<com.nmt.education.pojo.vo.RegisterSummaryVo>
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/5/30 11:59
+     */
+    public PageInfo<RegisterationSummaryPo> registerSummaryByRegisterId(Long registerId, Integer loginUser, Integer pageNo, Integer pageSize) {
+
+        return registerationSummaryService.queryPageByRegisterId(registerId,pageNo,pageSize);
+
+    }
 }

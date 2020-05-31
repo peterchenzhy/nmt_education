@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.nmt.education.pojo.dto.req.CourseRegisterReqDto;
 import com.nmt.education.pojo.dto.req.RegisterSearchReqDto;
 import com.nmt.education.pojo.dto.req.RegisterSummarySearchDto;
+import com.nmt.education.pojo.po.RegisterationSummaryPo;
 import com.nmt.education.pojo.vo.CourseRegistrationListVo;
 import com.nmt.education.pojo.vo.CourseRegistrationVo;
 import com.nmt.education.pojo.vo.RegisterSummaryVo;
@@ -73,6 +74,16 @@ public class CourseRegisterController {
     public PageInfo<RegisterSummaryVo> registerSummary(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
                                                        @RequestBody @Validated RegisterSummarySearchDto dto, BindingResult bindingResult) {
         return courseRegistrationService.registerSummary(dto, logInUser);
+    }
+
+    @ApiOperation(value = "register/summary/{registerId}", notes = "根据报名数据id查询")
+    @RequestMapping(value = "/register/summary/{registerId}", method = RequestMethod.GET)
+    public PageInfo<RegisterationSummaryPo> registerSummaryByRegisterId(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser,
+                                                                        @RequestHeader(ROLE_ID_HEAD) String roleId,
+                                                                        @PathVariable Long registerId,
+                                                                        @RequestParam(value = "pageNo", required = false, defaultValue = "1") Integer pageNo,
+                                                                        @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+        return courseRegistrationService.registerSummaryByRegisterId(registerId, logInUser,pageNo,pageSize);
     }
 
 
