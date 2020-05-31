@@ -15,6 +15,11 @@ public class UserVo {
     private Integer logInUser;
     @ApiModelProperty(value = "roleId")
     private String roleId;
+    @ApiModelProperty(value = "token")
+    private String token;
+
+
+
 
     public UserVo(UserPo userPo) {
         this.name = userPo.getName();
