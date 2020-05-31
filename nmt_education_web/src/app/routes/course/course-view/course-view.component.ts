@@ -3,7 +3,7 @@ import { Location, DatePipe } from '@angular/common';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { _HttpClient } from '@delon/theme';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { COURSE_STATUS, EDIT_FLAG } from '@shared/constant/system.constant';
 import { Course, CourseSession } from 'src/app/model/course.model';
@@ -38,6 +38,7 @@ export class CourseViewComponent implements OnInit {
     private modalSrv: NzModalService,
     public http: _HttpClient,
     private cdr: ChangeDetectorRef,
+    private router: Router,
     private _location: Location
   ) {
 
@@ -307,6 +308,11 @@ export class CourseViewComponent implements OnInit {
     this.editSessionIndex = -1;
   }
 
+  signIn(index: number) {
+    let sessionObj = this.sessions.at(index) as FormGroup;
+    this.router.navigate([`/course/signsession/${sessionObj.value.courseId}`], { queryParams: { sessionId: sessionObj.value.id } })
+  }
+
   addFee() {
     this.feeList.push(this.createFee());
     this.editFee(this.feeList.length - 1);
@@ -394,6 +400,9 @@ export class CourseViewComponent implements OnInit {
   }
 
   teacherSelected(value: number) {
+    if (value < 0) {
+      return;
+    }
     let selectedTeacher = this.teacherList.find(c => { return c.id == value; });
     this.selectedTeacherList.push(selectedTeacher);
     this.updateSessionByCourseProperties();
