@@ -25,7 +25,7 @@ export class CourseSessionSignComponent implements OnInit {
   course: Course = { editFlag: EDIT_FLAG.NO_CHANGE, courseExpenseList: [], courseScheduleList: [] };
   selectedSession: CourseSession = {};
   form: FormGroup;
-
+  loading: boolean = true;
   constructor(
     private appCtx: AppContextService,
     private fb: FormBuilder,
@@ -78,12 +78,7 @@ export class CourseSessionSignComponent implements OnInit {
             }
           }
 
-          [{ sessionId: 1, studentId: 1, studentName: "test", signIn: SIGNIN.UNSIGNIN, editFlag: EDIT_FLAG.NO_CHANGE }].forEach(i => {
-            i.editFlag = EDIT_FLAG.NO_CHANGE;
-            const field = this.createSessionSign();
-            field.patchValue(i);
-            this.sessionSignStatusList.push(field);
-          });
+          this.loadSessionSignStudentList(this.selectedSession.id);
 
         });
 
@@ -91,12 +86,37 @@ export class CourseSessionSignComponent implements OnInit {
 
   }
 
+  loadSessionSignStudentList(sessionId: number): void {
+    if (!sessionId || sessionId <= 0) {
+      this.loading = false;
+      return;
+    }
+    this.loading = true;
+    this.appCtx.courseService.getSessionStudents(sessionId)
+      .pipe(
+        tap(() => (this.loading = false)),
+      ).subscribe((signStudent: any) => {
+        this.sessionSignStatusList.clear();
+        if (!signStudent) {
+          signStudent = [];
+        }
+        signStudent.forEach(i => {
+          i.editFlag = EDIT_FLAG.NO_CHANGE;
+          const field = this.createSessionSign();
+          field.patchValue(i);
+          this.sessionSignStatusList.push(field);
+        });
+      });
+  }
+
   createSessionSign(): FormGroup {
     return this.fb.group({
-      sessionId: [0, []],
+      courseId: [0, []],
+      courseScheduleId: [0, []],
+      registerSummaryId: [0, []],
       studentId: [0, []],
       studentName: ["", []],
-      signIn: [0, []],
+      signIn: [SIGNIN.UNSIGNIN, []],
       editFlag: [EDIT_FLAG.NO_CHANGE, []]
     });
   }
@@ -107,22 +127,26 @@ export class CourseSessionSignComponent implements OnInit {
   }
   //#endregion
 
+  onCourseSessionChanged(session: CourseSession): void {
+    this.selectedSession = session;
+    this.loadSessionSignStudentList(this.selectedSession.id);
+  }
+
+  onSignInfoChanged(index: number): void {
+    let signObj = this.sessionSignStatusList.at(index) as FormGroup;
+    signObj.get("editFlag").setValue(EDIT_FLAG.UPDATE);
+  }
+
   _submitForm() {
-    Object.keys(this.form.controls).forEach(key => {
-      this.form.controls[key].markAsDirty();
-      this.form.controls[key].updateValueAndValidity();
-    });
-    if (this.form.invalid) return;
-    this.course = { ...this.form.value };
-    this.course.year = new Date(this.course.year).getFullYear();
-    this.course.courseScheduleList.filter(s => { return s.editFlag != EDIT_FLAG.DELETE; })
-      .sort((a, b) => new Date(a.courseDatetime).getTime() - new Date(b.courseDatetime).getTime())
-      .forEach((d, i) => {
-        d.courseTimes = i + 1;
+    this.loading = true;
+    let signInStudentList = this.form.value.sessionSignStatusList;
+    signInStudentList = signInStudentList.filter(s => { return s.editFlag == EDIT_FLAG.UPDATE; });
+    this.appCtx.courseService.sessionStudentsSignIn(signInStudentList)
+      .pipe(
+        tap(() => (this.loading = false)),
+      ).subscribe((res) => {
+        //this.goBack();
       });
-    this.appCtx.courseService.saveCourse(this.course).subscribe((res) => {
-      this.goBack();
-    });
   }
 
   goBack() {
