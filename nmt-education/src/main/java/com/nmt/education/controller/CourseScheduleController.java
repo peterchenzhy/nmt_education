@@ -32,12 +32,12 @@ public class CourseScheduleController {
     @Autowired
     private CourseScheduleService courseScheduleService;
 
-    @ApiOperation(value = "signin/default", notes = "课程签到页面--默认页面")
-    @RequestMapping(value = "/signIn/default/{courseId}", method = RequestMethod.GET)
-    public CourseSignInVo signInDefault(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
-                                        @PathVariable Long courseId) {
-        return courseScheduleService.signInDefault(courseId, logInUser);
-    }
+//    @ApiOperation(value = "signin/default", notes = "课程签到页面--默认页面")
+//    @RequestMapping(value = "/signIn/default/{courseId}", method = RequestMethod.GET)
+//    public CourseSignInVo signInDefault(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
+//                                        @PathVariable Long courseId) {
+//        return courseScheduleService.signInDefault(courseId, logInUser);
+//    }
 
     @ApiOperation(value = "signin/select", notes = "课程签到页面--选择上课时间下拉列表")
     @RequestMapping(value = "/signIn/select/{courseId}", method = RequestMethod.GET)

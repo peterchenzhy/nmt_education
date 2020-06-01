@@ -10,6 +10,7 @@ import com.nmt.education.listener.event.TeacherChangeEvent;
 import com.nmt.education.pojo.dto.req.CourseReqDto;
 import com.nmt.education.pojo.dto.req.CourseSearchDto;
 import com.nmt.education.pojo.po.CoursePo;
+import com.nmt.education.pojo.po.CourseSchedulePo;
 import com.nmt.education.pojo.vo.CourseDetailVo;
 import com.nmt.education.service.CodeService;
 import com.nmt.education.service.course.expense.CourseExpenseService;
@@ -24,10 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -256,6 +254,10 @@ public class CourseService {
         if (Objects.nonNull(po.getTeacherId()) && Consts.DEFAULT_LONG != po.getTeacherId()) {
             vo.setTeacher(teacherService.detail(po.getTeacherId()));
         }
+        List<CourseSchedulePo> courseSchedulePoList = courseScheduleService.queryByCourseId(po.getId());
+        vo.setCourseSchedule(courseSchedulePoList.stream().
+                filter(e -> Enums.signInType.已签到.getCode().equals(e.getSignIn())).sorted(Comparator.comparing(CourseSchedulePo::getId).reversed())
+                .findFirst().orElse(null));
         return vo;
     }
 

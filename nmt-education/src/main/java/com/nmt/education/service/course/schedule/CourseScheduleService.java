@@ -38,7 +38,7 @@ public class CourseScheduleService {
             invalidByCourseId(courseId, operator);
             return true;
         }
-        dtoList.stream().forEach(e -> manager(e, courseId, operator));
+        dtoList.stream().filter(e -> !Enums.signInType.已签到.getCode().equals(e.getSignIn())).forEach(e -> manager(e, courseId, operator));
         return true;
     }
 
@@ -242,7 +242,7 @@ public class CourseScheduleService {
      * @version v1
      * @since 2020/5/28 22:18
      */
-    public  List<CourseSchedulePo> signInSelect(Long id, Integer logInUser) {
+    public List<CourseSchedulePo> signInSelect(Long id, Integer logInUser) {
         CourseSchedulePo po = selectByPrimaryKey(id);
         Assert.notNull(po, "课表信息为空，id：" + id);
         return this.courseSchedulePoMapper.queryByCourseId(id);
@@ -272,6 +272,7 @@ public class CourseScheduleService {
      * @version v1
      * @since 2020/5/28 22:18
      */
+    @Deprecated
     public CourseSignInVo signInDefault(Long courseId, Integer logInUser) {
         CourseSignInVo vo = new CourseSignInVo();
         vo.setCourseId(courseId);
