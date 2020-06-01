@@ -53,6 +53,7 @@ export class CourseSessionSignComponent implements OnInit {
 
   ngOnInit() {
     this.form = this.fb.group({
+      selectedSession: [null, []],
       sessionSignStatusList: this.fb.array([])
     });
     //this.form.patchValue(this.course);
@@ -77,7 +78,7 @@ export class CourseSessionSignComponent implements OnInit {
               this.selectedSession = completedSeesions[completedSeesions.length - 1];
             }
           }
-
+          this.form.get("selectedSession").setValue(this.selectedSession);
           this.loadSessionSignStudentList(this.selectedSession.id);
 
         });

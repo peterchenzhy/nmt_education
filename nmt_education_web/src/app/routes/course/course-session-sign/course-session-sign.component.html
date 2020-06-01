@@ -1,10 +1,17 @@
 <page-header [title]="pageHeader"></page-header>
 <nz-spin [nzSpinning]="loading" [nzSize]="'large'">
   <form nz-form [formGroup]="form" [nzLayout]="'vertical'">
-    <nz-card [nzHoverable]="true" [nzBordered]="false" [nzExtra]="feeButtonsTemplate">
+    <nz-card [nzHoverable]="true" [nzBordered]="false">
       <sv-container size="large" title="课时信息">
+        <sv label="上课时间" col="1">
+          <nz-select style="width: 200px;" formControlName="selectedSession" [nzPlaceHolder]="'请选课时'"
+            (ngModelChange)="onCourseSessionChanged($event)">
+            <nz-option *ngFor="let i of course.courseScheduleList"
+              [nzLabel]="i.courseDatetime|date:'yyyy-MM-dd HH:mm:ss'" [nzValue]="i">
+            </nz-option>
+          </nz-select>
+        </sv>
         <sv label="课程名">{{course.name}}</sv>
-        <!-- <sv label="上课时间">{{ selectedSession.courseDatetime|date:"yyyy-MM-dd HH:mm:dd"}}</sv> -->
         <sv label="课程时长">{{selectedSession.perTime}}</sv>
         <sv label="任课老师">{{getTeacherName(selectedSession.teacherId)}}</sv>
       </sv-container>
@@ -38,12 +45,3 @@
     </footer-toolbar>
   </form>
 </nz-spin>
-<ng-template #feeButtonsTemplate>
-  <span style="margin-right:10px;" class="text-md mb-md">课时时间</span>
-  <nz-select style="width: 200px;" [(ngModel)]="selectedSession" [nzPlaceHolder]="'请选课时'"
-    (ngModelChange)="onCourseSessionChanged($event)">
-    <nz-option *ngFor="let i of course.courseScheduleList" [nzLabel]="i.courseDatetime|date:'yyyy-MM-dd HH:mm:ss'"
-      [nzValue]="i">
-    </nz-option>
-  </nz-select>
-</ng-template>

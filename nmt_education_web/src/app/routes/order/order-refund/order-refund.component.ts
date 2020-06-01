@@ -11,14 +11,14 @@ import { ORDER_STATUS, EDIT_FLAG, PAY_STATUS, ORDER_TYPE } from '@shared/constan
 import { STData, STComponent, STColumn, STChange } from '@delon/abc';
 
 @Component({
-    selector: 'app-order-view',
-    templateUrl: './order-view.component.html',
+    selector: 'app-order-refund',
+    templateUrl: './order-refund.component.html',
     styles: [`
     .enroll-selector{width:200px;}
     ::ng-deep .enroll-selector .ant-select-selection--single{height:22px;}
     ::ng-deep .enroll-selector .ant-select-selection__rendered{line-height:20px;}`]
 })
-export class OrderViewComponent implements OnInit {
+export class OrderRefundComponent implements OnInit {
     feeTypeList = this.appCtx.globalService.FEE_TYPE_LIST;
     payStatusList = this.appCtx.globalService.PAY_STATUS_LIST;
     payMethodList = this.appCtx.globalService.PAY_METHOD_LIST;
@@ -29,7 +29,7 @@ export class OrderViewComponent implements OnInit {
     order: Order = {
         student: {},
         course: {},
-        courseScheduleIds: [],
+        courseScheduleList: [],
         registerExpenseDetail: [],
         editFlag: EDIT_FLAG.NEW
     };
@@ -61,13 +61,13 @@ export class OrderViewComponent implements OnInit {
             id: [null, []],
             registrationStatus: [ORDER_STATUS.NORMAL, [Validators.required]],
             registrationType: [ORDER_TYPE.NEW, [Validators.required]],
-            courseScheduleIds: [[], []],
             feeStatus: [PAY_STATUS.PAIED, [Validators.required]],
             campus: [null, [Validators.required]],
             remark: [null, []],
             editFlag: [EDIT_FLAG.NO_CHANGE, [Validators.required]],
             studentId: [null, [Validators.required]],
             courseId: [null, [Validators.required]],
+            courseScheduleList: this.fb.array([]),
             registerExpenseDetail: this.fb.array([])
         });
         let orderId = this.activaterRouter.snapshot.params.id;
@@ -75,7 +75,6 @@ export class OrderViewComponent implements OnInit {
             this.appCtx.courseService.getRegisterDetails(orderId)
                 .subscribe(res => {
                     this.order = res;
-                    this.order.courseScheduleIds = this.order.courseScheduleList.map(s => s.id);
                     this.order.editFlag = EDIT_FLAG.UPDATE;
                     this.form.patchValue(this.order);
                     this.order.registerExpenseDetail.forEach(i => {
@@ -84,19 +83,7 @@ export class OrderViewComponent implements OnInit {
                         this.registerExpenseDetail.push(field);
                     });
                 });
-            return;
         }
-        let studentStr = this.activaterRouter.snapshot.params.student;
-        if (studentStr) {
-            this.order.student = JSON.parse(studentStr);
-            this.order.studentId = this.order.student.id;
-        }
-        let courseStr = this.activaterRouter.snapshot.params.course;
-        if (courseStr) {
-            this.order.course = JSON.parse(courseStr);
-            this.order.courseId = this.order.course.id;
-        }
-        this.form.patchValue(this.order);
     }
     createPay(): FormGroup {
         return this.fb.group({
@@ -196,7 +183,6 @@ export class OrderViewComponent implements OnInit {
         this.selectedSessions = [];
         this.sessionsSTData.forEach(s => {
             s.checked = this.form.value.courseScheduleIds.find(id => { return id == s.id; }) != null;
-            s.disabled = s.checked;
             if (s.checked) {
                 this.selectedSessions.push(s);
             }
