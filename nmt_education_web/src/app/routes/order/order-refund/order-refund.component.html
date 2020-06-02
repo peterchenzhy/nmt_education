@@ -3,7 +3,7 @@
     <nz-card [nzHoverable]="true" [nzBordered]="false">
         <sv-container size="large" title="报名信息">
             <sv label="报名类型">{{ appCtx.globalService.getOrderTypeLabel(order.registrationType)}}</sv>
-            <sv label="状态">{{ appCtx.globalService.getOrderStatus(order.registrationStatus).label}}</sv>
+            <sv label="状态">{{ appCtx.globalService.getOrderStatusLabel(order.registrationStatus)}}</sv>
             <sv label="备注" col="1"> {{order.remark}} </sv>
         </sv-container>
         <nz-divider></nz-divider>
@@ -19,8 +19,8 @@
         <sv-container size="large" title="课程信息">
             <sv *ngIf="order.courseId != null" label="课程名">{{order.course.name}}
                 [{{order.course.year+" "+appCtx.globalService.getSeasonLabel(order.course.season)}}]
-                <i *ngIf="order.editFlag!=2" nz-icon nzType="swap" nzTheme="outline"
-                    style="color:blue;margin-left:15px;" title="重新选择课程" (click)="clearSelectedCourse()"></i>
+                <!-- <i *ngIf="order.editFlag!=2" nz-icon nzType="swap" nzTheme="outline"
+                    style="color:blue;margin-left:15px;" title="重新选择课程" (click)="clearSelectedCourse()"></i> -->
             </sv>
             <sv *ngIf="order.courseId == null" label="课程名" nz-form-control nzErrorTip="请选择课程">
                 <nz-select formControlName="courseId" class="enroll-selector" nzShowSearch nzServerSearch
@@ -28,7 +28,7 @@
                     [nzDropdownMatchSelectWidth]="false" (nzOnSearch)="search($event)"
                     (ngModelChange)="courseSelected($event)">
                     <nz-option *ngFor="let o of coursesOfOption" nzCustomContent [nzLabel]="o.name" [nzValue]="o.id">
-                        <!-- <div style="width: 200px; float: left;">{{o.code}}</div> -->
+                        <!-- <div style="width: 200px; float: left;">{{o.code}}</div>-->
                         <div style="width: 100px; float: left">{{o.name}}</div>
                         <div style="width: 30px; float: left">
                             {{appCtx.globalService.getCourseSubjectLabel(o.courseSubject)}}
@@ -45,13 +45,20 @@
         </sv-container>
         <nz-divider></nz-divider>
         <div class="text-lg mb-md">课时信息</div>
-        <st #st [columns]="sessionColumns" [ps]=100 [data]="order.courseScheduleList" (change)="stChange($event)">
-            <ng-template st-row="showTeacher" let-i>
-                {{order.course.teacher.name}}
+        <st #st [columns]="sessionColumns" [ps]=100 [data]="sessionsSTData" (change)="stChange($event)">
+            <ng-template st-row="payment" let-i>
+                {{appCtx.globalService.getPayMethodLabel(i.payment)}}
+            </ng-template>
+            <ng-template st-row="feeType" let-i>
+                {{appCtx.globalService.getFeeTypeLabel(i.feeType)}}
             </ng-template>
         </st>
     </nz-card>
     <footer-toolbar errorCollect>
-        <button nz-button type="primary" nzType="primary" (click)="_submitForm()">提交</button>
+        <button nz-button type="primary" nzType="primary" (click)="confirmRefundFee(modalConfirm)">提交</button>
     </footer-toolbar>
 </form>
+
+<ng-template #modalConfirm>
+    <div>共退费[{{refundAmount}}]元</div>
+</ng-template>
