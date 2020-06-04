@@ -2,11 +2,13 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { OrderListComponent } from './order-list/order-list.component';
 import { OrderViewComponent } from './order-view/order-view.component';
+import { OrderRefundComponent } from './order-refund/order-refund.component';
 
 const routes: Routes = [
   { path: 'list', component: OrderListComponent },
   { path: 'create', component: OrderViewComponent },
-  { path: 'view/:id', component: OrderViewComponent }
+  { path: 'view/:id', component: OrderViewComponent },
+  { path: 'refund/:id', component: OrderRefundComponent }
 ];
 
 @NgModule({

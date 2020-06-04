@@ -70,6 +70,10 @@ export class GlobalService {
     public getOrderStatus(status: ORDER_STATUS) {
         return this.ORDER_STATUS_LIST.find(i => { return i.value == status });
     }
+    public getOrderStatusLabel(status: ORDER_STATUS) {
+        let obj =  this.ORDER_STATUS_LIST.find(i => { return i.value == status });
+        return obj ? obj.label : "";
+    }
 
     public FEE_TYPE_LIST: SysEnum[] = [];
     public getFeeTypeLabel(type: number) {
