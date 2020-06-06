@@ -53,10 +53,6 @@ public class CourseRegistrationService {
     @Autowired
     private CourseScheduleService courseScheduleService;
 
-    @Autowired
-    private SysConfigService sysConfigService;
-
-
     private static Integer 普通单节费用 = 1;
 
     /**

@@ -1,6 +1,7 @@
 package com.nmt.education.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.nmt.education.commmons.utils.ReqDtoCheckUtil;
 import com.nmt.education.pojo.dto.req.CourseRegisterReqDto;
 import com.nmt.education.pojo.dto.req.RefundReqDto;
 import com.nmt.education.pojo.dto.req.RegisterSearchReqDto;
@@ -44,13 +45,15 @@ public class CourseRegisterController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public void register(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
             , @RequestBody @Validated CourseRegisterReqDto dto, BindingResult bindingResult) {
+        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
         courseRegistrationService.register(dto, logInUser);
     }
 
     @ApiOperation(value = "register/search", notes = "报名记录查询")
     @RequestMapping(value = "/register/search", method = RequestMethod.POST)
     public PageInfo<CourseRegistrationListVo> registerSearch(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
-            , @RequestBody @Validated RegisterSearchReqDto dto) {
+            , @RequestBody @Validated RegisterSearchReqDto dto, BindingResult bindingResult) {
+        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
         return courseRegistrationService.registerSearch(dto, logInUser);
     }
 
@@ -65,7 +68,8 @@ public class CourseRegisterController {
     @ApiOperation(value = "退费", notes = "退费")
     @RequestMapping(value = "/register/refund", method = RequestMethod.POST)
     public void registerRefund(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
-            , @RequestBody @Validated RefundReqDto  dto) {
+            , @RequestBody @Validated RefundReqDto  dto, BindingResult bindingResult)  {
+        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
         courseRegistrationService.registerRefund(dto, logInUser);
     }
 
@@ -74,6 +78,7 @@ public class CourseRegisterController {
     @RequestMapping(value = "/register/summary", method = RequestMethod.POST)
     public PageInfo<RegisterSummaryVo> registerSummary(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
                                                        @RequestBody @Validated RegisterSummarySearchDto dto, BindingResult bindingResult) {
+        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
         return courseRegistrationService.registerSummary(dto, logInUser);
     }
 
