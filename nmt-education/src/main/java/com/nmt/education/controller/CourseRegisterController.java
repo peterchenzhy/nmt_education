@@ -2,6 +2,7 @@ package com.nmt.education.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.nmt.education.pojo.dto.req.CourseRegisterReqDto;
+import com.nmt.education.pojo.dto.req.RefundReqDto;
 import com.nmt.education.pojo.dto.req.RegisterSearchReqDto;
 import com.nmt.education.pojo.dto.req.RegisterSummarySearchDto;
 import com.nmt.education.pojo.po.RegisterationSummaryPo;
@@ -61,11 +62,11 @@ public class CourseRegisterController {
     }
 
 
-    @ApiOperation(value = "register/delete", notes = "退费")
-    @RequestMapping(value = "/register/{id}", method = RequestMethod.DELETE)
-    public void registerDel(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
-            , @PathVariable Long id) {
-        courseRegistrationService.registerDel(id, logInUser);
+    @ApiOperation(value = "退费", notes = "退费")
+    @RequestMapping(value = "/register/refund", method = RequestMethod.POST)
+    public void registerRefund(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
+            , @RequestBody @Validated RefundReqDto  dto) {
+        courseRegistrationService.registerRefund(dto, logInUser);
     }
 
 

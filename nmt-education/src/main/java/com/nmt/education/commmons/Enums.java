@@ -142,6 +142,7 @@ public interface Enums {
         未签到(0, "未签到", null),
         已签到(1, "已签到", null),
         请假(2, "请假", null),
+        已退费(3, "已退费", null),
 //        锁定(3, "锁定", null),
         ;
 
@@ -153,6 +154,54 @@ public interface Enums {
         private String icon;
 
         signInType(Integer code, String desc, String icon) {
+            this.desc = desc;
+            this.code = code;
+            this.icon = icon;
+        }
+    }
+
+    /**
+     * 费用方向
+     */
+    enum FeeDirection implements IEnum {
+        支付(1, "支付", null),
+        退费(2, "退费", null),
+//        锁定(3, "锁定", null),
+        ;
+
+        @Getter
+        private Integer code;
+        @Getter
+        private String desc;
+        @Getter
+        private String icon;
+
+        FeeDirection(Integer code, String desc, String icon) {
+            this.desc = desc;
+            this.code = code;
+            this.icon = icon;
+        }
+    }
+
+    /**
+     * 支付方式
+     */
+    enum PaymentType implements IEnum {
+        现金(1, "现金", null),
+        刷卡(2, "刷卡", null),
+        微信(3, "微信", null),
+        支付宝(4, "支付宝", null),
+//        锁定(3, "锁定", null),
+        ;
+
+        @Getter
+        private Integer code;
+        @Getter
+        private String desc;
+        @Getter
+        private String icon;
+
+        PaymentType(Integer code, String desc, String icon) {
             this.desc = desc;
             this.code = code;
             this.icon = icon;

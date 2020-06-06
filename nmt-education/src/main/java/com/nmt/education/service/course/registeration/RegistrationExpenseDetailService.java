@@ -38,24 +38,12 @@ public class RegistrationExpenseDetailService {
     }
 
 
-    public int updateBatchSelective(List<RegistrationExpenseDetailPo> list) {
-        return registrationExpenseDetailPoMapper.updateBatchSelective(list);
-    }
-
-
     public int batchInsert(List<RegistrationExpenseDetailPo> list) {
         return registrationExpenseDetailPoMapper.batchInsert(list);
     }
 
 
-    public int insertOrUpdate(RegistrationExpenseDetailPo record) {
-        return registrationExpenseDetailPoMapper.insertOrUpdate(record);
-    }
 
-
-    public int insertOrUpdateSelective(RegistrationExpenseDetailPo record) {
-        return registrationExpenseDetailPoMapper.insertOrUpdateSelective(record);
-    }
 
     public RegistrationExpenseDetailPo dto2po(int updator, CourseRegistrationPo courseRegistrationPo, RegisterExpenseDetailReqDto e) {
         RegistrationExpenseDetailPo detailPo = new RegistrationExpenseDetailPo();

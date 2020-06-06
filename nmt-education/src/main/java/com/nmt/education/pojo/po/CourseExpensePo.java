@@ -3,6 +3,8 @@ package com.nmt.education.pojo.po;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.nmt.education.commmons.Enums;
+import com.nmt.education.commmons.IEnum;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

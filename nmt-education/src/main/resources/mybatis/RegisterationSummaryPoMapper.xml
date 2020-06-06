@@ -53,6 +53,14 @@
         </foreach>
     </update>
 
+    <update id="updateSignIn">
+        update registeration_summary set operate_time = now() ,operator=#{logInUser} ,sign_in=#{code}
+        where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update>
+
     <select id="queryBySearchDto" parameterType="com.nmt.education.pojo.dto.req.RegisterSummarySearchDto"
             resultType="com.nmt.education.pojo.vo.RegisterSummaryVo">
         <!--@mbg.generated-->

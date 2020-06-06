@@ -109,7 +109,7 @@ public class RegisterationSummaryService {
      * @since 2020/5/11 22:50
      */
     public PageInfo<RegisterationSummaryPo> queryPageByRegisterId(Long id, Integer pageNo, Integer pageSize) {
-        return PageHelper.startPage(pageNo,pageSize).doSelectPageInfo(()->this.registerationSummaryPoMapper.queryByRegisterId(id));
+        return PageHelper.startPage(pageNo, pageSize).doSelectPageInfo(() -> this.registerationSummaryPoMapper.queryByRegisterId(id));
     }
 
     /**
@@ -142,5 +142,23 @@ public class RegisterationSummaryService {
             return;
         }
         this.registerationSummaryPoMapper.signIn(list, operator);
+    }
+
+    /**
+     * 更新 学生课表 签到状态
+     *
+     * @param ids       主键id
+     * @param logInUser 操作人
+     * @param signIn 签到状态
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/6/6 14:05
+     */
+    public void updateSignIn(List<Long> ids, Integer logInUser, Enums.signInType signIn) {
+        if(CollectionUtils.isEmpty(ids)){
+            return ;
+        }
+        this.registerationSummaryPoMapper.updateSignIn(ids,logInUser,signIn.getCode());
     }
 }

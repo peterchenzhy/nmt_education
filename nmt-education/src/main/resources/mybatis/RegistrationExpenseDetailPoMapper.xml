@@ -14,6 +14,7 @@
     <result column="discount" jdbcType="VARCHAR" property="discount" />
     <result column="payment" jdbcType="TINYINT" property="payment" />
     <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="fee_direction" jdbcType="TINYINT" property="feeDirection" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="creator" jdbcType="INTEGER" property="creator" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -22,12 +23,12 @@
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, registration_id, fee_type, fee_status, amount, per_amount, `count`, discount, 
-    payment, `status`, remark, creator, create_time, `operator`, operate_time
+    id, registration_id, fee_type, fee_status, amount, per_amount, `count`, discount,
+    payment, `status`, remark, creator, create_time, `operator`, operate_time,fee_direction
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     <!--@mbg.generated-->
-    select 
+    select
     <include refid="Base_Column_List" />
     from registration_expense_detail
     where id = #{id,jdbcType=INTEGER}
@@ -86,6 +87,9 @@
       <if test="operateTime != null">
         operate_time,
       </if>
+      <if test="feeDirection != null">
+        fee_direction,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="registrationId != null">
@@ -129,6 +133,9 @@
       </if>
       <if test="operateTime != null">
         #{operateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="feeDirection != null">
+        #{feeDirection},
       </if>
     </trim>
   </insert>
@@ -261,337 +268,20 @@
       #{item.id,jdbcType=INTEGER}
     </foreach>
   </update>
-  <update id="updateBatchSelective" parameterType="java.util.List">
-    <!--@mbg.generated-->
-    update registration_expense_detail
-    <trim prefix="set" suffixOverrides=",">
-      <trim prefix="registration_id = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.registrationId != null">
-            when id = #{item.id,jdbcType=INTEGER} then #{item.registrationId,jdbcType=BIGINT}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="fee_type = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.feeType != null">
-            when id = #{item.id,jdbcType=INTEGER} then #{item.feeType,jdbcType=TINYINT}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="fee_status = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.feeStatus != null">
-            when id = #{item.id,jdbcType=INTEGER} then #{item.feeStatus,jdbcType=TINYINT}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="amount = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.amount != null">
-            when id = #{item.id,jdbcType=INTEGER} then #{item.amount,jdbcType=VARCHAR}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="per_amount = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.perAmount != null">
-            when id = #{item.id,jdbcType=INTEGER} then #{item.perAmount,jdbcType=VARCHAR}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="`count` = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.count != null">
-            when id = #{item.id,jdbcType=INTEGER} then #{item.count,jdbcType=TINYINT}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="discount = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.discount != null">
-            when id = #{item.id,jdbcType=INTEGER} then #{item.discount,jdbcType=VARCHAR}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="payment = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.payment != null">
-            when id = #{item.id,jdbcType=INTEGER} then #{item.payment,jdbcType=TINYINT}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="`status` = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.status != null">
-            when id = #{item.id,jdbcType=INTEGER} then #{item.status,jdbcType=TINYINT}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="remark = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.remark != null">
-            when id = #{item.id,jdbcType=INTEGER} then #{item.remark,jdbcType=VARCHAR}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="creator = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.creator != null">
-            when id = #{item.id,jdbcType=INTEGER} then #{item.creator,jdbcType=INTEGER}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="create_time = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.createTime != null">
-            when id = #{item.id,jdbcType=INTEGER} then #{item.createTime,jdbcType=TIMESTAMP}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="`operator` = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.operator != null">
-            when id = #{item.id,jdbcType=INTEGER} then #{item.operator,jdbcType=INTEGER}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="operate_time = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.operateTime != null">
-            when id = #{item.id,jdbcType=INTEGER} then #{item.operateTime,jdbcType=TIMESTAMP}
-          </if>
-        </foreach>
-      </trim>
-    </trim>
-    where id in
-    <foreach close=")" collection="list" item="item" open="(" separator=", ">
-      #{item.id,jdbcType=INTEGER}
-    </foreach>
-  </update>
   <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
     <!--@mbg.generated-->
     insert into registration_expense_detail
-    (registration_id, fee_type, fee_status, amount, per_amount, `count`, discount, 
-      payment, `status`, remark, creator, create_time, `operator`, operate_time)
+    (registration_id, fee_type, fee_status, amount, per_amount, `count`, discount,
+      payment, `status`, remark, creator, create_time, `operator`, operate_time,fee_direction)
     values
     <foreach collection="list" item="item" separator=",">
-      (#{item.registrationId,jdbcType=BIGINT}, #{item.feeType,jdbcType=TINYINT}, 
-        #{item.feeStatus,jdbcType=TINYINT}, #{item.amount,jdbcType=VARCHAR}, #{item.perAmount,jdbcType=VARCHAR}, 
-        #{item.count,jdbcType=TINYINT}, #{item.discount,jdbcType=VARCHAR}, #{item.payment,jdbcType=TINYINT}, 
-        #{item.status,jdbcType=TINYINT}, #{item.remark,jdbcType=VARCHAR}, #{item.creator,jdbcType=INTEGER}, 
-        #{item.createTime,jdbcType=TIMESTAMP}, #{item.operator,jdbcType=INTEGER}, #{item.operateTime,jdbcType=TIMESTAMP}
+      (#{item.registrationId,jdbcType=BIGINT}, #{item.feeType,jdbcType=TINYINT},
+        #{item.feeStatus,jdbcType=TINYINT}, #{item.amount,jdbcType=VARCHAR}, #{item.perAmount,jdbcType=VARCHAR},
+        #{item.count,jdbcType=TINYINT}, #{item.discount,jdbcType=VARCHAR}, #{item.payment,jdbcType=TINYINT},
+        #{item.status,jdbcType=TINYINT}, #{item.remark,jdbcType=VARCHAR}, #{item.creator,jdbcType=INTEGER},
+        #{item.createTime,jdbcType=TIMESTAMP}, #{item.operator,jdbcType=INTEGER}, #{item.operateTime,jdbcType=TIMESTAMP},
+        #{item.feeDirection}
         )
     </foreach>
   </insert>
-  <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.RegistrationExpenseDetailPo" useGeneratedKeys="true">
-    <!--@mbg.generated-->
-    insert into registration_expense_detail
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
-      registration_id,
-      fee_type,
-      fee_status,
-      amount,
-      per_amount,
-      `count`,
-      discount,
-      payment,
-      `status`,
-      remark,
-      creator,
-      create_time,
-      `operator`,
-      operate_time,
-    </trim>
-    values
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=INTEGER},
-      </if>
-      #{registrationId,jdbcType=BIGINT},
-      #{feeType,jdbcType=TINYINT},
-      #{feeStatus,jdbcType=TINYINT},
-      #{amount,jdbcType=VARCHAR},
-      #{perAmount,jdbcType=VARCHAR},
-      #{count,jdbcType=TINYINT},
-      #{discount,jdbcType=VARCHAR},
-      #{payment,jdbcType=TINYINT},
-      #{status,jdbcType=TINYINT},
-      #{remark,jdbcType=VARCHAR},
-      #{creator,jdbcType=INTEGER},
-      #{createTime,jdbcType=TIMESTAMP},
-      #{operator,jdbcType=INTEGER},
-      #{operateTime,jdbcType=TIMESTAMP},
-    </trim>
-    on duplicate key update 
-    <trim suffixOverrides=",">
-      <if test="id != null">
-        id = #{id,jdbcType=INTEGER},
-      </if>
-      registration_id = #{registrationId,jdbcType=BIGINT},
-      fee_type = #{feeType,jdbcType=TINYINT},
-      fee_status = #{feeStatus,jdbcType=TINYINT},
-      amount = #{amount,jdbcType=VARCHAR},
-      per_amount = #{perAmount,jdbcType=VARCHAR},
-      `count` = #{count,jdbcType=TINYINT},
-      discount = #{discount,jdbcType=VARCHAR},
-      payment = #{payment,jdbcType=TINYINT},
-      `status` = #{status,jdbcType=TINYINT},
-      remark = #{remark,jdbcType=VARCHAR},
-      creator = #{creator,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      `operator` = #{operator,jdbcType=INTEGER},
-      operate_time = #{operateTime,jdbcType=TIMESTAMP},
-    </trim>
-  </insert>
-  <insert id="insertOrUpdateSelective" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.RegistrationExpenseDetailPo" useGeneratedKeys="true">
-    <!--@mbg.generated-->
-    insert into registration_expense_detail
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
-      <if test="registrationId != null">
-        registration_id,
-      </if>
-      <if test="feeType != null">
-        fee_type,
-      </if>
-      <if test="feeStatus != null">
-        fee_status,
-      </if>
-      <if test="amount != null">
-        amount,
-      </if>
-      <if test="perAmount != null">
-        per_amount,
-      </if>
-      <if test="count != null">
-        `count`,
-      </if>
-      <if test="discount != null">
-        discount,
-      </if>
-      <if test="payment != null">
-        payment,
-      </if>
-      <if test="status != null">
-        `status`,
-      </if>
-      <if test="remark != null">
-        remark,
-      </if>
-      <if test="creator != null">
-        creator,
-      </if>
-      <if test="createTime != null">
-        create_time,
-      </if>
-      <if test="operator != null">
-        `operator`,
-      </if>
-      <if test="operateTime != null">
-        operate_time,
-      </if>
-    </trim>
-    values
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=INTEGER},
-      </if>
-      <if test="registrationId != null">
-        #{registrationId,jdbcType=BIGINT},
-      </if>
-      <if test="feeType != null">
-        #{feeType,jdbcType=TINYINT},
-      </if>
-      <if test="feeStatus != null">
-        #{feeStatus,jdbcType=TINYINT},
-      </if>
-      <if test="amount != null">
-        #{amount,jdbcType=VARCHAR},
-      </if>
-      <if test="perAmount != null">
-        #{perAmount,jdbcType=VARCHAR},
-      </if>
-      <if test="count != null">
-        #{count,jdbcType=TINYINT},
-      </if>
-      <if test="discount != null">
-        #{discount,jdbcType=VARCHAR},
-      </if>
-      <if test="payment != null">
-        #{payment,jdbcType=TINYINT},
-      </if>
-      <if test="status != null">
-        #{status,jdbcType=TINYINT},
-      </if>
-      <if test="remark != null">
-        #{remark,jdbcType=VARCHAR},
-      </if>
-      <if test="creator != null">
-        #{creator,jdbcType=INTEGER},
-      </if>
-      <if test="createTime != null">
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="operator != null">
-        #{operator,jdbcType=INTEGER},
-      </if>
-      <if test="operateTime != null">
-        #{operateTime,jdbcType=TIMESTAMP},
-      </if>
-    </trim>
-    on duplicate key update 
-    <trim suffixOverrides=",">
-      <if test="id != null">
-        id = #{id,jdbcType=INTEGER},
-      </if>
-      <if test="registrationId != null">
-        registration_id = #{registrationId,jdbcType=BIGINT},
-      </if>
-      <if test="feeType != null">
-        fee_type = #{feeType,jdbcType=TINYINT},
-      </if>
-      <if test="feeStatus != null">
-        fee_status = #{feeStatus,jdbcType=TINYINT},
-      </if>
-      <if test="amount != null">
-        amount = #{amount,jdbcType=VARCHAR},
-      </if>
-      <if test="perAmount != null">
-        per_amount = #{perAmount,jdbcType=VARCHAR},
-      </if>
-      <if test="count != null">
-        `count` = #{count,jdbcType=TINYINT},
-      </if>
-      <if test="discount != null">
-        discount = #{discount,jdbcType=VARCHAR},
-      </if>
-      <if test="payment != null">
-        payment = #{payment,jdbcType=TINYINT},
-      </if>
-      <if test="status != null">
-        `status` = #{status,jdbcType=TINYINT},
-      </if>
-      <if test="remark != null">
-        remark = #{remark,jdbcType=VARCHAR},
-      </if>
-      <if test="creator != null">
-        creator = #{creator,jdbcType=INTEGER},
-      </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="operator != null">
-        `operator` = #{operator,jdbcType=INTEGER},
-      </if>
-      <if test="operateTime != null">
-        operate_time = #{operateTime,jdbcType=TIMESTAMP},
-      </if>
-    </trim>
-  </insert>
-</mapper>
+ </mapper>
