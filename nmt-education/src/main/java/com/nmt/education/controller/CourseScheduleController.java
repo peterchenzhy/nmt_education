@@ -66,7 +66,7 @@ public class CourseScheduleController {
     @ApiOperation(value = "manager", notes = "课表管理")
     @RequestMapping(value = "/manager", method = RequestMethod.POST)
     public Boolean manager(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
-            , @RequestBody List<CourseScheduleReqDto> dtoList, @RequestParam("courseId") Long courseId,BindingResult bindingResult) { {
+            , @RequestBody List<CourseScheduleReqDto> dtoList, @RequestParam("courseId") Long courseId,BindingResult bindingResult) { 
         ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
         return courseScheduleService.manager(dtoList, courseId, logInUser);
     }
