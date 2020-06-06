@@ -61,6 +61,16 @@
         </foreach>
     </update>
 
+    <select id="selectByIds">
+        select
+        <include refid="Base_Column_List"/>
+        from registeration_summary
+        where status = 1
+        and id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
     <select id="queryBySearchDto" parameterType="com.nmt.education.pojo.dto.req.RegisterSummarySearchDto"
             resultType="com.nmt.education.pojo.vo.RegisterSummaryVo">
         <!--@mbg.generated-->

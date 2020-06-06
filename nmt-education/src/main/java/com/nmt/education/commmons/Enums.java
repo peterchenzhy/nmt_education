@@ -1,6 +1,9 @@
 package com.nmt.education.commmons;
 
+import com.google.common.collect.Lists;
 import lombok.Getter;
+
+import java.util.List;
 
 
 /**
@@ -81,6 +84,7 @@ public interface Enums {
             this.icon = icon;
         }
     }
+
     /**
      * 报名类型
      */
@@ -128,13 +132,14 @@ public interface Enums {
         public static EditFlag codeOf(Integer code) {
             EditFlag result = null;
             for (EditFlag e : EditFlag.values()) {
-                if( e.getCode().equals(code)){
+                if (e.getCode().equals(code)) {
                     return e;
                 }
             }
             return result;
         }
     }
+
     /**
      * 签到状态
      */
@@ -145,6 +150,7 @@ public interface Enums {
         已退费(3, "已退费", null),
 //        锁定(3, "锁定", null),
         ;
+        public static List<Integer> canRefund = Lists.newArrayList(未签到.code, 请假.code);
 
         @Getter
         private Integer code;

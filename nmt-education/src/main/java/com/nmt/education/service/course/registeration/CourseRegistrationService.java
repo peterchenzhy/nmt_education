@@ -392,12 +392,18 @@ public class CourseRegistrationService {
         List<RegistrationExpenseDetailPo> expenseDetailList = registrationExpenseDetailService.queryRegisterId(dto.getRegisterId());
         Map<Integer, List<RefundItemReqDto>> itemMap = dtoList.stream().collect(Collectors.groupingBy(e -> e.getFeeType()));
         itemMap.keySet().stream().forEach(k -> {
-            processRefund(dto, logInUser, itemMap.get(k), expenseDetailList, k);
             if (k.equals(普通单节费用)) {
+                RegisterationSummaryPo p = registerationSummaryService.selectByIds(itemMap.get(k).stream().map(e -> e.getRegisterSummaryId()).collect(Collectors.toList()))
+                        .stream().filter(e -> !Enums.signInType.canRefund.contains(e.getSignIn())).findAny().orElse(null);
+                Assert.isTrue(Objects.isNull(p), "有记录已经被被退费了，RegisterationSummaryPoId:" + p.getId());
+                processRefund(dto, logInUser, itemMap.get(k), expenseDetailList, k);
                 //更新报名课表
                 registerationSummaryService.updateSignIn(itemMap.get(k).stream().map(e -> e.getRegisterSummaryId()).collect(Collectors.toList()),
                         logInUser, Enums.signInType.已退费);
+            } else {
+                processRefund(dto, logInUser, itemMap.get(k), expenseDetailList, k);
             }
+
         });
 
     }
