@@ -4,10 +4,10 @@ import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { _HttpClient } from '@delon/theme';
-import { Order, Payment } from 'src/app/model/order.model';
+import { Order, Payment, OrderRefund } from 'src/app/model/order.model';
 import { Course } from 'src/app/model/course.model';
 import { AppContextService } from '@shared/service/appcontext.service';
-import { ORDER_STATUS, EDIT_FLAG, PAY_STATUS, ORDER_TYPE, SIGNIN, FEE_TYPE } from '@shared/constant/system.constant';
+import { ORDER_STATUS, EDIT_FLAG, PAY_STATUS, ORDER_TYPE, SIGNIN, FEE_TYPE, FeeDirection } from '@shared/constant/system.constant';
 import { STData, STComponent, STColumn, STChange } from '@delon/abc';
 
 @Component({
@@ -34,6 +34,9 @@ export class OrderRefundComponent implements OnInit {
         registerExpenseDetail: [],
         editFlag: EDIT_FLAG.NEW
     };
+    orderRefund: OrderRefund = {
+        itemList: []
+    };
 
     constructor(
         private appCtx: AppContextService,
@@ -48,7 +51,7 @@ export class OrderRefundComponent implements OnInit {
 
     @ViewChild('st', { static: true })
     st: STComponent;
-    sessionColumns: STColumn[] = [
+    orderFeeColumns: STColumn[] = [
         { title: '', index: 'id', type: 'checkbox' },
         { title: '费用类型', index: 'feeType', render: "feeType" },
         { title: '支付方式', index: 'payment', render: "payment" },
@@ -56,34 +59,29 @@ export class OrderRefundComponent implements OnInit {
         { title: '课时时间', index: 'courseDatetime', type: 'date', dateFormat: 'YYYY-MM-DD HH:mm' },
         { title: '备注', index: 'remark' }
     ];
-    sessionsSTData: STData[] = [];
+    orderFeeSTData: STData[] = [];
     selectedFee: STData[] = [];
     ngOnInit(): void {
         this.form = this.fb.group({
-            id: [null, []],
-            registrationStatus: [ORDER_STATUS.NORMAL, [Validators.required]],
-            registrationType: [ORDER_TYPE.NEW, [Validators.required]],
-            feeStatus: [PAY_STATUS.PAIED, [Validators.required]],
-            campus: [null, [Validators.required]],
-            remark: [null, []],
-            editFlag: [EDIT_FLAG.NO_CHANGE, [Validators.required]],
-            studentId: [null, [Validators.required]],
-            courseId: [null, [Validators.required]],
-            courseScheduleList: this.fb.array([]),
-            registerExpenseDetail: this.fb.array([])
+            registerId: [0, []],
+            payment: [null, [Validators.required]],
+            remark: ["", []],
+            itemList: this.fb.array([]),
         });
         let orderId = this.activaterRouter.snapshot.params.id;
+        this.orderRefund.registerId = orderId;
+        this.form.patchValue(this.orderRefund);
         if (orderId) {
             this.appCtx.courseService.getRegisterDetails(orderId)
                 .subscribe(res => {
                     this.order = res;
                     this.order.course.teacher = {};
                     this.order.editFlag = EDIT_FLAG.UPDATE;
-                    this.form.patchValue(this.order);
-                    this.sessionsSTData = this.order.courseScheduleList;
-                    let sessionFee = this.order.registerExpenseDetail.filter(f => f.feeType == FEE_TYPE.SESSION);
-                    this.sessionsSTData.forEach(s => {
-                        s.disabled = s.signIn == SIGNIN.SIGNIN;
+                    this.orderFeeSTData = this.order.courseScheduleList;
+                    let payFeeList = this.order.registerExpenseDetail;//.filter(f => f.feeDirection == FeeDirection.PAY);
+                    let sessionFee = payFeeList.filter(f => f.feeType == FEE_TYPE.SESSION);
+                    this.orderFeeSTData.forEach(s => {
+                        s.disabled = s.studentSignIn == SIGNIN.SIGNIN || s.studentSignIn == SIGNIN.REFUND;
                         if (sessionFee.length > 0) {
                             s.amount = sessionFee[0].perAmount;
                             s.feeType = sessionFee[0].feeType;
@@ -91,20 +89,16 @@ export class OrderRefundComponent implements OnInit {
                             s.remark = sessionFee[0].remark;
                         }
                     });
-                    let otherFee = this.order.registerExpenseDetail.filter(f => f.feeType != FEE_TYPE.SESSION);
+                    let otherFee = payFeeList.filter(f => f.feeType != FEE_TYPE.SESSION);
                     otherFee.forEach(f => {
-                        this.sessionsSTData.push({
+                        this.orderFeeSTData.push({
+                            disabled: f.feeStatus == PAY_STATUS.REFUNDED,
                             amount: f.amount,
                             feeType: f.feeType,
                             payment: f.payment,
                             remark: f.remark
                         });
                     });
-                    // this.order.registerExpenseDetail.forEach(i => {
-                    //     const field = this.createPay();
-                    //     field.patchValue(i);
-                    //     this.registerExpenseDetail.push(field);
-                    // });
                 });
         }
     }
@@ -129,9 +123,7 @@ export class OrderRefundComponent implements OnInit {
         return this.form.value.editFlag != EDIT_FLAG.NEW;
     }
 
-    get registerExpenseDetail() {
-        return this.form.controls.registerExpenseDetail as FormArray;
-    }
+
 
     coursesOfOption: Array<Course> = [];
     nzFilterOption = () => true;
@@ -157,7 +149,6 @@ export class OrderRefundComponent implements OnInit {
                         pay.perAmount = i.price;
                         const field = this.createPay();
                         field.patchValue(pay);
-                        this.registerExpenseDetail.push(field);
                     });
                     this.form.get("campus").setValue(this.order.course.campus);
                 }
@@ -172,27 +163,6 @@ export class OrderRefundComponent implements OnInit {
     //     this.registerExpenseDetail.clear();
     // }
 
-    onPayInfoChanged(index: number, event: any) {
-        let payObject = this.registerExpenseDetail.at(index) as FormGroup;
-        let newValue = this.calPayAmount(payObject.value);
-        payObject.get("receivable").setValue(newValue.receivable);
-        payObject.get("amount").setValue(newValue.amount);
-        payObject.markAsDirty();
-
-
-    }
-    calPayAmount(payVal: any): any {
-        let perAmount = payVal.perAmount || 0;
-        let count = payVal.count || 0;
-        let discount = payVal.discount || 1;
-        payVal.receivable = (perAmount * count).toFixed(2);
-        payVal.amount = (perAmount * count * discount).toFixed(2);
-
-        if (payVal.editFlag == EDIT_FLAG.NO_CHANGE) {
-            payVal.editFlag = EDIT_FLAG.UPDATE;
-        }
-        return payVal;
-    }
     stChange(e: STChange) {
         switch (e.type) {
             case 'checkbox':
@@ -229,17 +199,22 @@ export class OrderRefundComponent implements OnInit {
     //         },
     //     });
     // }
-    refundAmount = 0;
-    confirmRefundFee(tpl: TemplateRef<{}>) {
-        this.selectedFee.forEach(f => {
-            this.refundAmount += parseFloat(f.amount);
+    confirmRefundFee() {
+        Object.keys(this.form.controls).forEach(key => {
+            this.form.controls[key].markAsDirty();
+            this.form.controls[key].updateValueAndValidity();
         });
-        this.modalSrv.create({
+        if (this.form.invalid) return;
+        let refundAmount = 0;
+        this.selectedFee.forEach(f => {
+            refundAmount += parseFloat(f.amount);
+        });
+        this.modalSrv.warning({
             nzTitle: "退费确认",
-            nzContent: tpl,
-            nzWidth: 400,
+            nzContent: `共退费[${refundAmount}]元`,
             nzOnOk: () => {
 
+                this._submitForm();
             }
         });
     }
@@ -247,22 +222,23 @@ export class OrderRefundComponent implements OnInit {
         this._location.back();
     }
     _submitForm() {
-        Object.keys(this.form.controls).forEach(key => {
-            this.form.controls[key].markAsDirty();
-            this.form.controls[key].updateValueAndValidity();
-            if (key == "registerExpenseDetail") {
-                let feeDetailCtrl: any = this.form.controls[key];
-                feeDetailCtrl.controls.forEach(fee => {
-                    Object.keys(fee.controls).forEach(key => {
-                        fee.controls[key].markAsDirty();
-                        fee.controls[key].updateValueAndValidity();
-                    });
-                });
-            }
-        });
-        if (this.form.invalid) return;
-        this.appCtx.courseService.registerCourse(this.form.value).subscribe((res) => {
-            this.goBack();
+        let refundObj = this.form.value;
+        this.selectedFee.forEach(fee => {
+            refundObj.itemList.push({
+                amount: fee.amount,
+                feeType: fee.feeType,
+                registerId: refundObj.registerId,
+                registerSummaryId: fee.registerSummaryId
+            });
+        })
+        this.appCtx.courseService.refundFee(refundObj).subscribe((res) => {
+            this.modalSrv.success({
+                nzTitle: '处理结果',
+                nzContent: '退费成功！',
+                nzOnOk: () => {
+                    window.location.reload();
+                }
+            });
         });
     }
 }

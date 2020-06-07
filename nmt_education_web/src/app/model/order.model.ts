@@ -1,7 +1,7 @@
 import { Course } from './course.model';
 import { Student } from './student.model';
 import { SysEnum } from './system.model';
-import { PAY_STATUS, ORDER_STATUS, EDIT_FLAG, ORDER_TYPE } from '@shared/constant/system.constant';
+import { PAY_STATUS, ORDER_STATUS, EDIT_FLAG, ORDER_TYPE, SIGNIN, FeeDirection } from '@shared/constant/system.constant';
 
 export interface Order {
     id?: number;
@@ -28,34 +28,35 @@ export interface Order {
     operator?: number;
 }
 export interface RegisterSummary {
-  balanceAmount?: string;
-  courseId?: number;
-  courseName?: string
-  createTime?: string;
-  creator?: number;
-  feeStatus?: PAY_STATUS;
-  id?: number;
-  operateTime?: string;
-  operator?: number;
-  registerTime?: string;
-  registrationNumber?: string
-  registrationStatus?: ORDER_STATUS;
-  registrationType?: ORDER_TYPE;
-  remark?: string;
-  status?: number;
-  studentId?: number;
-  studentName?: string;
-  times?: number;
-  totalAmount?: string;
+    balanceAmount?: string;
+    courseId?: number;
+    courseName?: string
+    createTime?: string;
+    creator?: number;
+    feeStatus?: PAY_STATUS;
+    id?: number;
+    operateTime?: string;
+    operator?: number;
+    registerTime?: string;
+    registrationNumber?: string
+    registrationStatus?: ORDER_STATUS;
+    registrationType?: ORDER_TYPE;
+    remark?: string;
+    status?: number;
+    studentId?: number;
+    studentName?: string;
+    times?: number;
+    totalAmount?: string;
 }
 
 export interface Payment {
     id?: string;
     feeType?: number;
+    feeDirection?:FeeDirection;
     payment?: number;
     feeStatus?: PAY_STATUS;
     perAmount?: number;
-    count?:number;
+    count?: number;
     discount?: number;
     receivable?: number;
     deduction?: number;
@@ -65,10 +66,12 @@ export interface Payment {
 
 export interface OrderSession {
     id?: number;
+    registerSummaryId?: number;
     courseId?: number;
     courseDatetime?: Date;
     perTime?: number;
     signIn?: number;
+    studentSignIn: SIGNIN;
     teacherId?: number;
     teacherPrice?: number;
     editFlag?: EDIT_FLAG;
@@ -78,4 +81,11 @@ export interface OrderSession {
     creator?: number;
     operateTime?: Date;
     operator?: number;
+}
+
+export interface OrderRefund {
+    itemList?: Array<any>;
+    payment?: number;
+    registerId?: number;
+    remark?: string;
 }
