@@ -60,7 +60,8 @@ export class GlobalService {
         return obj ? obj.label : "";
     }
 
-    public ORDER_TYPE_LIST = [{ value: 1, label: '新报' }, { value: 2, label: '续报' }, { value: 3, label: '试听课' }];
+    // public ORDER_TYPE_LIST = [{ value: 1, label: '新报' }, { value: 2, label: '续报' }, { value: 3, label: '试听课' }];
+  public ORDER_TYPE_LIST = [{ value: 1, label: '新报' }, { value: 2, label: '续报' }];
     public getOrderTypeLabel(type: ORDER_TYPE) {
         let obj = this.ORDER_TYPE_LIST.find(i => { return i.value == type });
         return obj ? obj.label : "";
