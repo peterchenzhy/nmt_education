@@ -50,6 +50,9 @@ export class GlobalService {
     public SIGNIN_STATUS_LIST = [{ value: 0, label: '未签到' }, { value: 1, label: '已签到' },
     { value: 2, label: '请假' }];
     public getSignInStatusLabel(signIn: SIGNIN) {
+        if (signIn == SIGNIN.REFUND) {
+            return "已退费";
+        }
         let obj = this.SIGNIN_STATUS_LIST.find(i => { return i.value == signIn });
         return obj ? obj.label : "";
     }
@@ -72,7 +75,7 @@ export class GlobalService {
         return this.ORDER_STATUS_LIST.find(i => { return i.value == status });
     }
     public getOrderStatusLabel(status: ORDER_STATUS) {
-        let obj =  this.ORDER_STATUS_LIST.find(i => { return i.value == status });
+        let obj = this.ORDER_STATUS_LIST.find(i => { return i.value == status });
         return obj ? obj.label : "";
     }
 

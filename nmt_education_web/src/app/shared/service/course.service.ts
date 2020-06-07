@@ -56,4 +56,9 @@ export class CourseService {
     public sessionStudentsSignIn(list: any): Observable<Object> {
         return this.httpClient.post('nmt-education/course/schedule/signIn', list);
     }
+
+    public refundFee(feeList:any):Observable<Object>{
+        return this.httpClient.post('nmt-education/course/register/refund', feeList)
+
+    }
 }
