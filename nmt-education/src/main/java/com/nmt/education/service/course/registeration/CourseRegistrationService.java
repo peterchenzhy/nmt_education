@@ -14,7 +14,6 @@ import com.nmt.education.service.course.CourseService;
 import com.nmt.education.service.course.registeration.summary.RegisterationSummaryService;
 import com.nmt.education.service.course.schedule.CourseScheduleService;
 import com.nmt.education.service.student.StudentService;
-import com.nmt.education.service.sysconfig.SysConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,8 +72,15 @@ public class CourseRegistrationService {
     @Transactional(rollbackFor = Exception.class)
     public void startRegisterTransaction(CourseRegisterReqDto dto, int updator) {
         //生成报名记录
-        CourseRegistrationPo courseRegistrationPo = generateCourseRegistrationPo(dto, updator);
-        this.insertSelective(courseRegistrationPo);
+        CourseRegistrationPo courseRegistrationPo;
+        if (Enums.EditFlag.新增.getCode().equals(dto.getEditFlag())) {
+            courseRegistrationPo = generateCourseRegistrationPo(dto, updator);
+            this.insertSelective(courseRegistrationPo);
+        } else {
+            courseRegistrationPo = this.courseRegistrationPoMapper.selectByPrimaryKey(dto.getId());
+        }
+        Assert.isTrue(Objects.nonNull(courseRegistrationPo), "非新增报名时，报名信息不存在，学生：" + dto.getStudentId()+
+                "课程："+dto.getCourseId());
 
         //缴费记录明细
         List<RegistrationExpenseDetailPo> expenseDetailPoList = generateRegisterExpenseDetail(dto.getRegisterExpenseDetail(), updator,
@@ -114,7 +120,9 @@ public class CourseRegistrationService {
         Assert.notNull(studentService.selectByPrimaryKey(dto.getStudentId()), "学生信息不存在！id:" + dto.getStudentId());
         Assert.notNull(courseService.selectByPrimaryKey(dto.getCourseId()), "学生信息不存在！id:" + dto.getCourseId());
         Assert.notEmpty(dto.getCourseScheduleIds(), "报名课时必填！id:" + dto.getCourseId());
-        Assert.isNull(queryByCourseStudent(dto.getCourseId(), dto.getStudentId()), "报名记录已经存在！id:" + dto.getCourseId());
+        if (Enums.EditFlag.新增.getCode().equals(dto.getEditFlag())) {
+            Assert.isNull(queryByCourseStudent(dto.getCourseId(), dto.getStudentId()), "报名记录已经存在！id:" + dto.getCourseId());
+        }
     }
 
     /**
