@@ -29,7 +29,7 @@ public class RegisterationSummaryService {
         registerationSummaryPo.setCourseId(courseRegistrationPo.getCourseId());
         registerationSummaryPo.setCourseScheduleId(e);
         registerationSummaryPo.setCourseRegistrationId(courseRegistrationPo.getId());
-        registerationSummaryPo.setSignIn(Enums.signInType.未签到.getCode());
+        registerationSummaryPo.setSignIn(Enums.SignInType.未签到.getCode());
         registerationSummaryPo.setStatus(StatusEnum.VALID.getCode());
         registerationSummaryPo.setCreator(updator);
         registerationSummaryPo.setCreateTime(new Date());
@@ -152,7 +152,7 @@ public class RegisterationSummaryService {
      * @version v1
      * @since 2020/6/6 14:05
      */
-    public void updateSignIn(List<Long> ids, Integer logInUser, Enums.signInType signIn) {
+    public void updateSignIn(List<Long> ids, Integer logInUser, Enums.SignInType signIn) {
         if (CollectionUtils.isEmpty(ids)) {
             return;
         }

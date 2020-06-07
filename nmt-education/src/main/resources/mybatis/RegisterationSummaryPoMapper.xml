@@ -61,7 +61,7 @@
         </foreach>
     </update>
 
-    <select id="selectByIds">
+    <select id="selectByIds" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from registeration_summary

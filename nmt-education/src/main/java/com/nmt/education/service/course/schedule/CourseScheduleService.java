@@ -38,7 +38,7 @@ public class CourseScheduleService {
             invalidByCourseId(courseId, operator);
             return true;
         }
-        dtoList.stream().filter(e -> !Enums.signInType.已签到.getCode().equals(e.getSignIn())).forEach(e -> manager(e, courseId, operator));
+        dtoList.stream().filter(e -> !Enums.SignInType.已签到.getCode().equals(e.getSignIn())).forEach(e -> manager(e, courseId, operator));
         return true;
     }
 
@@ -189,16 +189,16 @@ public class CourseScheduleService {
         registerationSummaryService.signIn(list, operator);
         new Thread(() -> {
             CourseSchedulePo courseSchedulePo = selectByPrimaryKey(list.get(0).getCourseScheduleId());
-            if (list.stream().anyMatch(e -> Enums.signInType.已签到.getCode().equals(e.getSignIn()))) {
-                if (!Enums.signInType.已签到.getCode().equals(courseSchedulePo.getSignIn())) {
-                    courseSchedulePo.setSignIn(Enums.signInType.已签到.getCode());
+            if (list.stream().anyMatch(e -> Enums.SignInType.已签到.getCode().equals(e.getSignIn()))) {
+                if (!Enums.SignInType.已签到.getCode().equals(courseSchedulePo.getSignIn())) {
+                    courseSchedulePo.setSignIn(Enums.SignInType.已签到.getCode());
                     courseSchedulePo.setOperator(operator);
                     courseSchedulePo.setOperateTime(new Date());
                     updateByPrimaryKeySelective(courseSchedulePo);
                 }
             } else {
-                if (Enums.signInType.已签到.getCode().equals(courseSchedulePo.getSignIn())) {
-                    courseSchedulePo.setSignIn(Enums.signInType.未签到.getCode());
+                if (Enums.SignInType.已签到.getCode().equals(courseSchedulePo.getSignIn())) {
+                    courseSchedulePo.setSignIn(Enums.SignInType.未签到.getCode());
                     courseSchedulePo.setOperator(operator);
                     courseSchedulePo.setOperateTime(new Date());
                     updateByPrimaryKeySelective(courseSchedulePo);
@@ -281,7 +281,7 @@ public class CourseScheduleService {
         vo.setCourseName(coursePo.getName());
         List<CourseSchedulePo> courseSchedulePoList = courseSchedulePoMapper.queryByCourseId(courseId);
         vo.setCourseSchedule(courseSchedulePoList.stream().
-                filter(e -> Enums.signInType.已签到.getCode().equals(e.getSignIn())).sorted(Comparator.comparing(CourseSchedulePo::getId).reversed())
+                filter(e -> Enums.SignInType.已签到.getCode().equals(e.getSignIn())).sorted(Comparator.comparing(CourseSchedulePo::getId).reversed())
                 .findFirst().orElse(null));
         vo.setSignInVos(Objects.nonNull(vo.getCourseSchedule()) ? signInList(vo.getCourseSchedule().getId(), Consts.SYSTEM_USER) : Collections.EMPTY_LIST);
         return vo;

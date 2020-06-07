@@ -143,7 +143,7 @@ public interface Enums {
     /**
      * 签到状态
      */
-    enum signInType implements IEnum {
+    enum SignInType implements IEnum {
         未签到(0, "未签到", null),
         已签到(1, "已签到", null),
         请假(2, "请假", null),
@@ -159,7 +159,7 @@ public interface Enums {
         @Getter
         private String icon;
 
-        signInType(Integer code, String desc, String icon) {
+        SignInType(Integer code, String desc, String icon) {
             this.desc = desc;
             this.code = code;
             this.icon = icon;

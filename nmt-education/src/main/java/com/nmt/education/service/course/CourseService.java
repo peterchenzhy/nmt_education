@@ -256,7 +256,7 @@ public class CourseService {
         }
         List<CourseSchedulePo> courseSchedulePoList = courseScheduleService.queryByCourseId(po.getId());
         vo.setCourseSchedule(courseSchedulePoList.stream().
-                filter(e -> Enums.signInType.已签到.getCode().equals(e.getSignIn())).sorted(Comparator.comparing(CourseSchedulePo::getId).reversed())
+                filter(e -> Enums.SignInType.已签到.getCode().equals(e.getSignIn())).sorted(Comparator.comparing(CourseSchedulePo::getId).reversed())
                 .findFirst().orElse(null));
         return vo;
     }
