@@ -7,7 +7,7 @@ import { _HttpClient } from '@delon/theme';
 import { Order, Payment } from 'src/app/model/order.model';
 import { Course } from 'src/app/model/course.model';
 import { AppContextService } from '@shared/service/appcontext.service';
-import { ORDER_STATUS, EDIT_FLAG, PAY_STATUS, ORDER_TYPE } from '@shared/constant/system.constant';
+import { ORDER_STATUS, EDIT_FLAG, PAY_STATUS, ORDER_TYPE, FeeDirection } from '@shared/constant/system.constant';
 import { STData, STComponent, STColumn, STChange } from '@delon/abc';
 
 @Component({
@@ -78,11 +78,12 @@ export class OrderViewComponent implements OnInit {
                     this.order.courseScheduleIds = this.order.courseScheduleList.map(s => s.id);
                     this.order.editFlag = EDIT_FLAG.UPDATE;
                     this.form.patchValue(this.order);
-                    this.order.registerExpenseDetail.forEach(i => {
-                        const field = this.createPay();
-                        field.patchValue(i);
-                        this.registerExpenseDetail.push(field);
-                    });
+                    this.order.registerExpenseDetail.filter(f => f.feeDirection == FeeDirection.PAY)
+                        .forEach(i => {
+                            const field = this.createPay();
+                            field.patchValue(i);
+                            this.registerExpenseDetail.push(field);
+                        });
                 });
             return;
         }
