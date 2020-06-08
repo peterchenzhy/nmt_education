@@ -56,6 +56,7 @@ export class OrderRefundComponent implements OnInit {
         { title: '费用类型', index: 'feeType', render: "feeType" },
         { title: '支付方式', index: 'payment', render: "payment" },
         { title: '费用', index: 'amount' },
+        { title: '支付状态', index: 'feeStatus', render: "feeStatus" },
         { title: '课时时间', index: 'courseDatetime', type: 'date', dateFormat: 'YYYY-MM-DD HH:mm' },
         { title: '备注', index: 'remark' }
     ];
@@ -86,6 +87,7 @@ export class OrderRefundComponent implements OnInit {
                             s.amount = sessionFee[0].perAmount;
                             s.feeType = sessionFee[0].feeType;
                             s.payment = sessionFee[0].payment;
+                            s.feeStatus = sessionFee[0].feeStatus;;
                             s.remark = sessionFee[0].remark;
                         }
                     });
@@ -93,6 +95,7 @@ export class OrderRefundComponent implements OnInit {
                     otherFee.forEach(f => {
                         this.orderFeeSTData.push({
                             disabled: f.feeStatus == PAY_STATUS.REFUNDED,
+                            feeStatus: f.feeStatus,
                             amount: f.amount,
                             feeType: f.feeType,
                             payment: f.payment,

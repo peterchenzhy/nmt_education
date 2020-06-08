@@ -1,161 +1,191 @@
 <page-header [title]="'报名信息'"></page-header>
 <form nz-form [formGroup]="form" [nzLayout]="'vertical'">
-    <nz-card [nzHoverable]="true" [nzBordered]="false">
-        <sv-container size="large" title="学生信息">
-            <sv label="姓名">{{order.student.name}}</sv>
-            <sv label="性别">{{ appCtx.globalService.getGenderLabel(order.student.sex)}}</sv>
-            <sv label="出生年月">{{order.student.birthday|date:"yyyy-MM-dd"}}</sv>
-            <sv label="联系电话">{{order.student.phone}}</sv>
-            <sv label="学校">{{order.student.school}}</sv>
-            <sv label="备注" col="1">{{order.student.remark}}</sv>
-        </sv-container>
-        <nz-divider></nz-divider>
-        <sv-container size="large" title="课程信息">
-            <sv *ngIf="order.courseId != null" label="课程名">{{order.course.name}}
-                [{{order.course.year+" "+appCtx.globalService.getSeasonLabel(order.course.season)}}]
-                <i *ngIf="order.editFlag!=2" nz-icon nzType="swap" nzTheme="outline"
-                    style="color:blue;margin-left:15px;" title="重新选择课程" (click)="clearSelectedCourse()"></i>
-            </sv>
-            <sv *ngIf="order.courseId == null" label="课程名" nz-form-control nzErrorTip="请选择课程">
-                <nz-select formControlName="courseId" class="enroll-selector" nzShowSearch nzServerSearch
-                    nzPlaceHolder="输入课程编号或课程名称" [nzShowArrow]="false" [nzFilterOption]="nzFilterOption"
-                    [nzDropdownMatchSelectWidth]="false" (nzOnSearch)="search($event)"
-                    (ngModelChange)="courseSelected($event)">
-                    <nz-option *ngFor="let o of coursesOfOption" nzCustomContent [nzLabel]="o.name" [nzValue]="o.id">
-                        <!-- <div style="width: 200px; float: left;">{{o.code}}</div> -->
-                        <div style="width: 100px; float: left">{{o.name}}</div>
-                        <div style="width: 30px; float: left">
-                            {{appCtx.globalService.getCourseSubjectLabel(o.courseSubject)}}
-                        </div>
-                    </nz-option>
-                </nz-select>
-            </sv>
-            <sv label="科目">{{appCtx.globalService.getCourseSubjectLabel(order.course.courseSubject)}}</sv>
-            <sv label="开课日期">{{order.course.startDate|date:"yyyy-MM-dd"}}</sv>
-            <sv label="年级">{{appCtx.globalService.getGradeLabel(order.course.grade)}}</sv>
-            <sv label="类型">{{appCtx.globalService.getCourseTypeLabel(order.course.courseType)}}</sv>
-            <sv label="任课教师">{{order.course.teacher&&order.course.teacher.name}}</sv>
-            <sv label="校区">{{appCtx.globalService.getCampusLabel(order.course.campus)}}</sv>
-        </sv-container>
-        <nz-divider></nz-divider>
-        <sv-container size="large" title="报名信息">
-            <sv label="报名类型" nz-form-control nzErrorTip="请选择报名类型">
-                <nz-select formControlName="registrationType" [nzPlaceHolder]="'请选择报名类型'" [nzShowSearch]="true">
-                    <nz-option *ngFor="let i of registrationTypeList" [nzLabel]="i.label" [nzValue]="i.value">
-                    </nz-option>
-                </nz-select>
-            </sv>
-            <sv *ngIf="isEditOrder" label="状态" nz-form-control nzErrorTip="请选择状态">
-                <nz-select formControlName="registrationStatus" [nzPlaceHolder]="'请选择状态'" [nzShowSearch]="true">
-                    <nz-option *ngFor="let i of registrationStatusList" [nzLabel]="i.label" [nzValue]="i.value">
-                    </nz-option>
-                </nz-select>
-            </sv>
-            <sv label="备注" col="1">
-                <textarea nz-input formControlName="remark" [nzAutosize]="{ minRows: 4 }"
-                    placeholder="请输入备注"></textarea>
-            </sv>
-        </sv-container>
-        <nz-divider></nz-divider>
-        <div class="text-lg mb-md">支付信息</div>
-        <nz-table formArrayName="registerExpenseDetail" [nzData]="registerExpenseDetail.value"
-            [nzShowPagination]="false">
-            <thead>
-                <tr>
-                    <th>费用类型</th>
-                    <th>原价</th>
-                    <th>数量</th>
-                    <th>折扣系数</th>
-                    <th>应付</th>
-                    <th>实付</th>
-                    <th>支付方式</th>
-                    <th>支付状态</th>
-                    <th>备注</th>
-                    <!-- <th>操作</th> -->
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let item of registerExpenseDetail.controls; let i = index" [formGroupName]="i">
-                    <td>
-                        <span nz-form-control nzErrorTip="请选费用类型">
-                            <nz-select formControlName="feeType" [nzPlaceHolder]="'请选费用类型'" [nzShowSearch]="true">
-                                <nz-option *ngFor="let o of feeTypeList" [nzLabel]="o.label" [nzValue]="o.value">
-                                </nz-option>
-                            </nz-select>
-                        </span>
-                    </td>
-                    <td>
-                        <span nz-form-control>
-                            <nz-input-number style="width: 80px;" formControlName="perAmount" (ngModelChange)="onPayInfoChanged(i)">
-                            </nz-input-number>
-                        </span>
-                    </td>
-                    <td>
-                        <span nz-form-control>
-                            <nz-input-number style="width: 80px;" [nzDisabled]="registerExpenseDetail.value[i].feeType == 1"
-                                formControlName="count" (ngModelChange)="onPayInfoChanged(i)">
-                            </nz-input-number>
-                            <i *ngIf="registerExpenseDetail.value[i].feeType == 1" nz-icon nzType="edit"
-                                nzTheme="outline" title="选择报名课程" (click)="selectSessions(modalSessionSelection)"></i>
-                        </span>
-                    </td>
-                    <td>
-                        <span nz-form-control>
-                            <nz-input-number style="width: 80px;" formControlName="discount" (ngModelChange)="onPayInfoChanged(i,$event)">
-                            </nz-input-number>
-                        </span>
-                    </td>
-                    <td>
-                        <span>{{ registerExpenseDetail.value[i].receivable }}</span>
-                    </td>
-                    <td>
-                        <span nz-form-control>
-                            <nz-input-number formControlName="amount"></nz-input-number>
-                        </span>
-                    </td>
-                    <td>
-                        <nz-form-item style="padding-bottom: 0px;margin-bottom: 0px;">
-                            <nz-form-control nzErrorTip="">
-                                <nz-select style="width: 100px;" formControlName="payment" [nzPlaceHolder]="'请选支付方式'" [nzShowSearch]="true"
-                                    (ngModelChange)="onPayInfoChanged(i)">
-                                    <nz-option *ngFor="let i of payMethodList" [nzLabel]="i.label" [nzValue]="i.value">
-                                    </nz-option>
-                                </nz-select>
-                            </nz-form-control>
-                        </nz-form-item>
-                    </td>
-                    <td>
-                        <span nz-form-control>
-                            <nz-select style="width: 100px;" formControlName="feeStatus" [nzPlaceHolder]="'请选支付状态'" [nzShowSearch]="true"
-                                (ngModelChange)="onPayInfoChanged(i)">
-                                <nz-option *ngFor="let i of payStatusList" [nzLabel]="i.label" [nzValue]="i.value">
-                                </nz-option>
-                            </nz-select>
-                        </span>
-                    </td>
-                    <td>
-                        <span nz-form-control>
-                            <input nz-input formControlName="remark" (ngModelChange)="onPayInfoChanged(i)" />
-                        </span>
-                    </td>
-                    <!-- <td>
-                        <span>
-                            <a nz-popconfirm nzPopconfirmTitle="是否要删除此行？" (nzOnConfirm)="delFee(i)">删除</a>
-                        </span>
-                    </td> -->
-                </tr>
-            </tbody>
-        </nz-table>
-        <!-- <button nz-button [nzType]="'dashed'" (click)="addFee()" nzBlock class="mt-md">
-            <i nz-icon nzType="plus"></i>
-            <span>新增费用</span>
-        </button> -->
-        <!-- <div class="text-lg my-md">课时列表</div>
-        <st [data]="order.sessionList" [columns]="sessionListColumns" [page]="{ show: false }"></st> -->
-    </nz-card>
-    <footer-toolbar errorCollect>
-        <button nz-button type="primary" nzType="primary" (click)="_submitForm()">提交</button>
-    </footer-toolbar>
+    <nz-tabset>
+        <nz-tab nzTitle="报名信息">
+            <nz-card [nzHoverable]="true" [nzBordered]="false">
+                <sv-container size="large" title="学生信息">
+                    <sv label="姓名">{{order.student.name}}</sv>
+                    <sv label="性别">{{ appCtx.globalService.getGenderLabel(order.student.sex)}}</sv>
+                    <sv label="出生年月">{{order.student.birthday|date:"yyyy-MM-dd"}}</sv>
+                    <sv label="联系电话">{{order.student.phone}}</sv>
+                    <sv label="学校">{{order.student.school}}</sv>
+                    <sv label="备注" col="1">{{order.student.remark}}</sv>
+                </sv-container>
+                <nz-divider></nz-divider>
+                <sv-container size="large" title="课程信息">
+                    <sv *ngIf="order.courseId != null" label="课程名">{{order.course.name}}
+                        [{{order.course.year+" "+appCtx.globalService.getSeasonLabel(order.course.season)}}]
+                        <i *ngIf="order.editFlag!=2" nz-icon nzType="swap" nzTheme="outline"
+                            style="color:blue;margin-left:15px;" title="重新选择课程" (click)="clearSelectedCourse()"></i>
+                    </sv>
+                    <sv *ngIf="order.courseId == null" label="课程名" nz-form-control nzErrorTip="请选择课程">
+                        <nz-select formControlName="courseId" class="enroll-selector" nzShowSearch nzServerSearch
+                            nzPlaceHolder="输入课程编号或课程名称" [nzShowArrow]="false" [nzFilterOption]="nzFilterOption"
+                            [nzDropdownMatchSelectWidth]="false" (nzOnSearch)="search($event)"
+                            (ngModelChange)="courseSelected($event)">
+                            <nz-option *ngFor="let o of coursesOfOption" nzCustomContent [nzLabel]="o.name"
+                                [nzValue]="o.id">
+                                <!-- <div style="width: 200px; float: left;">{{o.code}}</div> -->
+                                <div style="width: 100px; float: left">{{o.name}}</div>
+                                <div style="width: 30px; float: left">
+                                    {{appCtx.globalService.getCourseSubjectLabel(o.courseSubject)}}
+                                </div>
+                            </nz-option>
+                        </nz-select>
+                    </sv>
+                    <sv label="科目">{{appCtx.globalService.getCourseSubjectLabel(order.course.courseSubject)}}</sv>
+                    <sv label="开课日期">{{order.course.startDate|date:"yyyy-MM-dd"}}</sv>
+                    <sv label="年级">{{appCtx.globalService.getGradeLabel(order.course.grade)}}</sv>
+                    <sv label="类型">{{appCtx.globalService.getCourseTypeLabel(order.course.courseType)}}</sv>
+                    <sv label="任课教师">{{order.course.teacher&&order.course.teacher.name}}</sv>
+                    <sv label="校区">{{appCtx.globalService.getCampusLabel(order.course.campus)}}</sv>
+                </sv-container>
+                <nz-divider></nz-divider>
+                <sv-container size="large" title="报名状态">
+                    <sv label="报名类型" nz-form-control nzErrorTip="请选择报名类型">
+                        <nz-select formControlName="registrationType" [nzPlaceHolder]="'请选择报名类型'" [nzShowSearch]="true">
+                            <nz-option *ngFor="let i of registrationTypeList" [nzLabel]="i.label" [nzValue]="i.value">
+                            </nz-option>
+                        </nz-select>
+                    </sv>
+                    <sv *ngIf="isEditOrder" label="状态" nz-form-control nzErrorTip="请选择状态">
+                        <nz-select formControlName="registrationStatus" [nzPlaceHolder]="'请选择状态'" [nzShowSearch]="true">
+                            <nz-option *ngFor="let i of registrationStatusList" [nzLabel]="i.label" [nzValue]="i.value">
+                            </nz-option>
+                        </nz-select>
+                    </sv>
+                    <sv label="备注" col="1">
+                        <textarea nz-input formControlName="remark" [nzAutosize]="{ minRows: 4 }"
+                            placeholder="请输入备注"></textarea>
+                    </sv>
+                </sv-container>
+                <nz-divider></nz-divider>
+                <div class="text-lg mb-md">支付信息</div>
+                <nz-table formArrayName="registerExpenseDetail" [nzData]="registerExpenseDetail.value"
+                    [nzShowPagination]="false">
+                    <thead>
+                        <tr>
+                            <th>费用类型</th>
+                            <th>原价</th>
+                            <th>数量</th>
+                            <th>折扣系数</th>
+                            <th>应付</th>
+                            <th>实付</th>
+                            <th>支付方式</th>
+                            <th>支付状态</th>
+                            <th>备注</th>
+                            <!-- <th>操作</th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of registerExpenseDetail.controls; let i = index" [formGroupName]="i">
+                            <td>
+                                <span nz-form-control nzErrorTip="请选费用类型">
+                                    <nz-select formControlName="feeType" [nzPlaceHolder]="'请选费用类型'"
+                                        [nzShowSearch]="true">
+                                        <nz-option *ngFor="let o of feeTypeList" [nzLabel]="o.label"
+                                            [nzValue]="o.value">
+                                        </nz-option>
+                                    </nz-select>
+                                </span>
+                            </td>
+                            <td>
+                                <span nz-form-control>
+                                    <nz-input-number style="width: 80px;" formControlName="perAmount"
+                                        (ngModelChange)="onPayInfoChanged(i)">
+                                    </nz-input-number>
+                                </span>
+                            </td>
+                            <td>
+                                <span nz-form-control>
+                                    <nz-input-number style="width: 80px;"
+                                        [nzDisabled]="registerExpenseDetail.value[i].feeType == 1"
+                                        formControlName="count" (ngModelChange)="onPayInfoChanged(i)">
+                                    </nz-input-number>
+                                    <i *ngIf="registerExpenseDetail.value[i].feeType == 1" nz-icon nzType="edit"
+                                        nzTheme="outline" title="选择报名课程"
+                                        (click)="selectSessions(modalSessionSelection)"></i>
+                                </span>
+                            </td>
+                            <td>
+                                <span nz-form-control>
+                                    <nz-input-number style="width: 80px;" formControlName="discount"
+                                        (ngModelChange)="onPayInfoChanged(i,$event)">
+                                    </nz-input-number>
+                                </span>
+                            </td>
+                            <td>
+                                <span>{{ registerExpenseDetail.value[i].receivable }}</span>
+                            </td>
+                            <td>
+                                <span nz-form-control>
+                                    <nz-input-number formControlName="amount"></nz-input-number>
+                                </span>
+                            </td>
+                            <td>
+                                <nz-form-item style="padding-bottom: 0px;margin-bottom: 0px;">
+                                    <nz-form-control nzErrorTip="">
+                                        <nz-select style="width: 100px;" formControlName="payment"
+                                            [nzPlaceHolder]="'请选支付方式'" [nzShowSearch]="true"
+                                            (ngModelChange)="onPayInfoChanged(i)">
+                                            <nz-option *ngFor="let i of payMethodList" [nzLabel]="i.label"
+                                                [nzValue]="i.value">
+                                            </nz-option>
+                                        </nz-select>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </td>
+                            <td>
+                                <span nz-form-control>
+                                    <nz-select style="width: 100px;" formControlName="feeStatus"
+                                        [nzPlaceHolder]="'请选支付状态'" [nzShowSearch]="true"
+                                        (ngModelChange)="onPayInfoChanged(i)">
+                                        <nz-option *ngFor="let i of payStatusList" [nzLabel]="i.label"
+                                            [nzValue]="i.value">
+                                        </nz-option>
+                                    </nz-select>
+                                </span>
+                            </td>
+                            <td>
+                                <span nz-form-control>
+                                    <input nz-input formControlName="remark" (ngModelChange)="onPayInfoChanged(i)" />
+                                </span>
+                            </td>
+                            <!-- <td>
+                                <span>
+                                    <a nz-popconfirm nzPopconfirmTitle="是否要删除此行？" (nzOnConfirm)="delFee(i)">删除</a>
+                                </span>
+                            </td> -->
+                        </tr>
+                    </tbody>
+                </nz-table>
+                <!-- <button nz-button [nzType]="'dashed'" (click)="addFee()" nzBlock class="mt-md">
+                    <i nz-icon nzType="plus"></i>
+                    <span>新增费用</span>
+                </button> -->
+                <!-- <div class="text-lg my-md">课时列表</div>
+                <st [data]="order.sessionList" [columns]="sessionListColumns" [page]="{ show: false }"></st> -->
+            </nz-card>
+            <footer-toolbar errorCollect>
+                <button nz-button type="primary" nzType="primary" (click)="_submitForm()">提交</button>
+            </footer-toolbar>
+        </nz-tab>
+        <nz-tab nzTitle="支付流水">
+            <nz-card [nzBordered]="false">
+                <st #payst [columns]="payDetailsColumns" [data]="order.registerExpenseDetail">
+                    <ng-template st-row="payment" let-i>
+                        {{appCtx.globalService.getPayMethodLabel(i.payment)}}
+                    </ng-template>
+                    <ng-template st-row="feeType" let-i>
+                        {{appCtx.globalService.getFeeTypeLabel(i.feeType)}}
+                    </ng-template>
+                    <ng-template st-row="feeStatus" let-i>
+                        {{appCtx.globalService.getPayStatusLabel(i.feeStatus)}}
+                    </ng-template>
+                </st>
+            </nz-card>
+        </nz-tab>
+    </nz-tabset>
 </form>
 
 <ng-template #modalSessionSelection>
