@@ -33,6 +33,19 @@
     from registration_expense_detail
     where id = #{id,jdbcType=INTEGER}
   </select>
+
+  <select id="selectByIds"  resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select
+    <include refid="Base_Column_List" />
+    from registration_expense_detail
+    where
+    id in
+    <foreach collection="ids" item="id" close=")" open="(" separator=",">
+      #{id}
+    </foreach>
+
+  </select>
   <select id="queryRegisterId" resultMap="BaseResultMap">
     <!--@mbg.generated-->
     select

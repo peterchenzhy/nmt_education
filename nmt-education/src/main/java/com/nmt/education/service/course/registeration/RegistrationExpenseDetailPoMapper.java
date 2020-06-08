@@ -19,4 +19,6 @@ interface RegistrationExpenseDetailPoMapper {
     int batchInsert(@Param("list") List<RegistrationExpenseDetailPo> list);
 
     List<RegistrationExpenseDetailPo> queryRegisterId(@Param("registerId") Long registerId);
+
+    List<RegistrationExpenseDetailPo> selectByIds(@Param("ids") List<Long> ids);
 }

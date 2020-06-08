@@ -6,8 +6,10 @@ import com.nmt.education.pojo.dto.req.RegisterExpenseDetailReqDto;
 import com.nmt.education.pojo.po.CourseRegistrationPo;
 import com.nmt.education.pojo.po.RegistrationExpenseDetailPo;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -66,5 +68,12 @@ public class RegistrationExpenseDetailService {
 
     public List<RegistrationExpenseDetailPo> queryRegisterId(Long registerId) {
         return this.registrationExpenseDetailPoMapper.queryRegisterId(registerId);
+    }
+
+    public List<RegistrationExpenseDetailPo> selectByIds(List<Long> ids) {
+        if(CollectionUtils.isEmpty(ids)){
+            return Collections.emptyList();
+        }
+        return this.registrationExpenseDetailPoMapper.selectByIds(ids);
     }
 }

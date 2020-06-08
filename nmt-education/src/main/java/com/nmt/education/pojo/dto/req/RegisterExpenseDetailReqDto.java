@@ -12,6 +12,14 @@ import java.util.List;
 @Setter
 public class RegisterExpenseDetailReqDto {
 
+    @ApiModelProperty(value = "编辑标志；0：无变化，1：新增，2：编辑，3：需要删除")
+    private Integer editFlag = 0;
+    /**
+     * 数据id
+     */
+    @ApiModelProperty(value = "数据id")
+    private Long id ;
+
     /**
      * 费用类型
      */

@@ -83,9 +83,8 @@ public class CourseRegistrationService {
                 "课程：" + dto.getCourseId());
 
         //缴费记录明细
-        List<RegistrationExpenseDetailPo> expenseDetailPoList = generateRegisterExpenseDetail(dto.getRegisterExpenseDetail(), updator,
+        generateRegisterExpenseDetail(dto.getRegisterExpenseDetail(), updator,
                 courseRegistrationPo);
-        registrationExpenseDetailService.batchInsert(expenseDetailPoList);
 
         //汇总课表
         registerationSummaryService.batchInsert(generateRegisterationSummary(dto, updator, courseRegistrationPo));
@@ -105,9 +104,16 @@ public class CourseRegistrationService {
      * @since 2020/4/30 21:30
      */
     private List<RegisterationSummaryPo> generateRegisterationSummary(CourseRegisterReqDto dto, int updator, CourseRegistrationPo courseRegistrationPo) {
-        List<Long> courseScheduleIds = dto.getCourseScheduleIds();
-        Assert.isTrue(!CollectionUtils.isEmpty(courseScheduleIds), "报名时不存在上课信息");
-        List<RegisterationSummaryPo> list = new ArrayList<>(courseScheduleIds.size());
+        Assert.isTrue(!CollectionUtils.isEmpty(dto.getCourseScheduleIds()), "报名时不存在上课信息");
+        List<RegisterationSummaryPo> list = new ArrayList<>(dto.getCourseScheduleIds().size());
+        List<Long> courseScheduleIds;
+        if (Enums.EditFlag.新增.getCode().equals(dto.getEditFlag())) {
+            courseScheduleIds = dto.getCourseScheduleIds();
+        } else {
+            List<Long> alreadyList =
+                    registerationSummaryService.queryByRegisterId(dto.getId()).stream().map(e -> e.getCourseScheduleId()).collect(Collectors.toList());
+            courseScheduleIds = (List<Long>) org.apache.commons.collections4.CollectionUtils.subtract(dto.getCourseScheduleIds(), alreadyList);
+        }
         courseScheduleIds.stream().forEach(e -> {
             RegisterationSummaryPo registerationSummaryPo = registerationSummaryService.dto2po(dto, updator, courseRegistrationPo, e);
             list.add(registerationSummaryPo);
@@ -140,14 +146,21 @@ public class CourseRegistrationService {
         return this.courseRegistrationPoMapper.queryByCourseStudent(courseId, studentId);
     }
 
-    private List<RegistrationExpenseDetailPo> generateRegisterExpenseDetail(List<RegisterExpenseDetailReqDto> expenseDetailList, int updator,
-                                                                            CourseRegistrationPo courseRegistrationPo) {
+    private void generateRegisterExpenseDetail(List<RegisterExpenseDetailReqDto> expenseDetailList, int updator,
+                                               CourseRegistrationPo courseRegistrationPo) {
         Assert.isTrue(!CollectionUtils.isEmpty(expenseDetailList), "报名时不存在费用信息");
-        List<RegistrationExpenseDetailPo> resultList = new ArrayList<>(expenseDetailList.size());
-        expenseDetailList.stream().forEach(e -> {
-            resultList.add(registrationExpenseDetailService.dto2po(updator, courseRegistrationPo, e));
+        List<RegistrationExpenseDetailPo> addList = new ArrayList<>(expenseDetailList.size());
+        List<RegistrationExpenseDetailPo> updateList =
+                registrationExpenseDetailService.selectByIds(expenseDetailList.stream().filter(e -> Objects.nonNull(e.getId()) && e.getId() != -1)
+                        .map(e -> e.getId()).collect(Collectors.toList()));
+
+        expenseDetailList.stream().filter(e -> Enums.EditFlag.修改.getCode().equals(e.getEditFlag())).forEach(e -> {
+            addList.add(registrationExpenseDetailService.dto2po(updator, courseRegistrationPo, e));
         });
-        return resultList;
+
+        registrationExpenseDetailService.batchInsert(addList);
+        registrationExpenseDetailService.updateBatch(updateList);
+
     }
 
 
@@ -396,8 +409,8 @@ public class CourseRegistrationService {
         }
         List<RegistrationExpenseDetailPo> expenseDetailList = registrationExpenseDetailService.queryRegisterId(dto.getRegisterId());
         Map<Integer, RegistrationExpenseDetailPo> validExpenseDetail =
-                expenseDetailList.stream().filter(e-> Enums.FeeStatus.已缴费.getCode().equals(e.getFeeStatus()) && Enums.FeeDirection.支付.getCode().equals(e.getFeeDirection()))
-                .collect(Collectors.toMap(k->k.getFeeType(),v->v));
+                expenseDetailList.stream().filter(e -> Enums.FeeStatus.已缴费.getCode().equals(e.getFeeStatus()) && Enums.FeeDirection.支付.getCode().equals(e.getFeeDirection()))
+                        .collect(Collectors.toMap(k -> k.getFeeType(), v -> v));
         Map<Integer, List<RefundItemReqDto>> itemMap = dtoList.stream().collect(Collectors.groupingBy(e -> e.getFeeType()));
         itemMap.keySet().stream().forEach(k -> {
             if (k.equals(普通单节费用)) {

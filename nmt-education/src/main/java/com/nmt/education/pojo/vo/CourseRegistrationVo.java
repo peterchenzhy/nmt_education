@@ -16,7 +16,6 @@ import java.util.List;
 @ToString
 public class CourseRegistrationVo extends CourseRegistrationPo {
 
-
     @ApiModelProperty(value = "课程对象")
     private CoursePo course;
 
