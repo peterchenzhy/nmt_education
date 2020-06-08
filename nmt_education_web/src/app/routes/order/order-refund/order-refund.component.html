@@ -67,6 +67,9 @@
             <ng-template st-row="feeType" let-i>
                 {{appCtx.globalService.getFeeTypeLabel(i.feeType)}}
             </ng-template>
+            <ng-template st-row="feeStatus" let-i>
+                {{appCtx.globalService.getPayStatusLabel(i.feeStatus)}}
+            </ng-template>
         </st>
     </nz-card>
     <footer-toolbar errorCollect>

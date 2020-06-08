@@ -62,6 +62,11 @@ export interface Payment {
     deduction?: number;
     amount?: number;
     remark?: string;
+    editFlag?: EDIT_FLAG;
+    createTime?: Date;
+    creator?: number;
+    operateTime?: Date;
+    operator?: number;
 }
 
 export interface OrderSession {
