@@ -388,12 +388,16 @@ public class CourseRegistrationService {
      * @version v1
      * @since 2020/6/5 22:37
      */
+    @Transactional(rollbackFor = Exception.class)
     public void registerRefund(RefundReqDto dto, Integer logInUser) {
         List<RefundItemReqDto> dtoList = dto.getItemList();
         if (CollectionUtils.isEmpty(dtoList)) {
             return;
         }
         List<RegistrationExpenseDetailPo> expenseDetailList = registrationExpenseDetailService.queryRegisterId(dto.getRegisterId());
+        Map<Integer, RegistrationExpenseDetailPo> validExpenseDetail =
+                expenseDetailList.stream().filter(e-> Enums.FeeStatus.已缴费.getCode().equals(e.getFeeStatus()) && Enums.FeeDirection.支付.getCode().equals(e.getFeeDirection()))
+                .collect(Collectors.toMap(k->k.getFeeType(),v->v));
         Map<Integer, List<RefundItemReqDto>> itemMap = dtoList.stream().collect(Collectors.groupingBy(e -> e.getFeeType()));
         itemMap.keySet().stream().forEach(k -> {
             if (k.equals(普通单节费用)) {
@@ -402,14 +406,21 @@ public class CourseRegistrationService {
                 if (Objects.nonNull(p)) {
                     throw new RuntimeException("有记录已经被被退费了，RegisterationSummaryPoId:" + p.getId());
                 }
-                processRefund(dto, logInUser, itemMap.get(k), expenseDetailList, k);
-                //更新报名课表
-                registerationSummaryService.updateSignIn(itemMap.get(k).stream().map(e -> e.getRegisterSummaryId()).collect(Collectors.toList()),
-                        logInUser, Enums.SignInType.已退费);
+                if (processRefund(dto, logInUser, itemMap.get(k), expenseDetailList, k)) {
+                    //更新报名课表
+                    registerationSummaryService.updateSignIn(itemMap.get(k).stream().map(e -> e.getRegisterSummaryId()).collect(Collectors.toList()),
+                            logInUser, Enums.SignInType.已退费);
+                }
             } else {
-                processRefund(dto, logInUser, itemMap.get(k), expenseDetailList, k);
+                if (processRefund(dto, logInUser, itemMap.get(k), expenseDetailList, k)) {
+                    //将支付状态无效
+                    RegistrationExpenseDetailPo expenseDetailPo = validExpenseDetail.get(k);
+                    expenseDetailPo.setFeeStatus(Enums.FeeStatus.已退费.getCode());
+                    expenseDetailPo.setOperateTime(new Date());
+                    expenseDetailPo.setOperator(logInUser);
+                    registrationExpenseDetailService.updateByPrimaryKeySelective(expenseDetailPo);
+                }
             }
-
         });
 
     }
@@ -422,16 +433,17 @@ public class CourseRegistrationService {
      * @param itemList
      * @param expenseDetailList
      * @param feeType
+     * @return 退费结果
      * @author PeterChen
      * @modifier PeterChen
      * @version v1
      * @since 2020/6/6 14:38
      */
-    private void processRefund(RefundReqDto dto, Integer logInUser, List<RefundItemReqDto> itemList
+    private boolean processRefund(RefundReqDto dto, Integer logInUser, List<RefundItemReqDto> itemList
             , List<RegistrationExpenseDetailPo> expenseDetailList, Integer feeType) {
         if (CollectionUtils.isEmpty(itemList)) {
             log.warn("费用类型：{},没有项目明细，退费逻辑终止，dto：{}", feeType, dto);
-            return;
+            return false;
         }
         //获取付款记录
         List<RegistrationExpenseDetailPo> payList = expenseDetailList.stream().filter(
@@ -467,7 +479,7 @@ public class CourseRegistrationService {
         refundPo.setOperator(logInUser);
         refundPo.setOperateTime(new Date());
         registrationExpenseDetailService.insertSelective(refundPo);
-
+        return true;
     }
 
 }

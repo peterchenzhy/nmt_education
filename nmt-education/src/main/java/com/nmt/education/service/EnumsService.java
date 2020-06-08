@@ -75,6 +75,7 @@ public class EnumsService {
         map.put(getEnumKey(Enums.EditFlag.class), getEnumVos(Enums.EditFlag.values()));
         map.put(getEnumKey(Enums.RegistrationType.class), getEnumVos(Enums.RegistrationType.values()));
         map.put(getEnumKey(Enums.SignInType.class), getEnumVos(Enums.SignInType.values()));
+        map.put(getEnumKey(Enums.FeeDirection.class), getEnumVos(Enums.FeeDirection.values()));
         map.putAll(getDbEnums());
         return map;
     }
