@@ -78,7 +78,7 @@ export class OrderRefundComponent implements OnInit {
                     this.order.course.teacher = {};
                     this.order.editFlag = EDIT_FLAG.UPDATE;
                     this.orderFeeSTData = this.order.courseScheduleList;
-                    let payFeeList = this.order.registerExpenseDetail;//.filter(f => f.feeDirection == FeeDirection.PAY);
+                    let payFeeList = this.order.registerExpenseDetail.filter(f => f.feeDirection == FeeDirection.PAY);
                     let sessionFee = payFeeList.filter(f => f.feeType == FEE_TYPE.SESSION);
                     this.orderFeeSTData.forEach(s => {
                         s.disabled = s.studentSignIn == SIGNIN.SIGNIN || s.studentSignIn == SIGNIN.REFUND;
