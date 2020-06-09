@@ -64,6 +64,9 @@ public class RegisterationSummaryService {
 
 
     public int batchInsert(List<RegisterationSummaryPo> list) {
+        if(CollectionUtils.isEmpty(list)){
+            return 0 ;
+        }
         return registerationSummaryPoMapper.batchInsert(list);
     }
 

@@ -77,7 +77,11 @@ public class CourseRegistrationService {
             courseRegistrationPo = generateCourseRegistrationPo(dto, updator);
             this.insertSelective(courseRegistrationPo);
         } else {
-            courseRegistrationPo = this.courseRegistrationPoMapper.selectByPrimaryKey(dto.getId());
+            courseRegistrationPo = selectByPrimaryKey(dto.getId());
+            courseRegistrationPo.setRemark(dto.getRemark());
+            courseRegistrationPo.setOperator(updator);
+            courseRegistrationPo.setOperateTime(new Date());
+            this.updateByPrimaryKeySelective(courseRegistrationPo);
         }
         Assert.isTrue(Objects.nonNull(courseRegistrationPo), "非新增报名时，报名信息不存在，学生：" + dto.getStudentId() +
                 "课程：" + dto.getCourseId());
@@ -127,7 +131,11 @@ public class CourseRegistrationService {
         Assert.notNull(courseService.selectByPrimaryKey(dto.getCourseId()), "学生信息不存在！id:" + dto.getCourseId());
         Assert.notEmpty(dto.getCourseScheduleIds(), "报名课时必填！id:" + dto.getCourseId());
         if (Enums.EditFlag.新增.getCode().equals(dto.getEditFlag())) {
-            Assert.isNull(queryByCourseStudent(dto.getCourseId(), dto.getStudentId()), "报名记录已经存在！id:" + dto.getCourseId());
+            CourseRegistrationListVo vo = queryByCourseStudent(dto.getCourseId(), dto.getStudentId());
+            if(Objects.nonNull(vo)){
+                Assert.isTrue(Enums.RegistrationStatus.已退费.getCode().equals(vo.getRegistrationStatus()),"报名记录已经存在，不能重复报名！id："+vo.getId());
+            }
+
         }
     }
 
@@ -154,7 +162,7 @@ public class CourseRegistrationService {
                 registrationExpenseDetailService.selectByIds(expenseDetailList.stream().filter(e -> Objects.nonNull(e.getId()) && e.getId() != -1)
                         .map(e -> e.getId()).collect(Collectors.toList()));
 
-        expenseDetailList.stream().filter(e -> Enums.EditFlag.修改.getCode().equals(e.getEditFlag())).forEach(e -> {
+        expenseDetailList.stream().filter(e -> Enums.EditFlag.新增.getCode().equals(e.getEditFlag())).forEach(e -> {
             addList.add(registrationExpenseDetailService.dto2po(updator, courseRegistrationPo, e));
         });
 
@@ -403,6 +411,10 @@ public class CourseRegistrationService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void registerRefund(RefundReqDto dto, Integer logInUser) {
+        CourseRegistrationPo courseRegistrationPo = courseRegistrationPoMapper.selectByPrimaryKey(dto.getRegisterId());
+        Assert.isTrue(Objects.nonNull(courseRegistrationPo), "报名信息不存在，id：" + dto.getRegisterId());
+        Assert.isTrue(!Enums.RegistrationStatus.已退费.getCode().equals(courseRegistrationPo.getRegistrationStatus()),
+                "已退费的订单无法重复退费，id：" + dto.getRegisterId());
         List<RefundItemReqDto> dtoList = dto.getItemList();
         if (CollectionUtils.isEmpty(dtoList)) {
             return;
@@ -435,6 +447,10 @@ public class CourseRegistrationService {
                 }
             }
         });
+        courseRegistrationPo.setRegistrationStatus(Enums.RegistrationStatus.已退费.getCode());
+        courseRegistrationPo.setOperateTime(new Date());
+        courseRegistrationPo.setOperator(logInUser);
+        updateByPrimaryKeySelective(courseRegistrationPo);
 
     }
 

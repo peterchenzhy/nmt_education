@@ -69,7 +69,7 @@ public interface Enums {
         正常(1, "正常", "default"),
         已冻结(2, "已冻结", "processing"),
         退费中(3, "退费中", "success"),
-        已退费(5, "已退费", "error");
+        已退费(4, "已退费", "error");
 
         @Getter
         private Integer code;
@@ -91,7 +91,8 @@ public interface Enums {
     enum RegistrationType implements IEnum {
         新报(1, "新报", "default"),
         续报(2, "续报", "success"),
-        试听课(3, "试听课", "success");
+//        试听课(3, "试听课", "success")
+        ;
 
         @Getter
         private Integer code;

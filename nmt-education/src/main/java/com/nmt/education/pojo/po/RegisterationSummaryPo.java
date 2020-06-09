@@ -49,6 +49,12 @@ public class RegisterationSummaryPo {
     private Integer signIn;
 
     /**
+     * 签到备注
+     */
+    @ApiModelProperty(value="签到备注")
+    private String signInRemark;
+
+    /**
     * 有效：1 无效：0
     */
     @ApiModelProperty(value="有效：1 无效：0")

@@ -2,7 +2,8 @@
 <form nz-form [formGroup]="form" [nzLayout]="'vertical'">
   <nz-tabset (nzSelectChange)="onSelectedTabChanged($event)">
     <nz-tab nzTitle="课程信息">
-      <nz-card [nzBordered]="false" nzTitle="基本信息" [nzExtra]="courseStatusTemplate">
+<!--      <nz-card [nzBordered]="false" nzTitle="基本信息" [nzExtra]="courseStatusTemplate">-->
+      <nz-card [nzBordered]="false" nzTitle="基本信息" >
         <nz-row nzGutter="16">
           <nz-col nzLg="5" nzMd="12" nzSm="24">
             <nz-form-item>

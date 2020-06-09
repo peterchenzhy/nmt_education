@@ -36,11 +36,17 @@ public class RegistrationExpenseDetailService {
 
 
     public int updateBatch(List<RegistrationExpenseDetailPo> list) {
+        if(CollectionUtils.isEmpty(list)){
+            return 0 ;
+        }
         return registrationExpenseDetailPoMapper.updateBatch(list);
     }
 
 
     public int batchInsert(List<RegistrationExpenseDetailPo> list) {
+        if(CollectionUtils.isEmpty(list)){
+            return 0;
+        }
         return registrationExpenseDetailPoMapper.batchInsert(list);
     }
 
