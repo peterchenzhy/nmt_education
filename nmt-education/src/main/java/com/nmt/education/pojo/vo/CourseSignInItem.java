@@ -43,4 +43,10 @@ public class CourseSignInItem {
      */
     @ApiModelProperty(value = "课程日程id")
     private Long courseScheduleId ;
+
+    /**
+     *签到备注
+     */
+    @ApiModelProperty(value = "签到备注")
+    private String signInRemark ;
 }

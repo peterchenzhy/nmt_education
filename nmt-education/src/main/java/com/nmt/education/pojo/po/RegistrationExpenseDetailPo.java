@@ -1,5 +1,6 @@
 package com.nmt.education.pojo.po;
 
+import com.nmt.education.commmons.Enums;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
@@ -65,7 +66,12 @@ public class RegistrationExpenseDetailPo {
     */
     @ApiModelProperty(value="缴费方式")
     private Integer payment;
-
+    /**
+     * 支付方向
+     * 1：付费 2：退费
+     */
+    @ApiModelProperty(value="支付方向 1：付费 2：退费" )
+    private Integer feeDirection= Enums.FeeDirection.支付.getCode();
     /**
     * 有效：1 无效：0
     */

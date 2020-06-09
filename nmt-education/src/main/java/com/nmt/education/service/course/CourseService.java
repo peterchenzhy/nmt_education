@@ -7,9 +7,11 @@ import com.nmt.education.commmons.Enums;
 import com.nmt.education.commmons.utils.SpringContextUtil;
 import com.nmt.education.listener.event.BaseEvent;
 import com.nmt.education.listener.event.TeacherChangeEvent;
+import com.nmt.education.pojo.dto.req.CourseExpenseReqDto;
 import com.nmt.education.pojo.dto.req.CourseReqDto;
 import com.nmt.education.pojo.dto.req.CourseSearchDto;
 import com.nmt.education.pojo.po.CoursePo;
+import com.nmt.education.pojo.po.CourseSchedulePo;
 import com.nmt.education.pojo.vo.CourseDetailVo;
 import com.nmt.education.service.CodeService;
 import com.nmt.education.service.course.expense.CourseExpenseService;
@@ -24,10 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -62,6 +62,10 @@ public class CourseService {
     @Transactional(rollbackFor = Exception.class)
     public Boolean courseManager(Integer loginUser, CourseReqDto dto) {
         Enums.EditFlag editFlag = Enums.EditFlag.codeOf(dto.getEditFlag());
+        if( dto.getCourseExpenseList().stream().collect(Collectors.groupingBy(k -> k.getType())).values()
+                .stream().filter(v -> v.size() > 1).findAny().isPresent()){
+            throw new RuntimeException("一个课程一个类型的费用配置只能有一个");
+        }
         CoursePo po = null;
         switch (editFlag) {
             case 新增:
@@ -256,6 +260,10 @@ public class CourseService {
         if (Objects.nonNull(po.getTeacherId()) && Consts.DEFAULT_LONG != po.getTeacherId()) {
             vo.setTeacher(teacherService.detail(po.getTeacherId()));
         }
+        List<CourseSchedulePo> courseSchedulePoList = courseScheduleService.queryByCourseId(po.getId());
+        vo.setCourseSchedule(courseSchedulePoList.stream().
+                filter(e -> Enums.SignInType.已签到.getCode().equals(e.getSignIn())).sorted(Comparator.comparing(CourseSchedulePo::getId).reversed())
+                .findFirst().orElse(null));
         return vo;
     }
 

@@ -31,12 +31,12 @@ public class CourseExpenseController {
     @Autowired
     private CourseExpenseService courseExpenseService;
 
-    @ApiOperation(value = "manager", notes = "课时费管理")
-    @RequestMapping(value = "/manager", method = RequestMethod.POST)
-    public Boolean manager(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
-            , @RequestBody List<CourseExpenseReqDto> dtoList , @RequestParam("courseId") Long courseId ) {
-        return courseExpenseService.manager(dtoList,courseId,logInUser);
-    }
+//    @ApiOperation(value = "manager", notes = "课时费管理")
+//    @RequestMapping(value = "/manager", method = RequestMethod.POST)
+//    public Boolean manager(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
+//            , @RequestBody List<CourseExpenseReqDto> dtoList , @RequestParam("courseId") Long courseId ) {
+//        return courseExpenseService.manager(dtoList,courseId,logInUser);
+//    }
 
 
 

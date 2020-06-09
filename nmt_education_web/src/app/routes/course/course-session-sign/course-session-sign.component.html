@@ -1,0 +1,47 @@
+<page-header [title]="pageHeader"></page-header>
+<nz-spin [nzSpinning]="loading" [nzSize]="'large'">
+  <form nz-form [formGroup]="form" [nzLayout]="'vertical'">
+    <nz-card [nzHoverable]="true" [nzBordered]="false">
+      <sv-container size="large" title="课时信息">
+        <sv label="上课时间" col="1">
+          <nz-select style="width: 200px;" formControlName="selectedSession" [nzPlaceHolder]="'请选课时'"
+            (ngModelChange)="onCourseSessionChanged($event)">
+            <nz-option *ngFor="let i of course.courseScheduleList"
+              [nzLabel]="i.courseDatetime|date:'yyyy-MM-dd HH:mm:ss'" [nzValue]="i">
+            </nz-option>
+          </nz-select>
+        </sv>
+        <sv label="课程名">{{course.name}}</sv>
+        <sv label="课程时长">{{selectedSession.perTime}}</sv>
+        <sv label="任课老师">{{getTeacherName(selectedSession.teacherId)}}</sv>
+      </sv-container>
+      <nz-divider></nz-divider>
+      <div class="text-lg mb-md">学生列表</div>
+      <nz-table formArrayName="sessionSignStatusList" [nzData]="sessionSignStatusList.value" [nzShowPagination]="false">
+        <thead>
+          <tr>
+            <th>学生姓名</th>
+            <th>签到状态</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of sessionSignStatusList.controls; let i = index" [formGroupName]="i">
+            <td>
+              <span>{{ sessionSignStatusList.value[i].studentName }}</span>
+            </td>
+            <td>
+              <nz-select style="width: 25%;" formControlName="signIn" [nzPlaceHolder]="'请选签到状态'"
+                (ngModelChange)="onSignInfoChanged(i)">
+                <nz-option *ngFor="let status of signInStatusList" [nzLabel]="status.label" [nzValue]="status.value">
+                </nz-option>
+              </nz-select>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </nz-card>
+    <footer-toolbar errorCollect>
+      <button nz-button type="primary" nzType="primary" (click)="_submitForm()">提交</button>
+    </footer-toolbar>
+  </form>
+</nz-spin>

@@ -1,5 +1,6 @@
 package com.nmt.education.controller;
 
+import com.nmt.education.commmons.utils.ReqDtoCheckUtil;
 import com.nmt.education.pojo.dto.req.CourseScheduleReqDto;
 import com.nmt.education.pojo.po.CourseSchedulePo;
 import com.nmt.education.pojo.vo.CourseSignInItem;
@@ -8,6 +9,7 @@ import com.nmt.education.service.course.schedule.CourseScheduleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,12 +34,12 @@ public class CourseScheduleController {
     @Autowired
     private CourseScheduleService courseScheduleService;
 
-    @ApiOperation(value = "signin/default", notes = "课程签到页面--默认页面")
-    @RequestMapping(value = "/signIn/default/{courseId}", method = RequestMethod.GET)
-    public CourseSignInVo signInDefault(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
-                                        @PathVariable Long courseId) {
-        return courseScheduleService.signInDefault(courseId, logInUser);
-    }
+//    @ApiOperation(value = "signin/default", notes = "课程签到页面--默认页面")
+//    @RequestMapping(value = "/signIn/default/{courseId}", method = RequestMethod.GET)
+//    public CourseSignInVo signInDefault(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
+//                                        @PathVariable Long courseId) {
+//        return courseScheduleService.signInDefault(courseId, logInUser);
+//    }
 
     @ApiOperation(value = "signin/select", notes = "课程签到页面--选择上课时间下拉列表")
     @RequestMapping(value = "/signIn/select/{courseId}", method = RequestMethod.GET)
@@ -56,14 +58,16 @@ public class CourseScheduleController {
     @ApiOperation(value = "signIn", notes = "签到")
     @RequestMapping(value = "/signIn", method = RequestMethod.POST)
     public void signIn(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
-                           @RequestBody List<CourseSignInItem> list) {
+                       @RequestBody List<CourseSignInItem> list, BindingResult bindingResult) {
+        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
           courseScheduleService.signIn(list, logInUser);
     }
 
     @ApiOperation(value = "manager", notes = "课表管理")
     @RequestMapping(value = "/manager", method = RequestMethod.POST)
     public Boolean manager(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
-            , @RequestBody List<CourseScheduleReqDto> dtoList, @RequestParam("courseId") Long courseId) {
+            , @RequestBody List<CourseScheduleReqDto> dtoList, @RequestParam("courseId") Long courseId,BindingResult bindingResult) {
+        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
         return courseScheduleService.manager(dtoList, courseId, logInUser);
     }
 

@@ -34,4 +34,8 @@ interface RegisterationSummaryPoMapper {
     List<CourseSignInItem> queryByCourseScheduleId(@Param("courseScheduleId") Long courseScheduleId);
 
     void signIn(@Param("list") List<CourseSignInItem> list, @Param("operator") Integer operator);
+
+    void updateSignIn(@Param("ids") List<Long> ids, @Param("logInUser") Integer logInUser, @Param("code") Integer code);
+
+    List<RegisterationSummaryPo> selectByIds(@Param("ids") List<Long> ids);
 }

@@ -1,9 +1,6 @@
 package com.nmt.education.pojo.vo;
 
-import com.nmt.education.pojo.po.CoursePo;
-import com.nmt.education.pojo.po.CourseRegistrationPo;
-import com.nmt.education.pojo.po.CourseSchedulePo;
-import com.nmt.education.pojo.po.RegistrationExpenseDetailPo;
+import com.nmt.education.pojo.po.*;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,7 +16,6 @@ import java.util.List;
 @ToString
 public class CourseRegistrationVo extends CourseRegistrationPo {
 
-
     @ApiModelProperty(value = "课程对象")
     private CoursePo course;
 
@@ -28,8 +24,9 @@ public class CourseRegistrationVo extends CourseRegistrationPo {
 
     @ApiModelProperty(value = "报名时间")
     private Date registerTime;
-    @ApiModelProperty(value = "课时信息")
-    private List<CourseSchedulePo> courseScheduleList = Collections.emptyList();
+
+    @ApiModelProperty(value = "报名课时信息")
+    private List<StudentCourseScheduleSummaryVo> courseScheduleList = Collections.emptyList();
 
     @ApiModelProperty(value = "缴费信息")
     private List<RegistrationExpenseDetailPo> registerExpenseDetail =Collections.emptyList();

@@ -41,7 +41,8 @@
         select
         <include refid="Base_Column_List"/>
         from course_registration
-        where id = #{id,jdbcType=BIGINT}
+        where status = 1 and
+        id = #{id,jdbcType=BIGINT}
     </select>
     <select id="queryByCourseId" parameterType="java.lang.Long" resultMap="BaseResultMap">
         <!--@mbg.generated-->

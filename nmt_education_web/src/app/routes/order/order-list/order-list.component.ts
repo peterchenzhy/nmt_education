@@ -74,7 +74,11 @@ export class OrderListComponent implements OnInit {
             buttons: [
                 {
                     text: '编辑',
-                    click: (item: any) => this.router.navigate([`/order/view/${item.id}`]),
+                    click: (item: any) => this.router.navigate([`/order/view/${item.id}`])
+                },
+                {
+                    text: '退费',
+                    click: (item: any) => this.router.navigate([`/order/refund/${item.id}`])
                 }
             ],
         },

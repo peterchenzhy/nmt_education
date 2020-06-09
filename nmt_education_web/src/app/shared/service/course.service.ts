@@ -48,4 +48,17 @@ export class CourseService {
     public getRegisteredStudents(id: number): Observable<Object> {
         return this.httpClient.get('nmt-education/course/register/student/' + id);
     }
+
+    public getSessionStudents(id: number): Observable<Object> {
+        return this.httpClient.get(`nmt-education/course/schedule/signIn/list/${id}`);
+    }
+
+    public sessionStudentsSignIn(list: any): Observable<Object> {
+        return this.httpClient.post('nmt-education/course/schedule/signIn', list);
+    }
+
+    public refundFee(feeList:any):Observable<Object>{
+        return this.httpClient.post('nmt-education/course/register/refund', feeList)
+
+    }
 }

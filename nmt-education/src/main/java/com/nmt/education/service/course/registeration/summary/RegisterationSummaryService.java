@@ -14,10 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class RegisterationSummaryService {
@@ -32,7 +29,7 @@ public class RegisterationSummaryService {
         registerationSummaryPo.setCourseId(courseRegistrationPo.getCourseId());
         registerationSummaryPo.setCourseScheduleId(e);
         registerationSummaryPo.setCourseRegistrationId(courseRegistrationPo.getId());
-        registerationSummaryPo.setSignIn(Enums.signInType.未签到.getCode());
+        registerationSummaryPo.setSignIn(Enums.SignInType.未签到.getCode());
         registerationSummaryPo.setStatus(StatusEnum.VALID.getCode());
         registerationSummaryPo.setCreator(updator);
         registerationSummaryPo.setCreateTime(new Date());
@@ -67,6 +64,9 @@ public class RegisterationSummaryService {
 
 
     public int batchInsert(List<RegisterationSummaryPo> list) {
+        if(CollectionUtils.isEmpty(list)){
+            return 0 ;
+        }
         return registerationSummaryPoMapper.batchInsert(list);
     }
 
@@ -109,7 +109,7 @@ public class RegisterationSummaryService {
      * @since 2020/5/11 22:50
      */
     public PageInfo<RegisterationSummaryPo> queryPageByRegisterId(Long id, Integer pageNo, Integer pageSize) {
-        return PageHelper.startPage(pageNo,pageSize).doSelectPageInfo(()->this.registerationSummaryPoMapper.queryByRegisterId(id));
+        return PageHelper.startPage(pageNo, pageSize).doSelectPageInfo(() -> this.registerationSummaryPoMapper.queryByRegisterId(id));
     }
 
     /**
@@ -142,5 +142,30 @@ public class RegisterationSummaryService {
             return;
         }
         this.registerationSummaryPoMapper.signIn(list, operator);
+    }
+
+    /**
+     * 更新 学生课表 签到状态
+     *
+     * @param ids       主键id
+     * @param logInUser 操作人
+     * @param signIn    签到状态
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/6/6 14:05
+     */
+    public void updateSignIn(List<Long> ids, Integer logInUser, Enums.SignInType signIn) {
+        if (CollectionUtils.isEmpty(ids)) {
+            return;
+        }
+        this.registerationSummaryPoMapper.updateSignIn(ids, logInUser, signIn.getCode());
+    }
+
+    public List<RegisterationSummaryPo> selectByIds(List<Long> ids) {
+        if(CollectionUtils.isEmpty(ids)){
+            return Collections.EMPTY_LIST;
+        }
+        return this.registerationSummaryPoMapper.selectByIds(ids);
     }
 }

@@ -10,6 +10,7 @@
         <result column="course_schedule_id" jdbcType="BIGINT" property="courseScheduleId"/>
         <result column="course_registration_id" jdbcType="BIGINT" property="courseRegistrationId"/>
         <result column="sign_in" jdbcType="TINYINT" property="signIn"/>
+        <result column="sign_in_remark" jdbcType="VARCHAR" property="signInRemark"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="creator" jdbcType="INTEGER" property="creator"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -20,7 +21,7 @@
     <sql id="Base_Column_List">
         <!--@mbg.generated-->
         id, student_id, course_id, course_schedule_id, course_registration_id, sign_in, `status`,
-        creator, create_time, `operator`, operate_time
+        creator, create_time, `operator`, operate_time,sign_in_remark
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         <!--@mbg.generated-->
@@ -44,15 +45,34 @@
     inner join student s on rs.student_id = s.id
     where rs.status = 1
     and rs.course_schedule_id =#{courseScheduleId}
+    and rs.sign_in != 3
   </select>
 
     <update id="signIn">
         <foreach collection="list" item="e" separator=";">
-            update registeration_summary set operate_time = now() ,operator=#{operator} ,sign_in=#{e.signIn}
+            update registeration_summary set operate_time = now() ,operator=#{operator} ,sign_in=#{e.signIn},sign_in_remark=#{e.signInRemark}
             where id = #{e.registerSummaryId}
         </foreach>
     </update>
 
+    <update id="updateSignIn">
+        update registeration_summary set operate_time = now() ,operator=#{logInUser} ,sign_in=#{code},sign_in_remark=#{e.signInRemark}
+        where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="selectByIds" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from registeration_summary
+        where status = 1
+        and id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
     <select id="queryBySearchDto" parameterType="com.nmt.education.pojo.dto.req.RegisterSummarySearchDto"
             resultType="com.nmt.education.pojo.vo.RegisterSummaryVo">
         <!--@mbg.generated-->

@@ -47,8 +47,12 @@ export class GlobalService {
         return obj ? obj.label : "";
     }
 
-    public SIGNIN_STATUS_LIST = [{ value: 0, label: '未签到' }, { value: 1, label: '已签到' }];
+    public SIGNIN_STATUS_LIST = [{ value: 0, label: '未签到' }, { value: 1, label: '已签到' },
+    { value: 2, label: '请假' }];
     public getSignInStatusLabel(signIn: SIGNIN) {
+        if (signIn == SIGNIN.REFUND) {
+            return "已退费";
+        }
         let obj = this.SIGNIN_STATUS_LIST.find(i => { return i.value == signIn });
         return obj ? obj.label : "";
     }
@@ -59,7 +63,8 @@ export class GlobalService {
         return obj ? obj.label : "";
     }
 
-    public ORDER_TYPE_LIST = [{ value: 1, label: '新报' }, { value: 2, label: '续报' }, { value: 3, label: '试听课' }];
+    // public ORDER_TYPE_LIST = [{ value: 1, label: '新报' }, { value: 2, label: '续报' }, { value: 3, label: '试听课' }];
+  public ORDER_TYPE_LIST = [{ value: 1, label: '新报' }, { value: 2, label: '续报' }];
     public getOrderTypeLabel(type: ORDER_TYPE) {
         let obj = this.ORDER_TYPE_LIST.find(i => { return i.value == type });
         return obj ? obj.label : "";
@@ -68,6 +73,10 @@ export class GlobalService {
     public ORDER_STATUS_LIST: SysEnum[] = [];
     public getOrderStatus(status: ORDER_STATUS) {
         return this.ORDER_STATUS_LIST.find(i => { return i.value == status });
+    }
+    public getOrderStatusLabel(status: ORDER_STATUS) {
+        let obj = this.ORDER_STATUS_LIST.find(i => { return i.value == status });
+        return obj ? obj.label : "";
     }
 
     public FEE_TYPE_LIST: SysEnum[] = [];

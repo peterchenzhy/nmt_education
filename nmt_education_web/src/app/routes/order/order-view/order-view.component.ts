@@ -7,7 +7,7 @@ import { _HttpClient } from '@delon/theme';
 import { Order, Payment } from 'src/app/model/order.model';
 import { Course } from 'src/app/model/course.model';
 import { AppContextService } from '@shared/service/appcontext.service';
-import { ORDER_STATUS, EDIT_FLAG, PAY_STATUS, ORDER_TYPE } from '@shared/constant/system.constant';
+import { ORDER_STATUS, EDIT_FLAG, PAY_STATUS, ORDER_TYPE, FeeDirection } from '@shared/constant/system.constant';
 import { STData, STComponent, STColumn, STChange } from '@delon/abc';
 
 @Component({
@@ -75,13 +75,19 @@ export class OrderViewComponent implements OnInit {
             this.appCtx.courseService.getRegisterDetails(orderId)
                 .subscribe(res => {
                     this.order = res;
+                    this.order.courseScheduleIds = this.order.courseScheduleList.map(s => s.id);
+                    this.order.campus = this.order.course.campus;
                     this.order.editFlag = EDIT_FLAG.UPDATE;
                     this.form.patchValue(this.order);
-                    this.order.registerExpenseDetail.forEach(i => {
-                        const field = this.createPay();
-                        field.patchValue(i);
-                        this.registerExpenseDetail.push(field);
-                    });
+                    this.selectedSessions = this.order.courseScheduleList;
+                    this.order.registerExpenseDetail.filter(f => f.feeDirection == FeeDirection.PAY)
+                        .forEach(i => {
+                            i.receivable = i.amount;
+                            i.editFlag = EDIT_FLAG.UPDATE;
+                            const field = this.createPay();
+                            field.patchValue(i);
+                            this.registerExpenseDetail.push(field);
+                        });
                 });
             return;
         }
@@ -155,6 +161,7 @@ export class OrderViewComponent implements OnInit {
     }
 
     clearSelectedCourse() {
+        this.order.courseId = null;
         this.order.course = {};
         this.form.patchValue({ courseScheduleIds: [] });
         this.selectedSessions = [];
@@ -185,19 +192,21 @@ export class OrderViewComponent implements OnInit {
     stChange(e: STChange) {
         switch (e.type) {
             case 'checkbox':
-                this.selectedSessions = e.checkbox!;
+                this.selectedSessions = this.order.courseScheduleList || [];
+                this.selectedSessions = this.selectedSessions.concat(e.checkbox!);
                 this.cdr.detectChanges();
                 break;
         }
     }
     selectSessions(tpl: TemplateRef<{}>) {
         this.sessionsSTData = this.order.course.courseScheduleList;
-        this.selectedSessions = [];
+        //this.selectedSessions = [];
         this.sessionsSTData.forEach(s => {
-            s.checked = this.form.value.courseScheduleIds.find(id => { return id == s.id; }) != null;
-            if (s.checked) {
-                this.selectedSessions.push(s);
-            }
+            s.checked = this.selectedSessions.find(session => session.id == s.id) != null;
+            s.disabled = this.order.courseScheduleIds.find(id => { return id == s.id; }) != null;
+            // if (s.checked) {
+            //     this.selectedSessions.push(s);
+            // }
         });
         this.modalSrv.create({
             nzTitle: "选择报名课时",
@@ -240,4 +249,17 @@ export class OrderViewComponent implements OnInit {
             this.goBack();
         });
     }
+
+    @ViewChild('payst', { static: true })
+    payst: STComponent;
+    payDetailsColumns: STColumn[] = [
+        { title: '费用类型', index: 'feeType', render: "feeType" },
+        { title: '原价', index: 'perAmount' },
+        { title: '数量', index: 'count' },
+        { title: '支付金额', index: 'amount' },
+        { title: '支付方式', index: 'payment', render: "payment" },
+        { title: '支付状态', index: 'feeStatus', render: "feeStatus" },
+        { title: '支付时间', index: 'operateTime', type: 'date', dateFormat: 'YYYY-MM-DD HH:mm' },
+        { title: '备注', index: 'remark' }
+    ];
 }
