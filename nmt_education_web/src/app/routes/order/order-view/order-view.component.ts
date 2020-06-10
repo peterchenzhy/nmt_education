@@ -249,17 +249,4 @@ export class OrderViewComponent implements OnInit {
             this.goBack();
         });
     }
-
-    @ViewChild('payst', { static: true })
-    payst: STComponent;
-    payDetailsColumns: STColumn[] = [
-        { title: '费用类型', index: 'feeType', render: "feeType" },
-        { title: '原价', index: 'perAmount' },
-        { title: '数量', index: 'count' },
-        { title: '支付金额', index: 'amount' },
-        { title: '支付方式', index: 'payment', render: "payment" },
-        { title: '支付状态', index: 'feeStatus', render: "feeStatus" },
-        { title: '支付时间', index: 'operateTime', type: 'date', dateFormat: 'YYYY-MM-DD HH:mm' },
-        { title: '备注', index: 'remark' }
-    ];
 }

@@ -64,8 +64,8 @@ export class OrderListComponent implements OnInit {
         },
         {
             title: '状态',
-            index: 'status',
-            render: 'orderStatus'
+            index: 'registrationStatus',
+            render: 'registrationStatus'
         },
         { title: '总金额', index: 'totalAmount' },
         { title: '余额', index: 'balanceAmount' },
@@ -110,7 +110,7 @@ export class OrderListComponent implements OnInit {
             .subscribe((res: ResponseData) => {
                 res.list = res.list || [];
                 // res.list.forEach(element => {
-                //   element.statusDetail = this.appCtx.globalService.COURSE_STATUS_LIST[element.courseStatus];
+                //   element.registrationStatusDetail = this.appCtx.globalService.ORDER_STATUS_LIST[element.registrationStatus];
                 // });
                 this.data = res;
                 this.cdr.detectChanges();

@@ -120,9 +120,10 @@
   <div style="margin-top: 15px;">
     <st #st [columns]="columns" [data]="data.list" [total]="data.total" [ps]="queryParam.pageSize"
       [pi]="queryParam.pageNo" [page]="pager" [loading]="loading" (change)="stChange($event)">
-      <!--    <ng-template st-row="orderStatus" let-i>-->
-      <!--      <nz-badge [nzStatus]="i.statusDetail.type" [nzText]="i.statusDetail.text"></nz-badge>-->
-      <!--    </ng-template>-->
+      <ng-template st-row="registrationStatus" let-i>
+        <!-- <nz-badge [nzStatus]="i.registrationStatusDetail.type" [nzText]="i.registrationStatusDetail.label"></nz-badge> -->
+        <span>{{appCtx.globalService.getOrderStatusLabel(i.registrationStatus)}}</span>
+      </ng-template>
       <!--    <ng-template st-row="studentName" let-i>-->
       <!--      <span>{{i.student.name}}</span>-->
       <!--    </ng-template>-->

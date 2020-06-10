@@ -262,8 +262,8 @@
               </td> -->
                 <td>
                   <span *ngIf="editSessionIndex !== i">
-                    <a (click)="signIn(i)">签到</a>
-                    <nz-divider nzType="vertical"></nz-divider>
+                    <a *ngIf="isEditCourse" (click)="signIn(i)">签到</a>
+                    <nz-divider *ngIf="isEditCourse" nzType="vertical"></nz-divider>
                     <a (click)="edit(i)">编辑</a>
                     <nz-divider nzType="vertical"></nz-divider>
                     <a nz-popconfirm nzPopconfirmTitle="是否要删除此行？" (nzOnConfirm)="del(i)">删除</a>

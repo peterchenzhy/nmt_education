@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, TemplateRef, ChangeDetectorRef } from '@angular/core';
 import { Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { _HttpClient } from '@delon/theme';
 import { Order, Payment, OrderRefund } from 'src/app/model/order.model';
@@ -45,7 +45,8 @@ export class OrderRefundComponent implements OnInit {
         private activaterRouter: ActivatedRoute,
         public msgSrv: NzMessageService,
         private cdr: ChangeDetectorRef,
-        private _location: Location
+        private _location: Location,
+        private router: Router
     ) {
     }
 
@@ -239,9 +240,22 @@ export class OrderRefundComponent implements OnInit {
                 nzTitle: '处理结果',
                 nzContent: '退费成功！',
                 nzOnOk: () => {
-                    window.location.reload();
+                    this.router.navigate(["/order/list"]);
                 }
             });
         });
     }
+
+    @ViewChild('payst', { static: true })
+    payst: STComponent;
+    payDetailsColumns: STColumn[] = [
+        { title: '费用类型', index: 'feeType', render: "feeType" },
+        { title: '原价', index: 'perAmount' },
+        { title: '数量', index: 'count' },
+        { title: '支付金额', index: 'amount' },
+        { title: '支付方式', index: 'payment', render: "payment" },
+        { title: '支付状态', index: 'feeStatus', render: "feeStatus" },
+        { title: '支付时间', index: 'operateTime', type: 'date', dateFormat: 'YYYY-MM-DD HH:mm' },
+        { title: '备注', index: 'remark' }
+    ];
 }
