@@ -6,8 +6,10 @@ import com.nmt.education.pojo.dto.req.RegisterExpenseDetailReqDto;
 import com.nmt.education.pojo.po.CourseRegistrationPo;
 import com.nmt.education.pojo.po.RegistrationExpenseDetailPo;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -34,28 +36,22 @@ public class RegistrationExpenseDetailService {
 
 
     public int updateBatch(List<RegistrationExpenseDetailPo> list) {
+        if(CollectionUtils.isEmpty(list)){
+            return 0 ;
+        }
         return registrationExpenseDetailPoMapper.updateBatch(list);
     }
 
 
-    public int updateBatchSelective(List<RegistrationExpenseDetailPo> list) {
-        return registrationExpenseDetailPoMapper.updateBatchSelective(list);
-    }
-
-
     public int batchInsert(List<RegistrationExpenseDetailPo> list) {
+        if(CollectionUtils.isEmpty(list)){
+            return 0;
+        }
         return registrationExpenseDetailPoMapper.batchInsert(list);
     }
 
 
-    public int insertOrUpdate(RegistrationExpenseDetailPo record) {
-        return registrationExpenseDetailPoMapper.insertOrUpdate(record);
-    }
 
-
-    public int insertOrUpdateSelective(RegistrationExpenseDetailPo record) {
-        return registrationExpenseDetailPoMapper.insertOrUpdateSelective(record);
-    }
 
     public RegistrationExpenseDetailPo dto2po(int updator, CourseRegistrationPo courseRegistrationPo, RegisterExpenseDetailReqDto e) {
         RegistrationExpenseDetailPo detailPo = new RegistrationExpenseDetailPo();
@@ -78,5 +74,12 @@ public class RegistrationExpenseDetailService {
 
     public List<RegistrationExpenseDetailPo> queryRegisterId(Long registerId) {
         return this.registrationExpenseDetailPoMapper.queryRegisterId(registerId);
+    }
+
+    public List<RegistrationExpenseDetailPo> selectByIds(List<Long> ids) {
+        if(CollectionUtils.isEmpty(ids)){
+            return Collections.emptyList();
+        }
+        return this.registrationExpenseDetailPoMapper.selectByIds(ids);
     }
 }

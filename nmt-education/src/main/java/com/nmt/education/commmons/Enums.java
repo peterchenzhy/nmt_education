@@ -1,6 +1,9 @@
 package com.nmt.education.commmons;
 
+import com.google.common.collect.Lists;
 import lombok.Getter;
+
+import java.util.List;
 
 
 /**
@@ -66,7 +69,7 @@ public interface Enums {
         正常(1, "正常", "default"),
         已冻结(2, "已冻结", "processing"),
         退费中(3, "退费中", "success"),
-        已退费(5, "已退费", "error");
+        已退费(4, "已退费", "error");
 
         @Getter
         private Integer code;
@@ -81,13 +84,15 @@ public interface Enums {
             this.icon = icon;
         }
     }
+
     /**
      * 报名类型
      */
     enum RegistrationType implements IEnum {
         新报(1, "新报", "default"),
         续报(2, "续报", "success"),
-        试听课(3, "试听课", "success");
+//        试听课(3, "试听课", "success")
+        ;
 
         @Getter
         private Integer code;
@@ -128,20 +133,25 @@ public interface Enums {
         public static EditFlag codeOf(Integer code) {
             EditFlag result = null;
             for (EditFlag e : EditFlag.values()) {
-                if( e.getCode().equals(code)){
+                if (e.getCode().equals(code)) {
                     return e;
                 }
             }
             return result;
         }
     }
+
     /**
      * 签到状态
      */
-    enum signInType implements IEnum {
+    enum SignInType implements IEnum {
         未签到(0, "未签到", null),
         已签到(1, "已签到", null),
-        请假(2, "请假", null);
+        请假(2, "请假", null),
+        已退费(3, "已退费", null),
+//        锁定(3, "锁定", null),
+        ;
+        public static List<Integer> canRefund = Lists.newArrayList(未签到.code, 请假.code);
 
         @Getter
         private Integer code;
@@ -150,7 +160,55 @@ public interface Enums {
         @Getter
         private String icon;
 
-        signInType(Integer code, String desc, String icon) {
+        SignInType(Integer code, String desc, String icon) {
+            this.desc = desc;
+            this.code = code;
+            this.icon = icon;
+        }
+    }
+
+    /**
+     * 费用方向
+     */
+    enum FeeDirection implements IEnum {
+        支付(1, "支付", null),
+        退费(2, "退费", null),
+//        锁定(3, "锁定", null),
+        ;
+
+        @Getter
+        private Integer code;
+        @Getter
+        private String desc;
+        @Getter
+        private String icon;
+
+        FeeDirection(Integer code, String desc, String icon) {
+            this.desc = desc;
+            this.code = code;
+            this.icon = icon;
+        }
+    }
+
+    /**
+     * 支付方式
+     */
+    enum PaymentType implements IEnum {
+        现金(1, "现金", null),
+        刷卡(2, "刷卡", null),
+        微信(3, "微信", null),
+        支付宝(4, "支付宝", null),
+//        锁定(3, "锁定", null),
+        ;
+
+        @Getter
+        private Integer code;
+        @Getter
+        private String desc;
+        @Getter
+        private String icon;
+
+        PaymentType(Integer code, String desc, String icon) {
             this.desc = desc;
             this.code = code;
             this.icon = icon;

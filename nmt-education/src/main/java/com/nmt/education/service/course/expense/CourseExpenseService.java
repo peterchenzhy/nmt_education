@@ -85,7 +85,7 @@ public class CourseExpenseService {
 
     private CourseExpensePo editExpense(Integer operator, CourseExpenseReqDto dto) {
         CourseExpensePo po = checkExist(dto);
-        BeanUtils.copyProperties(dto, po);
+        po.setValue(dto.getPrice());
         po.setStatus(StatusEnum.VALID.getCode());
         po.setOperator(operator);
         po.setOperateTime(new Date());

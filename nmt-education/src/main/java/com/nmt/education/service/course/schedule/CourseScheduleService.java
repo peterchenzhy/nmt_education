@@ -6,7 +6,10 @@ import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.pojo.dto.req.CourseScheduleReqDto;
 import com.nmt.education.pojo.po.CoursePo;
 import com.nmt.education.pojo.po.CourseSchedulePo;
+import com.nmt.education.pojo.vo.CourseSignInItem;
+import com.nmt.education.pojo.vo.CourseSignInVo;
 import com.nmt.education.service.course.CourseService;
+import com.nmt.education.service.course.registeration.summary.RegisterationSummaryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +30,15 @@ public class CourseScheduleService {
     @Autowired
     @Lazy
     private CourseService courseService;
+    @Autowired
+    private RegisterationSummaryService registerationSummaryService;
 
     public boolean manager(List<CourseScheduleReqDto> dtoList, Long courseId, Integer operator) {
         if (CollectionUtils.isEmpty(dtoList)) {
             invalidByCourseId(courseId, operator);
             return true;
         }
-        dtoList.stream().forEach(e -> manager(e, courseId, operator));
+        dtoList.stream().filter(e -> !Enums.SignInType.已签到.getCode().equals(e.getSignIn())).forEach(e -> manager(e, courseId, operator));
         return true;
     }
 
@@ -168,17 +173,46 @@ public class CourseScheduleService {
         return this.courseSchedulePoMapper.queryByCourseId(id);
     }
 
-    public Boolean signIn(Long id, Integer operator) {
-        CourseSchedulePo po = selectByPrimaryKey(id);
-        Assert.notNull(po, "课表信息为空，id：" + id);
-        return this.courseSchedulePoMapper.signIn(id, operator) > 0;
+    /**
+     * 签到
+     *
+     * @param list
+     * @param operator
+     */
+    public void signIn(List<CourseSignInItem> list, Integer operator) {
+        if (CollectionUtils.isEmpty(list)) {
+            return;
+        }
+        long courseId = list.get(0).getCourseId();
+        CourseSchedulePo po = selectByPrimaryKey(courseId);
+        Assert.notNull(po, "课表信息为空，id：" + courseId);
+        registerationSummaryService.signIn(list, operator);
+        new Thread(() -> {
+            CourseSchedulePo courseSchedulePo = selectByPrimaryKey(list.get(0).getCourseScheduleId());
+            if (list.stream().anyMatch(e -> Enums.SignInType.已签到.getCode().equals(e.getSignIn()))) {
+                if (!Enums.SignInType.已签到.getCode().equals(courseSchedulePo.getSignIn())) {
+                    courseSchedulePo.setSignIn(Enums.SignInType.已签到.getCode());
+                    courseSchedulePo.setOperator(operator);
+                    courseSchedulePo.setOperateTime(new Date());
+                    updateByPrimaryKeySelective(courseSchedulePo);
+                }
+            } else {
+                if (Enums.SignInType.已签到.getCode().equals(courseSchedulePo.getSignIn())) {
+                    courseSchedulePo.setSignIn(Enums.SignInType.未签到.getCode());
+                    courseSchedulePo.setOperator(operator);
+                    courseSchedulePo.setOperateTime(new Date());
+                    updateByPrimaryKeySelective(courseSchedulePo);
+                }
+            }
+        }).start();
+
     }
 
 
     public void changeTeacher(long courseId, long newTeacherId) {
         CoursePo coursePo = courseService.selectByPrimaryKey(courseId);
         Assert.notNull(coursePo, "课程不存在，id：" + courseId);
-        this.courseSchedulePoMapper.changeTeacher(newTeacherId);
+        this.courseSchedulePoMapper.changeTeacher(courseId, newTeacherId);
     }
 
     /**
@@ -196,5 +230,60 @@ public class CourseScheduleService {
             return Collections.emptyList();
         }
         return this.courseSchedulePoMapper.queryByIds(ids);
+    }
+
+    /**
+     * 课程签到页面 select组件
+     *
+     * @param id        课程id
+     * @param logInUser 登录人
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/5/28 22:18
+     */
+    public List<CourseSchedulePo> signInSelect(Long id, Integer logInUser) {
+        CourseSchedulePo po = selectByPrimaryKey(id);
+        Assert.notNull(po, "课表信息为空，id：" + id);
+        return this.courseSchedulePoMapper.queryByCourseId(id);
+    }
+
+    /**
+     * 课程签到页面数据
+     *
+     * @param courseScheduleId 课程日程id
+     * @param logInUser        登录人
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/5/28 22:18
+     */
+    public List<CourseSignInItem> signInList(Long courseScheduleId, Integer logInUser) {
+        return registerationSummaryService.queryByCourseScheduleId(courseScheduleId);
+    }
+
+    /**
+     * 课程签到页面 --默认页面
+     *
+     * @param courseId  课程日程id
+     * @param logInUser 登录人
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/5/28 22:18
+     */
+    @Deprecated
+    public CourseSignInVo signInDefault(Long courseId, Integer logInUser) {
+        CourseSignInVo vo = new CourseSignInVo();
+        vo.setCourseId(courseId);
+        CoursePo coursePo = courseService.selectByPrimaryKey(courseId);
+        Assert.notNull(coursePo, "课程不存在，id：" + courseId);
+        vo.setCourseName(coursePo.getName());
+        List<CourseSchedulePo> courseSchedulePoList = courseSchedulePoMapper.queryByCourseId(courseId);
+        vo.setCourseSchedule(courseSchedulePoList.stream().
+                filter(e -> Enums.SignInType.已签到.getCode().equals(e.getSignIn())).sorted(Comparator.comparing(CourseSchedulePo::getId).reversed())
+                .findFirst().orElse(null));
+        vo.setSignInVos(Objects.nonNull(vo.getCourseSchedule()) ? signInList(vo.getCourseSchedule().getId(), Consts.SYSTEM_USER) : Collections.EMPTY_LIST);
+        return vo;
     }
 }
