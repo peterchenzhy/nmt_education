@@ -56,7 +56,8 @@
     </update>
 
     <update id="updateSignIn">
-        update registeration_summary set operate_time = now() ,operator=#{logInUser} ,sign_in=#{code},sign_in_remark=#{e.signInRemark}
+        update registeration_summary set operate_time = now() ,operator=#{logInUser} ,sign_in=#{code}
+        ,sign_in_remark=#{remark}
         where id in
         <foreach collection="ids" item="id" open="(" close=")" separator=",">
             #{id}

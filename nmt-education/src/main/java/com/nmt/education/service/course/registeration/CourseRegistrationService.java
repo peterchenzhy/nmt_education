@@ -2,6 +2,7 @@ package com.nmt.education.service.course.registeration;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.base.Strings;
 import com.nmt.education.commmons.Enums;
 import com.nmt.education.commmons.NumberUtil;
 import com.nmt.education.commmons.StatusEnum;
@@ -81,6 +82,9 @@ public class CourseRegistrationService {
             courseRegistrationPo.setRemark(dto.getRemark());
             courseRegistrationPo.setOperator(updator);
             courseRegistrationPo.setOperateTime(new Date());
+            courseRegistrationPo.setTotalAmount( calculateTotalAmount(dto.getRegisterExpenseDetail()));
+            //todo 扣费记录
+            courseRegistrationPo.setBalanceAmount(courseRegistrationPo.getTotalAmount());
             this.updateByPrimaryKeySelective(courseRegistrationPo);
         }
         Assert.isTrue(Objects.nonNull(courseRegistrationPo), "非新增报名时，报名信息不存在，学生：" + dto.getStudentId() +
@@ -158,13 +162,30 @@ public class CourseRegistrationService {
                                                CourseRegistrationPo courseRegistrationPo) {
         Assert.isTrue(!CollectionUtils.isEmpty(expenseDetailList), "报名时不存在费用信息");
         List<RegistrationExpenseDetailPo> addList = new ArrayList<>(expenseDetailList.size());
+        Map<Long,RegisterExpenseDetailReqDto> reqDtoMap =
+                expenseDetailList.stream().filter(e-> Enums.EditFlag.修改.getCode().equals(e.getEditFlag()))
+                        .collect(Collectors.toMap(k->k.getId(), v->v));
         List<RegistrationExpenseDetailPo> updateList =
-                registrationExpenseDetailService.selectByIds(expenseDetailList.stream().filter(e -> Objects.nonNull(e.getId()) && e.getId() != -1)
-                        .map(e -> e.getId()).collect(Collectors.toList()));
+                registrationExpenseDetailService.selectByIds(new ArrayList<>(reqDtoMap.keySet()));
+        updateList.stream().forEach(e->{
+            RegisterExpenseDetailReqDto dto = reqDtoMap.get(e.getId());
+            e.setFeeType(dto.getFeeType());
+            e.setFeeStatus(dto.getFeeStatus());
+            e.setAmount(dto.getAmount());
+            e.setPerAmount(dto.getPerAmount());
+            e.setCount(dto.getCount());
+            e.setDiscount(dto.getDiscount());
+            e.setPayment(dto.getPayment());
+            e.setRemark(Strings.nullToEmpty(dto.getRemark()));
+            e.setOperator(updator);
+            e.setOperateTime(new Date());
+        });
 
         expenseDetailList.stream().filter(e -> Enums.EditFlag.新增.getCode().equals(e.getEditFlag())).forEach(e -> {
             addList.add(registrationExpenseDetailService.dto2po(updator, courseRegistrationPo, e));
         });
+
+
 
         registrationExpenseDetailService.batchInsert(addList);
         registrationExpenseDetailService.updateBatch(updateList);
@@ -434,7 +455,7 @@ public class CourseRegistrationService {
                 if (processRefund(dto, logInUser, itemMap.get(k), expenseDetailList, k)) {
                     //更新报名课表
                     registerationSummaryService.updateSignIn(itemMap.get(k).stream().map(e -> e.getRegisterSummaryId()).collect(Collectors.toList()),
-                            logInUser, Enums.SignInType.已退费);
+                            logInUser, Enums.SignInType.已退费, Enums.SignInType.已退费.getDesc());
                 }
             } else {
                 if (processRefund(dto, logInUser, itemMap.get(k), expenseDetailList, k)) {

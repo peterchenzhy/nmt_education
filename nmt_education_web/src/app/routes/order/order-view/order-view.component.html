@@ -86,7 +86,7 @@
                     </td>
                     <td>
                         <span nz-form-control>
-                            <nz-input-number style="width: 80px;" formControlName="perAmount"
+                            <nz-input-number [nzDisabled]=true style="width: 80px;" formControlName="perAmount"
                                 (ngModelChange)="onPayInfoChanged(i)">
                             </nz-input-number>
                         </span>
@@ -129,7 +129,7 @@
                     </td>
                     <td>
                         <span nz-form-control>
-                            <nz-select style="width: 100px;" formControlName="feeStatus" [nzPlaceHolder]="'请选支付状态'"
+                            <nz-select [nzDisabled]=true style="width: 100px;" formControlName="feeStatus" [nzPlaceHolder]="'请选支付状态'"
                                 [nzShowSearch]="true" (ngModelChange)="onPayInfoChanged(i)">
                                 <nz-option *ngFor="let i of payStatusList" [nzLabel]="i.label" [nzValue]="i.value">
                                 </nz-option>

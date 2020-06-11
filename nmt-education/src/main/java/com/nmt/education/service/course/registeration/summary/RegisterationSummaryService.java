@@ -155,11 +155,11 @@ public class RegisterationSummaryService {
      * @version v1
      * @since 2020/6/6 14:05
      */
-    public void updateSignIn(List<Long> ids, Integer logInUser, Enums.SignInType signIn) {
+    public void updateSignIn(List<Long> ids, Integer logInUser, Enums.SignInType signIn,String remark) {
         if (CollectionUtils.isEmpty(ids)) {
             return;
         }
-        this.registerationSummaryPoMapper.updateSignIn(ids, logInUser, signIn.getCode());
+        this.registerationSummaryPoMapper.updateSignIn(ids, logInUser, signIn.getCode(),  remark);
     }
 
     public List<RegisterationSummaryPo> selectByIds(List<Long> ids) {
