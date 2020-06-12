@@ -112,9 +112,11 @@
                         <span>{{ registerExpenseDetail.value[i].receivable }}</span>
                     </td>
                     <td>
-                        <span nz-form-control>
-                            <nz-input-number [nzDisabled]=true formControlName="amount"></nz-input-number>
-                        </span>
+                        <nz-form-item style="padding-bottom: 0px;margin-bottom: 0px;">
+                            <nz-form-control nzErrorTip="修改金额不能小于当前支付金额！需要退费，请在退费页面操作！">
+                                <nz-input-number [nzDisabled]=true formControlName="amount"></nz-input-number>
+                            </nz-form-control>
+                        </nz-form-item>
                     </td>
                     <td>
                         <nz-form-item style="padding-bottom: 0px;margin-bottom: 0px;">
@@ -129,8 +131,8 @@
                     </td>
                     <td>
                         <span nz-form-control>
-                            <nz-select [nzDisabled]=true style="width: 100px;" formControlName="feeStatus" [nzPlaceHolder]="'请选支付状态'"
-                                [nzShowSearch]="true" (ngModelChange)="onPayInfoChanged(i)">
+                            <nz-select [nzDisabled]=true style="width: 100px;" formControlName="feeStatus"
+                                [nzPlaceHolder]="'请选支付状态'" [nzShowSearch]="true" (ngModelChange)="onPayInfoChanged(i)">
                                 <nz-option *ngFor="let i of payStatusList" [nzLabel]="i.label" [nzValue]="i.value">
                                 </nz-option>
                             </nz-select>

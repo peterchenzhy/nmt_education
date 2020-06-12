@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, TemplateRef, ChangeDetectorRef } from '@angular/core';
 import { Location } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormArray, ValidatorFn, AbstractControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { _HttpClient } from '@delon/theme';
@@ -82,7 +82,7 @@ export class OrderViewComponent implements OnInit {
                     this.selectedSessions = this.order.courseScheduleList;
                     this.order.registerExpenseDetail.filter(f => f.feeDirection == FeeDirection.PAY)
                         .forEach(i => {
-                            i.receivable = i.amount;
+                            i.receivable = (i.perAmount * i.count);
                             i.editFlag = EDIT_FLAG.UPDATE;
                             const field = this.createPay();
                             field.patchValue(i);
@@ -107,17 +107,23 @@ export class OrderViewComponent implements OnInit {
         return this.fb.group({
             id: [null],
             feeType: [null, [Validators.required]],
-            payment: [null, [Validators.required]],
+            payment: [null, Validators.compose([this.paymentValueValidator])],
             feeStatus: [PAY_STATUS.PAIED, [Validators.required]],
             perAmount: [0, [Validators.required]],
             count: [0, [Validators.required]],
             discount: [1, [Validators.required]],
             receivable: [0, []],
             deduction: [0, []],
-            amount: [0, [Validators.required]],
+            amount: [0, Validators.compose([Validators.required, amountValueValidator(this.order)])],
             remark: ["", []],
             editFlag: [EDIT_FLAG.NEW, []]
         });
+    }
+
+    paymentValueValidator(control: any): any {
+        if (!control.value && control.parent && control.parent.value.amount > 0) {
+            return { value: { info: '请选择支付方式' } };
+        }
     }
 
     get isEditOrder() {
@@ -245,8 +251,26 @@ export class OrderViewComponent implements OnInit {
             }
         });
         if (this.form.invalid) return;
+        let submitObj = { ...this.form.value };
+        submitObj.registerExpenseDetail = submitObj.registerExpenseDetail.filter(f => f.amount > 0);
         this.appCtx.courseService.registerCourse(this.form.value).subscribe((res) => {
             this.goBack();
         });
     }
+}
+
+export function amountValueValidator(order: Order): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+        if (control.parent) {
+            let operateFee = control.parent.value;
+            if (!operateFee) {
+                return;
+            }
+            let currentFee = order.registerExpenseDetail.filter(f =>
+                f.feeDirection == FeeDirection.PAY && f.feeType == operateFee.feeType && f.feeStatus != PAY_STATUS.REFUNDED);
+            if (currentFee && currentFee.length > 0 && currentFee[0].amount > control.value) {
+                return { value: { info: '修改金额不能小于当前支付金额！需要退费，请在退费页面操作！' } };
+            }
+        }
+    };
 }
