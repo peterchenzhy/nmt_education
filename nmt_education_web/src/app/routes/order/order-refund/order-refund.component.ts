@@ -213,11 +213,10 @@ export class OrderRefundComponent implements OnInit {
         this.selectedFee.forEach(f => {
             refundAmount += parseFloat(f.amount);
         });
-        this.modalSrv.warning({
+        this.modalSrv.confirm({
             nzTitle: "退费确认",
             nzContent: `共退费[${refundAmount}]元`,
             nzOnOk: () => {
-
                 this._submitForm();
             }
         });

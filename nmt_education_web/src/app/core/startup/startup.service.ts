@@ -62,7 +62,7 @@ export class StartupService {
   }
 
   private viaMock(resolve: any, reject: any) {
-    // const tokenData = this.tokenService.get();
+     const tokenData = this.tokenService.get();
     // if (!tokenData.token) {
     //   this.injector.get(Router).navigateByUrl('/passport/login');
     //   resolve({});
@@ -74,9 +74,9 @@ export class StartupService {
       description: `Ng-zorro admin panel front-end framework`
     };
     const user: any = {
-      name: 'Admin',
+      name: tokenData.name,
       avatar: './assets/tmp/img/avatar.jpg',
-      email: 'cipchk@qq.com',
+      email: '',
       token: '123456789'
     };
     // Application information: including site name, description, year

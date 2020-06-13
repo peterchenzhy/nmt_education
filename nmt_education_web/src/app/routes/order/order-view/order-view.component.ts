@@ -162,6 +162,18 @@ export class OrderViewComponent implements OnInit {
                     });
                     this.form.get("campus").setValue(this.order.course.campus);
                 }
+                else {
+                    let paiedFee = this.order.registerExpenseDetail.map(f => f.feeType);
+                    this.order.course.courseExpenseList.filter(f => paiedFee.indexOf(f.type) == -1)
+                        .forEach(i => {
+                            let pay: Payment = {};
+                            pay.feeType = i.type;
+                            pay.perAmount = i.price;
+                            const field = this.createPay();
+                            field.patchValue(pay);
+                            this.registerExpenseDetail.push(field);
+                        });
+                }
             });
 
     }
@@ -253,7 +265,7 @@ export class OrderViewComponent implements OnInit {
         if (this.form.invalid) return;
         let submitObj = { ...this.form.value };
         submitObj.registerExpenseDetail = submitObj.registerExpenseDetail.filter(f => f.amount > 0);
-        this.appCtx.courseService.registerCourse(this.form.value).subscribe((res) => {
+        this.appCtx.courseService.registerCourse(submitObj).subscribe((res) => {
             this.goBack();
         });
     }
@@ -268,7 +280,7 @@ export function amountValueValidator(order: Order): ValidatorFn {
             }
             let currentFee = order.registerExpenseDetail.filter(f =>
                 f.feeDirection == FeeDirection.PAY && f.feeType == operateFee.feeType && f.feeStatus != PAY_STATUS.REFUNDED);
-            if (currentFee && currentFee.length > 0 && currentFee[0].amount > control.value) {
+            if (currentFee && currentFee.length > 0 && parseFloat(currentFee[0].amount) > parseFloat(control.value)) {
                 return { value: { info: '修改金额不能小于当前支付金额！需要退费，请在退费页面操作！' } };
             }
         }
