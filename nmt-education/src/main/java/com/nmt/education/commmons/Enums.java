@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -152,6 +153,30 @@ public interface Enums {
 //        锁定(3, "锁定", null),
         ;
         public static List<Integer> canRefund = Lists.newArrayList(未签到.code, 请假.code);
+
+
+        public static Boolean isConsumed(SignInType source, SignInType target) {
+            if (Objects.isNull(source) || Objects.isNull(target) || source.equals(target) || 已退费.equals(source)) {
+                return null;
+            }
+            if (已签到.equals(target)) {
+                return true;
+            }
+            if (已签到.equals(source)) {
+                return false;
+            }
+            return null;
+        }
+
+        public static SignInType codeOf(Integer code) {
+            SignInType result = null;
+            for (SignInType e : SignInType.values()) {
+                if (e.getCode().equals(code)) {
+                    return e;
+                }
+            }
+            return result;
+        }
 
         @Getter
         private Integer code;

@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nmt.education.service.course.registeration.RegistrationExpenseDetailFlowMapper">
+  <resultMap id="BaseResultMap" type="com.nmt.education.pojo.po.RegistrationExpenseDetailFlow">
+    <!--@mbg.generated-->
+    <!--@Table registration_expense_detail_flow-->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="registration_id" jdbcType="BIGINT" property="registrationId" />
+    <result column="register_expense_detail_id" jdbcType="BIGINT" property="registerExpenseDetailId" />
+    <result column="fee_type" jdbcType="INTEGER" property="feeType" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="amount" jdbcType="VARCHAR" property="amount" />
+    <result column="status" jdbcType="BOOLEAN" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="creator" jdbcType="INTEGER" property="creator" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="operator" jdbcType="INTEGER" property="operator" />
+    <result column="operate_time" jdbcType="TIMESTAMP" property="operateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, registration_id, register_expense_detail_id, fee_type, `type`, amount, `status`, 
+    remark, creator, create_time, `operator`, operate_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from registration_expense_detail_flow
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.RegistrationExpenseDetailFlow" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into registration_expense_detail_flow
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="registrationId != null">
+        registration_id,
+      </if>
+      <if test="registerExpenseDetailId != null">
+        register_expense_detail_id,
+      </if>
+      <if test="feeType != null">
+        fee_type,
+      </if>
+      <if test="type != null">
+        `type`,
+      </if>
+      <if test="amount != null">
+        amount,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="creator != null">
+        creator,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="operator != null">
+        `operator`,
+      </if>
+      <if test="operateTime != null">
+        operate_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="registrationId != null">
+        #{registrationId,jdbcType=BIGINT},
+      </if>
+      <if test="registerExpenseDetailId != null">
+        #{registerExpenseDetailId,jdbcType=BIGINT},
+      </if>
+      <if test="feeType != null">
+        #{feeType,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="amount != null">
+        #{amount,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=BOOLEAN},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operator != null">
+        #{operator,jdbcType=INTEGER},
+      </if>
+      <if test="operateTime != null">
+        #{operateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.nmt.education.pojo.po.RegistrationExpenseDetailFlow">
+    <!--@mbg.generated-->
+    update registration_expense_detail_flow
+    <set>
+      <if test="registrationId != null">
+        registration_id = #{registrationId,jdbcType=BIGINT},
+      </if>
+      <if test="registerExpenseDetailId != null">
+        register_expense_detail_id = #{registerExpenseDetailId,jdbcType=BIGINT},
+      </if>
+      <if test="feeType != null">
+        fee_type = #{feeType,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        `type` = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="amount != null">
+        amount = #{amount,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=BOOLEAN},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null">
+        creator = #{creator,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operator != null">
+        `operator` = #{operator,jdbcType=INTEGER},
+      </if>
+      <if test="operateTime != null">
+        operate_time = #{operateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateBatchSelective" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update registration_expense_detail_flow
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="registration_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.registrationId != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.registrationId,jdbcType=BIGINT}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="register_expense_detail_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.registerExpenseDetailId != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.registerExpenseDetailId,jdbcType=BIGINT}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="fee_type = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.feeType != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.feeType,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="`type` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.type != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.type,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="amount = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.amount != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.amount,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="`status` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.status != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.status,jdbcType=BOOLEAN}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="remark = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.remark != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.remark,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="creator = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.creator != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.creator,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="create_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.createTime != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.createTime,jdbcType=TIMESTAMP}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="`operator` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.operator != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.operator,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="operate_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.operateTime != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.operateTime,jdbcType=TIMESTAMP}
+          </if>
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=INTEGER}
+    </foreach>
+  </update>
+  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into registration_expense_detail_flow
+    (registration_id, register_expense_detail_id, fee_type, `type`, amount, `status`, 
+      remark, creator, create_time, `operator`, operate_time)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.registrationId,jdbcType=BIGINT}, #{item.registerExpenseDetailId,jdbcType=BIGINT}, 
+        #{item.feeType,jdbcType=INTEGER}, #{item.type,jdbcType=INTEGER}, #{item.amount,jdbcType=VARCHAR}, 
+        #{item.status,jdbcType=BOOLEAN}, #{item.remark,jdbcType=VARCHAR}, #{item.creator,jdbcType=INTEGER}, 
+        #{item.createTime,jdbcType=TIMESTAMP}, #{item.operator,jdbcType=INTEGER}, #{item.operateTime,jdbcType=TIMESTAMP}
+        )
+    </foreach>
+  </insert>
+</mapper>

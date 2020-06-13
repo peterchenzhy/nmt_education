@@ -12,7 +12,6 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -26,15 +25,15 @@ public class CourseExpenseService {
     public Boolean manager(List<CourseExpenseReqDto> dtoList, Long courseId, Integer operator) {
         if (CollectionUtils.isEmpty(dtoList)) {
             //无效所有数据
-            invalidByCourseId(courseId,operator);
-        }else {
+            invalidByCourseId(courseId, operator);
+        } else {
             dtoList.stream().forEach(e -> manager(e, courseId, operator));
         }
         return true;
     }
 
     private void invalidByCourseId(Long courseId, Integer operator) {
-        this.courseExpensePoMapper.invalidByCourseId(courseId,operator);
+        this.courseExpensePoMapper.invalidByCourseId(courseId, operator);
     }
 
 
@@ -44,7 +43,7 @@ public class CourseExpenseService {
         List<CourseExpensePo> editList = new ArrayList<>();
         switch (editFlag) {
             case 新增:
-                addList.add(newExpense(operator, dto,courseId));
+                addList.add(newExpense(operator, dto, courseId));
                 break;
             case 修改:
                 editList.add(editExpense(operator, dto));
@@ -62,7 +61,7 @@ public class CourseExpenseService {
         batchInsert(addList);
     }
 
-    private CourseExpensePo newExpense(Integer operator, CourseExpenseReqDto dto,Long courseId) {
+    private CourseExpensePo newExpense(Integer operator, CourseExpenseReqDto dto, Long courseId) {
         CourseExpensePo po = new CourseExpensePo();
         BeanUtils.copyProperties(dto, po);
         po.setValue(dto.getPrice());

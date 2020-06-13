@@ -2,13 +2,15 @@ package com.nmt.education.service.course.schedule;
 
 import com.nmt.education.commmons.Consts;
 import com.nmt.education.commmons.Enums;
+import com.nmt.education.commmons.ExpenseDetailFlowTypeEnum;
 import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.pojo.dto.req.CourseScheduleReqDto;
-import com.nmt.education.pojo.po.CoursePo;
-import com.nmt.education.pojo.po.CourseSchedulePo;
+import com.nmt.education.pojo.po.*;
 import com.nmt.education.pojo.vo.CourseSignInItem;
 import com.nmt.education.pojo.vo.CourseSignInVo;
 import com.nmt.education.service.course.CourseService;
+import com.nmt.education.service.course.registeration.CourseRegistrationService;
+import com.nmt.education.service.course.registeration.RegistrationExpenseDetailService;
 import com.nmt.education.service.course.registeration.summary.RegisterationSummaryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -19,6 +21,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -32,6 +35,10 @@ public class CourseScheduleService {
     private CourseService courseService;
     @Autowired
     private RegisterationSummaryService registerationSummaryService;
+    @Autowired
+    private CourseRegistrationService courseRegistrationService;
+    @Autowired
+    private RegistrationExpenseDetailService registrationExpenseDetailService;
 
     public boolean manager(List<CourseScheduleReqDto> dtoList, Long courseId, Integer operator) {
         if (CollectionUtils.isEmpty(dtoList)) {
@@ -186,26 +193,100 @@ public class CourseScheduleService {
         long courseId = list.get(0).getCourseId();
         CourseSchedulePo po = selectByPrimaryKey(courseId);
         Assert.notNull(po, "课表信息为空，id：" + courseId);
-        registerationSummaryService.signIn(list, operator);
-        new Thread(() -> {
-            CourseSchedulePo courseSchedulePo = selectByPrimaryKey(list.get(0).getCourseScheduleId());
-            if (list.stream().anyMatch(e -> Enums.SignInType.已签到.getCode().equals(e.getSignIn()))) {
-                if (!Enums.SignInType.已签到.getCode().equals(courseSchedulePo.getSignIn())) {
-                    courseSchedulePo.setSignIn(Enums.SignInType.已签到.getCode());
-                    courseSchedulePo.setOperator(operator);
-                    courseSchedulePo.setOperateTime(new Date());
-                    updateByPrimaryKeySelective(courseSchedulePo);
-                }
-            } else {
-                if (Enums.SignInType.已签到.getCode().equals(courseSchedulePo.getSignIn())) {
-                    courseSchedulePo.setSignIn(Enums.SignInType.未签到.getCode());
-                    courseSchedulePo.setOperator(operator);
-                    courseSchedulePo.setOperateTime(new Date());
-                    updateByPrimaryKeySelective(courseSchedulePo);
-                }
+        List<RegistrationExpenseDetailFlow> flowList = new ArrayList<>(list.size());
+        List<CourseRegistrationPo> courseRegistrationPoList = new ArrayList<>(list.size());
+        List<CourseSignInItem> needUpdate = new ArrayList<>(list.size());
+        //消耗记录
+        for (CourseSignInItem courseSignInItem : list) {
+            RegisterationSummaryPo registerationSummaryPo = registerationSummaryService.selectByPrimaryKey(courseSignInItem.getRegisterSummaryId());
+            Assert.isTrue(Objects.nonNull(registerationSummaryPo), "报名课时不存在，id：" + courseSignInItem.getRegisterSummaryId());
+            Enums.SignInType target = Enums.SignInType.codeOf(courseSignInItem.getSignIn());
+            Enums.SignInType source = Enums.SignInType.codeOf(registerationSummaryPo.getSignIn());
+            Boolean isConsumed = Enums.SignInType.isConsumed(source, target);
+            if (Objects.isNull(isConsumed)) {
+                //状态没有变化
+                continue;
             }
-        }).start();
+            if (!courseSignInItem.getSignIn().equals(registerationSummaryPo.getSignIn())) {
+                CourseRegistrationPo courseRegistrationPo =
+                        courseRegistrationService.selectByPrimaryKey(registerationSummaryPo.getCourseRegistrationId());
+                BigDecimal balanceAmount = new BigDecimal(courseRegistrationPo.getBalanceAmount());
+                RegistrationExpenseDetailPo expenseDetailPo = registrationExpenseDetailService.queryRegisterId(courseRegistrationPo.getId())
+                        .stream().filter(p -> Consts.普通单节费用.equals(p.getFeeType()) && Enums.FeeDirection.支付.getCode().equals(p.getFeeDirection()) &&
+                                Enums.FeeStatus.已缴费.equals(p.getFeeStatus())).findFirst().get();
+                Assert.isTrue(Objects.nonNull(expenseDetailPo), "可退费的记录不存在，id：" + courseSignInItem.getRegisterSummaryId());
+                BigDecimal perAmount = new BigDecimal(expenseDetailPo.getPerAmount());
+                //设置余额
+                if (isConsumed) {
+                    courseRegistrationPo.setBalanceAmount(balanceAmount.subtract(perAmount).toPlainString());
+                    flowList.add(generateFlow(operator, courseRegistrationPo.getId(),expenseDetailPo.getId(), perAmount, ExpenseDetailFlowTypeEnum.消耗));
+                } else {
+                    courseRegistrationPo.setBalanceAmount(balanceAmount.add(perAmount).toPlainString());
+                    flowList.add(generateFlow(operator, courseRegistrationPo.getId(),expenseDetailPo.getId(), perAmount, ExpenseDetailFlowTypeEnum.还原));
+                }
+                courseRegistrationPoList.add(courseRegistrationPo);
+                needUpdate.add(courseSignInItem);
+            }
+        }
+        //更新课程日历信息
+        CourseSchedulePo courseSchedulePo = selectByPrimaryKey(list.get(0).getCourseScheduleId());
+        if (list.stream().anyMatch(e -> Enums.SignInType.已签到.getCode().equals(e.getSignIn()))) {
+            if (!Enums.SignInType.已签到.getCode().equals(courseSchedulePo.getSignIn())) {
+                courseSchedulePo.setSignIn(Enums.SignInType.已签到.getCode());
+                courseSchedulePo.setOperator(operator);
+                courseSchedulePo.setOperateTime(new Date());
+                updateByPrimaryKeySelective(courseSchedulePo);
+            }
+        } else {
+            if (Enums.SignInType.已签到.getCode().equals(courseSchedulePo.getSignIn())) {
+                courseSchedulePo.setSignIn(Enums.SignInType.未签到.getCode());
+                courseSchedulePo.setOperator(operator);
+                courseSchedulePo.setOperateTime(new Date());
+                updateByPrimaryKeySelective(courseSchedulePo);
+            }
+        }
+        //更新状态
+        if (!CollectionUtils.isEmpty(needUpdate)) {
+            registerationSummaryService.signIn(needUpdate, operator);
+            //更新报名记录
+            courseRegistrationService.updateBatch(courseRegistrationPoList);
+            //插入流水
+            registrationExpenseDetailService.batchInsertFlow(flowList);
+        }else{
+            log.info("课程签到没有状态变更，"+list);
+        }
 
+    }
+
+    /**
+     * 生成流水
+     *
+     * @param operator
+     * @param courseRegistrationId
+     * @param perAmount
+     * @param type
+     * @return com.nmt.education.pojo.po.RegistrationExpenseDetailFlow
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/6/13 14:45
+     */
+    private RegistrationExpenseDetailFlow generateFlow(Integer operator, Long courseRegistrationId, Long courseRegistrationExpenseId,
+                                                       BigDecimal perAmount,
+                                                       ExpenseDetailFlowTypeEnum type) {
+        RegistrationExpenseDetailFlow flow = new RegistrationExpenseDetailFlow();
+        flow.setRegistrationId(courseRegistrationId);
+        flow.setFeeType(Consts.普通单节费用);
+        flow.setType(type.getCode());
+        flow.setAmount(perAmount.toPlainString());
+        flow.setRegisterExpenseDetailId(courseRegistrationExpenseId);
+        flow.setStatus(StatusEnum.VALID.getCode());
+        flow.setRemark(type.getDescription());
+        flow.setCreator(operator);
+        flow.setCreateTime(new Date());
+        flow.setOperator(operator);
+        flow.setOperateTime(new Date());
+        return flow;
     }
 
 

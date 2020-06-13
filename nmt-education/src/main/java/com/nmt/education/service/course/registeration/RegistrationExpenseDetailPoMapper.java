@@ -10,7 +10,7 @@ import java.util.List;
 interface RegistrationExpenseDetailPoMapper {
     int insertSelective(RegistrationExpenseDetailPo record);
 
-    RegistrationExpenseDetailPo selectByPrimaryKey(Integer id);
+    RegistrationExpenseDetailPo selectByPrimaryKey(Long id);
 
     int updateByPrimaryKeySelective(RegistrationExpenseDetailPo record);
 

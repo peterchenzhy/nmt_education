@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.pojo.dto.req.RegisterExpenseDetailReqDto;
 import com.nmt.education.pojo.po.CourseRegistrationPo;
+import com.nmt.education.pojo.po.RegistrationExpenseDetailFlow;
 import com.nmt.education.pojo.po.RegistrationExpenseDetailPo;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -18,14 +19,23 @@ public class RegistrationExpenseDetailService {
 
     @Resource
     private RegistrationExpenseDetailPoMapper registrationExpenseDetailPoMapper;
+    @Resource
+    private RegistrationExpenseDetailFlowMapper registrationExpenseDetailFlowMapper;
 
+
+    public void batchInsertFlow(List<RegistrationExpenseDetailFlow> list) {
+        if (CollectionUtils.isEmpty(list)) {
+            return;
+        }
+        registrationExpenseDetailFlowMapper.batchInsert(list);
+    }
 
     public int insertSelective(RegistrationExpenseDetailPo record) {
         return registrationExpenseDetailPoMapper.insertSelective(record);
     }
 
 
-    public RegistrationExpenseDetailPo selectByPrimaryKey(Integer id) {
+    public RegistrationExpenseDetailPo selectByPrimaryKey(Long id) {
         return registrationExpenseDetailPoMapper.selectByPrimaryKey(id);
     }
 
@@ -36,21 +46,19 @@ public class RegistrationExpenseDetailService {
 
 
     public int updateBatch(List<RegistrationExpenseDetailPo> list) {
-        if(CollectionUtils.isEmpty(list)){
-            return 0 ;
+        if (CollectionUtils.isEmpty(list)) {
+            return 0;
         }
         return registrationExpenseDetailPoMapper.updateBatch(list);
     }
 
 
     public int batchInsert(List<RegistrationExpenseDetailPo> list) {
-        if(CollectionUtils.isEmpty(list)){
+        if (CollectionUtils.isEmpty(list)) {
             return 0;
         }
         return registrationExpenseDetailPoMapper.batchInsert(list);
     }
-
-
 
 
     public RegistrationExpenseDetailPo dto2po(int updator, CourseRegistrationPo courseRegistrationPo, RegisterExpenseDetailReqDto e) {
@@ -77,7 +85,7 @@ public class RegistrationExpenseDetailService {
     }
 
     public List<RegistrationExpenseDetailPo> selectByIds(List<Long> ids) {
-        if(CollectionUtils.isEmpty(ids)){
+        if (CollectionUtils.isEmpty(ids)) {
             return Collections.emptyList();
         }
         return this.registrationExpenseDetailPoMapper.selectByIds(ids);

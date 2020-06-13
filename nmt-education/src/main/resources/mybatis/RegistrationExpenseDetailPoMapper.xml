@@ -20,18 +20,20 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="operator" jdbcType="INTEGER" property="operator" />
     <result column="operate_time" jdbcType="TIMESTAMP" property="operateTime" />
+    <result column="ref_id" jdbcType="BIGINT" property="refId" />
+
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, registration_id, fee_type, fee_status, amount, per_amount, `count`, discount,
+    id, registration_id, fee_type, fee_status, amount, per_amount, `count`, discount,ref_id,
     payment, `status`, remark, creator, create_time, `operator`, operate_time,fee_direction
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey"  resultMap="BaseResultMap">
     <!--@mbg.generated-->
     select
     <include refid="Base_Column_List" />
     from registration_expense_detail
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id}
   </select>
 
   <select id="selectByIds"  resultMap="BaseResultMap">
@@ -103,6 +105,9 @@
       <if test="feeDirection != null">
         fee_direction,
       </if>
+      <if test="refId != null">
+        ref_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="registrationId != null">
@@ -149,6 +154,9 @@
       </if>
       <if test="feeDirection != null">
         #{feeDirection},
+      </if>
+      <if test="refId != null">
+        #{refId}
       </if>
     </trim>
   </insert>
@@ -197,6 +205,9 @@
       </if>
       <if test="operateTime != null">
         operate_time = #{operateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="refId != null">
+        ref_id = #{refId},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -275,6 +286,11 @@
           when id = #{item.id,jdbcType=INTEGER} then #{item.operateTime,jdbcType=TIMESTAMP}
         </foreach>
       </trim>
+      <trim prefix="ref_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=INTEGER} then #{item.refId}
+        </foreach>
+      </trim>
     </trim>
     where id in
     <foreach close=")" collection="list" item="item" open="(" separator=", ">
@@ -285,7 +301,7 @@
     <!--@mbg.generated-->
     insert into registration_expense_detail
     (registration_id, fee_type, fee_status, amount, per_amount, `count`, discount,
-      payment, `status`, remark, creator, create_time, `operator`, operate_time,fee_direction)
+      payment, `status`, remark, creator, create_time, `operator`, operate_time,fee_direction,ref_id)
     values
     <foreach collection="list" item="item" separator=",">
       (#{item.registrationId,jdbcType=BIGINT}, #{item.feeType,jdbcType=TINYINT},
@@ -293,7 +309,7 @@
         #{item.count,jdbcType=TINYINT}, #{item.discount,jdbcType=VARCHAR}, #{item.payment,jdbcType=TINYINT},
         #{item.status,jdbcType=TINYINT}, #{item.remark,jdbcType=VARCHAR}, #{item.creator,jdbcType=INTEGER},
         #{item.createTime,jdbcType=TIMESTAMP}, #{item.operator,jdbcType=INTEGER}, #{item.operateTime,jdbcType=TIMESTAMP},
-        #{item.feeDirection}
+        #{item.feeDirection},#{item.refId}
         )
     </foreach>
   </insert>
