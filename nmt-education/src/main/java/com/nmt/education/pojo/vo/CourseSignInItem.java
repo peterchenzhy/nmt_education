@@ -48,5 +48,5 @@ public class CourseSignInItem {
      *签到备注
      */
     @ApiModelProperty(value = "签到备注")
-    private String signInRemark ;
+    private String signInRemark="" ;
 }

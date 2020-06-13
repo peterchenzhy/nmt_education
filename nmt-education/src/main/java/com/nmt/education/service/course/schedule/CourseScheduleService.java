@@ -213,7 +213,7 @@ public class CourseScheduleService {
                 BigDecimal balanceAmount = new BigDecimal(courseRegistrationPo.getBalanceAmount());
                 RegistrationExpenseDetailPo expenseDetailPo = registrationExpenseDetailService.queryRegisterId(courseRegistrationPo.getId())
                         .stream().filter(p -> Consts.普通单节费用.equals(p.getFeeType()) && Enums.FeeDirection.支付.getCode().equals(p.getFeeDirection()) &&
-                                Enums.FeeStatus.已缴费.equals(p.getFeeStatus())).findFirst().get();
+                                Enums.FeeStatus.已缴费.getCode().equals(p.getFeeStatus())).findFirst().get();
                 Assert.isTrue(Objects.nonNull(expenseDetailPo), "可退费的记录不存在，id：" + courseSignInItem.getRegisterSummaryId());
                 BigDecimal perAmount = new BigDecimal(expenseDetailPo.getPerAmount());
                 //设置余额

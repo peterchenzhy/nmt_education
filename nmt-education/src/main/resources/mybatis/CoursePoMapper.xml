@@ -48,8 +48,8 @@
         <include refid="Base_Column_List" />
         from course
         where status = 1
-        and name like concat(#{name},'%')
-        or code like concat(#{name},'%')
+        and name like concat('%',#{name},'%')
+        or code like concat('%',#{name},'%')
 
     </select>
     <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.CoursePo" useGeneratedKeys="true">

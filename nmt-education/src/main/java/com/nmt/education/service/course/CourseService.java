@@ -143,7 +143,7 @@ public class CourseService {
                 this.updateByPrimaryKeySelective(coursePo);
                 break;
             default:
-                log.error("次editflag无法识别" + dto.toString());
+                log.error("此editflag无法识别" + dto.toString());
                 break;
         }
         return coursePo;

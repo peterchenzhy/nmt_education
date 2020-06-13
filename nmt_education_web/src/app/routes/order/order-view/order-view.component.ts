@@ -52,7 +52,7 @@ export class OrderViewComponent implements OnInit {
         { title: '课时', index: 'courseTimes' },
         { title: '任课教师', index: 'teacherId', render: "showTeacher" },
         { title: '上课时间', index: 'courseDatetime', type: 'date', dateFormat: 'YYYY-MM-DD HH:mm' },
-        { title: '时长', index: 'perTime' }
+        { title: '时长(分钟)', index: 'perTime' }
     ];
     sessionsSTData: STData[] = [];
     selectedSessions: STData[] = [];

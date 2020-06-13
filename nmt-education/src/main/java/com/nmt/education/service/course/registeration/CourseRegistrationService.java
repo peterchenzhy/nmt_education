@@ -72,6 +72,7 @@ public class CourseRegistrationService {
         //生成报名记录
         CourseRegistrationPo courseRegistrationPo;
         if (Enums.EditFlag.新增.getCode().equals(dto.getEditFlag())) {
+            Assert.isTrue(dto.getRegisterExpenseDetail().stream().map(e -> Consts.普通单节费用.equals(e.getFeeType())).findAny().get(), "报名必须含有单节收费项目");
             courseRegistrationPo = generateCourseRegistrationPo(dto, updator);
             this.insertSelective(courseRegistrationPo);
         } else {
@@ -83,10 +84,17 @@ public class CourseRegistrationService {
             BigDecimal prepBalance = new BigDecimal(courseRegistrationPo.getBalanceAmount());
             //计算增加金额
             BigDecimal total = BigDecimal.ZERO;
-            dto.getRegisterExpenseDetail().forEach(e -> total.add(new BigDecimal(e.getAmount())));
+            int addTimes = 0 ;
+            for (RegisterExpenseDetailReqDto e : dto.getRegisterExpenseDetail()) {
+                total = total.add(new BigDecimal(e.getAmount()));
+                if(Consts.普通单节费用.equals(e.getFeeType())){
+                    addTimes = e.getCount();
+                }
+            }
             Assert.isTrue(total.compareTo(prepTotal) >= 0, "编辑金额不能小于原订单总额");
             courseRegistrationPo.setTotalAmount(calculateTotalAmount(dto.getRegisterExpenseDetail()));
             courseRegistrationPo.setBalanceAmount(prepBalance.add(total).subtract(prepTotal).toPlainString());
+            courseRegistrationPo.setTimes(addTimes);
             this.updateByPrimaryKeySelective(courseRegistrationPo);
         }
         Assert.isTrue(Objects.nonNull(courseRegistrationPo), "非新增报名时，报名信息不存在，学生：" + dto.getStudentId() +
@@ -353,6 +361,17 @@ public class CourseRegistrationService {
     }
 
 
+    /**
+     * 报名记录详情
+     *
+     * @param id
+     * @param logInUser
+     * @return com.nmt.education.pojo.vo.CourseRegistrationVo
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/6/13 16:08
+     */
     public CourseRegistrationVo registerDetail(Long id, Integer logInUser) {
         if (Objects.isNull(id)) {
             return null;
@@ -443,16 +462,28 @@ public class CourseRegistrationService {
         Map<Integer, List<RefundItemReqDto>> itemMap = dtoList.stream().collect(Collectors.groupingBy(e -> e.getFeeType()));
         self.refundByFeeType(dto, logInUser, expenseDetailList, itemMap);
 
+        BigDecimal refundTotal = BigDecimal.ZERO;
+        int refundTimes = 0;
+        for (RefundItemReqDto refundItemReqDto : dto.getItemList()) {
+            refundTotal = refundTotal.add(new BigDecimal(refundItemReqDto.getAmount()));
+            if (Consts.普通单节费用.equals(refundItemReqDto.getFeeType())) {
+                refundTimes++;
+            }
+        }
+        //修改订单总额,报名次数
+        courseRegistrationPo.setBalanceAmount(new BigDecimal(courseRegistrationPo.getBalanceAmount()).subtract(refundTotal).toPlainString());
+        courseRegistrationPo.setTotalAmount(new BigDecimal(courseRegistrationPo.getTotalAmount()).subtract(refundTotal).toPlainString());
+        courseRegistrationPo.setTimes(courseRegistrationPo.getTimes() - refundTimes);
+        courseRegistrationPo.setOperateTime(new Date());
+        courseRegistrationPo.setOperator(logInUser);
+
         //如果费用已经全部退完则更新 报名状态
-        if (registrationExpenseDetailService.queryRegisterId(dto.getRegisterId())
+        if (!registrationExpenseDetailService.queryRegisterId(dto.getRegisterId())
                 .stream().map(e -> Enums.FeeStatus.已缴费.getCode().equals(e.getFeeStatus()) && Enums.FeeDirection.支付.getCode().equals(e.getFeeDirection()))
                 .findAny().get()) {
             courseRegistrationPo.setRegistrationStatus(Enums.RegistrationStatus.已退费.getCode());
-            courseRegistrationPo.setOperateTime(new Date());
-            courseRegistrationPo.setOperator(logInUser);
-            updateByPrimaryKeySelective(courseRegistrationPo);
         }
-
+        updateByPrimaryKeySelective(courseRegistrationPo);
 
     }
 
