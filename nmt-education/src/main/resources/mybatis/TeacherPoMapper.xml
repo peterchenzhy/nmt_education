@@ -35,7 +35,7 @@
     <include refid="Base_Column_List" />
     from teacher
     where status = 1
-    and name like concat(#{name},'%')
+    and name like concat('%',#{name},'%')
   </select>
   <select id="query"  resultMap="BaseResultMap">
     <!--@mbg.generated-->

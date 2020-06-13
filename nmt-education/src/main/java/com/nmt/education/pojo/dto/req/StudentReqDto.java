@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotNull;
@@ -29,6 +30,7 @@ public class StudentReqDto {
      */
     @NotNull(message = "学生姓名不能为空")
     @ApiModelProperty(value = "学生姓名", required = true)
+    @Length(max = 10, message = "学生姓名最多10个字")
     private String name;
 
     /**
@@ -41,6 +43,7 @@ public class StudentReqDto {
      * 学校
      */
     @ApiModelProperty(value = "学校", required = true)
+    @Length(max = 30, message = "学校最多30个字")
     private String school;
 
     /**
@@ -62,6 +65,7 @@ public class StudentReqDto {
      * 电话
      */
     @ApiModelProperty(value = "电话", required = true)
+    @Length(max = 11, message = "联系方式最多11位")
     private String phone;
     /**
      * 性别
