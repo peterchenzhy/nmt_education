@@ -23,5 +23,5 @@ public interface Consts {
     int 订单编号长度 = 20;
     String 订单前缀 = "CR";
 
-    Integer 普通单节费用 = 1;
+    Integer FEE_TYPE_普通单节费用 = 1;
 }

@@ -74,11 +74,6 @@ public class RegistrationExpenseDetailPo {
     private Integer feeDirection= Enums.FeeDirection.支付.getCode();
 
     /**
-     * 关联支付id，退费用 默认0
-     */
-    @ApiModelProperty(value="关联支付id，退费用" )
-    private Long refId=0L;
-    /**
     * 有效：1 无效：0
     */
     @ApiModelProperty(value="有效：1 无效：0")

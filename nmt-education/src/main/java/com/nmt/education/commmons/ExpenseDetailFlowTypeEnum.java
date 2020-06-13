@@ -12,10 +12,11 @@ import java.util.Objects;
  * @Version 1.0
  */
 public enum ExpenseDetailFlowTypeEnum {
-    新增(1, "新增"),
+    新增记录(1, "新增记录"),
     编辑(2, "编辑"),
     消耗(3, "消耗"),
     还原(4, "还原"),
+    退费(5, "退费"),
     ;
 
 

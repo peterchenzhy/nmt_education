@@ -24,6 +24,8 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static com.nmt.education.commmons.Consts.SYSTEM_USER;
+
 @Service
 @Slf4j
 public class CourseScheduleService {
@@ -212,7 +214,7 @@ public class CourseScheduleService {
                         courseRegistrationService.selectByPrimaryKey(registerationSummaryPo.getCourseRegistrationId());
                 BigDecimal balanceAmount = new BigDecimal(courseRegistrationPo.getBalanceAmount());
                 RegistrationExpenseDetailPo expenseDetailPo = registrationExpenseDetailService.queryRegisterId(courseRegistrationPo.getId())
-                        .stream().filter(p -> Consts.普通单节费用.equals(p.getFeeType()) && Enums.FeeDirection.支付.getCode().equals(p.getFeeDirection()) &&
+                        .stream().filter(p -> Consts.FEE_TYPE_普通单节费用.equals(p.getFeeType()) && Enums.FeeDirection.支付.getCode().equals(p.getFeeDirection()) &&
                                 Enums.FeeStatus.已缴费.getCode().equals(p.getFeeStatus())).findFirst().get();
                 Assert.isTrue(Objects.nonNull(expenseDetailPo), "可退费的记录不存在，id：" + courseSignInItem.getRegisterSummaryId());
                 BigDecimal perAmount = new BigDecimal(expenseDetailPo.getPerAmount());
@@ -276,7 +278,7 @@ public class CourseScheduleService {
                                                        ExpenseDetailFlowTypeEnum type) {
         RegistrationExpenseDetailFlow flow = new RegistrationExpenseDetailFlow();
         flow.setRegistrationId(courseRegistrationId);
-        flow.setFeeType(Consts.普通单节费用);
+        flow.setFeeType(Consts.FEE_TYPE_普通单节费用);
         flow.setType(type.getCode());
         flow.setAmount(perAmount.toPlainString());
         flow.setRegisterExpenseDetailId(courseRegistrationExpenseId);
@@ -286,6 +288,10 @@ public class CourseScheduleService {
         flow.setCreateTime(new Date());
         flow.setOperator(operator);
         flow.setOperateTime(new Date());
+        flow.setPerAmount(perAmount.toPlainString());
+        flow.setCount(1);
+        flow.setDiscount("1");
+        flow.setPayment(SYSTEM_USER);
         return flow;
     }
 
@@ -364,7 +370,7 @@ public class CourseScheduleService {
         vo.setCourseSchedule(courseSchedulePoList.stream().
                 filter(e -> Enums.SignInType.已签到.getCode().equals(e.getSignIn())).sorted(Comparator.comparing(CourseSchedulePo::getId).reversed())
                 .findFirst().orElse(null));
-        vo.setSignInVos(Objects.nonNull(vo.getCourseSchedule()) ? signInList(vo.getCourseSchedule().getId(), Consts.SYSTEM_USER) : Collections.EMPTY_LIST);
+        vo.setSignInVos(Objects.nonNull(vo.getCourseSchedule()) ? signInList(vo.getCourseSchedule().getId(), SYSTEM_USER) : Collections.EMPTY_LIST);
         return vo;
     }
 }

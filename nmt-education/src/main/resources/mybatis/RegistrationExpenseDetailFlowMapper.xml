@@ -9,8 +9,12 @@
     <result column="register_expense_detail_id" jdbcType="BIGINT" property="registerExpenseDetailId" />
     <result column="fee_type" jdbcType="INTEGER" property="feeType" />
     <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="per_amount" jdbcType="VARCHAR" property="perAmount" />
     <result column="amount" jdbcType="VARCHAR" property="amount" />
-    <result column="status" jdbcType="BOOLEAN" property="status" />
+    <result column="count" jdbcType="INTEGER" property="count" />
+    <result column="payment" jdbcType="INTEGER" property="payment" />
+    <result column="discount" jdbcType="VARCHAR" property="discount" />
+    <result column="status" jdbcType="INTEGER" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="creator" jdbcType="INTEGER" property="creator" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -19,8 +23,8 @@
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, registration_id, register_expense_detail_id, fee_type, `type`, amount, `status`, 
-    remark, creator, create_time, `operator`, operate_time
+    id, registration_id, register_expense_detail_id, fee_type, `type`, per_amount, amount, 
+    `count`, payment, discount, `status`, remark, creator, create_time, `operator`, operate_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     <!--@mbg.generated-->
@@ -45,8 +49,20 @@
       <if test="type != null">
         `type`,
       </if>
+      <if test="perAmount != null">
+        per_amount,
+      </if>
       <if test="amount != null">
         amount,
+      </if>
+      <if test="count != null">
+        `count`,
+      </if>
+      <if test="payment != null">
+        payment,
+      </if>
+      <if test="discount != null">
+        discount,
       </if>
       <if test="status != null">
         `status`,
@@ -80,11 +96,23 @@
       <if test="type != null">
         #{type,jdbcType=INTEGER},
       </if>
+      <if test="perAmount != null">
+        #{perAmount,jdbcType=VARCHAR},
+      </if>
       <if test="amount != null">
         #{amount,jdbcType=VARCHAR},
       </if>
+      <if test="count != null">
+        #{count,jdbcType=INTEGER},
+      </if>
+      <if test="payment != null">
+        #{payment,jdbcType=INTEGER},
+      </if>
+      <if test="discount != null">
+        #{discount,jdbcType=VARCHAR},
+      </if>
       <if test="status != null">
-        #{status,jdbcType=BOOLEAN},
+        #{status},
       </if>
       <if test="remark != null">
         #{remark,jdbcType=VARCHAR},
@@ -119,8 +147,20 @@
       <if test="type != null">
         `type` = #{type,jdbcType=INTEGER},
       </if>
+      <if test="perAmount != null">
+        per_amount = #{perAmount,jdbcType=VARCHAR},
+      </if>
       <if test="amount != null">
         amount = #{amount,jdbcType=VARCHAR},
+      </if>
+      <if test="count != null">
+        `count` = #{count,jdbcType=INTEGER},
+      </if>
+      <if test="payment != null">
+        payment = #{payment,jdbcType=INTEGER},
+      </if>
+      <if test="discount != null">
+        discount = #{discount,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
         `status` = #{status,jdbcType=BOOLEAN},
@@ -175,10 +215,38 @@
           </if>
         </foreach>
       </trim>
+      <trim prefix="per_amount = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.perAmount != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.perAmount,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
       <trim prefix="amount = case" suffix="end,">
         <foreach collection="list" index="index" item="item">
           <if test="item.amount != null">
             when id = #{item.id,jdbcType=INTEGER} then #{item.amount,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="`count` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.count != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.count,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="payment = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.payment != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.payment,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="discount = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.discount != null">
+            when id = #{item.id,jdbcType=INTEGER} then #{item.discount,jdbcType=VARCHAR}
           </if>
         </foreach>
       </trim>
@@ -233,15 +301,17 @@
   <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
     <!--@mbg.generated-->
     insert into registration_expense_detail_flow
-    (registration_id, register_expense_detail_id, fee_type, `type`, amount, `status`, 
-      remark, creator, create_time, `operator`, operate_time)
+    (registration_id, register_expense_detail_id, fee_type, `type`, per_amount, amount, 
+      `count`, payment, discount, `status`, remark, creator, create_time, `operator`, 
+      operate_time)
     values
     <foreach collection="list" item="item" separator=",">
       (#{item.registrationId,jdbcType=BIGINT}, #{item.registerExpenseDetailId,jdbcType=BIGINT}, 
-        #{item.feeType,jdbcType=INTEGER}, #{item.type,jdbcType=INTEGER}, #{item.amount,jdbcType=VARCHAR}, 
-        #{item.status,jdbcType=BOOLEAN}, #{item.remark,jdbcType=VARCHAR}, #{item.creator,jdbcType=INTEGER}, 
-        #{item.createTime,jdbcType=TIMESTAMP}, #{item.operator,jdbcType=INTEGER}, #{item.operateTime,jdbcType=TIMESTAMP}
-        )
+        #{item.feeType,jdbcType=INTEGER}, #{item.type,jdbcType=INTEGER}, #{item.perAmount,jdbcType=VARCHAR}, 
+        #{item.amount,jdbcType=VARCHAR}, #{item.count,jdbcType=INTEGER}, #{item.payment,jdbcType=INTEGER}, 
+        #{item.discount,jdbcType=VARCHAR}, #{item.status,jdbcType=BOOLEAN}, #{item.remark,jdbcType=VARCHAR}, 
+        #{item.creator,jdbcType=INTEGER}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.operator,jdbcType=INTEGER}, 
+        #{item.operateTime,jdbcType=TIMESTAMP})
     </foreach>
   </insert>
 </mapper>

@@ -85,7 +85,7 @@ public class RegisterationSummaryService {
     }
 
     /**
-     * 根据报名id 查询报名汇总信息
+     * 根据报名id 查询报名汇总信息 会包含退费的课程日历
      *
      * @param id
      * @return java.util.List<com.nmt.education.pojo.po.RegisterationSummaryPo>

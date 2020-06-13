@@ -43,10 +43,34 @@ public class RegistrationExpenseDetailFlow {
     private Integer type;
 
     /**
+     * 单项金额
+     */
+    @ApiModelProperty(value = "单项金额")
+    private String perAmount;
+
+    /**
      * 金额
      */
     @ApiModelProperty(value = "金额")
     private String amount;
+
+    /**
+     * 数量
+     */
+    @ApiModelProperty(value = "数量")
+    private Integer count;
+
+    /**
+     * 缴费方式
+     */
+    @ApiModelProperty(value = "缴费方式")
+    private Integer payment;
+
+    /**
+     * 折扣
+     */
+    @ApiModelProperty(value = "折扣")
+    private String discount;
 
     /**
      * 有效：1 无效：0
