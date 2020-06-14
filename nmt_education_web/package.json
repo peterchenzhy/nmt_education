@@ -7,6 +7,7 @@
     "build": "npm run color-less && node --max_old_space_size=5120 ./node_modules/@angular/cli/bin/ng build --prod",
     "build-test": "npm run color-less && node --max_old_space_size=5120 ./node_modules/@angular/cli/bin/ng build",
     "build-uat": "npm run color-less && node --max_old_space_size=5120 ./node_modules/@angular/cli/bin/ng build --configuration=uat",
+    "build-prd": "npm run color-less && node --max_old_space_size=5120 ./node_modules/@angular/cli/bin/ng build --configuration=prd",
     "test": "ng test",
     "lint": "npm run lint:ts && npm run lint:style",
     "e2e": "ng e2e",
