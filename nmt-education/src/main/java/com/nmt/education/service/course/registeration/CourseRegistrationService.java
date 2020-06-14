@@ -74,7 +74,8 @@ public class CourseRegistrationService {
         //生成报名记录
         CourseRegistrationPo courseRegistrationPo;
         if (Enums.EditFlag.新增.getCode().equals(dto.getEditFlag())) {
-            Assert.isTrue(dto.getRegisterExpenseDetail().stream().map(e -> Consts.FEE_TYPE_普通单节费用.equals(e.getFeeType())).findAny().get(), "报名必须含有单节收费项目");
+            Assert.notNull(dto.getRegisterExpenseDetail().stream().filter(e -> Consts.FEE_TYPE_普通单节费用.equals(e.getFeeType())).findAny().get(),
+                    "报名必须含有单节收费项目");
             courseRegistrationPo = generateCourseRegistrationPo(dto, updator);
             this.insertSelective(courseRegistrationPo);
         } else {

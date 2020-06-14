@@ -48,7 +48,7 @@ public class CourseSearchDto {
     private Date endDate;
 
     @ApiModelProperty(value = "分页 页码")
-    private Integer pageNo = 0;
+    private Integer pageNo = 1;
 
     @ApiModelProperty(value = "分页 每页数量")
     private Integer pageSize = 10;

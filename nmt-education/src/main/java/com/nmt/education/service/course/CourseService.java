@@ -2,6 +2,7 @@ package com.nmt.education.service.course;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
 import com.nmt.education.commmons.Consts;
 import com.nmt.education.commmons.Enums;
 import com.nmt.education.commmons.utils.SpringContextUtil;
@@ -9,6 +10,7 @@ import com.nmt.education.listener.event.BaseEvent;
 import com.nmt.education.listener.event.TeacherChangeEvent;
 import com.nmt.education.pojo.dto.req.CourseExpenseReqDto;
 import com.nmt.education.pojo.dto.req.CourseReqDto;
+import com.nmt.education.pojo.dto.req.CourseScheduleReqDto;
 import com.nmt.education.pojo.dto.req.CourseSearchDto;
 import com.nmt.education.pojo.po.CoursePo;
 import com.nmt.education.pojo.po.CourseSchedulePo;
@@ -18,6 +20,7 @@ import com.nmt.education.service.course.expense.CourseExpenseService;
 import com.nmt.education.service.course.registeration.CourseRegistrationService;
 import com.nmt.education.service.course.schedule.CourseScheduleService;
 import com.nmt.education.service.teacher.TeacherService;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -197,6 +200,7 @@ public class CourseService {
         po.setCreateTime(new Date());
         po.setOperator(operator);
         po.setOperateTime(new Date());
+        po.setEndDate(dto.getCourseScheduleList().stream().sorted(Comparator.comparing(CourseScheduleReqDto::getCourseDatetime).reversed()).findFirst().get().getCourseDatetime());
         po.setCode(codeService.generateNewCourseCode(dto.getCampus(), dto.getCourseSubject()));
         return po;
     }
