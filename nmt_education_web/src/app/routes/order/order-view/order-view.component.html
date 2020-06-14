@@ -86,7 +86,7 @@
                     </td>
                     <td>
                         <span nz-form-control>
-                            <nz-input-number [nzDisabled]=true style="width: 80px;" formControlName="perAmount"
+                            <nz-input-number style="width: 80px;" formControlName="perAmount"
                                 (ngModelChange)="onPayInfoChanged(i)">
                             </nz-input-number>
                         </span>
@@ -167,7 +167,7 @@
     <st #st [columns]="sessionColumns" [scroll]="{ y: '500px' }" [ps]=100 [data]="order.course.courseScheduleList"
         (change)="stChange($event)">
         <ng-template st-row="showTeacher" let-i>
-            {{order.course.teacher.name}}
+            {{order.course.teacher&&order.course.teacher.name}}
         </ng-template>
     </st>
 </ng-template>
