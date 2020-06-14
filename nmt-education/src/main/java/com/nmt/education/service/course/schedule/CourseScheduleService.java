@@ -192,9 +192,8 @@ public class CourseScheduleService {
         if (CollectionUtils.isEmpty(list)) {
             return;
         }
-        long courseId = list.get(0).getCourseId();
-        CourseSchedulePo po = selectByPrimaryKey(courseId);
-        Assert.notNull(po, "课表信息为空，id：" + courseId);
+        CourseSchedulePo po = selectByPrimaryKey(list.get(0).getCourseScheduleId());
+        Assert.notNull(po, "课表信息为空，id：" + list.get(0).getCourseScheduleId());
         List<RegistrationExpenseDetailFlow> flowList = new ArrayList<>(list.size());
         List<CourseRegistrationPo> courseRegistrationPoList = new ArrayList<>(list.size());
         List<CourseSignInItem> needUpdate = new ArrayList<>(list.size());
