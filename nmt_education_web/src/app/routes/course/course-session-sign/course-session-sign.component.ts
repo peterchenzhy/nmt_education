@@ -27,7 +27,7 @@ export class CourseSessionSignComponent implements OnInit {
   form: FormGroup;
   loading: boolean = true;
   constructor(
-    private appCtx: AppContextService,
+    public appCtx: AppContextService,
     private fb: FormBuilder,
     private activaterRouter: ActivatedRoute,
     public msgSrv: NzMessageService,

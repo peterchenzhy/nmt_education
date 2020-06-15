@@ -87,7 +87,7 @@
                     <td>
                         <span nz-form-control>
                             <nz-input-number style="width: 80px;" formControlName="perAmount"
-                                (ngModelChange)="onPayInfoChanged(i)">
+                                (ngModelChange)="onPayInfoChanged(i,$event)">
                             </nz-input-number>
                         </span>
                     </td>
@@ -95,7 +95,7 @@
                         <span nz-form-control>
                             <nz-input-number style="width: 80px;"
                                 [nzDisabled]="registerExpenseDetail.value[i].feeType == 1" formControlName="count"
-                                (ngModelChange)="onPayInfoChanged(i)">
+                                (ngModelChange)="onPayInfoChanged(i,$event)">
                             </nz-input-number>
                             <i *ngIf="registerExpenseDetail.value[i].feeType == 1" nz-icon nzType="edit"
                                 nzTheme="outline" title="选择报名课程" (click)="selectSessions(modalSessionSelection)"></i>
@@ -122,7 +122,7 @@
                         <nz-form-item style="padding-bottom: 0px;margin-bottom: 0px;">
                             <nz-form-control nzErrorTip="">
                                 <nz-select style="width: 100px;" formControlName="payment" [nzPlaceHolder]="'请选支付方式'"
-                                    [nzShowSearch]="true" (ngModelChange)="onPayInfoChanged(i)">
+                                    [nzShowSearch]="true" (ngModelChange)="onPayInfoChanged(i,$event)">
                                     <nz-option *ngFor="let i of payMethodList" [nzLabel]="i.label" [nzValue]="i.value">
                                     </nz-option>
                                 </nz-select>
@@ -132,7 +132,7 @@
                     <td>
                         <span nz-form-control>
                             <nz-select [nzDisabled]=true style="width: 100px;" formControlName="feeStatus"
-                                [nzPlaceHolder]="'请选支付状态'" [nzShowSearch]="true" (ngModelChange)="onPayInfoChanged(i)">
+                                [nzPlaceHolder]="'请选支付状态'" [nzShowSearch]="true" (ngModelChange)="onPayInfoChanged(i,$event)">
                                 <nz-option *ngFor="let i of payStatusList" [nzLabel]="i.label" [nzValue]="i.value">
                                 </nz-option>
                             </nz-select>
@@ -140,7 +140,7 @@
                     </td>
                     <td>
                         <span nz-form-control>
-                            <input nz-input formControlName="remark" (ngModelChange)="onPayInfoChanged(i)" />
+                            <input nz-input formControlName="remark" (ngModelChange)="onPayInfoChanged(i,$event)" />
                         </span>
                     </td>
                     <!-- <td>

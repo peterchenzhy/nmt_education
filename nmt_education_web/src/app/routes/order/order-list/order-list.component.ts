@@ -89,8 +89,8 @@ export class OrderListComponent implements OnInit {
     expandForm = false;
 
     constructor(
-        private appCtx: AppContextService,
-        private globalService: GlobalService,
+        public appCtx: AppContextService,
+        public globalService: GlobalService,
         private router: Router,
         public msg: NzMessageService,
         private modalSrv: NzModalService,

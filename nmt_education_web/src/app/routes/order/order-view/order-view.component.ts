@@ -35,7 +35,7 @@ export class OrderViewComponent implements OnInit {
     };
 
     constructor(
-        private appCtx: AppContextService,
+        public appCtx: AppContextService,
         private modalSrv: NzModalService,
         private fb: FormBuilder,
         private activaterRouter: ActivatedRoute,
