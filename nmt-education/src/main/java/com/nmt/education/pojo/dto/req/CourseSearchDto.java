@@ -41,6 +41,12 @@ public class CourseSearchDto {
      */
     @ApiModelProperty(value = "开始日期")
     private Date startDate;
+
+    /**
+     * 教师id
+     */
+    @ApiModelProperty(value = "教师id")
+    private Long teacherId;
     /**
      * 结束日期
      */

@@ -29,6 +29,7 @@
         <result column="s_name" jdbcType="VARCHAR" property="studentName"/>
         <result column="c_name" jdbcType="VARCHAR" property="courseName"/>
         <result column="cr_registerTime" jdbcType="TIMESTAMP" property="registerTime"/>
+        <result column="c_campus" jdbcType="INTEGER" property="campus"/>
     </resultMap>
     <sql id="Base_Column_List">
         <!--@mbg.generated-->
@@ -54,7 +55,7 @@
     </select>
     <select id="queryByDto" parameterType="com.nmt.education.pojo.dto.req.RegisterSearchReqDto"
             resultMap="CourseRegistrationListVoResultMap">
-        select cr.*,s.name as s_name,c.name as c_name,cr.create_time as cr_registerTime
+        select cr.*,s.name as s_name,c.name as c_name,cr.create_time as cr_registerTime,c.campus as c_campus
         from course_registration cr
         inner join course c on c.id= cr.course_id
         inner join student s on s.id =cr.student_id
@@ -71,6 +72,7 @@
         <if test="dto.studentId != null">
             and cr.student_id =#{dto.studentId}
         </if>
+        order by cr.id desc
     </select>
 
     <select id="queryVoById"

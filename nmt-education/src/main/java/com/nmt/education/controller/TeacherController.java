@@ -4,7 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.utils.ReqDtoCheckUtil;
 import com.nmt.education.pojo.dto.req.TeacherReqDto;
 import com.nmt.education.pojo.dto.req.TeacherSearchReqDto;
-import com.nmt.education.pojo.vo.StudentVo;
+import com.nmt.education.pojo.po.CoursePo;
 import com.nmt.education.pojo.vo.TeacherVo;
 import com.nmt.education.service.teacher.TeacherService;
 import io.swagger.annotations.Api;
@@ -66,8 +66,15 @@ public class TeacherController {
     @ApiOperation(value = "detail", notes = "老师明细")
     @RequestMapping(value = "/detail/{teacherId}", method = RequestMethod.POST)
     public TeacherVo detail(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
-            , @PathVariable Long teacherId ) {
+            , @PathVariable Long teacherId) {
         return teacherService.detail(teacherId);
+    }
+
+    @ApiOperation(value = "course", notes = "老师授课明细")
+    @RequestMapping(value = "/course/list/{teacherId}", method = RequestMethod.POST)
+    public PageInfo<CoursePo> courseList(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
+            , @PathVariable Long teacherId, @RequestParam(value = "pageNo", required = false, defaultValue = "0") Integer pageNo, @RequestParam(value = "pageSize", required = false, defaultValue = "0") Integer pageSize) {
+        return teacherService.courseList(teacherId,pageNo,pageSize);
     }
 
 }

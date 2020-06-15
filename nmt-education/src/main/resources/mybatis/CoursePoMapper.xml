@@ -234,6 +234,9 @@
             and   start_date != "1970-01-02 00:00:00"
             and start_date <= #{dto.endDate}  ]]>
         </if>
+        <if test="dto.teacherId != null">
+            teacher_id = #{dto.teacherId}
+        </if>
     </select>
     <update id="updateByPrimaryKeySelective" parameterType="com.nmt.education.pojo.po.CoursePo">
         <!--@mbg.generated-->

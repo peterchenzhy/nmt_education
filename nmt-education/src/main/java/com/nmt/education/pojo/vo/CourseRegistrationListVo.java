@@ -27,6 +27,8 @@ public class CourseRegistrationListVo extends CourseRegistrationPo {
 
     @ApiModelProperty(value = "报名时间")
     private Date registerTime;
+    @ApiModelProperty(value = "校区")
+    private Integer campus ;
     @ApiModelProperty(value = "课时信息")
     private List<CourseSchedulePo> courseScheduleList = Collections.emptyList();
 

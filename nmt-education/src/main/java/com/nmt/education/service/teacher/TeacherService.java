@@ -5,13 +5,16 @@ import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.Enums;
 import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.commmons.utils.DateUtil;
+import com.nmt.education.pojo.dto.req.CourseSearchDto;
 import com.nmt.education.pojo.dto.req.TeacherReqDto;
 import com.nmt.education.pojo.dto.req.TeacherSearchReqDto;
-import com.nmt.education.pojo.po.StudentPo;
+import com.nmt.education.pojo.po.CoursePo;
 import com.nmt.education.pojo.po.TeacherPo;
 import com.nmt.education.pojo.vo.TeacherVo;
+import com.nmt.education.service.course.CourseService;
 import com.nmt.education.service.teacher.config.TeacherSalaryConfigService;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -39,6 +42,9 @@ public class TeacherService {
     private TeacherService self;
     @Resource
     private TeacherPoMapper teacherPoMapper;
+    @Autowired
+    @Lazy
+    private CourseService courseService;
 
     /**
      * 教师信息，修改，删除接口
@@ -209,7 +215,7 @@ public class TeacherService {
     private TeacherVo po2vo(TeacherPo e) {
         TeacherVo vo = new TeacherVo();
         BeanUtils.copyProperties(e, vo);
-        if(DateUtil.defaultDateTime().compareTo(vo.getBirthday())==0){
+        if (DateUtil.defaultDateTime().compareTo(vo.getBirthday()) == 0) {
             vo.setBirthday(null);
         }
         //todo 老师的价格如果是敏感数据，那么这边需要做权限控制或者
@@ -258,9 +264,17 @@ public class TeacherService {
 
 
     public TeacherVo detail(Long id) {
-        Assert.notNull(id,"老师明细缺少id,id:"+id);
+        Assert.notNull(id, "老师明细缺少id,id:" + id);
         TeacherPo po = selectByPrimaryKey(id);
-        Assert.notNull(po,"老师明细不存在，id："+id);
+        Assert.notNull(po, "老师明细不存在，id：" + id);
         return po2vo(po);
+    }
+
+    public PageInfo<CoursePo> courseList(Long teacherId, Integer pageNo, Integer pageSize) {
+        CourseSearchDto searchDto = new CourseSearchDto();
+        searchDto.setTeacherId(teacherId);
+        searchDto.setPageNo(pageNo);
+        searchDto.setPageSize(pageSize);
+        return courseService.search(searchDto);
     }
 }
