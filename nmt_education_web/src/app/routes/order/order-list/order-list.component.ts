@@ -135,4 +135,17 @@ export class OrderListComponent implements OnInit {
         // wait form reset updated finished
         setTimeout(() => this.getData());
     }
+
+
+    studentsOfOption: Array<Course> = [];
+    nzFilterOption = () => true;
+    searchStudent(value: string): void {
+        if (!value || value == "") {
+            return;
+        }
+        this.appCtx.studentService.fuzzyQueryStudents(value)
+            .subscribe((data: Course[]) => {
+                this.studentsOfOption = data;
+            });
+    }
 }
