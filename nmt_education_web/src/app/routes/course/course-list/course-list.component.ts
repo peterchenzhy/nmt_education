@@ -74,7 +74,7 @@ export class CourseListComponent implements OnInit {
 
   constructor(
     private datePipe: DatePipe,
-    private appCtx: AppContextService,
+    public appCtx: AppContextService,
     private router: Router,
     private http: _HttpClient,
     public msg: NzMessageService,

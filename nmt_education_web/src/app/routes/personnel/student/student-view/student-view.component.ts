@@ -25,7 +25,7 @@ export class StudentViewComponent implements OnInit {
     st: STComponent;
     constructor(
         private activaterRouter: ActivatedRoute,
-        private globalService: GlobalService,
+        public globalService: GlobalService,
         private studentService: StudentService,
         private fb: FormBuilder,
         public msgSrv: NzMessageService,

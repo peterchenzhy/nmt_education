@@ -31,7 +31,7 @@ export class CourseViewComponent implements OnInit {
   sessionParam: any = { title: "新建课时" };
 
   constructor(
-    private appCtx: AppContextService,
+    public appCtx: AppContextService,
     private fb: FormBuilder,
     private activaterRouter: ActivatedRoute,
     public msgSrv: NzMessageService,

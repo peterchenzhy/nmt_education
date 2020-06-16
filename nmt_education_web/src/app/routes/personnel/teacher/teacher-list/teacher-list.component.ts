@@ -48,7 +48,7 @@ export class TeacherListComponent implements OnInit {
     expandForm = false;
 
     constructor(
-        private globalService: GlobalService,
+        public globalService: GlobalService,
         private teacherService: TeacherService,
         private router: Router,
         private http: _HttpClient,

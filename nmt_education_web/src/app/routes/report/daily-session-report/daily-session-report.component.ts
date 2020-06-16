@@ -62,7 +62,7 @@ export class DailySessionReportComponent implements OnInit {
 
   constructor(
     private datePipe: DatePipe,
-    private appCtx: AppContextService,
+    public appCtx: AppContextService,
     private router: Router,
     private http: _HttpClient,
     public msg: NzMessageService,
@@ -128,12 +128,12 @@ export class DailySessionReportComponent implements OnInit {
     setTimeout(() => this.getData());
   }
 
-  onDateRangeChanged(result: Date, param: string): void {
+  onDateRangeChanged(result: Date): void {
     this.queryParam.startDate = this.datePipe.transform(result[0], 'yyyy-MM-dd');
     this.queryParam.endDate = this.datePipe.transform(result[1], 'yyyy-MM-dd');
   }
 
-  onRegisterDateRangeChanged(result: Date, param: string): void {
+  onRegisterDateRangeChanged(result: Date): void {
     this.queryParam.registerStartDate = this.datePipe.transform(result[0], 'yyyy-MM-dd');
     this.queryParam.registerEndDate = this.datePipe.transform(result[1], 'yyyy-MM-dd');
   }

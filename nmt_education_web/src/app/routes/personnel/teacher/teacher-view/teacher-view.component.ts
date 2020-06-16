@@ -5,7 +5,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { _HttpClient } from '@delon/theme';
 import { ActivatedRoute } from '@angular/router';
 import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { STColumn, STComponent } from '@delon/abc';
+import { STColumn, STComponent, STData } from '@delon/abc';
 import { Teacher } from 'src/app/model/teacher.model';
 import { GlobalService } from '@shared/service/global.service';
 import { TeacherService } from '@shared/service/teacher.service';
@@ -21,7 +21,7 @@ export class TeacherViewComponent implements OnInit {
     @ViewChild('st', { static: true })
     st: STComponent;
     constructor(
-        private globalService: GlobalService,
+        public globalService: GlobalService,
         private teacherService: TeacherService,
         private fb: FormBuilder,
         private activaterRouter: ActivatedRoute,
@@ -46,6 +46,7 @@ export class TeacherViewComponent implements OnInit {
         { title: '上课时间', index: 'startTime' },
         { title: '课程时长', index: 'duration' }
     ];
+    courses: STData[] = [];
 
     ngOnInit() {
         this.form = this.fb.group({

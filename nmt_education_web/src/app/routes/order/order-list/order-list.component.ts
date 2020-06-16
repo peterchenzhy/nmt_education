@@ -89,8 +89,8 @@ export class OrderListComponent implements OnInit {
     expandForm = false;
 
     constructor(
-        private appCtx: AppContextService,
-        private globalService: GlobalService,
+        public appCtx: AppContextService,
+        public globalService: GlobalService,
         private router: Router,
         public msg: NzMessageService,
         private modalSrv: NzModalService,
@@ -134,5 +134,18 @@ export class OrderListComponent implements OnInit {
     reset() {
         // wait form reset updated finished
         setTimeout(() => this.getData());
+    }
+
+
+    studentsOfOption: Array<Course> = [];
+    nzFilterOption = () => true;
+    searchStudent(value: string): void {
+        if (!value || value == "") {
+            return;
+        }
+        this.appCtx.studentService.fuzzyQueryStudents(value)
+            .subscribe((data: Course[]) => {
+                this.studentsOfOption = data;
+            });
     }
 }
