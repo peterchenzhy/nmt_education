@@ -9,7 +9,7 @@
         <result column="code" jdbcType="VARCHAR" property="code"/>
         <result column="year" jdbcType="INTEGER" property="year"/>
         <result column="season" jdbcType="TINYINT" property="season"/>
-        <result column="campus" jdbcType="TINYINT" property="campus"/>
+        <result column="campus" jdbcType="INTEGER" property="campus"/>
         <result column="course_type" jdbcType="TINYINT" property="courseType"/>
         <result column="course_subject" jdbcType="TINYINT" property="courseSubject"/>
         <result column="course_classification" jdbcType="TINYINT" property="courseClassification"/>
@@ -236,6 +236,9 @@
         </if>
         <if test="dto.teacherId != null">
             teacher_id = #{dto.teacherId}
+        </if>
+        <if test="dto.campus != null">
+            campus = #{dto.campus}
         </if>
     </select>
     <update id="updateByPrimaryKeySelective" parameterType="com.nmt.education.pojo.po.CoursePo">
