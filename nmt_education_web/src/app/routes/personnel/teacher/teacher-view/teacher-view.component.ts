@@ -1,15 +1,16 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Location } from '@angular/common';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { _HttpClient } from '@delon/theme';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { STColumn, STComponent, STData } from '@delon/abc';
 import { Teacher } from 'src/app/model/teacher.model';
 import { GlobalService } from '@shared/service/global.service';
 import { TeacherService } from '@shared/service/teacher.service';
 import { EDIT_FLAG } from '@shared/constant/system.constant';
+import { tap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-teacher-view',
@@ -25,12 +26,12 @@ export class TeacherViewComponent implements OnInit {
         private teacherService: TeacherService,
         private fb: FormBuilder,
         private activaterRouter: ActivatedRoute,
-        public msgSrv: NzMessageService,
-        public http: _HttpClient,
+        private modalSrv: NzModalService,
+        private router: Router,
         private _location: Location
     ) {
     }
-
+    loading: boolean = false;
     editIndex = -1;
     editObj = {};
     form: FormGroup;
@@ -144,10 +145,19 @@ export class TeacherViewComponent implements OnInit {
             this.form.controls[key].updateValueAndValidity();
         });
         if (this.form.invalid) return;
-
-        this.teacherService.saveTeacher(this.form.value).subscribe((res) => {
-            this.goBack();
-        });
+        this.loading = true;
+        this.teacherService.saveTeacher(this.form.value)
+            .pipe(
+                tap(() => (this.loading = false))
+            ).subscribe((res) => {
+                this.modalSrv.success({
+                    nzTitle: '处理结果',
+                    nzContent: '教师信息保存成功！',
+                    nzOnOk: () => {
+                        this.router.navigate(["/personnel/teacher/list"]);
+                    }
+                });
+            });
     }
 
     goBack() {

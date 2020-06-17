@@ -1,159 +1,163 @@
 <page-header [title]="pageHeader"></page-header>
-<form nz-form [formGroup]="form" (ngSubmit)="_submitForm()" [nzLayout]="'vertical'">
-    <nz-card [nzBordered]="false" nzTitle="教师信息">
-        <nz-row nzGutter="16">
-            <nz-col nzLg="6" nzMd="12" nzSm="24">
-                <nz-form-item>
-                    <nz-form-label nzFor="name">教师姓名</nz-form-label>
-                    <nz-form-control nzErrorTip="请输入教师姓名">
-                        <input nz-input formControlName="name" placeholder="请输入教师姓名" />
-                    </nz-form-control>
-                </nz-form-item>
-            </nz-col>
-            <nz-col [nzXl]="{ span: 6, offset: 2 }" [nzLg]="{ span: 8 }" [nzMd]="{ span: 12 }" nzSm="24">
-                <nz-form-item>
-                    <nz-form-label>性别</nz-form-label>
-                    <nz-form-control nzErrorTip="请选择性别">
-                        <nz-radio-group formControlName="sex">
-                            <label nz-radio [nzValue]="1">男</label>
-                            <label nz-radio [nzValue]="0">女</label>
-                        </nz-radio-group>
-                    </nz-form-control>
-                </nz-form-item>
-            </nz-col>
-            <nz-col [nzXl]="{ span: 6, offset: 2 }" [nzLg]="{ span: 8 }" [nzMd]="{ span: 12 }" nzSm="24">
-                <nz-form-item>
-                    <nz-form-label nzFor="birthday">出生日期</nz-form-label>
-                    <nz-form-control nzErrorTip="请输入出生日期">
-                        <nz-date-picker formControlName="birthday"></nz-date-picker>
-                    </nz-form-control>
-                </nz-form-item>
-            </nz-col>
-        </nz-row>
-        <nz-row nzGutter="16">
-            <nz-col nzLg="6" nzMd="12" nzSm="24">
-                <nz-form-item>
-                    <nz-form-label nzFor="phone">联系方式</nz-form-label>
-                    <nz-form-control nzErrorTip="请输入联系方式">
-                        <input nz-input formControlName="phone" placeholder="请输入联系方式" />
-                    </nz-form-control>
-                </nz-form-item>
-            </nz-col>
-            <nz-col [nzXl]="{ span: 6, offset: 2 }" [nzLg]="{ span: 8 }" [nzMd]="{ span: 12 }" nzSm="24">
-                <nz-form-item>
-                    <nz-form-label>学校</nz-form-label>
-                    <nz-form-control nzErrorTip="请输入学校">
-                        <input nz-input formControlName="school" placeholder="请输入学校" />
-                    </nz-form-control>
-                </nz-form-item>
-            </nz-col>
-            <nz-col [nzXl]="{ span: 6, offset: 2 }" [nzLg]="{ span: 8 }" [nzMd]="{ span: 12 }" nzSm="24">
-            </nz-col>
-        </nz-row>
-        <nz-row nzGutter="16">
-            <nz-col nzLg="14" nzMd="12" nzSm="24">
-                <nz-form-item>
-                    <nz-form-label>备注</nz-form-label>
-                    <nz-form-control nzErrorTip="请输入教师备注">
-                        <textarea nz-input formControlName="remark" [nzAutosize]="{ minRows: 4 }"
-                            placeholder="请输入教师备注"></textarea>
-                    </nz-form-control>
-                </nz-form-item>
-            </nz-col>
-            <nz-col [nzXl]="{ span: 6, offset: 2 }" [nzLg]="{ span: 8 }" [nzMd]="{ span: 12 }" nzSm="24">
-            </nz-col>
-        </nz-row>
-    </nz-card>
-    <nz-card [nzBordered]="false" nzTitle="薪资配置">
-        <nz-table formArrayName="teacherSalaryConfigList" [nzData]="teacherSalaryConfigList.value"
-            [nzShowPagination]="false">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>年级</th>
-                    <th>科目</th>
-                    <th>课程类型</th>
-                    <th>薪资</th>
-                    <th>备注</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                <ng-container *ngFor="let item of teacherSalaryConfigList.controls; let i = index">
-                    <tr *ngIf="teacherSalaryConfigList.value[i].editFlag!=3" [formGroupName]="i">
-                        <td>
-                            <span>{{ i+1 }}</span>
-                        </td>
-                        <td>
-                            <span
-                                *ngIf="editIndex !== i">{{ globalService.getGradeLabel(teacherSalaryConfigList.value[i].grade) }}</span>
-                            <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请选择年级">
-                                <nz-select formControlName="grade" [nzPlaceHolder]="'请选择年级'" [nzShowSearch]="true">
-                                    <nz-option *ngFor="let i of gradeList" [nzLabel]="i.label" [nzValue]="i.value">
-                                    </nz-option>
-                                </nz-select>
-                            </span>
-                        </td>
-                        <td>
-                            <span
-                                *ngIf="editIndex !== i">{{ globalService.getCourseSubjectLabel(teacherSalaryConfigList.value[i].courseSubject) }}</span>
-                            <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请选择科目">
-                                <nz-select formControlName="courseSubject" [nzPlaceHolder]="'请选择科目'"
-                                    [nzShowSearch]="true">
-                                    <nz-option *ngFor="let i of courseSubjectList" [nzLabel]="i.label"
-                                        [nzValue]="i.value">
-                                    </nz-option>
-                                </nz-select>
-                            </span>
-                        </td>
-                        <td>
-                            <span
-                                *ngIf="editIndex !== i">{{ globalService.getCourseTypeLabel(teacherSalaryConfigList.value[i].courseType) }}</span>
-                            <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请选择课程类型">
-                                <nz-select formControlName="courseType" [nzPlaceHolder]="'请选择课程类型'"
-                                    [nzShowSearch]="true">
-                                    <nz-option *ngFor="let i of courseTypeList" [nzLabel]="i.label" [nzValue]="i.value">
-                                    </nz-option>
-                                </nz-select>
-                            </span>
-                        </td>
-                        <td>
-                            <span *ngIf="editIndex !== i">{{ teacherSalaryConfigList.value[i].unitPrice }}</span>
-                            <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请输入单节课薪资">
-                                <nz-input-number formControlName="unitPrice" placeholder="请输入单节课薪资"></nz-input-number>
-                            </span>
-                        </td>
-                        <td>
-                            <span *ngIf="editIndex !== i">{{ teacherSalaryConfigList.value[i].remark }}</span>
-                            <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请输入备注">
-                                <input nz-input formControlName="remark" placeholder="请输入备注" />
-                            </span>
-                        </td>
-                        <td>
-                            <span *ngIf="editIndex !== i">
-                                <a (click)="editSalary(i)">编辑</a>
-                                <nz-divider nzType="vertical"></nz-divider>
-                                <a nz-popconfirm nzPopconfirmTitle="是否要删除此行？" (nzOnConfirm)="delSalary(i)">删除</a>
-                            </span>
-                            <span *ngIf="editIndex === i">
-                                <a (click)="saveSalary(i)">保存</a>
-                                <nz-divider nzType="vertical"></nz-divider>
-                                <a nz-popconfirm nzPopconfirmTitle="是否要取消操作？" (nzOnConfirm)="cancelSalary(i)">取消</a>
-                            </span>
-                        </td>
+<nz-spin [nzSpinning]="loading" [nzSize]="'large'">
+    <form nz-form [formGroup]="form" (ngSubmit)="_submitForm()" [nzLayout]="'vertical'">
+        <nz-card [nzBordered]="false" nzTitle="教师信息">
+            <nz-row nzGutter="16">
+                <nz-col nzLg="6" nzMd="12" nzSm="24">
+                    <nz-form-item>
+                        <nz-form-label nzFor="name">教师姓名</nz-form-label>
+                        <nz-form-control nzErrorTip="请输入教师姓名">
+                            <input nz-input formControlName="name" placeholder="请输入教师姓名" />
+                        </nz-form-control>
+                    </nz-form-item>
+                </nz-col>
+                <nz-col [nzXl]="{ span: 6, offset: 2 }" [nzLg]="{ span: 8 }" [nzMd]="{ span: 12 }" nzSm="24">
+                    <nz-form-item>
+                        <nz-form-label>性别</nz-form-label>
+                        <nz-form-control nzErrorTip="请选择性别">
+                            <nz-radio-group formControlName="sex">
+                                <label nz-radio [nzValue]="1">男</label>
+                                <label nz-radio [nzValue]="0">女</label>
+                            </nz-radio-group>
+                        </nz-form-control>
+                    </nz-form-item>
+                </nz-col>
+                <nz-col [nzXl]="{ span: 6, offset: 2 }" [nzLg]="{ span: 8 }" [nzMd]="{ span: 12 }" nzSm="24">
+                    <nz-form-item>
+                        <nz-form-label nzFor="birthday">出生日期</nz-form-label>
+                        <nz-form-control nzErrorTip="请输入出生日期">
+                            <nz-date-picker formControlName="birthday"></nz-date-picker>
+                        </nz-form-control>
+                    </nz-form-item>
+                </nz-col>
+            </nz-row>
+            <nz-row nzGutter="16">
+                <nz-col nzLg="6" nzMd="12" nzSm="24">
+                    <nz-form-item>
+                        <nz-form-label nzFor="phone">联系方式</nz-form-label>
+                        <nz-form-control nzErrorTip="请输入联系方式">
+                            <input nz-input formControlName="phone" placeholder="请输入联系方式" />
+                        </nz-form-control>
+                    </nz-form-item>
+                </nz-col>
+                <nz-col [nzXl]="{ span: 6, offset: 2 }" [nzLg]="{ span: 8 }" [nzMd]="{ span: 12 }" nzSm="24">
+                    <nz-form-item>
+                        <nz-form-label>学校</nz-form-label>
+                        <nz-form-control nzErrorTip="请输入学校">
+                            <input nz-input formControlName="school" placeholder="请输入学校" />
+                        </nz-form-control>
+                    </nz-form-item>
+                </nz-col>
+                <nz-col [nzXl]="{ span: 6, offset: 2 }" [nzLg]="{ span: 8 }" [nzMd]="{ span: 12 }" nzSm="24">
+                </nz-col>
+            </nz-row>
+            <nz-row nzGutter="16">
+                <nz-col nzLg="14" nzMd="12" nzSm="24">
+                    <nz-form-item>
+                        <nz-form-label>备注</nz-form-label>
+                        <nz-form-control nzErrorTip="请输入教师备注">
+                            <textarea nz-input formControlName="remark" [nzAutosize]="{ minRows: 4 }"
+                                placeholder="请输入教师备注"></textarea>
+                        </nz-form-control>
+                    </nz-form-item>
+                </nz-col>
+                <nz-col [nzXl]="{ span: 6, offset: 2 }" [nzLg]="{ span: 8 }" [nzMd]="{ span: 12 }" nzSm="24">
+                </nz-col>
+            </nz-row>
+        </nz-card>
+        <nz-card [nzBordered]="false" nzTitle="薪资配置">
+            <nz-table formArrayName="teacherSalaryConfigList" [nzData]="teacherSalaryConfigList.value"
+                [nzShowPagination]="false">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>年级</th>
+                        <th>科目</th>
+                        <th>课程类型</th>
+                        <th>薪资</th>
+                        <th>备注</th>
+                        <th>操作</th>
                     </tr>
-                </ng-container>
-            </tbody>
-        </nz-table>
-        <button *ngIf="editIndex === -1" nz-button [nzType]="'dashed'" (click)="addSalary()" nzBlock class="mt-md">
-            <i nz-icon nzType="plus"></i>
-            <span>新增薪资</span>
-        </button>
-    </nz-card>
-    <footer-toolbar errorCollect>
-        <button nz-button type="primary" nzType="primary">提交</button>
-    </footer-toolbar>
-</form>
+                </thead>
+                <tbody>
+                    <ng-container *ngFor="let item of teacherSalaryConfigList.controls; let i = index">
+                        <tr *ngIf="teacherSalaryConfigList.value[i].editFlag!=3" [formGroupName]="i">
+                            <td>
+                                <span>{{ i+1 }}</span>
+                            </td>
+                            <td>
+                                <span
+                                    *ngIf="editIndex !== i">{{ globalService.getGradeLabel(teacherSalaryConfigList.value[i].grade) }}</span>
+                                <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请选择年级">
+                                    <nz-select formControlName="grade" [nzPlaceHolder]="'请选择年级'" [nzShowSearch]="true">
+                                        <nz-option *ngFor="let i of gradeList" [nzLabel]="i.label" [nzValue]="i.value">
+                                        </nz-option>
+                                    </nz-select>
+                                </span>
+                            </td>
+                            <td>
+                                <span
+                                    *ngIf="editIndex !== i">{{ globalService.getCourseSubjectLabel(teacherSalaryConfigList.value[i].courseSubject) }}</span>
+                                <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请选择科目">
+                                    <nz-select formControlName="courseSubject" [nzPlaceHolder]="'请选择科目'"
+                                        [nzShowSearch]="true">
+                                        <nz-option *ngFor="let i of courseSubjectList" [nzLabel]="i.label"
+                                            [nzValue]="i.value">
+                                        </nz-option>
+                                    </nz-select>
+                                </span>
+                            </td>
+                            <td>
+                                <span
+                                    *ngIf="editIndex !== i">{{ globalService.getCourseTypeLabel(teacherSalaryConfigList.value[i].courseType) }}</span>
+                                <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请选择课程类型">
+                                    <nz-select formControlName="courseType" [nzPlaceHolder]="'请选择课程类型'"
+                                        [nzShowSearch]="true">
+                                        <nz-option *ngFor="let i of courseTypeList" [nzLabel]="i.label"
+                                            [nzValue]="i.value">
+                                        </nz-option>
+                                    </nz-select>
+                                </span>
+                            </td>
+                            <td>
+                                <span *ngIf="editIndex !== i">{{ teacherSalaryConfigList.value[i].unitPrice }}</span>
+                                <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请输入单节课薪资">
+                                    <nz-input-number formControlName="unitPrice" placeholder="请输入单节课薪资">
+                                    </nz-input-number>
+                                </span>
+                            </td>
+                            <td>
+                                <span *ngIf="editIndex !== i">{{ teacherSalaryConfigList.value[i].remark }}</span>
+                                <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请输入备注">
+                                    <input nz-input formControlName="remark" placeholder="请输入备注" />
+                                </span>
+                            </td>
+                            <td>
+                                <span *ngIf="editIndex !== i">
+                                    <a (click)="editSalary(i)">编辑</a>
+                                    <nz-divider nzType="vertical"></nz-divider>
+                                    <a nz-popconfirm nzPopconfirmTitle="是否要删除此行？" (nzOnConfirm)="delSalary(i)">删除</a>
+                                </span>
+                                <span *ngIf="editIndex === i">
+                                    <a (click)="saveSalary(i)">保存</a>
+                                    <nz-divider nzType="vertical"></nz-divider>
+                                    <a nz-popconfirm nzPopconfirmTitle="是否要取消操作？" (nzOnConfirm)="cancelSalary(i)">取消</a>
+                                </span>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </nz-table>
+            <button *ngIf="editIndex === -1" nz-button [nzType]="'dashed'" (click)="addSalary()" nzBlock class="mt-md">
+                <i nz-icon nzType="plus"></i>
+                <span>新增薪资</span>
+            </button>
+        </nz-card>
+        <footer-toolbar errorCollect>
+            <button nz-button type="primary" nzType="primary">提交</button>
+        </footer-toolbar>
+    </form>
+</nz-spin>
 <nz-card [nzBordered]="true">
     <div class="text-lg mb-md">授课列表</div>
     <st #st [data]="courses" [columns]="coursesColumns" [page]="{ show: true }">

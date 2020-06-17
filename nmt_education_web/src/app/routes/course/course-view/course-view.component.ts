@@ -55,7 +55,7 @@ export class CourseViewComponent implements OnInit {
   teacherList: Teacher[] = [];
   selectedTeacherList: Teacher[] = [];
   classroomList: any[] = [{ value: '101', label: '101' }, { value: '202', label: '202' }, { value: '303', label: '303' }];
-
+  loading: boolean = false;
   ngOnInit() {
     this.form = this.fb.group({
       id: [0, []],
@@ -85,8 +85,11 @@ export class CourseViewComponent implements OnInit {
     this.form.patchValue(this.course);
     let courseId = this.activaterRouter.snapshot.params.id;
     if (courseId) {
+      this.loading = true;
       this.appCtx.courseService.getCourseDetails(courseId)
-        .subscribe(res => {
+        .pipe(
+          tap(() => (this.loading = false)),
+        ).subscribe(res => {
           this.course = res;
           let year: number = toNumber(this.course.year.toString());
           this.course.year = new Date().setFullYear(year);
@@ -372,9 +375,19 @@ export class CourseViewComponent implements OnInit {
       .forEach((d, i) => {
         d.courseTimes = i + 1;
       });
-    this.appCtx.courseService.saveCourse(this.course).subscribe((res) => {
-      this.goBack();
-    });
+    this.loading = true;
+    this.appCtx.courseService.saveCourse(this.course)
+      .pipe(
+        tap(() => (this.loading = false)),
+      ).subscribe((res) => {
+        this.modalSrv.success({
+          nzTitle: '处理结果',
+          nzContent: '课程信息保存成功！',
+          nzOnOk: () => {
+            this.router.navigate(["/course/list"]);
+          }
+        });
+      });
   }
 
   goBack() {
@@ -446,7 +459,6 @@ export class CourseViewComponent implements OnInit {
     }
   }
   studentLoaded = false;
-  loading = false;
   studentList = [];
   @ViewChild('st', { static: true })
   st: STComponent;

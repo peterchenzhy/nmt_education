@@ -3,7 +3,7 @@ import { Location, DatePipe } from '@angular/common';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { _HttpClient } from '@delon/theme';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { COURSE_STATUS, EDIT_FLAG, SIGNIN } from '@shared/constant/system.constant';
 import { Course, CourseSession } from 'src/app/model/course.model';
@@ -32,7 +32,7 @@ export class CourseSessionSignComponent implements OnInit {
     private activaterRouter: ActivatedRoute,
     public msgSrv: NzMessageService,
     private modalSrv: NzModalService,
-    public http: _HttpClient,
+    public router: Router,
     private cdr: ChangeDetectorRef,
     private _location: Location
   ) {
@@ -146,7 +146,13 @@ export class CourseSessionSignComponent implements OnInit {
       .pipe(
         tap(() => (this.loading = false)),
       ).subscribe((res) => {
-        //this.goBack();
+        this.modalSrv.success({
+          nzTitle: '处理结果',
+          nzContent: '课程签到成功！',
+          nzOnOk: () => {
+            this.router.navigate(["/course/list"]);
+          }
+        });
       });
   }
 

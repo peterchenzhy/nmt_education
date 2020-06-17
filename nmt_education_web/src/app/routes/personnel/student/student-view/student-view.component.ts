@@ -1,15 +1,16 @@
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Location } from '@angular/common';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { _HttpClient } from '@delon/theme';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { STColumn, STComponent } from '@delon/abc';
 import { Student } from 'src/app/model/student.model';
 import { GlobalService } from '@shared/service/global.service';
 import { StudentService } from '@shared/service/student.service';
 import { EDIT_FLAG } from '@shared/constant/system.constant';
+import { tap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-student-view',
@@ -21,6 +22,7 @@ export class StudentViewComponent implements OnInit {
     editIndex = -1;
     editObj = {};
     form: FormGroup;
+    loading: boolean = false;
     @ViewChild('st', { static: true })
     st: STComponent;
     constructor(
@@ -29,7 +31,8 @@ export class StudentViewComponent implements OnInit {
         private studentService: StudentService,
         private fb: FormBuilder,
         public msgSrv: NzMessageService,
-        public http: _HttpClient,
+        private modalSrv: NzModalService,
+        private router: Router,
         private _location: Location
     ) {
     }
@@ -176,10 +179,20 @@ export class StudentViewComponent implements OnInit {
             this.form.controls[key].updateValueAndValidity();
         });
         if (this.form.invalid) return;
-
-        this.studentService.saveStudent(this.form.value).subscribe((res) => {
-            this.goBack();
-        });
+        this.loading = true;
+        this.studentService.saveStudent(this.form.value)
+            .pipe(
+                tap(() => (this.loading = false))
+            )
+            .subscribe((res) => {
+                this.modalSrv.success({
+                    nzTitle: '处理结果',
+                    nzContent: '学生信息保存成功！',
+                    nzOnOk: () => {
+                        this.router.navigate(["/personnel/student/list"]);
+                    }
+                });
+            });
     }
 
     goBack() {
