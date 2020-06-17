@@ -84,6 +84,14 @@
                   "with": "src/environments/environment.uat.ts"
                 }
               ]
+            },
+            "prd": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prd.ts"
+                }
+              ]
             }
           }
         },
@@ -91,7 +99,7 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "browserTarget": "nmt-edu-ui:build",
-            "proxyConfig": "proxy.conf.json"
+            "proxyConfig": "proxy-prd.conf.json"
           },
           "configurations": {
             "production": {
