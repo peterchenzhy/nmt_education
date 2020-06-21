@@ -1,16 +1,18 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { Location } from '@angular/common';
+import { Location, DatePipe } from '@angular/common';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { _HttpClient } from '@delon/theme';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { STColumn, STComponent, STData } from '@delon/abc';
+import { STColumn, STComponent, STData, STChange } from '@delon/abc';
 import { Teacher } from 'src/app/model/teacher.model';
 import { GlobalService } from '@shared/service/global.service';
 import { TeacherService } from '@shared/service/teacher.service';
 import { EDIT_FLAG } from '@shared/constant/system.constant';
 import { tap } from 'rxjs/operators';
+import { AppContextService } from '@shared/service/appcontext.service';
+import { ResponseData, TeacherCourseQueryParam } from 'src/app/model/system.model';
 
 @Component({
     selector: 'app-teacher-view',
@@ -22,32 +24,31 @@ export class TeacherViewComponent implements OnInit {
     @ViewChild('st', { static: true })
     st: STComponent;
     constructor(
-        public globalService: GlobalService,
-        private teacherService: TeacherService,
+        public appCtx: AppContextService,
         private fb: FormBuilder,
         private activaterRouter: ActivatedRoute,
         private modalSrv: NzModalService,
         private router: Router,
-        private _location: Location
+        private _location: Location,
+        private cdr: ChangeDetectorRef
     ) {
     }
     loading: boolean = false;
     editIndex = -1;
     editObj = {};
     form: FormGroup;
-    courseTypeList = this.globalService.COURSE_TYPE_LIST;
-    courseSubjectList = this.globalService.COURSE_SUBJECT_LIST;
-    campusList = this.globalService.CAMPUS_LIST;
-    gradeList = this.globalService.GRADE_LIST;
+    courseTypeList = this.appCtx.globalService.COURSE_TYPE_LIST;
+    courseSubjectList = this.appCtx.globalService.COURSE_SUBJECT_LIST;
+    campusList = this.appCtx.globalService.CAMPUS_LIST;
+    gradeList = this.appCtx.globalService.GRADE_LIST;
     classroomList = [{ value: '101', label: '101' }, { value: '202', label: '202' }, { value: '303', label: '303' }];
     coursesColumns: STColumn[] = [
-        { title: '名称', index: 'courseName' },
-        { title: '校区', index: 'campus' },
+        { title: '课程编号', index: 'code' },
+        { title: '校区', index: 'campus',render: "campus" },
         { title: '教室', index: 'classroom' },
-        { title: '上课时间', index: 'startTime' },
-        { title: '课程时长', index: 'duration' }
+        { title: '上课时间', index: 'startDate', render: "startDate" },
+        { title: '课程时长', index: 'perTime' }
     ];
-    courses: STData[] = [];
 
     ngOnInit() {
         this.form = this.fb.group({
@@ -146,7 +147,7 @@ export class TeacherViewComponent implements OnInit {
         });
         if (this.form.invalid) return;
         this.loading = true;
-        this.teacherService.saveTeacher(this.form.value)
+        this.appCtx.teacherService.saveTeacher(this.form.value)
             .pipe(
                 tap(() => (this.loading = false))
             ).subscribe((res) => {
@@ -164,4 +165,44 @@ export class TeacherViewComponent implements OnInit {
         this._location.back();
     }
 
+    courseLoaded = false;
+    pager = {
+        front: false
+    };
+    courseQueryParam: TeacherCourseQueryParam = { pageNo: 1, pageSize: 10 };
+    courses: ResponseData = { list: [], total: 0 };
+    onSelectedTabChanged(event: any) {
+        if (!this.courseLoaded && event.index == 1) {
+            this.getScheduleCourses();
+        }
+    }
+
+    getScheduleCourses() {
+        if (!this.teacher.id) {
+            return;
+        }
+        this.loading = true;
+        this.courseQueryParam.teacherId = this.teacher.id;
+        this.appCtx.teacherService.getCourseList(this.courseQueryParam)
+            .pipe(
+                tap(() => (this.loading = false)),
+            )
+            .subscribe((res: ResponseData) => {
+                res.list = res.list || [];
+                this.courseLoaded = true;
+                this.courses = res;
+                this.cdr.detectChanges();
+            });
+    }
+
+    courseStChange(e: STChange) {
+        switch (e.type) {
+            case 'checkbox':
+                break;
+            case 'pi':
+                this.courseQueryParam.pageNo = e.pi;
+                this.getScheduleCourses();
+                break;
+        }
+    }
 }

@@ -463,6 +463,7 @@ export class CourseViewComponent implements OnInit {
   @ViewChild('st', { static: true })
   st: STComponent;
   columns: STColumn[] = [
+    { title: '序号', index: 'index' },
     { title: '学生姓名', index: 'name' },
     { title: '性别', index: 'sex', render: "sex" },
     { title: '学校', index: 'school' },
@@ -479,9 +480,9 @@ export class CourseViewComponent implements OnInit {
       )
       .subscribe((res: any) => {
         res = res || [];
-        // res.list.forEach(element => {
-        //   element.statusDetail = this.appCtx.globalService.COURSE_STATUS_LIST[element.courseStatus];
-        // });
+        res.forEach((element, i) => {
+          element.index = i + 1;
+        });
         this.studentList = res;
         this.studentLoaded = true;
         this.cdr.detectChanges();

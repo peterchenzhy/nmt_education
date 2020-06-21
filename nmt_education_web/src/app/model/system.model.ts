@@ -35,7 +35,14 @@ export interface TeacherQueryParam {
     phone?: string;
 }
 
+export interface TeacherCourseQueryParam {
+    teacherId?: number;
+    pageNo?: number;
+    pageSize?: number;
+}
+
 export interface CourseQueryParam {
+    campush?: number;
     courseSubject?: number;
     courseType?: number;
     grade?: number;

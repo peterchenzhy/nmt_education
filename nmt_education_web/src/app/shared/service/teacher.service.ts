@@ -1,7 +1,7 @@
 import { Injectable, Injector } from '@angular/core'
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpService } from './http.service';
-import { TeacherQueryParam } from 'src/app/model/system.model';
+import { TeacherQueryParam, TeacherCourseQueryParam } from 'src/app/model/system.model';
 import { HttpClient } from '@angular/common/http';
 import { SettingsService } from '@delon/theme';
 import { Teacher } from 'src/app/model/teacher.model';
@@ -25,5 +25,9 @@ export class TeacherService {
 
     public saveTeacher(T: Teacher): Observable<Object> {
         return this.httpClient.post('nmt-education/teacher/manager', T);
+    }
+
+    public getCourseList(T: TeacherCourseQueryParam): Observable<Object> {
+        return this.httpClient.post(`nmt-education/teacher/course/list/${T.teacherId}?pageNo=${T.pageNo}&pageSize=${T.pageSize}`, T);
     }
 }
