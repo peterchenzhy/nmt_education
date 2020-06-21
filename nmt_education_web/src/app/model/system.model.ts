@@ -42,7 +42,7 @@ export interface TeacherCourseQueryParam {
 }
 
 export interface CourseQueryParam {
-    campush?: number;
+    campus?: number;
     courseSubject?: number;
     courseType?: number;
     grade?: number;
