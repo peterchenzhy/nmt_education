@@ -1,14 +1,13 @@
 package com.nmt.education.service.user;
 
-import com.nmt.education.pojo.dto.req.TeacherReqDto;
 import com.nmt.education.pojo.dto.req.UserLoginDto;
+import com.nmt.education.pojo.po.UserPo;
 import com.nmt.education.pojo.vo.UserVo;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+
 import javax.annotation.Resource;
 import java.util.List;
-import com.nmt.education.pojo.po.UserPo;
-import com.nmt.education.service.user.UserPoMapper;
-import org.springframework.util.Assert;
 
 @Service
 public class UserService {

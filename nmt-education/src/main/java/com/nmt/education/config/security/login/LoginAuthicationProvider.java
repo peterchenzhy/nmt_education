@@ -18,7 +18,9 @@ public class LoginAuthicationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        return null;
+
+
+        return authentication;
     }
 
     @Override

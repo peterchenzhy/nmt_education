@@ -22,4 +22,6 @@ public interface Consts {
     int 课程编号长度 = 20;
     int 订单编号长度 = 20;
     String 订单前缀="CR";
+
+    String JWT_KEY = "asdieoerknsdf";
 }
