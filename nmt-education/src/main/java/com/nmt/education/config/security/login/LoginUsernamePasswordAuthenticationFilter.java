@@ -2,6 +2,7 @@ package com.nmt.education.config.security.login;
 
 import com.alibaba.fastjson.JSONObject;
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.nmt.education.commmons.Consts;
 import com.nmt.education.commmons.utils.RequestBodyUtil;
@@ -11,6 +12,8 @@ import com.nmt.education.service.user.UserService;
 import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.jdbc.support.incrementer.PostgresSequenceMaxValueIncrementer;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
@@ -65,7 +68,10 @@ public class LoginUsernamePasswordAuthenticationFilter extends AbstractAuthentic
         dto.setCode(username);
         dto.setPassword(password);
         UserVo vo = userService.login(dto);
-        return null;
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(vo.getLogInUser(), vo.getRoleId());
+        return authentication;
+
     }
 
     /**
@@ -94,15 +100,25 @@ public class LoginUsernamePasswordAuthenticationFilter extends AbstractAuthentic
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         Algorithm algorithm = Algorithm.HMAC256(Consts.JWT_KEY);
         String token = JWT.create()
-                .withIssuer("autho")
-                .sign(algorithm)
+                .withIssuer("auth0")
+                .sign(algorithm);
+//
+//                Jwts.builder().setSubject(authResult.getName())
+//                //有效期两个小时
+//                .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 2 * 1000))
+//                //采用算法 : HS512
+//                .signWith(SignatureAlgorithm.HS512, Consts.JWT_KEY).compact();
+//        response.addHeader(Consts.HTTP_HEADER_TOKEN, Consts.HTTP_HEADER_BEARER + token);
+//        response.addHeader(Consts.LONGIN_USER,authResult.getDetails().toString());
+    }
 
-                Jwts.builder().setSubject(authResult.getName())
-                //有效期两个小时
-                .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 2 * 1000))
-                //采用算法 : HS512
-                .signWith(SignatureAlgorithm.HS512, Consts.JWT_KEY).compact();
-        response.addHeader(Consts.HTTP_HEADER_TOKEN, Consts.HTTP_HEADER_BEARER + token);
-        response.addHeader(Consts.LONGIN_USER,authResult.getDetails().toString());
+    public static void main(String[] args) {
+        Algorithm algorithm = Algorithm.HMAC256(Consts.JWT_KEY);
+        String token = JWT.create()
+                .withIssuer("auth0")
+                .sign(algorithm);
+        System.out.println(token);
+
+        JWTVerifier verifier = JWT.require(algorithm)
     }
 }
