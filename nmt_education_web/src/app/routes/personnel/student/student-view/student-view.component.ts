@@ -1,15 +1,18 @@
-import { Component, OnInit, ViewChild, Input } from '@angular/core';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { Component, OnInit, ViewChild, Input, ChangeDetectorRef } from '@angular/core';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Location } from '@angular/common';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { _HttpClient } from '@delon/theme';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { STColumn, STComponent } from '@delon/abc';
+import { STColumn, STComponent, STChange } from '@delon/abc';
 import { Student } from 'src/app/model/student.model';
 import { GlobalService } from '@shared/service/global.service';
 import { StudentService } from '@shared/service/student.service';
 import { EDIT_FLAG } from '@shared/constant/system.constant';
+import { tap } from 'rxjs/operators';
+import { AppContextService } from '@shared/service/appcontext.service';
+import { ResponseData, RegisterQueryParam } from 'src/app/model/system.model';
 
 @Component({
     selector: 'app-student-view',
@@ -21,56 +24,60 @@ export class StudentViewComponent implements OnInit {
     editIndex = -1;
     editObj = {};
     form: FormGroup;
+    loading: boolean = false;
     @ViewChild('st', { static: true })
     st: STComponent;
     constructor(
         private activaterRouter: ActivatedRoute,
-        public globalService: GlobalService,
-        private studentService: StudentService,
+        public appCtx: AppContextService,
         private fb: FormBuilder,
         public msgSrv: NzMessageService,
-        public http: _HttpClient,
-        private _location: Location
+        private modalSrv: NzModalService,
+        private router: Router,
+        private _location: Location,
+        private cdr: ChangeDetectorRef
     ) {
     }
-    courseStatus = this.globalService.COURSE_STATUS_LIST;
-    orderStatus: any[] = this.globalService.ORDER_STATUS_LIST;
-    relationships: any[] = this.globalService.RELATIONSHIP_LIST;
-    campusList: any[] = this.globalService.CAMPUS_LIST;
-    gradeList: any[] = this.globalService.GRADE_LIST;
+    courseStatus = this.appCtx.globalService.COURSE_STATUS_LIST;
+    orderStatus: any[] = this.appCtx.globalService.ORDER_STATUS_LIST;
+    relationships: any[] = this.appCtx.globalService.RELATIONSHIP_LIST;
+    campusList: any[] = this.appCtx.globalService.CAMPUS_LIST;
+    gradeList: any[] = this.appCtx.globalService.GRADE_LIST;
     classroomList: any[] = [{ value: '101', label: '101' }, { value: '202', label: '202' }, { value: '303', label: '303' }];
     coursesColumns: STColumn[] = [
-        { title: '订单编号', index: 'orderNo', type: 'link' },
-        { title: '名称', index: 'courseName' },
-        { title: '校区', index: 'campus' },
+        { title: '订单编号', index: 'registrationNumber' },
+        { title: '姓名', index: 'studentName' },
+        { title: '课程名', index: 'courseName' },
         {
-            title: '课程状态',
-            index: 'courseStatus',
-            render: 'courseStatus'
+            title: '报名时间',
+            index: 'registerTime',
+            type: 'date',
+            sort: {
+                compare: (a: any, b: any) => a.updatedAt - b.updatedAt,
+            },
         },
         {
-            title: '上课状态',
-            index: 'orderStatus',
-            render: 'orderStatus'
+            title: '状态',
+            index: 'registrationStatus',
+            render: 'registrationStatus'
         },
+        { title: '总金额', index: 'totalAmount' },
+        { title: '余额', index: 'balanceAmount' },
         {
             title: '操作',
             buttons: [
                 {
-                    text: '冻结',
-                    //click: (item: any) => this.router.navigate([`/course/view/${item.courseNo}`]),
+                    text: '编辑',
+                    click: (item: any) => this.router.navigate([`/order/view/${item.id}`])
                 },
                 {
-                    text: '恢复',
-                    //click: (item: any) => this.msg.success(`报名${item.courseName}`),
-                },
+                    text: '退费',
+                    click: (item: any) => this.router.navigate([`/order/refund/${item.id}`])
+                }
             ],
         },
     ];
-    // courses = [{ orderNo: 'order111', courseName: 'course111', campus: "二工大", courseStatus: 1, courseStatusText: "开课中", courseStatusType: "processing", orderStatus: "0", orderStatusText: "续费", orderStatusType: "purple" },
-    // { orderNo: 'order222', courseName: 'course222', campus: "二工大", courseStatus: 1, courseStatusText: "开课中", courseStatusType: "processing", orderStatus: "2", orderStatusText: "冻结", orderStatusType: "error" },
-    // { orderNo: 'order333', courseName: 'course333', campus: "二工大", courseStatus: 2, courseStatusText: "已结课", courseStatusType: "success", orderStatus: "1", orderStatusText: "完成", orderStatusType: "success" }];
-    courses = [];
+
     ngOnInit() {
         this.form = this.fb.group({
             id: [null, []],
@@ -176,13 +183,64 @@ export class StudentViewComponent implements OnInit {
             this.form.controls[key].updateValueAndValidity();
         });
         if (this.form.invalid) return;
-
-        this.studentService.saveStudent(this.form.value).subscribe((res) => {
-            this.goBack();
-        });
+        this.loading = true;
+        this.appCtx.studentService.saveStudent(this.form.value)
+            .pipe(
+                tap(() => (this.loading = false))
+            )
+            .subscribe((res) => {
+                this.modalSrv.success({
+                    nzTitle: '处理结果',
+                    nzContent: '学生信息保存成功！',
+                    nzOnOk: () => {
+                        this.router.navigate(["/personnel/student/list"]);
+                    }
+                });
+            });
     }
 
     goBack() {
         this._location.back();
+    }
+
+    courseLoaded = false;
+    pager = {
+        front: false
+    };
+    courseQueryParam: RegisterQueryParam = { pageNo: 1, pageSize: 10 };
+    courses: ResponseData = { list: [], total: 0 };
+    onSelectedTabChanged(event: any) {
+        if (!this.courseLoaded && event.index == 1) {
+            this.getRegisteredCourses();
+        }
+    }
+
+    getRegisteredCourses() {
+        if (!this.student.id) {
+            return;
+        }
+        this.loading = true;
+        this.courseQueryParam.studentId = this.student.id;
+        this.appCtx.courseService.registerSearch(this.courseQueryParam)
+            .pipe(
+                tap(() => (this.loading = false)),
+            )
+            .subscribe((res: ResponseData) => {
+                res.list = res.list || [];
+                this.courseLoaded = true;
+                this.courses = res;
+                this.cdr.detectChanges();
+            });
+    }
+
+    courseStChange(e: STChange) {
+        switch (e.type) {
+            case 'checkbox':
+                break;
+            case 'pi':
+                this.courseQueryParam.pageNo = e.pi;
+                this.getRegisteredCourses();
+                break;
+        }
     }
 }

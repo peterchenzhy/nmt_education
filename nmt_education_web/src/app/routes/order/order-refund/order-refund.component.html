@@ -1,15 +1,16 @@
 <page-header [title]="'课程退费'"></page-header>
-<form nz-form [formGroup]="form" [nzLayout]="'vertical'">
-    <nz-tabset>
-        <nz-tab nzTitle="缴费信息">
-            <nz-card [nzHoverable]="true" [nzBordered]="false">
-                <sv-container size="large" title="报名信息">
-                    <sv label="报名类型">{{ appCtx.globalService.getOrderTypeLabel(order.registrationType)}}</sv>
-                    <sv label="状态">{{ appCtx.globalService.getOrderStatusLabel(order.registrationStatus)}}</sv>
-                    <sv label="备注" col="1"> {{order.remark}} </sv>
-                </sv-container>
-                <nz-divider></nz-divider>
-                <!-- <sv-container size="large" title="学生信息">
+<nz-spin [nzSpinning]="loading" [nzSize]="'large'">
+    <form nz-form [formGroup]="form" [nzLayout]="'vertical'">
+        <nz-tabset>
+            <nz-tab nzTitle="缴费信息">
+                <nz-card [nzHoverable]="true" [nzBordered]="false">
+                    <sv-container size="large" title="报名信息">
+                        <sv label="报名类型">{{ appCtx.globalService.getOrderTypeLabel(order.registrationType)}}</sv>
+                        <sv label="状态">{{ appCtx.globalService.getOrderStatusLabel(order.registrationStatus)}}</sv>
+                        <sv label="备注" col="1"> {{order.remark}} </sv>
+                    </sv-container>
+                    <nz-divider></nz-divider>
+                    <!-- <sv-container size="large" title="学生信息">
             <sv label="姓名">{{order.student.name}}</sv>
             <sv label="性别">{{ appCtx.globalService.getGenderLabel(order.student.sex)}}</sv>
             <sv label="出生年月">{{order.student.birthday|date:"yyyy-MM-dd"}}</sv>
@@ -43,55 +44,58 @@
             <sv label="校区">{{appCtx.globalService.getCampusLabel(order.course.campus)}}</sv>
         </sv-container>
         <nz-divider></nz-divider> -->
-                <sv-container size="large" title="退费处理">
-                    <sv label="支付方式">
-                        <nz-form-item style="padding-bottom: 0px;margin-bottom: 0px;">
-                            <nz-form-control nzErrorTip="请选支付方式">
-                                <nz-select formControlName="payment" [nzPlaceHolder]="'请选支付方式'" [nzShowSearch]="true">
-                                    <nz-option *ngFor="let i of payMethodList" [nzLabel]="i.label" [nzValue]="i.value">
-                                    </nz-option>
-                                </nz-select>
-                            </nz-form-control>
-                        </nz-form-item>
+                    <sv-container size="large" title="退费处理">
+                        <sv label="支付方式">
+                            <nz-form-item style="padding-bottom: 0px;margin-bottom: 0px;">
+                                <nz-form-control nzErrorTip="请选支付方式">
+                                    <nz-select formControlName="payment" [nzPlaceHolder]="'请选支付方式'"
+                                        [nzShowSearch]="true">
+                                        <nz-option *ngFor="let i of payMethodList" [nzLabel]="i.label"
+                                            [nzValue]="i.value">
+                                        </nz-option>
+                                    </nz-select>
+                                </nz-form-control>
+                            </nz-form-item>
 
-                    </sv>
-                    <sv label="备注" col="1">
-                        <textarea nz-input formControlName="remark" [nzAutosize]="{ minRows: 4 }"
-                            placeholder="请输入备注"></textarea>
-                    </sv>
-                </sv-container>
-                <nz-divider></nz-divider>
-                <div class="text-lg mb-md">费用信息</div>
-                <st #st [columns]="orderFeeColumns" [ps]=100 [data]="orderFeeSTData" (change)="stChange($event)">
-                    <ng-template st-row="payment" let-i>
-                        {{appCtx.globalService.getPayMethodLabel(i.payment)}}
-                    </ng-template>
-                    <ng-template st-row="feeType" let-i>
-                        {{appCtx.globalService.getFeeTypeLabel(i.feeType)}}
-                    </ng-template>
-                    <ng-template st-row="feeStatus" let-i>
-                        {{appCtx.globalService.getPayStatusLabel(i.feeStatus)}}
-                    </ng-template>
-                </st>
-            </nz-card>
-            <footer-toolbar errorCollect>
-                <button nz-button type="primary" nzType="primary" (click)="confirmRefundFee()">提交</button>
-            </footer-toolbar>
-        </nz-tab>
-        <nz-tab nzTitle="支付流水">
-            <nz-card [nzBordered]="false">
-                <st #payst [columns]="payDetailsColumns" [data]="order.registerExpenseDetail">
-                    <ng-template st-row="payment" let-i>
-                        {{appCtx.globalService.getPayMethodLabel(i.payment)}}
-                    </ng-template>
-                    <ng-template st-row="feeType" let-i>
-                        {{appCtx.globalService.getFeeTypeLabel(i.feeType)}}
-                    </ng-template>
-                    <ng-template st-row="feeStatus" let-i>
-                        {{appCtx.globalService.getPayStatusLabel(i.feeStatus)}}
-                    </ng-template>
-                </st>
-            </nz-card>
-        </nz-tab>
-    </nz-tabset>
-</form>
+                        </sv>
+                        <sv label="备注" col="1">
+                            <textarea nz-input formControlName="remark" [nzAutosize]="{ minRows: 4 }"
+                                placeholder="请输入备注"></textarea>
+                        </sv>
+                    </sv-container>
+                    <nz-divider></nz-divider>
+                    <div class="text-lg mb-md">费用信息</div>
+                    <st #st [columns]="orderFeeColumns" [ps]=100 [data]="orderFeeSTData" (change)="stChange($event)">
+                        <ng-template st-row="payment" let-i>
+                            {{appCtx.globalService.getPayMethodLabel(i.payment)}}
+                        </ng-template>
+                        <ng-template st-row="feeType" let-i>
+                            {{appCtx.globalService.getFeeTypeLabel(i.feeType)}}
+                        </ng-template>
+                        <ng-template st-row="feeStatus" let-i>
+                            {{appCtx.globalService.getPayStatusLabel(i.feeStatus)}}
+                        </ng-template>
+                    </st>
+                </nz-card>
+                <footer-toolbar errorCollect>
+                    <button nz-button type="primary" nzType="primary" (click)="confirmRefundFee()">提交</button>
+                </footer-toolbar>
+            </nz-tab>
+            <nz-tab nzTitle="支付流水">
+                <nz-card [nzBordered]="false">
+                    <st #payst [columns]="payDetailsColumns" [data]="order.registerExpenseDetail">
+                        <ng-template st-row="payment" let-i>
+                            {{appCtx.globalService.getPayMethodLabel(i.payment)}}
+                        </ng-template>
+                        <ng-template st-row="feeType" let-i>
+                            {{appCtx.globalService.getFeeTypeLabel(i.feeType)}}
+                        </ng-template>
+                        <ng-template st-row="feeStatus" let-i>
+                            {{appCtx.globalService.getPayStatusLabel(i.feeStatus)}}
+                        </ng-template>
+                    </st>
+                </nz-card>
+            </nz-tab>
+        </nz-tabset>
+    </form>
+</nz-spin>

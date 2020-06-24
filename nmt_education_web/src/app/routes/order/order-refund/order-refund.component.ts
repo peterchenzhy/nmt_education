@@ -9,6 +9,7 @@ import { Course } from 'src/app/model/course.model';
 import { AppContextService } from '@shared/service/appcontext.service';
 import { ORDER_STATUS, EDIT_FLAG, PAY_STATUS, ORDER_TYPE, SIGNIN, FEE_TYPE, FeeDirection } from '@shared/constant/system.constant';
 import { STData, STComponent, STColumn, STChange } from '@delon/abc';
+import { tap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-order-refund',
@@ -37,6 +38,7 @@ export class OrderRefundComponent implements OnInit {
     orderRefund: OrderRefund = {
         itemList: []
     };
+    loading: boolean = true;
 
     constructor(
         public appCtx: AppContextService,
@@ -75,7 +77,9 @@ export class OrderRefundComponent implements OnInit {
         this.form.patchValue(this.orderRefund);
         if (orderId) {
             this.appCtx.courseService.getRegisterDetails(orderId)
-                .subscribe(res => {
+                .pipe(
+                    tap(() => (this.loading = false))
+                ).subscribe(res => {
                     this.order = res;
                     this.order.course.teacher = {};
                     this.order.editFlag = EDIT_FLAG.UPDATE;
@@ -233,16 +237,20 @@ export class OrderRefundComponent implements OnInit {
                 registerId: refundObj.registerId,
                 registerSummaryId: fee.registerSummaryId
             });
-        })
-        this.appCtx.courseService.refundFee(refundObj).subscribe((res) => {
-            this.modalSrv.success({
-                nzTitle: '处理结果',
-                nzContent: '退费成功！',
-                nzOnOk: () => {
-                    this.router.navigate(["/order/list"]);
-                }
-            });
         });
+        this.loading = true;
+        this.appCtx.courseService.refundFee(refundObj)
+            .pipe(
+                tap(() => (this.loading = false))
+            ).subscribe((res) => {
+                this.modalSrv.success({
+                    nzTitle: '处理结果',
+                    nzContent: '订单退费成功！',
+                    nzOnOk: () => {
+                        this.router.navigate(["/order/list"]);
+                    }
+                });
+            });
     }
 
     @ViewChild('payst', { static: true })

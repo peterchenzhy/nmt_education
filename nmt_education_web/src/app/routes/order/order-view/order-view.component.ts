@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, TemplateRef, ChangeDetectorRef } from '@angular/core';
 import { Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, FormArray, ValidatorFn, AbstractControl } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { _HttpClient } from '@delon/theme';
 import { Order, Payment } from 'src/app/model/order.model';
@@ -9,6 +9,7 @@ import { Course } from 'src/app/model/course.model';
 import { AppContextService } from '@shared/service/appcontext.service';
 import { ORDER_STATUS, EDIT_FLAG, PAY_STATUS, ORDER_TYPE, FeeDirection } from '@shared/constant/system.constant';
 import { STData, STComponent, STColumn, STChange } from '@delon/abc';
+import { tap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-order-view',
@@ -33,7 +34,7 @@ export class OrderViewComponent implements OnInit {
         registerExpenseDetail: [],
         editFlag: EDIT_FLAG.NEW
     };
-
+    loading: boolean = false;
     constructor(
         public appCtx: AppContextService,
         private modalSrv: NzModalService,
@@ -41,7 +42,8 @@ export class OrderViewComponent implements OnInit {
         private activaterRouter: ActivatedRoute,
         public msgSrv: NzMessageService,
         private cdr: ChangeDetectorRef,
-        private _location: Location
+        private _location: Location,
+        private router: Router
     ) {
     }
 
@@ -72,8 +74,11 @@ export class OrderViewComponent implements OnInit {
         });
         let orderId = this.activaterRouter.snapshot.params.id;
         if (orderId) {
+            this.loading = true;
             this.appCtx.courseService.getRegisterDetails(orderId)
-                .subscribe(res => {
+                .pipe(
+                    tap(() => (this.loading = false))
+                ).subscribe(res => {
                     this.order = res;
                     this.order.courseScheduleIds = this.order.courseScheduleList.map(s => s.id);
                     this.order.campus = this.order.course.campus;
@@ -147,8 +152,11 @@ export class OrderViewComponent implements OnInit {
     }
 
     courseSelected(value: number) {
+        this.loading = true;
         this.appCtx.courseService.getCourseDetails(value)
-            .subscribe((res: Course) => {
+            .pipe(
+                tap(() => (this.loading = false))
+            ).subscribe((res: Course) => {
                 this.order.courseId = res.id;
                 this.order.course = res;
                 if (this.order.editFlag == EDIT_FLAG.NEW) {
@@ -265,9 +273,19 @@ export class OrderViewComponent implements OnInit {
         if (this.form.invalid) return;
         let submitObj = { ...this.form.value };
         submitObj.registerExpenseDetail = submitObj.registerExpenseDetail.filter(f => f.amount > 0);
-        this.appCtx.courseService.registerCourse(submitObj).subscribe((res) => {
-            this.goBack();
-        });
+        this.loading = true;
+        this.appCtx.courseService.registerCourse(submitObj)
+            .pipe(
+                tap(() => (this.loading = false))
+            ).subscribe((res) => {
+                this.modalSrv.success({
+                    nzTitle: '处理结果',
+                    nzContent: '订单保存成功！',
+                    nzOnOk: () => {
+                        this.router.navigate(["/order/list"]);
+                    }
+                });
+            });
     }
 }
 
