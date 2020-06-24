@@ -44,10 +44,11 @@ export class TeacherViewComponent implements OnInit {
     classroomList = [{ value: '101', label: '101' }, { value: '202', label: '202' }, { value: '303', label: '303' }];
     coursesColumns: STColumn[] = [
         { title: '课程编号', index: 'code' },
+      { title: '课程名称', index: 'name' },
         { title: '校区', index: 'campus',render: "campus" },
-        { title: '教室', index: 'classroom' },
-        { title: '上课时间', index: 'startDate', render: "startDate" },
-        { title: '课程时长', index: 'perTime' }
+        // { title: '教室', index: 'classroom' },
+        { title: '开始日期', index: 'startDate', render: "startDate" },
+        { title: '课程时长(分钟)', index: 'perTime' }
     ];
 
     ngOnInit() {
