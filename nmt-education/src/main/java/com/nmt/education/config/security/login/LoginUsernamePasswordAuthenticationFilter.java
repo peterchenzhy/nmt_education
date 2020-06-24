@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.nmt.education.commmons.Consts;
 import com.nmt.education.commmons.utils.RequestBodyUtil;
 import com.nmt.education.pojo.dto.req.UserLoginDto;
@@ -112,13 +113,24 @@ public class LoginUsernamePasswordAuthenticationFilter extends AbstractAuthentic
 //        response.addHeader(Consts.LONGIN_USER,authResult.getDetails().toString());
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         Algorithm algorithm = Algorithm.HMAC256(Consts.JWT_KEY);
         String token = JWT.create()
-                .withIssuer("auth0")
+//                .withIssuer("auth0")
+                .withClaim("name","peter")
+                .withClaim("roleId","manager")
+                .withExpiresAt(new Date())
                 .sign(algorithm);
         System.out.println(token);
+        Thread.sleep(5*1000);
+
 
         JWTVerifier verifier = JWT.require(algorithm)
+                .acceptExpiresAt(6)//6s超时
+//                .withIssuer("auth0")
+                .build();
+        DecodedJWT jwt = verifier.verify(token);
+        System.out.println(jwt.getClaims().get("name").asString());
+        System.out.println(jwt.getClaims().get("roleId").asString());
     }
 }
