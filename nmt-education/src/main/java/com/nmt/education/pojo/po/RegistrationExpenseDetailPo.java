@@ -72,6 +72,7 @@ public class RegistrationExpenseDetailPo {
      */
     @ApiModelProperty(value="支付方向 1：付费 2：退费" )
     private Integer feeDirection= Enums.FeeDirection.支付.getCode();
+
     /**
     * 有效：1 无效：0
     */

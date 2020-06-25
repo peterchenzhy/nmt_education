@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, TemplateRef, ChangeDetectorRef } from '@angular/core';
 import { Location } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { FormBuilder, FormGroup, Validators, FormArray, ValidatorFn, AbstractControl } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { _HttpClient } from '@delon/theme';
 import { Order, Payment } from 'src/app/model/order.model';
@@ -9,6 +9,7 @@ import { Course } from 'src/app/model/course.model';
 import { AppContextService } from '@shared/service/appcontext.service';
 import { ORDER_STATUS, EDIT_FLAG, PAY_STATUS, ORDER_TYPE, FeeDirection } from '@shared/constant/system.constant';
 import { STData, STComponent, STColumn, STChange } from '@delon/abc';
+import { tap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-order-view',
@@ -33,15 +34,16 @@ export class OrderViewComponent implements OnInit {
         registerExpenseDetail: [],
         editFlag: EDIT_FLAG.NEW
     };
-
+    loading: boolean = false;
     constructor(
-        private appCtx: AppContextService,
+        public appCtx: AppContextService,
         private modalSrv: NzModalService,
         private fb: FormBuilder,
         private activaterRouter: ActivatedRoute,
         public msgSrv: NzMessageService,
         private cdr: ChangeDetectorRef,
-        private _location: Location
+        private _location: Location,
+        private router: Router
     ) {
     }
 
@@ -52,7 +54,7 @@ export class OrderViewComponent implements OnInit {
         { title: '课时', index: 'courseTimes' },
         { title: '任课教师', index: 'teacherId', render: "showTeacher" },
         { title: '上课时间', index: 'courseDatetime', type: 'date', dateFormat: 'YYYY-MM-DD HH:mm' },
-        { title: '时长', index: 'perTime' }
+        { title: '时长(分钟)', index: 'perTime' }
     ];
     sessionsSTData: STData[] = [];
     selectedSessions: STData[] = [];
@@ -72,8 +74,11 @@ export class OrderViewComponent implements OnInit {
         });
         let orderId = this.activaterRouter.snapshot.params.id;
         if (orderId) {
+            this.loading = true;
             this.appCtx.courseService.getRegisterDetails(orderId)
-                .subscribe(res => {
+                .pipe(
+                    tap(() => (this.loading = false))
+                ).subscribe(res => {
                     this.order = res;
                     this.order.courseScheduleIds = this.order.courseScheduleList.map(s => s.id);
                     this.order.campus = this.order.course.campus;
@@ -82,7 +87,7 @@ export class OrderViewComponent implements OnInit {
                     this.selectedSessions = this.order.courseScheduleList;
                     this.order.registerExpenseDetail.filter(f => f.feeDirection == FeeDirection.PAY)
                         .forEach(i => {
-                            i.receivable = i.amount;
+                            i.receivable = (i.perAmount * i.count);
                             i.editFlag = EDIT_FLAG.UPDATE;
                             const field = this.createPay();
                             field.patchValue(i);
@@ -107,17 +112,23 @@ export class OrderViewComponent implements OnInit {
         return this.fb.group({
             id: [null],
             feeType: [null, [Validators.required]],
-            payment: [null, [Validators.required]],
+            payment: [null, Validators.compose([this.paymentValueValidator])],
             feeStatus: [PAY_STATUS.PAIED, [Validators.required]],
             perAmount: [0, [Validators.required]],
             count: [0, [Validators.required]],
             discount: [1, [Validators.required]],
             receivable: [0, []],
             deduction: [0, []],
-            amount: [0, [Validators.required]],
+            amount: [0, Validators.compose([Validators.required, amountValueValidator(this.order)])],
             remark: ["", []],
             editFlag: [EDIT_FLAG.NEW, []]
         });
+    }
+
+    paymentValueValidator(control: any): any {
+        if (!control.value && control.parent && control.parent.value.amount > 0) {
+            return { value: { info: '请选择支付方式' } };
+        }
     }
 
     get isEditOrder() {
@@ -141,8 +152,11 @@ export class OrderViewComponent implements OnInit {
     }
 
     courseSelected(value: number) {
+        this.loading = true;
         this.appCtx.courseService.getCourseDetails(value)
-            .subscribe((res: Course) => {
+            .pipe(
+                tap(() => (this.loading = false))
+            ).subscribe((res: Course) => {
                 this.order.courseId = res.id;
                 this.order.course = res;
                 if (this.order.editFlag == EDIT_FLAG.NEW) {
@@ -155,6 +169,18 @@ export class OrderViewComponent implements OnInit {
                         this.registerExpenseDetail.push(field);
                     });
                     this.form.get("campus").setValue(this.order.course.campus);
+                }
+                else {
+                    let paiedFee = this.order.registerExpenseDetail.map(f => f.feeType);
+                    this.order.course.courseExpenseList.filter(f => paiedFee.indexOf(f.type) == -1)
+                        .forEach(i => {
+                            let pay: Payment = {};
+                            pay.feeType = i.type;
+                            pay.perAmount = i.price;
+                            const field = this.createPay();
+                            field.patchValue(pay);
+                            this.registerExpenseDetail.push(field);
+                        });
                 }
             });
 
@@ -245,21 +271,36 @@ export class OrderViewComponent implements OnInit {
             }
         });
         if (this.form.invalid) return;
-        this.appCtx.courseService.registerCourse(this.form.value).subscribe((res) => {
-            this.goBack();
-        });
+        let submitObj = { ...this.form.value };
+        submitObj.registerExpenseDetail = submitObj.registerExpenseDetail.filter(f => f.amount > 0);
+        this.loading = true;
+        this.appCtx.courseService.registerCourse(submitObj)
+            .pipe(
+                tap(() => (this.loading = false))
+            ).subscribe((res) => {
+                this.modalSrv.success({
+                    nzTitle: '处理结果',
+                    nzContent: '订单保存成功！',
+                    nzOnOk: () => {
+                        this.router.navigate(["/order/list"]);
+                    }
+                });
+            });
     }
+}
 
-    @ViewChild('payst', { static: true })
-    payst: STComponent;
-    payDetailsColumns: STColumn[] = [
-        { title: '费用类型', index: 'feeType', render: "feeType" },
-        { title: '原价', index: 'perAmount' },
-        { title: '数量', index: 'count' },
-        { title: '支付金额', index: 'amount' },
-        { title: '支付方式', index: 'payment', render: "payment" },
-        { title: '支付状态', index: 'feeStatus', render: "feeStatus" },
-        { title: '支付时间', index: 'operateTime', type: 'date', dateFormat: 'YYYY-MM-DD HH:mm' },
-        { title: '备注', index: 'remark' }
-    ];
+export function amountValueValidator(order: Order): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+        if (control.parent) {
+            let operateFee = control.parent.value;
+            if (!operateFee) {
+                return;
+            }
+            let currentFee = order.registerExpenseDetail.filter(f =>
+                f.feeDirection == FeeDirection.PAY && f.feeType == operateFee.feeType && f.feeStatus != PAY_STATUS.REFUNDED);
+            if (currentFee && currentFee.length > 0 && parseFloat(currentFee[0].amount) > parseFloat(control.value)) {
+                return { value: { info: '修改金额不能小于当前支付金额！需要退费，请在退费页面操作！' } };
+            }
+        }
+    };
 }

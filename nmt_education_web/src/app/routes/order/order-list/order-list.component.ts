@@ -8,8 +8,8 @@ import { Router } from '@angular/router';
 import { Course } from 'src/app/model/course.model';
 import { Order } from 'src/app/model/order.model';
 import { GlobalService } from '@shared/service/global.service';
-import {CourseQueryParam, RegisterQueryParam, RegisterSummaryQueryParam, ResponseData} from "../../../model/system.model";
-import {AppContextService} from "@shared/service/appcontext.service";
+import { CourseQueryParam, RegisterQueryParam, RegisterSummaryQueryParam, ResponseData } from "../../../model/system.model";
+import { AppContextService } from "@shared/service/appcontext.service";
 
 @Component({
     selector: 'app-order-list',
@@ -20,19 +20,19 @@ export class OrderListComponent implements OnInit {
     signInDate = new FormGroup({
         signInDate: new FormControl()
     });
-  courseDate = new FormGroup({
-    courseDate: new FormControl()
-  });
-  pager = {
-    front: false
-  };
-  queryParam: RegisterQueryParam = { pageNo: 1, pageSize: 10 };
-  courseTypeList = this.appCtx.globalService.COURSE_TYPE_LIST;
-  courseSubjectList = this.appCtx.globalService.COURSE_SUBJECT_LIST;
-  courseClassificationList = this.appCtx.globalService.COURSE_CLASSIFICATION_LIST;
-  courseStatusList = this.appCtx.globalService.COURSE_STATUS_LIST;
-  feeTypeList = this.appCtx.globalService.FEE_TYPE_LIST;
-  gradeList = this.appCtx.globalService.GRADE_LIST;
+    courseDate = new FormGroup({
+        courseDate: new FormControl()
+    });
+    pager = {
+        front: false
+    };
+    queryParam: RegisterQueryParam = { pageNo: 1, pageSize: 10 };
+    courseTypeList = this.appCtx.globalService.COURSE_TYPE_LIST;
+    courseSubjectList = this.appCtx.globalService.COURSE_SUBJECT_LIST;
+    courseClassificationList = this.appCtx.globalService.COURSE_CLASSIFICATION_LIST;
+    courseStatusList = this.appCtx.globalService.COURSE_STATUS_LIST;
+    feeTypeList = this.appCtx.globalService.FEE_TYPE_LIST;
+    gradeList = this.appCtx.globalService.GRADE_LIST;
     q: any = {
         pi: 1,
         ps: 10,
@@ -51,7 +51,7 @@ export class OrderListComponent implements OnInit {
     st: STComponent;
     columns: STColumn[] = [
         { title: '', index: 'key', type: 'checkbox' },
-        { title: '订单编号', index: 'registrationNumber'},
+        { title: '订单编号', index: 'registrationNumber' },
         { title: '姓名', index: 'studentName' },
         { title: '课程名', index: 'courseName' },
         {
@@ -64,8 +64,8 @@ export class OrderListComponent implements OnInit {
         },
         {
             title: '状态',
-            index: 'status',
-            render: 'orderStatus'
+            index: 'registrationStatus',
+            render: 'registrationStatus'
         },
         { title: '总金额', index: 'totalAmount' },
         { title: '余额', index: 'balanceAmount' },
@@ -89,8 +89,8 @@ export class OrderListComponent implements OnInit {
     expandForm = false;
 
     constructor(
-        private appCtx: AppContextService,
-        private globalService: GlobalService,
+        public appCtx: AppContextService,
+        public globalService: GlobalService,
         private router: Router,
         public msg: NzMessageService,
         private modalSrv: NzModalService,
@@ -110,7 +110,7 @@ export class OrderListComponent implements OnInit {
             .subscribe((res: ResponseData) => {
                 res.list = res.list || [];
                 // res.list.forEach(element => {
-                //   element.statusDetail = this.appCtx.globalService.COURSE_STATUS_LIST[element.courseStatus];
+                //   element.registrationStatusDetail = this.appCtx.globalService.ORDER_STATUS_LIST[element.registrationStatus];
                 // });
                 this.data = res;
                 this.cdr.detectChanges();
@@ -124,7 +124,8 @@ export class OrderListComponent implements OnInit {
                 this.totalCallNo = this.selectedRows.reduce((total, cv) => total + cv.callNo, 0);
                 this.cdr.detectChanges();
                 break;
-            case 'filter':
+            case 'pi':
+                this.queryParam.pageNo = e.pi;
                 this.getData();
                 break;
         }
@@ -133,5 +134,18 @@ export class OrderListComponent implements OnInit {
     reset() {
         // wait form reset updated finished
         setTimeout(() => this.getData());
+    }
+
+
+    studentsOfOption: Array<Course> = [];
+    nzFilterOption = () => true;
+    searchStudent(value: string): void {
+        if (!value || value == "") {
+            return;
+        }
+        this.appCtx.studentService.fuzzyQueryStudents(value)
+            .subscribe((data: Course[]) => {
+                this.studentsOfOption = data;
+            });
     }
 }

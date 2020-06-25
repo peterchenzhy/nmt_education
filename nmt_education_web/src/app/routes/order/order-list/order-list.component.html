@@ -12,10 +12,19 @@
       </div>
       <div nz-col nzMd="8" nzSm="24">
         <nz-form-item>
-          <nz-form-label nzFor="studentCode">学生编号</nz-form-label>
-          <nz-form-control>
-            <input nz-input [(ngModel)]="q.studentCode" name="studentCode" placeholder="请输入" id="studentCode" />
-          </nz-form-control>
+          <nz-form-label nzFor="studentId">学生编号</nz-form-label>
+          <nz-select [(ngModel)]="queryParam.studentId" name="studentId" class="enroll-selector" nzShowSearch nzServerSearch
+            [nzShowArrow]="false" [nzFilterOption]="nzFilterOption" [nzDropdownMatchSelectWidth]="false"
+            (nzOnSearch)="searchStudent($event)">
+            <nz-option *ngFor="let o of studentsOfOption" nzCustomContent [nzLabel]="o.name" [nzValue]="o.id">
+              <!-- <div style="width: 200px; float: left;">{{o.code}}</div> -->
+              <div style="float: left">{{o.code}}</div>
+              <div style="float: right"> {{o.name}} </div>
+            </nz-option>
+          </nz-select>
+          <!-- <nz-form-control>
+            <input nz-input [(ngModel)]="queryParam.studentId" name="studentId" placeholder="请输入" id="studentId" />
+          </nz-form-control> -->
         </nz-form-item>
       </div>
       <div nz-col nzMd="8" nzSm="24">
@@ -120,9 +129,10 @@
   <div style="margin-top: 15px;">
     <st #st [columns]="columns" [data]="data.list" [total]="data.total" [ps]="queryParam.pageSize"
       [pi]="queryParam.pageNo" [page]="pager" [loading]="loading" (change)="stChange($event)">
-      <!--    <ng-template st-row="orderStatus" let-i>-->
-      <!--      <nz-badge [nzStatus]="i.statusDetail.type" [nzText]="i.statusDetail.text"></nz-badge>-->
-      <!--    </ng-template>-->
+      <ng-template st-row="registrationStatus" let-i>
+        <!-- <nz-badge [nzStatus]="i.registrationStatusDetail.type" [nzText]="i.registrationStatusDetail.label"></nz-badge> -->
+        <span>{{appCtx.globalService.getOrderStatusLabel(i.registrationStatus)}}</span>
+      </ng-template>
       <!--    <ng-template st-row="studentName" let-i>-->
       <!--      <span>{{i.student.name}}</span>-->
       <!--    </ng-template>-->

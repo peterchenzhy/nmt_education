@@ -9,7 +9,7 @@
         <result column="code" jdbcType="VARCHAR" property="code"/>
         <result column="year" jdbcType="INTEGER" property="year"/>
         <result column="season" jdbcType="TINYINT" property="season"/>
-        <result column="campus" jdbcType="TINYINT" property="campus"/>
+        <result column="campus" jdbcType="INTEGER" property="campus"/>
         <result column="course_type" jdbcType="TINYINT" property="courseType"/>
         <result column="course_subject" jdbcType="TINYINT" property="courseSubject"/>
         <result column="course_classification" jdbcType="TINYINT" property="courseClassification"/>
@@ -45,11 +45,11 @@
     </select>
     <select id="queryFuzzy" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from course
         where status = 1
-        and name like concat(#{name},'%')
-        or code like concat(#{name},'%')
+        and name like concat('%',#{name},'%')
+        or code like concat('%',#{name},'%')
 
     </select>
     <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.CoursePo" useGeneratedKeys="true">
@@ -216,13 +216,13 @@
         from course
         where status =1
         <if test="dto.courseSubject != null">
-          and   course_subject = #{dto.courseSubject}
+            and course_subject = #{dto.courseSubject}
         </if>
         <if test="dto.courseType != null">
-            and   course_type = #{dto.courseType}
+            and course_type = #{dto.courseType}
         </if>
         <if test="dto.grade != null">
-            and   grade = #{dto.grade}
+            and grade = #{dto.grade}
         </if>
         <if test="dto.startDate != null">
             <![CDATA[
@@ -233,6 +233,12 @@
             <![CDATA[
             and   start_date != "1970-01-02 00:00:00"
             and start_date <= #{dto.endDate}  ]]>
+        </if>
+        <if test="dto.teacherId != null">
+            and teacher_id = #{dto.teacherId}
+        </if>
+        <if test="dto.campus != null">
+            and campus = #{dto.campus}
         </if>
     </select>
     <update id="updateByPrimaryKeySelective" parameterType="com.nmt.education.pojo.po.CoursePo">

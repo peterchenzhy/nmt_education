@@ -53,7 +53,7 @@ export class StudentListComponent implements OnInit {
     expandForm = false;
 
     constructor(
-        private globalService: GlobalService,
+        public globalService: GlobalService,
         private studentService: StudentService,
         private router: Router,
         private http: _HttpClient,

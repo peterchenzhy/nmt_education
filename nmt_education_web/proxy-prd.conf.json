@@ -1,0 +1,6 @@
+{
+    "/nmt-education": {
+        "target": "http://localhost:8998",
+        "secure": false
+    }
+}

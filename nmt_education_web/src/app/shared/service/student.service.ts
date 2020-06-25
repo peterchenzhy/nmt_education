@@ -24,4 +24,8 @@ export class StudentService {
 
         return this.httpClient.post('nmt-education/student/manager', T);
     }
+
+    public fuzzyQueryStudents(query: String): Observable<Object> {
+        return this.httpClient.get('nmt-education/student/search/fuzzy?name=' + query);
+    }
 }

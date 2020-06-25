@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
@@ -99,6 +101,7 @@ public class CourseReqDto {
      */
     @NotNull(message = "每节课时间不能为空")
     @ApiModelProperty(value = "每节课时间 单位：分钟", required = true)
+    @Range(min = 1,message = "每节课时间必须设置")
     private Integer perTime;
 
     /**
@@ -106,6 +109,7 @@ public class CourseReqDto {
      */
     @NotNull(message = "设计课次不能为空")
     @ApiModelProperty(value = "设计课次", required = true)
+    @Range(min = 1,message = "设计课次必须大于0")
     private Integer times;
 
     /**

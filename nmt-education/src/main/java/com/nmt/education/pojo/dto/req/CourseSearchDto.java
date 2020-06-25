@@ -41,6 +41,18 @@ public class CourseSearchDto {
      */
     @ApiModelProperty(value = "开始日期")
     private Date startDate;
+
+    /**
+     * 教师id
+     */
+    @ApiModelProperty(value = "教师id")
+    private Long teacherId;
+
+    /**
+     * 校区
+     */
+    @ApiModelProperty(value = "校区")
+    private Integer campus;
     /**
      * 结束日期
      */
@@ -48,7 +60,7 @@ public class CourseSearchDto {
     private Date endDate;
 
     @ApiModelProperty(value = "分页 页码")
-    private Integer pageNo = 0;
+    private Integer pageNo = 1;
 
     @ApiModelProperty(value = "分页 每页数量")
     private Integer pageSize = 10;

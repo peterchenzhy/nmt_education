@@ -1,0 +1,4 @@
+ 
+DB:
+alter user 'root'@'localhost' identified by 'nmt_root123456!'
+    -> ;

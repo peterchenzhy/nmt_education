@@ -31,7 +31,7 @@ export class CourseViewComponent implements OnInit {
   sessionParam: any = { title: "新建课时" };
 
   constructor(
-    private appCtx: AppContextService,
+    public appCtx: AppContextService,
     private fb: FormBuilder,
     private activaterRouter: ActivatedRoute,
     public msgSrv: NzMessageService,
@@ -55,7 +55,7 @@ export class CourseViewComponent implements OnInit {
   teacherList: Teacher[] = [];
   selectedTeacherList: Teacher[] = [];
   classroomList: any[] = [{ value: '101', label: '101' }, { value: '202', label: '202' }, { value: '303', label: '303' }];
-
+  loading: boolean = false;
   ngOnInit() {
     this.form = this.fb.group({
       id: [0, []],
@@ -85,8 +85,11 @@ export class CourseViewComponent implements OnInit {
     this.form.patchValue(this.course);
     let courseId = this.activaterRouter.snapshot.params.id;
     if (courseId) {
+      this.loading = true;
       this.appCtx.courseService.getCourseDetails(courseId)
-        .subscribe(res => {
+        .pipe(
+          tap(() => (this.loading = false)),
+        ).subscribe(res => {
           this.course = res;
           let year: number = toNumber(this.course.year.toString());
           this.course.year = new Date().setFullYear(year);
@@ -372,9 +375,19 @@ export class CourseViewComponent implements OnInit {
       .forEach((d, i) => {
         d.courseTimes = i + 1;
       });
-    this.appCtx.courseService.saveCourse(this.course).subscribe((res) => {
-      this.goBack();
-    });
+    this.loading = true;
+    this.appCtx.courseService.saveCourse(this.course)
+      .pipe(
+        tap(() => (this.loading = false)),
+      ).subscribe((res) => {
+        this.modalSrv.success({
+          nzTitle: '处理结果',
+          nzContent: '课程信息保存成功！',
+          nzOnOk: () => {
+            this.router.navigate(["/course/list"]);
+          }
+        });
+      });
   }
 
   goBack() {
@@ -446,11 +459,11 @@ export class CourseViewComponent implements OnInit {
     }
   }
   studentLoaded = false;
-  loading = false;
   studentList = [];
   @ViewChild('st', { static: true })
   st: STComponent;
   columns: STColumn[] = [
+    { title: '序号', index: 'index' },
     { title: '学生姓名', index: 'name' },
     { title: '性别', index: 'sex', render: "sex" },
     { title: '学校', index: 'school' },
@@ -467,9 +480,9 @@ export class CourseViewComponent implements OnInit {
       )
       .subscribe((res: any) => {
         res = res || [];
-        // res.list.forEach(element => {
-        //   element.statusDetail = this.appCtx.globalService.COURSE_STATUS_LIST[element.courseStatus];
-        // });
+        res.forEach((element, i) => {
+          element.index = i + 1;
+        });
         this.studentList = res;
         this.studentLoaded = true;
         this.cdr.detectChanges();

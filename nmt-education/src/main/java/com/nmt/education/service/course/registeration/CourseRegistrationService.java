@@ -1,10 +1,11 @@
 package com.nmt.education.service.course.registeration;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.nmt.education.commmons.Enums;
-import com.nmt.education.commmons.NumberUtil;
-import com.nmt.education.commmons.StatusEnum;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.nmt.education.commmons.*;
 import com.nmt.education.commmons.utils.DateUtil;
 import com.nmt.education.pojo.dto.req.*;
 import com.nmt.education.pojo.po.*;
@@ -52,7 +53,6 @@ public class CourseRegistrationService {
     @Autowired
     private CourseScheduleService courseScheduleService;
 
-    private static Integer 普通单节费用 = 1;
 
     /**
      * 课程报名
@@ -74,6 +74,8 @@ public class CourseRegistrationService {
         //生成报名记录
         CourseRegistrationPo courseRegistrationPo;
         if (Enums.EditFlag.新增.getCode().equals(dto.getEditFlag())) {
+            Assert.notNull(dto.getRegisterExpenseDetail().stream().filter(e -> Consts.FEE_TYPE_普通单节费用.equals(e.getFeeType())).findAny().get(),
+                    "报名必须含有单节收费项目");
             courseRegistrationPo = generateCourseRegistrationPo(dto, updator);
             this.insertSelective(courseRegistrationPo);
         } else {
@@ -81,6 +83,21 @@ public class CourseRegistrationService {
             courseRegistrationPo.setRemark(dto.getRemark());
             courseRegistrationPo.setOperator(updator);
             courseRegistrationPo.setOperateTime(new Date());
+            BigDecimal prepTotal = new BigDecimal(courseRegistrationPo.getTotalAmount());
+            BigDecimal prepBalance = new BigDecimal(courseRegistrationPo.getBalanceAmount());
+            //计算增加金额
+            BigDecimal total = BigDecimal.ZERO;
+            int addTimes = 0;
+            for (RegisterExpenseDetailReqDto e : dto.getRegisterExpenseDetail()) {
+                total = total.add(new BigDecimal(e.getAmount()));
+                if (Consts.FEE_TYPE_普通单节费用.equals(e.getFeeType())) {
+                    addTimes = e.getCount();
+                }
+            }
+            Assert.isTrue(total.compareTo(prepTotal) >= 0, "编辑金额不能小于原订单总额");
+            courseRegistrationPo.setTotalAmount(calculateTotalAmount(dto.getRegisterExpenseDetail()));
+            courseRegistrationPo.setBalanceAmount(prepBalance.add(total).subtract(prepTotal).toPlainString());
+            courseRegistrationPo.setTimes(addTimes);
             this.updateByPrimaryKeySelective(courseRegistrationPo);
         }
         Assert.isTrue(Objects.nonNull(courseRegistrationPo), "非新增报名时，报名信息不存在，学生：" + dto.getStudentId() +
@@ -115,7 +132,9 @@ public class CourseRegistrationService {
             courseScheduleIds = dto.getCourseScheduleIds();
         } else {
             List<Long> alreadyList =
-                    registerationSummaryService.queryByRegisterId(dto.getId()).stream().map(e -> e.getCourseScheduleId()).collect(Collectors.toList());
+                    registerationSummaryService.queryByRegisterId(dto.getId()).stream()
+                            .filter(a->!Enums.SignInType.已退费.getCode().equals( a.getSignIn()))
+                            .map(e -> e.getCourseScheduleId() ).collect(Collectors.toList());
             courseScheduleIds = (List<Long>) org.apache.commons.collections4.CollectionUtils.subtract(dto.getCourseScheduleIds(), alreadyList);
         }
         courseScheduleIds.stream().forEach(e -> {
@@ -132,8 +151,8 @@ public class CourseRegistrationService {
         Assert.notEmpty(dto.getCourseScheduleIds(), "报名课时必填！id:" + dto.getCourseId());
         if (Enums.EditFlag.新增.getCode().equals(dto.getEditFlag())) {
             CourseRegistrationListVo vo = queryByCourseStudent(dto.getCourseId(), dto.getStudentId());
-            if(Objects.nonNull(vo)){
-                Assert.isTrue(Enums.RegistrationStatus.已退费.getCode().equals(vo.getRegistrationStatus()),"报名记录已经存在，不能重复报名！id："+vo.getId());
+            if (Objects.nonNull(vo)) {
+                Assert.isTrue(Enums.RegistrationStatus.已退费.getCode().equals(vo.getRegistrationStatus()), "报名记录已经存在，不能重复报名！id：" + vo.getId());
             }
 
         }
@@ -158,17 +177,59 @@ public class CourseRegistrationService {
                                                CourseRegistrationPo courseRegistrationPo) {
         Assert.isTrue(!CollectionUtils.isEmpty(expenseDetailList), "报名时不存在费用信息");
         List<RegistrationExpenseDetailPo> addList = new ArrayList<>(expenseDetailList.size());
+        List<RegistrationExpenseDetailFlow> flowList = new ArrayList<>(expenseDetailList.size());
+        //处理修改记录
+        Map<Long, RegisterExpenseDetailReqDto> reqDtoMap =
+                expenseDetailList.stream().filter(e -> Enums.EditFlag.修改.getCode().equals(e.getEditFlag()))
+                        .collect(Collectors.toMap(k -> k.getId(), v -> v));
         List<RegistrationExpenseDetailPo> updateList =
-                registrationExpenseDetailService.selectByIds(expenseDetailList.stream().filter(e -> Objects.nonNull(e.getId()) && e.getId() != -1)
-                        .map(e -> e.getId()).collect(Collectors.toList()));
+                registrationExpenseDetailService.selectByIds(new ArrayList<>(reqDtoMap.keySet()));
+        updateList.stream().forEach(e -> {
+            RegisterExpenseDetailReqDto dto = reqDtoMap.get(e.getId());
+            e.setFeeType(dto.getFeeType());
+            e.setFeeStatus(dto.getFeeStatus());
+            e.setAmount(dto.getAmount());
+            e.setPerAmount(dto.getPerAmount());
+            e.setCount(dto.getCount());
+            e.setDiscount(dto.getDiscount());
+            e.setPayment(dto.getPayment());
+            e.setRemark(Strings.nullToEmpty(dto.getRemark()));
+            e.setOperator(updator);
+            e.setOperateTime(new Date());
+            flowList.add(generateFlow(updator, e, ExpenseDetailFlowTypeEnum.编辑));
 
+        });
+
+        //处理新增记录
         expenseDetailList.stream().filter(e -> Enums.EditFlag.新增.getCode().equals(e.getEditFlag())).forEach(e -> {
             addList.add(registrationExpenseDetailService.dto2po(updator, courseRegistrationPo, e));
         });
 
         registrationExpenseDetailService.batchInsert(addList);
         registrationExpenseDetailService.updateBatch(updateList);
+        addList.stream().forEach(e -> flowList.add(generateFlow(updator, e, ExpenseDetailFlowTypeEnum.新增记录)));
+        registrationExpenseDetailService.batchInsertFlow(flowList);
 
+    }
+
+    private RegistrationExpenseDetailFlow generateFlow(int updator, RegistrationExpenseDetailPo e, ExpenseDetailFlowTypeEnum type) {
+        RegistrationExpenseDetailFlow flow = new RegistrationExpenseDetailFlow();
+        flow.setRegistrationId(e.getRegistrationId());
+        flow.setRegisterExpenseDetailId(e.getId());
+        flow.setFeeType(e.getFeeType());
+        flow.setType(type.getCode());
+        flow.setAmount(e.getAmount());
+        flow.setStatus(StatusEnum.VALID.getCode());
+        flow.setRemark(type.getDescription());
+        flow.setCreator(updator);
+        flow.setCreateTime(new Date());
+        flow.setOperator(updator);
+        flow.setOperateTime(new Date());
+        flow.setPerAmount(e.getPerAmount());
+        flow.setCount(e.getCount());
+        flow.setDiscount(e.getDiscount());
+        flow.setPayment(e.getPayment());
+        return flow;
     }
 
 
@@ -242,31 +303,6 @@ public class CourseRegistrationService {
         return result.toPlainString();
     }
 
-    /**
-     * 退费
-     *
-     * @param id
-     * @author PeterChen
-     * @modifier PeterChen
-     * @version v1
-     * @since 2020/4/30 10:53
-     */
-    public void registerDel(Long id, int updator) {
-
-        // TODO: 2020/5/2 逻辑有问题  待定
-
-        CourseRegistrationPo courseRegistrationPo = selectByPrimaryKey(id);
-        Assert.notNull(courseRegistrationPo, "报名信息不存在，id：" + id);
-        CoursePo coursePo = courseService.selectByPrimaryKey(courseRegistrationPo.getCourseId());
-        Assert.notNull(coursePo, "课程信息不存在，id：" + courseRegistrationPo.getCourseId());
-        //无效报名记录
-
-        //无效课程消耗
-
-        //无效费用信息
-    }
-
-
     public PageInfo<RegisterSummaryVo> registerSummary(RegisterSummarySearchDto dto, Integer logInUser) {
         if (Objects.nonNull(dto.getEndDate())) {
             dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
@@ -334,6 +370,17 @@ public class CourseRegistrationService {
     }
 
 
+    /**
+     * 报名记录详情
+     *
+     * @param id
+     * @param logInUser
+     * @return com.nmt.education.pojo.vo.CourseRegistrationVo
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/6/13 16:08
+     */
     public CourseRegistrationVo registerDetail(Long id, Integer logInUser) {
         if (Objects.isNull(id)) {
             return null;
@@ -343,7 +390,10 @@ public class CourseRegistrationService {
         vo.setCourse(courseService.selectByPrimaryKey(vo.getCourseId()));
         vo.setStudent(studentService.detail(vo.getStudentId()));
         Map<Long, RegisterationSummaryPo> registerationSummaryMap =
-                registerationSummaryService.queryByRegisterId(id).stream().collect(Collectors.toMap(k -> k.getCourseScheduleId(), v -> v));
+                registerationSummaryService.queryByRegisterId(id).stream()
+                        .filter(e -> !Enums.SignInType.已退费.getCode().equals(e.getSignIn()))
+                        .collect(Collectors.toMap(k -> k.getCourseScheduleId(),
+                                v -> v));
         if (!CollectionUtils.isEmpty(registerationSummaryMap)) {
             vo.setCourseScheduleList(
                     courseScheduleService.queryByIds(new ArrayList<>(registerationSummaryMap.keySet()))
@@ -409,7 +459,7 @@ public class CourseRegistrationService {
      * @version v1
      * @since 2020/6/5 22:37
      */
-    @Transactional(rollbackFor = Exception.class)
+
     public void registerRefund(RefundReqDto dto, Integer logInUser) {
         CourseRegistrationPo courseRegistrationPo = courseRegistrationPoMapper.selectByPrimaryKey(dto.getRegisterId());
         Assert.isTrue(Objects.nonNull(courseRegistrationPo), "报名信息不存在，id：" + dto.getRegisterId());
@@ -420,38 +470,69 @@ public class CourseRegistrationService {
             return;
         }
         List<RegistrationExpenseDetailPo> expenseDetailList = registrationExpenseDetailService.queryRegisterId(dto.getRegisterId());
-        Map<Integer, RegistrationExpenseDetailPo> validExpenseDetail =
-                expenseDetailList.stream().filter(e -> Enums.FeeStatus.已缴费.getCode().equals(e.getFeeStatus()) && Enums.FeeDirection.支付.getCode().equals(e.getFeeDirection()))
-                        .collect(Collectors.toMap(k -> k.getFeeType(), v -> v));
+        //按照费用类型分组
         Map<Integer, List<RefundItemReqDto>> itemMap = dtoList.stream().collect(Collectors.groupingBy(e -> e.getFeeType()));
+        self.refundByFeeType(dto, logInUser, expenseDetailList, itemMap);
+
+        BigDecimal refundTotal = BigDecimal.ZERO;
+        int refundTimes = 0;
+        for (RefundItemReqDto refundItemReqDto : dto.getItemList()) {
+            refundTotal = refundTotal.add(new BigDecimal(refundItemReqDto.getAmount()));
+            if (Consts.FEE_TYPE_普通单节费用.equals(refundItemReqDto.getFeeType())) {
+                refundTimes++;
+            }
+        }
+        //修改订单总额,报名次数
+        courseRegistrationPo.setBalanceAmount(new BigDecimal(courseRegistrationPo.getBalanceAmount()).subtract(refundTotal).toPlainString());
+        courseRegistrationPo.setTotalAmount(new BigDecimal(courseRegistrationPo.getTotalAmount()).subtract(refundTotal).toPlainString());
+        courseRegistrationPo.setTimes(courseRegistrationPo.getTimes() - refundTimes);
+        courseRegistrationPo.setOperateTime(new Date());
+        courseRegistrationPo.setOperator(logInUser);
+
+        //如果费用已经全部退完则更新 报名状态
+        if (!registrationExpenseDetailService.queryRegisterId(dto.getRegisterId())
+                .stream().map(e -> Enums.FeeStatus.已缴费.getCode().equals(e.getFeeStatus()) && Enums.FeeDirection.支付.getCode().equals(e.getFeeDirection()))
+                .findAny().get()) {
+            courseRegistrationPo.setRegistrationStatus(Enums.RegistrationStatus.已退费.getCode());
+        }
+        updateByPrimaryKeySelective(courseRegistrationPo);
+
+    }
+
+    /**
+     * 根据费用类型退费
+     *
+     * @param dto
+     * @param logInUser
+     * @param expenseDetailList
+     * @param itemMap
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/6/13 13:01
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void refundByFeeType(RefundReqDto dto, Integer logInUser, List<RegistrationExpenseDetailPo> expenseDetailList, Map<Integer,
+            List<RefundItemReqDto>> itemMap) {
         itemMap.keySet().stream().forEach(k -> {
-            if (k.equals(普通单节费用)) {
-                RegisterationSummaryPo p = registerationSummaryService.selectByIds(itemMap.get(k).stream().map(e -> e.getRegisterSummaryId()).collect(Collectors.toList()))
-                        .stream().filter(e -> !Enums.SignInType.canRefund.contains(e.getSignIn())).findAny().orElse(null);
+            //按费用类型进行退款
+            if (k.equals(Consts.FEE_TYPE_普通单节费用)) {
+                //查询消耗情况
+                List<RegisterationSummaryPo> registerationSummaryPoList = registerationSummaryService.queryByRegisterId(dto.getRegisterId());
+                RegisterationSummaryPo p = registerationSummaryPoList.stream()
+                        .filter(e -> itemMap.get(k).contains(e.getId()) && !Enums.SignInType.canRefund.contains(e.getSignIn())).findAny().orElse(null);
                 if (Objects.nonNull(p)) {
                     throw new RuntimeException("有记录已经被被退费了，RegisterationSummaryPoId:" + p.getId());
                 }
                 if (processRefund(dto, logInUser, itemMap.get(k), expenseDetailList, k)) {
                     //更新报名课表
                     registerationSummaryService.updateSignIn(itemMap.get(k).stream().map(e -> e.getRegisterSummaryId()).collect(Collectors.toList()),
-                            logInUser, Enums.SignInType.已退费);
+                            logInUser, Enums.SignInType.已退费, Enums.SignInType.已退费.getDesc());
                 }
             } else {
-                if (processRefund(dto, logInUser, itemMap.get(k), expenseDetailList, k)) {
-                    //将支付状态无效
-                    RegistrationExpenseDetailPo expenseDetailPo = validExpenseDetail.get(k);
-                    expenseDetailPo.setFeeStatus(Enums.FeeStatus.已退费.getCode());
-                    expenseDetailPo.setOperateTime(new Date());
-                    expenseDetailPo.setOperator(logInUser);
-                    registrationExpenseDetailService.updateByPrimaryKeySelective(expenseDetailPo);
-                }
+                processRefund(dto, logInUser, itemMap.get(k), expenseDetailList, k);
             }
         });
-        courseRegistrationPo.setRegistrationStatus(Enums.RegistrationStatus.已退费.getCode());
-        courseRegistrationPo.setOperateTime(new Date());
-        courseRegistrationPo.setOperator(logInUser);
-        updateByPrimaryKeySelective(courseRegistrationPo);
-
     }
 
     /**
@@ -479,6 +560,10 @@ public class CourseRegistrationService {
                 e -> feeType.equals(e.getFeeType()) && Enums.FeeDirection.支付.getCode().equals(e.getFeeDirection())).collect(Collectors.toList());
         List<RegistrationExpenseDetailPo> refundedList = expenseDetailList.stream().filter(
                 e -> feeType.equals(e.getFeeType()) && Enums.FeeDirection.退费.getCode().equals(e.getFeeDirection())).collect(Collectors.toList());
+
+        RegistrationExpenseDetailPo ref = payList.stream().filter(e -> Enums.FeeStatus.已缴费.getCode().equals(e.getFeeStatus())).findFirst().get();
+        Assert.isTrue(Objects.nonNull(ref), "找不到支付关联信息，无法退费");
+
         //最大可退费金额
         BigDecimal maxCanRefund = BigDecimal.ZERO;
         for (RegistrationExpenseDetailPo e : payList) {
@@ -487,27 +572,44 @@ public class CourseRegistrationService {
         for (RegistrationExpenseDetailPo e : refundedList) {
             maxCanRefund = maxCanRefund.subtract(NumberUtil.String2Dec(e.getAmount()));
         }
+        //退费金额
         BigDecimal applyRefund = NumberUtil.String2Dec(payList.get(0).getPerAmount())
                 .multiply(NumberUtil.String2Dec(payList.get(0).getDiscount())).multiply(BigDecimal.valueOf(itemList.size()));
         Assert.isTrue(applyRefund.compareTo(maxCanRefund) <= 0, "退费金额不可大于最大可退费金额，" + maxCanRefund);
         //生成退费记录
-        RegistrationExpenseDetailPo refundPo = new RegistrationExpenseDetailPo();
-        refundPo.setRegistrationId(dto.getRegisterId());
-        refundPo.setFeeType(itemList.get(0).getFeeType());
-        refundPo.setFeeStatus(Enums.FeeStatus.已退费.getCode());
-        refundPo.setAmount(applyRefund.toPlainString());
-        refundPo.setPerAmount(payList.get(0).getPerAmount());
-        refundPo.setCount(itemList.size());
-        refundPo.setDiscount(payList.get(0).getDiscount());
-        refundPo.setPayment(dto.getPayment());
-        refundPo.setFeeDirection(Enums.FeeDirection.退费.getCode());
-        refundPo.setStatus(StatusEnum.VALID.getCode());
-        refundPo.setRemark(dto.getRemark());
-        refundPo.setCreator(logInUser);
-        refundPo.setCreateTime(new Date());
-        refundPo.setOperator(logInUser);
-        refundPo.setOperateTime(new Date());
-        registrationExpenseDetailService.insertSelective(refundPo);
+        RegistrationExpenseDetailFlow flow = new RegistrationExpenseDetailFlow();
+        flow.setRegistrationId(ref.getRegistrationId());
+        flow.setRegisterExpenseDetailId(ref.getId());
+        flow.setFeeType(ref.getFeeType());
+        flow.setType(ExpenseDetailFlowTypeEnum.退费.getCode());
+        flow.setPerAmount(payList.get(0).getPerAmount());
+        flow.setCount(itemList.size());
+        flow.setDiscount(payList.get(0).getDiscount());
+        flow.setAmount(applyRefund.toPlainString());
+        flow.setStatus(StatusEnum.VALID.getCode());
+        if(Consts.FEE_TYPE_普通单节费用.equals(ref.getFeeType())){
+            flow.setRemark(ExpenseDetailFlowTypeEnum.退费.getDescription()+"--"+
+                    JSON.toJSONString(itemList.stream().map(e->e.getRegisterSummaryId()).collect(Collectors.toList())));
+        }else{
+            flow.setRemark(ExpenseDetailFlowTypeEnum.退费.getDescription());
+        }
+        flow.setCreator(logInUser);
+        flow.setCreateTime(new Date());
+        flow.setOperator(logInUser);
+        flow.setOperateTime(new Date());
+        flow.setPayment(dto.getPayment());
+        registrationExpenseDetailService.batchInsertFlow(Lists.newArrayList(flow));
+
+        //如果所有的钱都退了那么就改变退费状态
+        if (maxCanRefund.compareTo(applyRefund) == 0) {
+            //修改支付状态
+            ref.setFeeStatus(Enums.FeeStatus.已退费.getCode());
+        }
+        ref.setOperateTime(new Date());
+        ref.setOperator(logInUser);
+        ref.setAmount(NumberUtil.String2Dec(ref.getAmount()).subtract(applyRefund).toPlainString());
+        ref.setCount(ref.getCount()-itemList.size());
+        registrationExpenseDetailService.updateByPrimaryKeySelective(ref);
         return true;
     }
 

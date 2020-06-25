@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, TemplateRef, ChangeDetectorRef } from '@angular/core';
 import { Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { _HttpClient } from '@delon/theme';
 import { Order, Payment, OrderRefund } from 'src/app/model/order.model';
@@ -9,6 +9,7 @@ import { Course } from 'src/app/model/course.model';
 import { AppContextService } from '@shared/service/appcontext.service';
 import { ORDER_STATUS, EDIT_FLAG, PAY_STATUS, ORDER_TYPE, SIGNIN, FEE_TYPE, FeeDirection } from '@shared/constant/system.constant';
 import { STData, STComponent, STColumn, STChange } from '@delon/abc';
+import { tap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-order-refund',
@@ -37,15 +38,17 @@ export class OrderRefundComponent implements OnInit {
     orderRefund: OrderRefund = {
         itemList: []
     };
+    loading: boolean = true;
 
     constructor(
-        private appCtx: AppContextService,
+        public appCtx: AppContextService,
         private modalSrv: NzModalService,
         private fb: FormBuilder,
         private activaterRouter: ActivatedRoute,
         public msgSrv: NzMessageService,
         private cdr: ChangeDetectorRef,
-        private _location: Location
+        private _location: Location,
+        private router: Router
     ) {
     }
 
@@ -74,7 +77,9 @@ export class OrderRefundComponent implements OnInit {
         this.form.patchValue(this.orderRefund);
         if (orderId) {
             this.appCtx.courseService.getRegisterDetails(orderId)
-                .subscribe(res => {
+                .pipe(
+                    tap(() => (this.loading = false))
+                ).subscribe(res => {
                     this.order = res;
                     this.order.course.teacher = {};
                     this.order.editFlag = EDIT_FLAG.UPDATE;
@@ -212,11 +217,10 @@ export class OrderRefundComponent implements OnInit {
         this.selectedFee.forEach(f => {
             refundAmount += parseFloat(f.amount);
         });
-        this.modalSrv.warning({
+        this.modalSrv.confirm({
             nzTitle: "退费确认",
             nzContent: `共退费[${refundAmount}]元`,
             nzOnOk: () => {
-
                 this._submitForm();
             }
         });
@@ -233,15 +237,32 @@ export class OrderRefundComponent implements OnInit {
                 registerId: refundObj.registerId,
                 registerSummaryId: fee.registerSummaryId
             });
-        })
-        this.appCtx.courseService.refundFee(refundObj).subscribe((res) => {
-            this.modalSrv.success({
-                nzTitle: '处理结果',
-                nzContent: '退费成功！',
-                nzOnOk: () => {
-                    window.location.reload();
-                }
-            });
         });
+        this.loading = true;
+        this.appCtx.courseService.refundFee(refundObj)
+            .pipe(
+                tap(() => (this.loading = false))
+            ).subscribe((res) => {
+                this.modalSrv.success({
+                    nzTitle: '处理结果',
+                    nzContent: '订单退费成功！',
+                    nzOnOk: () => {
+                        this.router.navigate(["/order/list"]);
+                    }
+                });
+            });
     }
+
+    @ViewChild('payst', { static: true })
+    payst: STComponent;
+    payDetailsColumns: STColumn[] = [
+        { title: '费用类型', index: 'feeType', render: "feeType" },
+        { title: '原价', index: 'perAmount' },
+        { title: '数量', index: 'count' },
+        { title: '支付金额', index: 'amount' },
+        { title: '支付方式', index: 'payment', render: "payment" },
+        { title: '支付状态', index: 'feeStatus', render: "feeStatus" },
+        { title: '支付时间', index: 'operateTime', type: 'date', dateFormat: 'YYYY-MM-DD HH:mm' },
+        { title: '备注', index: 'remark' }
+    ];
 }

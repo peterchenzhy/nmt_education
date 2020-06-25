@@ -60,7 +60,7 @@ export interface Payment {
     discount?: number;
     receivable?: number;
     deduction?: number;
-    amount?: number;
+    amount?: string;
     remark?: string;
     editFlag?: EDIT_FLAG;
     createTime?: Date;
