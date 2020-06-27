@@ -16,3 +16,4 @@ spring:
     maxWait: 60000
 
 swagger.enabled: true
+nmt.token.key: devasdie11k4nsdf

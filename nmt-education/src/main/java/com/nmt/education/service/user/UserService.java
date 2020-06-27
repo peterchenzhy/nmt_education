@@ -1,5 +1,6 @@
 package com.nmt.education.service.user;
 
+import com.nmt.education.commmons.utils.TokenUtil;
 import com.nmt.education.pojo.dto.req.UserLoginDto;
 import com.nmt.education.pojo.po.UserPo;
 import com.nmt.education.pojo.vo.UserVo;
@@ -29,6 +30,10 @@ public class UserService {
         UserPo userPo = this.userPoMapper.queryByLoginDto(dto);
         Assert.notNull(userPo,"登录失败，用户："+dto.getCode());
         UserVo vo = new UserVo(userPo);
+        TokenUtil.Token token = new TokenUtil.Token();
+        token.setRoleId(vo.getRoleId());
+        token.setLoginUserId(vo.getLogInUser());
+        vo.setToken(TokenUtil.generateToken(token));
         return vo ;
     }
     public int insertSelective(UserPo record) {

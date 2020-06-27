@@ -12,6 +12,9 @@ public interface Consts {
 
     String LOGIN_USER_HEAD = "loginUser";
     String ROLE_ID_HEAD = "roleId";
+    String NMT_TOKEN_HEAD = "nmt_token";
+    String ROLE_ROOT ="root";
+
     int SYSTEM_USER = 0;
     long DEFAULT_LONG = -1l;
 
@@ -24,4 +27,5 @@ public interface Consts {
     String 订单前缀 = "CR";
 
     Integer FEE_TYPE_普通单节费用 = 1;
+
 }

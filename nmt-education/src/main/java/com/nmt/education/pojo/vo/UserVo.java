@@ -18,13 +18,14 @@ public class UserVo {
     @ApiModelProperty(value = "token")
     private String token;
 
-
-
-
     public UserVo(UserPo userPo) {
         this.name = userPo.getName();
         this.logInUser = userPo.getCode();
         // TODO: 2020/5/2  roleId 暂时用工号代替
         this.roleId = String.valueOf(userPo.getCode());
+    }
+
+    public UserVo(){
+
     }
 }

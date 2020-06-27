@@ -1,10 +1,8 @@
 package com.nmt.education.config.security;
 
-import com.nmt.education.config.security.login.LoginAuthicationProvider;
-import com.nmt.education.config.security.login.LoginUsernamePasswordAuthenticationFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,26 +14,29 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private LoginAuthicationProvider loginAuthicationProvider;
-
     public static final String LOGIN_PAGE = "/login.html";
     private final String LOGIN_URL = "/user/login";
     private final String LOGOUT_URL = "/user/logout";
     private final String INDEX_URL = "/index";
 
     @Override
+    @Bean
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    @Override
     protected void configure(HttpSecurity http) throws Exception {
 
         http.authorizeRequests()
-                .antMatchers("/**/**swagger**/**", "/v2/api-docs",LOGIN_URL).permitAll()
-                .anyRequest().authenticated()
+                .antMatchers("/**/**swagger**/**", "/v2/api-docs", LOGIN_URL)
+                .permitAll()
+                .anyRequest()
+                .authenticated()
                 .and()
-                .formLogin().loginProcessingUrl(LOGIN_URL)
-                .and()
-                .addFilterAt(getFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(getJWTAuthenticationFilter(authenticationManagerBean()), UsernamePasswordAuthenticationFilter.class)
                 .httpBasic()
-//                .addFilter(new LoginAuthicationProvider())
+                .authenticationEntryPoint(new NmtAuthenticationCommence())
                 .and()
                 .logout()
                 .logoutUrl(LOGOUT_URL)
@@ -43,27 +44,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .deleteCookies().clearAuthentication(true).invalidateHttpSession(true)
                 .permitAll()
                 .and()
-                .csrf().disable();
+                .csrf().disable()
+                .anonymous().disable();
 
     }
 
-
-
-    @Bean
-    public LoginUsernamePasswordAuthenticationFilter getFilter() throws Exception {
-        LoginUsernamePasswordAuthenticationFilter filter =  new LoginUsernamePasswordAuthenticationFilter(this.LOGIN_URL);
-        filter.setAuthenticationManager(super.authenticationManagerBean());
+    private JWTAuthenticationFilter getJWTAuthenticationFilter(AuthenticationManager manager) throws Exception {
+        JWTAuthenticationFilter filter = new JWTAuthenticationFilter(manager);
         return filter;
     }
 
-
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        super.configure(auth);
+        auth.authenticationProvider(new NmtAuthenticationTokenProvider());
     }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/js/**", "/css/**", "images/**");
     }
+
 }
