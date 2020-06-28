@@ -130,7 +130,8 @@ export class DefaultInterceptor implements HttpInterceptor {
     let user = this.tokenService.get();
     let userId = user && user.logInUser ? user.logInUser : "";
     let roleId = user && user.roleId ? user.roleId : "";
-    const newReq = req.clone({ url, setHeaders: { loginUser: userId + "", roleId: roleId } });
+    let token = user && user.token ? user.token : "";
+    const newReq = req.clone({ url, setHeaders: { loginUser: userId + "", roleId: roleId, token: token } });
     return next.handle(newReq).pipe(
       mergeMap((event: any) => {
         // 允许统一对请求错误处理

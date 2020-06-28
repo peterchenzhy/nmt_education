@@ -148,6 +148,12 @@
               </nz-form-item>
             </nz-col>
             <nz-col [nzXl]="{ span: 5, offset: 1 }" [nzLg]="{ span: 6 }" [nzMd]="{ span: 12 }" nzSm="24">
+              <nz-form-item>
+                <nz-form-label>课程规律</nz-form-label>
+                {{form.value.courseRegular||"--"}}
+              </nz-form-item>
+            </nz-col>
+            <nz-col [nzXl]="{ span: 5, offset: 1 }" [nzLg]="{ span: 6 }" [nzMd]="{ span: 12 }" nzSm="24">
               <!-- <nz-form-item>
             <nz-form-label>教室</nz-form-label>
             <nz-form-control>
@@ -156,9 +162,6 @@
               </nz-select>
             </nz-form-control>
           </nz-form-item> -->
-            </nz-col>
-            <nz-col [nzXl]="{ span: 5, offset: 1 }" [nzLg]="{ span: 6 }" [nzMd]="{ span: 12 }" nzSm="24">
-
             </nz-col>
           </nz-row>
         </nz-card>

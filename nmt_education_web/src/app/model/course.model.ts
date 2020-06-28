@@ -27,6 +27,7 @@ export interface Course {
     classroom?: number;
     courseExpenseList?: CourseFee[];
     courseScheduleList?: CourseSession[];
+    courseRegular?: string;
     remark?: string;
     editFlag?: EDIT_FLAG;
     createTime?: Date;

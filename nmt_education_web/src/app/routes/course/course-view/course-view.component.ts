@@ -70,6 +70,7 @@ export class CourseViewComponent implements OnInit {
       courseType: [null, [Validators.required]],
       courseSubject: [null, [Validators.required]],
       courseClassification: [null, [Validators.required]],
+      courseRegular: [null, []],
       status: [COURSE_STATUS.PENDING, []],
       perTime: [0, [Validators.required]],
       teacherId: [null, []],
@@ -177,7 +178,7 @@ export class CourseViewComponent implements OnInit {
       count: 0,
       startTime: new Date("2020-01-01 00:00:00"),
       perTime: this.form.value.perTime,
-      dayOfWeek: [{ label: '星期天', value: 0 }, { label: '星期一', value: 1 }, { label: '星期二', value: 2 },
+      dayOfWeek: [{ label: '星期日', value: 0 }, { label: '星期一', value: 1 }, { label: '星期二', value: 2 },
       { label: '星期三', value: 3 }, { label: '星期四', value: 4 }, { label: '星期五', value: 5 }, { label: '星期六', value: 6 }],
       price: 0,
       teacherId: this.form.value.teacherId
@@ -204,6 +205,7 @@ export class CourseViewComponent implements OnInit {
       nzContent: tpl,
       nzWidth: 350,
       nzOnOk: () => {
+        debugger;
         let currentDate = new Date();
         for (let i = 0; i < this.sessions.length;) {
           let session = this.sessions.at(i);
@@ -242,6 +244,9 @@ export class CourseViewComponent implements OnInit {
             session.markAsDirty();
             i++;
           }
+          else {
+            i++;
+          }
         }
         for (let i = 0; i < this.sessionParam.count;) {
           let day = this.sessionParam.startDate.getDay();
@@ -266,7 +271,16 @@ export class CourseViewComponent implements OnInit {
         if (existsSessions.length > 0) {
           courseStartDate = existsSessions.sort((a, b) => new Date(a.courseDatetime).getTime() - new Date(b.courseDatetime).getTime())[0].courseDatetime;
         }
-        this.form.patchValue({ times: existsSessions.length, startDate: courseStartDate });
+        let selectDays = this.sessionParam.dayOfWeek.filter(d => { return d.checked; });
+        let regular = null;
+        if (selectDays.length > 0) {
+          let startTime = this.sessionParam.startTime.toTimeString().substring(0, 5);
+          let regularTime = this.sessionParam.startTime.getMinutes() + this.sessionParam.perTime;
+          let endTime = new Date(new Date(this.sessionParam.startTime).setMinutes(regularTime)).toTimeString().substring(0, 5);
+          regular = "每周" + selectDays.map(d => d.label.replace("星期", "")).join("、") + " " + startTime + "-" + endTime;
+        }
+
+        this.form.patchValue({ times: existsSessions.length, startDate: courseStartDate, courseRegular: regular });
       },
     });
   }
