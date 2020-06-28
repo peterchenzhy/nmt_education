@@ -12,7 +12,7 @@ public interface Consts {
 
     String LOGIN_USER_HEAD = "loginUser";
     String ROLE_ID_HEAD = "roleId";
-    String NMT_TOKEN_HEAD = "nmt_token";
+    String NMT_TOKEN_HEAD = "token";
     String ROLE_ROOT ="root";
 
     int SYSTEM_USER = 0;
