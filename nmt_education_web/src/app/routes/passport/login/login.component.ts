@@ -119,7 +119,7 @@ export class UserLoginComponent implements OnDestroy {
           this.error = "用户名或密码不正确";
           return;
         }
-        res.token = '123456789';
+        //res.token = '123456789';
         // 清空路由复用信息
         this.reuseTabService.clear();
         // 设置用户Token信息
