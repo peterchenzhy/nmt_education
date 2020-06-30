@@ -33,16 +33,17 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
             SecurityContextHolder.getContext().setAuthentication(tk);
             //进入下一个filter
             chain.doFilter(request,response);
-        }
-        String token = request.getHeader(NMT_TOKEN_HEAD);
-        String roleId = request.getHeader(Consts.ROLE_ID_HEAD);
-        Integer loginUserId = Integer.valueOf(request.getHeader(Consts.LOGIN_USER_HEAD));
-        //构造一个临时的 token
-        NmtAuthenticationToken tk = new NmtAuthenticationToken(loginUserId,roleId,token,Collections.emptyList());
-        SecurityContextHolder.getContext().setAuthentication(tk);
+        }else {
+            String token = request.getHeader(NMT_TOKEN_HEAD);
+            String roleId = request.getHeader(Consts.ROLE_ID_HEAD);
+            Integer loginUserId = Integer.valueOf(request.getHeader(Consts.LOGIN_USER_HEAD));
+            //构造一个临时的 token
+            NmtAuthenticationToken tk = new NmtAuthenticationToken(loginUserId, roleId, token, Collections.emptyList());
+            SecurityContextHolder.getContext().setAuthentication(tk);
 
-        //进入下一个filter
-        chain.doFilter(request,response);
+            //进入下一个filter
+            chain.doFilter(request, response);
+        }
     }
 
 

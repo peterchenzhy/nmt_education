@@ -2,6 +2,7 @@ package com.nmt.education.config.security;
 
 import com.nmt.education.commmons.Consts;
 import com.nmt.education.commmons.utils.TokenUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -9,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.util.Assert;
 
+@Slf4j
 public class NmtAuthenticationTokenProvider implements AuthenticationProvider {
     /**
      * Performs authentication with the same contract as
@@ -25,15 +27,22 @@ public class NmtAuthenticationTokenProvider implements AuthenticationProvider {
      */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        NmtAuthenticationToken authenticationToken = (NmtAuthenticationToken)authentication;
-        if(Consts.ROLE_ROOT.equals( authenticationToken.getCredentials())){
+        NmtAuthenticationToken authenticationToken = (NmtAuthenticationToken) authentication;
+        if (Consts.ROLE_ROOT.equals(authenticationToken.getCredentials())) {
             return authentication;
         }
-        TokenUtil.Token t = TokenUtil.verifyToken(authenticationToken.getToken());
+
+        TokenUtil.Token t = null;
         try {
-            Assert.isTrue(authenticationToken.getPrincipal().equals(t.getLoginUserId()),"token异常loginUserId");
-            Assert.isTrue(authenticationToken.getCredentials().equals(t.getRoleId()),"token异常roleId");
-        }catch (Exception ex){
+            t = TokenUtil.verifyToken(authenticationToken.getToken());
+        } catch (Exception e) {
+            log.error("token解析异常，token: ", e);
+            throw new AuthenticationServiceException("token解析失败");
+        }
+        try {
+            Assert.isTrue(authenticationToken.getPrincipal().equals(t.getLoginUserId()), "token异常loginUserId");
+            Assert.isTrue(authenticationToken.getCredentials().equals(t.getRoleId()), "token异常roleId");
+        } catch (Exception ex) {
             throw new AuthenticationServiceException(ex.getMessage());
         }
 
