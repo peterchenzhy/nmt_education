@@ -77,7 +77,7 @@ export class StartupService {
       name: tokenData.name,
       avatar: './assets/tmp/img/avatar.jpg',
       email: '',
-      token: '123456789'
+      token: tokenData.token
     };
     // Application information: including site name, description, year
     this.settingService.setApp(app);
