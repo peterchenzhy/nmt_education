@@ -36,6 +36,9 @@ public class UserService {
         vo.setToken(TokenUtil.generateToken(token));
         return vo ;
     }
+
+
+
     public int insertSelective(UserPo record) {
         return userPoMapper.insertSelective(record);
     }
@@ -50,30 +53,6 @@ public class UserService {
         return userPoMapper.updateByPrimaryKeySelective(record);
     }
 
-    
-    public int updateBatch(List<UserPo> list) {
-        return userPoMapper.updateBatch(list);
-    }
-
-    
-    public int updateBatchSelective(List<UserPo> list) {
-        return userPoMapper.updateBatchSelective(list);
-    }
-
-    
-    public int batchInsert(List<UserPo> list) {
-        return userPoMapper.batchInsert(list);
-    }
-
-    
-    public int insertOrUpdate(UserPo record) {
-        return userPoMapper.insertOrUpdate(record);
-    }
-
-    
-    public int insertOrUpdateSelective(UserPo record) {
-        return userPoMapper.insertOrUpdateSelective(record);
-    }
 
 
 }

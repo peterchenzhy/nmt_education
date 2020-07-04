@@ -1,5 +1,6 @@
 package com.nmt.education.config.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +19,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final String LOGIN_URL = "/user/login";
     private final String LOGOUT_URL = "/user/logout";
     private final String INDEX_URL = "/index";
+
+    @Value("${spring.profiles.active}")
+    private String env ;
 
     @Override
     @Bean

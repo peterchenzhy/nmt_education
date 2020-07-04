@@ -20,7 +20,7 @@ public interface StudentPoMapper {
 
     List<StudentPo> queryFuzzy(@Param("name") String name);
 
-    List<StudentPo> query(@Param("phone") String phone);
+    List<StudentPo> query(@Param("phone") String phone, @Param("campusList") List<Integer> campusList);
 
     void invalidByPrimaryKey(@Param("operator") Integer operator, @Param("id") Long id);
 

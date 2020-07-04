@@ -2,7 +2,8 @@ package com.nmt.education.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.utils.ReqDtoCheckUtil;
-import com.nmt.education.pojo.dto.req.*;
+import com.nmt.education.pojo.dto.req.CourseReqDto;
+import com.nmt.education.pojo.dto.req.CourseSearchDto;
 import com.nmt.education.pojo.po.CoursePo;
 import com.nmt.education.pojo.vo.CourseDetailVo;
 import com.nmt.education.service.course.CourseService;
@@ -49,24 +50,22 @@ public class CourseController {
     public PageInfo<CoursePo> search(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
                                      @RequestBody @Validated CourseSearchDto dto, BindingResult bindingResult) {
         ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
-        return courseService.search(dto);
+        return courseService.search(logInUser,dto);
     }
 
     @ApiOperation(value = "/search/fuzzy", notes = "根据课程编号或者课程名称，课程模糊查询")
     @RequestMapping(value = "/search/fuzzy", method = RequestMethod.GET)
     public List<CoursePo> searchFuzzy(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
                                       @RequestParam String name) {
-        return courseService.searchFuzzy(name);
+        return courseService.searchFuzzy(logInUser,name);
     }
 
     @ApiOperation(value = "detail", notes = "课程明细")
     @RequestMapping(value = "/detail/{courseId}", method = RequestMethod.POST)
     public CourseDetailVo detail(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
             , @PathVariable Long courseId) {
-        return courseService.detail(courseId);
+        return courseService.detail(logInUser, courseId);
     }
-
-
 
 
 }

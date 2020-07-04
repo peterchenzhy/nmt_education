@@ -17,17 +17,10 @@ interface RegisterationSummaryPoMapper {
 
     int updateByPrimaryKeySelective(RegisterationSummaryPo record);
 
-    int updateBatch(List<RegisterationSummaryPo> list);
-
-    int updateBatchSelective(List<RegisterationSummaryPo> list);
 
     int batchInsert(@Param("list") List<RegisterationSummaryPo> list);
 
-    int insertOrUpdate(RegisterationSummaryPo record);
-
-    int insertOrUpdateSelective(RegisterationSummaryPo record);
-
-    List<RegisterSummaryVo> queryBySearchDto(@Param("dto") RegisterSummarySearchDto dto);
+    List<RegisterSummaryVo> queryBySearchDto(@Param("dto") RegisterSummarySearchDto dto, @Param("campusList") List<Integer> campusList);
 
     List<RegisterationSummaryPo> queryByRegisterId(@Param("registerId") Long registerId);
 

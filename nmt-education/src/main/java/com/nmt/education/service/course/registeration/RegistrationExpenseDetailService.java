@@ -30,9 +30,6 @@ public class RegistrationExpenseDetailService {
         registrationExpenseDetailFlowMapper.batchInsert(list);
     }
 
-    public int insertSelective(RegistrationExpenseDetailPo record) {
-        return registrationExpenseDetailPoMapper.insertSelective(record);
-    }
 
 
     public RegistrationExpenseDetailPo selectByPrimaryKey(Long id) {

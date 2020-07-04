@@ -12,6 +12,7 @@ import org.springframework.util.Assert;
 
 @Slf4j
 public class NmtAuthenticationTokenProvider implements AuthenticationProvider {
+
     /**
      * Performs authentication with the same contract as
      * {@link AuthenticationManager#authenticate(Authentication)}

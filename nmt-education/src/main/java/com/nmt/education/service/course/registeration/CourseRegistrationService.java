@@ -11,6 +11,7 @@ import com.nmt.education.pojo.dto.req.*;
 import com.nmt.education.pojo.po.*;
 import com.nmt.education.pojo.vo.*;
 import com.nmt.education.service.CodeService;
+import com.nmt.education.service.campus.authorization.CampusAuthorizationService;
 import com.nmt.education.service.course.CourseService;
 import com.nmt.education.service.course.registeration.summary.RegisterationSummaryService;
 import com.nmt.education.service.course.schedule.CourseScheduleService;
@@ -52,6 +53,8 @@ public class CourseRegistrationService {
     private CodeService codeService;
     @Autowired
     private CourseScheduleService courseScheduleService;
+    @Autowired
+    private CampusAuthorizationService campusAuthorizationService;
 
 
     /**
@@ -64,7 +67,7 @@ public class CourseRegistrationService {
      * @since 2020/4/30 10:53
      */
     public void register(CourseRegisterReqDto dto, int updator) {
-        registerCheck(dto);
+        registerCheck(updator, dto);
         self.startRegisterTransaction(dto, updator);
 
     }
@@ -133,8 +136,8 @@ public class CourseRegistrationService {
         } else {
             List<Long> alreadyList =
                     registerationSummaryService.queryByRegisterId(dto.getId()).stream()
-                            .filter(a->!Enums.SignInType.已退费.getCode().equals( a.getSignIn()))
-                            .map(e -> e.getCourseScheduleId() ).collect(Collectors.toList());
+                            .filter(a -> !Enums.SignInType.已退费.getCode().equals(a.getSignIn()))
+                            .map(e -> e.getCourseScheduleId()).collect(Collectors.toList());
             courseScheduleIds = (List<Long>) org.apache.commons.collections4.CollectionUtils.subtract(dto.getCourseScheduleIds(), alreadyList);
         }
         courseScheduleIds.stream().forEach(e -> {
@@ -145,16 +148,17 @@ public class CourseRegistrationService {
     }
 
 
-    private void registerCheck(CourseRegisterReqDto dto) {
+    private void registerCheck(int loginUserId, CourseRegisterReqDto dto) {
         Assert.notNull(studentService.selectByPrimaryKey(dto.getStudentId()), "学生信息不存在！id:" + dto.getStudentId());
-        Assert.notNull(courseService.selectByPrimaryKey(dto.getCourseId()), "学生信息不存在！id:" + dto.getCourseId());
+        CoursePo coursePo = courseService.selectByPrimaryKey(dto.getCourseId());
+        campusAuthorizationService.getCampusAuthorization(loginUserId, coursePo.getCampus());
+        Assert.notNull(coursePo, "学生信息不存在！id:" + dto.getCourseId());
         Assert.notEmpty(dto.getCourseScheduleIds(), "报名课时必填！id:" + dto.getCourseId());
         if (Enums.EditFlag.新增.getCode().equals(dto.getEditFlag())) {
             CourseRegistrationListVo vo = queryByCourseStudent(dto.getCourseId(), dto.getStudentId());
             if (Objects.nonNull(vo)) {
                 Assert.isTrue(Enums.RegistrationStatus.已退费.getCode().equals(vo.getRegistrationStatus()), "报名记录已经存在，不能重复报名！id：" + vo.getId());
             }
-
         }
     }
 
@@ -310,7 +314,9 @@ public class CourseRegistrationService {
         if (Objects.nonNull(dto.getRegisterEndDate())) {
             dto.setRegisterEndDate(DateUtil.parseCloseDate(dto.getRegisterEndDate()));
         }
-        PageInfo<RegisterSummaryVo> pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> queryBySearchDto(dto));
+        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser);
+        PageInfo<RegisterSummaryVo> pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> queryBySearchDto(dto
+                ,campusList));
         return pageInfo;
     }
 
@@ -318,15 +324,16 @@ public class CourseRegistrationService {
      * 报名记录查询 ，课时消耗查询
      *
      * @param dto
+     * @param campusList
      * @return java.util.List<com.nmt.education.pojo.vo.RegisterSummaryVo>
      * @author PeterChen
      * @modifier PeterChen
      * @version v1
      * @since 2020/5/11 22:02
      */
-    private List<RegisterSummaryVo> queryBySearchDto(RegisterSummarySearchDto dto) {
+    private List<RegisterSummaryVo> queryBySearchDto(RegisterSummarySearchDto dto, List<Integer> campusList) {
 
-        return this.registerationSummaryService.queryBySearchDto(dto);
+        return this.registerationSummaryService.queryBySearchDto(dto,campusList);
     }
 
 
@@ -587,10 +594,10 @@ public class CourseRegistrationService {
         flow.setDiscount(payList.get(0).getDiscount());
         flow.setAmount(applyRefund.toPlainString());
         flow.setStatus(StatusEnum.VALID.getCode());
-        if(Consts.FEE_TYPE_普通单节费用.equals(ref.getFeeType())){
-            flow.setRemark(ExpenseDetailFlowTypeEnum.退费.getDescription()+"--"+
-                    JSON.toJSONString(itemList.stream().map(e->e.getRegisterSummaryId()).collect(Collectors.toList())));
-        }else{
+        if (Consts.FEE_TYPE_普通单节费用.equals(ref.getFeeType())) {
+            flow.setRemark(ExpenseDetailFlowTypeEnum.退费.getDescription() + "--" +
+                    JSON.toJSONString(itemList.stream().map(e -> e.getRegisterSummaryId()).collect(Collectors.toList())));
+        } else {
             flow.setRemark(ExpenseDetailFlowTypeEnum.退费.getDescription());
         }
         flow.setCreator(logInUser);
@@ -608,7 +615,7 @@ public class CourseRegistrationService {
         ref.setOperateTime(new Date());
         ref.setOperator(logInUser);
         ref.setAmount(NumberUtil.String2Dec(ref.getAmount()).subtract(applyRefund).toPlainString());
-        ref.setCount(ref.getCount()-itemList.size());
+        ref.setCount(ref.getCount() - itemList.size());
         registrationExpenseDetailService.updateByPrimaryKeySelective(ref);
         return true;
     }

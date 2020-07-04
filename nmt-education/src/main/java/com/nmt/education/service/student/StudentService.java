@@ -9,6 +9,7 @@ import com.nmt.education.pojo.dto.req.StudentSearchReqDto;
 import com.nmt.education.pojo.po.StudentPo;
 import com.nmt.education.pojo.vo.StudentVo;
 import com.nmt.education.service.CodeService;
+import com.nmt.education.service.campus.authorization.CampusAuthorizationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,9 +40,11 @@ public class StudentService {
     @Autowired
     @Lazy
     private StudentService self;
-
+    @Autowired
+    private CampusAuthorizationService campusAuthorizationService;
 
     public Boolean studentManager(Integer operator, StudentReqDto dto) {
+        campusAuthorizationService.getCampusAuthorization(operator, dto.getCampus());
         Enums.EditFlag editFlag = Enums.EditFlag.codeOf(dto.getEditFlag());
         switch (editFlag) {
             case 新增:
@@ -64,16 +67,16 @@ public class StudentService {
     }
 
     private void delStudent(Integer operator, StudentReqDto dto) {
-        invalidByPrimaryKey(operator,dto.getId());
+        invalidByPrimaryKey(operator, dto.getId());
     }
 
     private void invalidByPrimaryKey(Integer operator, Long id) {
-        if(Objects.isNull(id)){
+        if (Objects.isNull(id)) {
             log.error("invalidByPrimaryKey id is null");
-            return ;
+            return;
         }
-        this.studentPoMapper.invalidByPrimaryKey(operator,id);
-        
+        this.studentPoMapper.invalidByPrimaryKey(operator, id);
+
     }
 
 
@@ -120,9 +123,9 @@ public class StudentService {
      * @since 2020/4/5 19:59
      */
     public Boolean editStudent(Integer operator, StudentReqDto dto) {
-        Assert.notNull(dto.getId(),"编辑学生缺少id");
+        Assert.notNull(dto.getId(), "编辑学生缺少id");
         StudentPo studentPo = selectByPrimaryKey(dto.getId());
-        Assert.notNull(studentPo,"学生信息不存在"+dto.getId());
+        Assert.notNull(studentPo, "学生信息不存在" + dto.getId());
         studentPo.setName(dto.getName());
         studentPo.setBirthday(dto.getBirthday());
         studentPo.setSchool(dto.getSchool());
@@ -133,7 +136,7 @@ public class StudentService {
         studentPo.setRemark(dto.getRemark());
         studentPo.setOperator(operator);
         studentPo.setOperateTime(new Date());
-        return this.updateByPrimaryKeySelective(studentPo)>0 ;
+        return this.updateByPrimaryKeySelective(studentPo) > 0;
     }
 
     /**
@@ -148,14 +151,15 @@ public class StudentService {
      * @since 2020/4/4 9:05
      */
     public PageInfo<StudentVo> search(Integer operator, StudentSearchReqDto dto) {
+        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(operator);
         PageInfo<StudentPo> pageInfo;
         if (StringUtils.hasLength(dto.getPhone())) {
-            pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.queryByPhone(dto.getPhone()));
+            pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.queryByPhone(dto.getPhone(), campusList));
         } else {
             if (StringUtils.hasLength(dto.getName())) {
-                pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.searchFuzzy(dto.getName()));
+                pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.searchFuzzy(dto.getName(), campusList));
             } else {
-                pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.queryByPhone(null));
+                pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.queryByPhone(null, campusList));
             }
         }
         if (CollectionUtils.isEmpty(pageInfo.getList())) {
@@ -166,21 +170,13 @@ public class StudentService {
         PageInfo voPage = new PageInfo();
         BeanUtils.copyProperties(pageInfo, voPage);
         voPage.setList(voList);
+        PageHelper.clearPage();
         return voPage;
     }
 
-    private List<StudentPo> queryByPhone(String phone) {
-        return this.studentPoMapper.query(phone);
-    }
+    private List<StudentPo> queryByPhone(String phone, List<Integer> campusList) {
 
-
-    public int deleteByPrimaryKey(Long id) {
-        return studentPoMapper.deleteByPrimaryKey(id);
-    }
-
-
-    public int insert(StudentPo record) {
-        return studentPoMapper.insert(record);
+        return this.studentPoMapper.query(phone, campusList);
     }
 
 
@@ -199,19 +195,18 @@ public class StudentService {
     }
 
 
-
-
     /**
      * 学生模糊搜索 ，左匹配 不含联系方式
      *
      * @param name
+     * @param campusList
      * @return
      */
-    public List<StudentVo> searchFuzzy(String name) {
+    public List<StudentVo> searchFuzzy(String name, List<Integer> campusList) {
         if (StringUtils.hasLength(name)) {
             List<StudentPo> list = this.studentPoMapper.queryFuzzy(name);
             List<StudentVo> result = new ArrayList<>(list.size());
-            list.forEach(e -> {
+            list.stream().filter(e -> campusList.contains(e.getCampus())).forEach(e -> {
                 StudentVo vo = po2vo(e);
                 result.add(vo);
             });
@@ -220,11 +215,15 @@ public class StudentService {
         return Collections.emptyList();
     }
 
+    public List<StudentVo> searchFuzzy(Integer logInUser, String name) {
+        return this.searchFuzzy(name,campusAuthorizationService.getCampusAuthorization(logInUser));
+    }
+
 
     public StudentVo detail(Long id) {
-        Assert.notNull(id,"学生明细缺少学生,id:"+id);
+        Assert.notNull(id, "学生明细缺少学生,id:" + id);
         StudentPo po = selectByPrimaryKey(id);
-        Assert.notNull(po,"学生明细不存在，id："+id);
+        Assert.notNull(po, "学生明细不存在，id：" + id);
         return po2vo(po);
     }
 
@@ -236,9 +235,11 @@ public class StudentService {
 
 
     public List<StudentPo> queryByIds(List<Long> ids) {
-        if(CollectionUtils.isEmpty(ids)){
+        if (CollectionUtils.isEmpty(ids)) {
             return Collections.emptyList();
         }
         return this.studentPoMapper.queryByIds(ids);
     }
+
+
 }

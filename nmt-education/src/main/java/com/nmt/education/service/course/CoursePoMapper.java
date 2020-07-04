@@ -16,19 +16,9 @@ interface CoursePoMapper {
 
     int updateByPrimaryKeySelective(CoursePo record);
 
-    int updateBatch(List<CoursePo> list);
-
-    int updateBatchSelective(List<CoursePo> list);
-
-    int batchInsert(@Param("list") List<CoursePo> list);
-
-    int insertOrUpdate(CoursePo record);
-
-    int insertOrUpdateSelective(CoursePo record);
-
     void invalidByPrimaryKey(@Param("id") Long id, @Param("operator") Integer operator);
 
-    List<CoursePo> queryByDto(@Param("dto") CourseSearchDto dto);
+    List<CoursePo> queryByDto(@Param("dto") CourseSearchDto dto, @Param("campusList") List<Integer> campusList);
 
     List<CoursePo> queryFuzzy(@Param("name") String name);
 }

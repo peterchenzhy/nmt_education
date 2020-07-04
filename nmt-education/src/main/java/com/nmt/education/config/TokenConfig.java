@@ -3,14 +3,20 @@ package com.nmt.education.config;
 import com.nmt.education.commmons.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @Slf4j
+@ConditionalOnClass(TokenConfigProperties.class)
 public class TokenConfig implements InitializingBean {
-    @Value("${nmt.token.key}")
-    private String key;
+
+
+    @Autowired
+    private TokenConfigProperties tokenConfigProperties;
+
 
     /**
      * Invoked by the containing {@code BeanFactory} after it has set all bean properties
@@ -23,7 +29,11 @@ public class TokenConfig implements InitializingBean {
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        TokenUtil.setJWT_KEY(key);
-        log.info("加载token："+key.substring(0,4));
+        TokenUtil.setJWT_KEY(tokenConfigProperties.getKey());
+        TokenUtil.setEXPIRE_MINUTE(tokenConfigProperties.getExpireMinute());
+        if (log.isDebugEnabled()) {
+            log.info("加载token：" + tokenConfigProperties.getKey().substring(0, 4));
+            log.info("超时时间：" + tokenConfigProperties.getExpireMinute());
+        }
     }
 }

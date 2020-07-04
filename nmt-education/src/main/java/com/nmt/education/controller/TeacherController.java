@@ -75,7 +75,7 @@ public class TeacherController {
     public PageInfo<CoursePo> courseList(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
             , @PathVariable Long teacherId, @RequestParam(value = "pageNo", required = false, defaultValue = "1") Integer pageNo,
                                          @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
-        return teacherService.courseList(teacherId,pageNo,pageSize);
+        return teacherService.courseList(logInUser,teacherId,pageNo,pageSize);
     }
 
 }

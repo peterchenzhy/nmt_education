@@ -137,6 +137,9 @@ public class CourseReqDto {
     @ApiModelProperty(value = "备注")
     private String remark;
 
+    @ApiModelProperty(value = "上课规律")
+    private String courseRegular ;
+
     @ApiModelProperty(value = "课时信息",required = true)
     @NotNull(message = "课时信息不能为空")
     private List<CourseScheduleReqDto> courseScheduleList = Collections.emptyList();

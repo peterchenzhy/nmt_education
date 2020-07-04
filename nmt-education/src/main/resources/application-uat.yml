@@ -17,3 +17,4 @@ spring:
 
 swagger.enabled: true
 nmt.token.key: devasdie11k4nsdf
+nmt.token.expireMinute: 15

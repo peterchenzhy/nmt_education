@@ -2,13 +2,11 @@ package com.nmt.education.service.course;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.google.common.collect.Lists;
 import com.nmt.education.commmons.Consts;
 import com.nmt.education.commmons.Enums;
 import com.nmt.education.commmons.utils.SpringContextUtil;
 import com.nmt.education.listener.event.BaseEvent;
 import com.nmt.education.listener.event.TeacherChangeEvent;
-import com.nmt.education.pojo.dto.req.CourseExpenseReqDto;
 import com.nmt.education.pojo.dto.req.CourseReqDto;
 import com.nmt.education.pojo.dto.req.CourseScheduleReqDto;
 import com.nmt.education.pojo.dto.req.CourseSearchDto;
@@ -16,11 +14,10 @@ import com.nmt.education.pojo.po.CoursePo;
 import com.nmt.education.pojo.po.CourseSchedulePo;
 import com.nmt.education.pojo.vo.CourseDetailVo;
 import com.nmt.education.service.CodeService;
+import com.nmt.education.service.campus.authorization.CampusAuthorizationService;
 import com.nmt.education.service.course.expense.CourseExpenseService;
-import com.nmt.education.service.course.registeration.CourseRegistrationService;
 import com.nmt.education.service.course.schedule.CourseScheduleService;
 import com.nmt.education.service.teacher.TeacherService;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +44,7 @@ public class CourseService {
     @Autowired
     private TeacherService teacherService;
     @Autowired
-    private CourseRegistrationService courseRegistrationService;
+    private CampusAuthorizationService campusAuthorizationService;
 
     private final static ThreadLocal<List<BaseEvent>> eventList = ThreadLocal.withInitial(() -> new ArrayList<>(5));
 
@@ -64,9 +61,10 @@ public class CourseService {
      */
     @Transactional(rollbackFor = Exception.class)
     public Boolean courseManager(Integer loginUser, CourseReqDto dto) {
+        campusAuthorizationService.getCampusAuthorization(loginUser, dto.getCampus());
         Enums.EditFlag editFlag = Enums.EditFlag.codeOf(dto.getEditFlag());
-        if( dto.getCourseExpenseList().stream().collect(Collectors.groupingBy(k -> k.getType())).values()
-                .stream().filter(v -> v.size() > 1).findAny().isPresent()){
+        if (dto.getCourseExpenseList().stream().collect(Collectors.groupingBy(k -> k.getType())).values()
+                .stream().filter(v -> v.size() > 1).findAny().isPresent()) {
             throw new RuntimeException("一个课程一个类型的费用配置只能有一个");
         }
         CoursePo po = null;
@@ -106,15 +104,14 @@ public class CourseService {
      * @version v1
      * @since 2020/4/25 20:16
      */
-    public PageInfo<CoursePo> search(CourseSearchDto dto) {
+    public PageInfo<CoursePo> search(int loginUserId, CourseSearchDto dto) {
         if (Objects.isNull(dto)) {
             return new PageInfo();
         }
         return PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> {
-            this.coursePoMapper.queryByDto(dto);
+            this.coursePoMapper.queryByDto(dto, campusAuthorizationService.getCampusAuthorization(loginUserId, dto.getCampus()));
         });
     }
-
     /**
      * 编辑课程
      *
@@ -205,10 +202,6 @@ public class CourseService {
         return po;
     }
 
-    public int insertSelective(CoursePo record) {
-        return coursePoMapper.insertSelective(record);
-    }
-
 
     public CoursePo selectByPrimaryKey(Long id) {
         return coursePoMapper.selectByPrimaryKey(id);
@@ -220,30 +213,6 @@ public class CourseService {
     }
 
 
-    public int updateBatch(List<CoursePo> list) {
-        return coursePoMapper.updateBatch(list);
-    }
-
-
-    public int updateBatchSelective(List<CoursePo> list) {
-        return coursePoMapper.updateBatchSelective(list);
-    }
-
-
-    public int batchInsert(List<CoursePo> list) {
-        return coursePoMapper.batchInsert(list);
-    }
-
-
-    public int insertOrUpdate(CoursePo record) {
-        return coursePoMapper.insertOrUpdate(record);
-    }
-
-
-    public int insertOrUpdateSelective(CoursePo record) {
-        return coursePoMapper.insertOrUpdateSelective(record);
-    }
-
     /**
      * 课程明细
      *
@@ -254,9 +223,10 @@ public class CourseService {
      * @version v1
      * @since 2020/4/25 20:47
      */
-    public CourseDetailVo detail(Long id) {
+    public CourseDetailVo detail(Integer logInUser, Long id) {
         CoursePo po = selectByPrimaryKey(id);
         Assert.notNull(po, "没有获取到课程信息，id:" + id);
+        campusAuthorizationService.getCampusAuthorization(logInUser, po.getCampus());
         CourseDetailVo vo = new CourseDetailVo();
         BeanUtils.copyProperties(po, vo);
         vo.getCourseExpenseList().addAll(courseExpenseService.queryByCourseId(id));
@@ -281,9 +251,11 @@ public class CourseService {
      * @version v1
      * @since 2020/4/30 9:08
      */
-    public List<CoursePo> searchFuzzy(String name) {
+    public List<CoursePo> searchFuzzy(Integer logInUser, String name) {
         Assert.hasLength(name, "课程模糊搜索关键字不能为空");
-        return this.coursePoMapper.queryFuzzy(name);
+        List<CoursePo> coursePoList = this.coursePoMapper.queryFuzzy(name);
+        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser);
+        return coursePoList.stream().filter(e->campusList.contains(e.getCampus())).collect(Collectors.toList());
     }
 
 }

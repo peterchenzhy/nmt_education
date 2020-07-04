@@ -55,8 +55,8 @@ public class StudentController {
 
     @ApiOperation(value = "search/fuzzy", notes = "学生模糊搜索，左匹配，不含联系方式")
     @RequestMapping(value = "/search/fuzzy", method = RequestMethod.GET)
-    public List<StudentVo> searchStudent(@RequestParam(value = "name") String name) {
-        return studentService.searchFuzzy(name);
+    public List<StudentVo> searchStudent(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser,@RequestParam(value = "name") String name) {
+        return studentService.searchFuzzy(logInUser,name);
     }
 
 

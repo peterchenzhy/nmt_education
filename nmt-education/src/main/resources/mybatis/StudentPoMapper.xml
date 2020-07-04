@@ -61,6 +61,12 @@
     <if test="phone != null">
       and phone = #{phone}
     </if>
+    <if test="campusList != null and campusList.size() != 0">
+      and campus in
+      <foreach collection="campusList" item="campus" open="(" close=")" separator=",">
+        #{campus}
+      </foreach>
+    </if>
   </select>
   <update id="invalidByPrimaryKey">
     update student

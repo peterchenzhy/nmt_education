@@ -9,11 +9,7 @@ import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.sound.midi.Soundbank;
-
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class RegisterationSummaryServiceTest extends BaseTest {
 
@@ -24,7 +20,7 @@ class RegisterationSummaryServiceTest extends BaseTest {
     @Test
     void queryBySearchDto1() {
         RegisterSummarySearchDto dto = new RegisterSummarySearchDto();
-        System.out.println(registerationSummaryService.queryBySearchDto(dto));
+        System.out.println(registerationSummaryService.queryBySearchDto(dto, campusList));
     }
 
     @Test

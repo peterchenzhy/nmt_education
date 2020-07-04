@@ -15,7 +15,11 @@ public class TokenUtil {
     @Setter
     private static String JWT_KEY;
 
-    private static int EXPIRE_MINUTE = 15 * 60;
+    @Setter
+    /**
+     * 超时时间 单位 分钟
+     */
+    private static int EXPIRE_MINUTE ;
 
     public static String generateToken(Token t) {
         Algorithm algorithm = getAlgorithm();
@@ -31,7 +35,7 @@ public class TokenUtil {
     public static Token verifyToken(String token) {
         Algorithm algorithm = getAlgorithm();
         JWTVerifier verifier = JWT.require(algorithm)
-                .acceptExpiresAt(EXPIRE_MINUTE)//6s超时
+                .acceptExpiresAt(EXPIRE_MINUTE*60)
                 .build();
         DecodedJWT jwt = verifier.verify(token);
         Token t = new Token();

@@ -53,16 +53,6 @@ public class RegisterationSummaryService {
     }
 
 
-    public int updateBatch(List<RegisterationSummaryPo> list) {
-        return registerationSummaryPoMapper.updateBatch(list);
-    }
-
-
-    public int updateBatchSelective(List<RegisterationSummaryPo> list) {
-        return registerationSummaryPoMapper.updateBatchSelective(list);
-    }
-
-
     public int batchInsert(List<RegisterationSummaryPo> list) {
         if(CollectionUtils.isEmpty(list)){
             return 0 ;
@@ -71,17 +61,9 @@ public class RegisterationSummaryService {
     }
 
 
-    public int insertOrUpdate(RegisterationSummaryPo record) {
-        return registerationSummaryPoMapper.insertOrUpdate(record);
-    }
 
-
-    public int insertOrUpdateSelective(RegisterationSummaryPo record) {
-        return registerationSummaryPoMapper.insertOrUpdateSelective(record);
-    }
-
-    public List<RegisterSummaryVo> queryBySearchDto(RegisterSummarySearchDto dto) {
-        return this.registerationSummaryPoMapper.queryBySearchDto(dto);
+    public List<RegisterSummaryVo> queryBySearchDto(RegisterSummarySearchDto dto, List<Integer> campusList) {
+        return this.registerationSummaryPoMapper.queryBySearchDto(dto,campusList);
     }
 
     /**

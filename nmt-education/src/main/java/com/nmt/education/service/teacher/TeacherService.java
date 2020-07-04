@@ -11,6 +11,7 @@ import com.nmt.education.pojo.dto.req.TeacherSearchReqDto;
 import com.nmt.education.pojo.po.CoursePo;
 import com.nmt.education.pojo.po.TeacherPo;
 import com.nmt.education.pojo.vo.TeacherVo;
+import com.nmt.education.service.campus.authorization.CampusAuthorizationService;
 import com.nmt.education.service.course.CourseService;
 import com.nmt.education.service.teacher.config.TeacherSalaryConfigService;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +46,8 @@ public class TeacherService {
     @Autowired
     @Lazy
     private CourseService courseService;
+    @Autowired
+    private CampusAuthorizationService campusAuthorizationService;
 
     /**
      * 教师信息，修改，删除接口
@@ -187,10 +190,6 @@ public class TeacherService {
     }
 
 
-    public int updateByPrimaryKey(TeacherPo record) {
-        return teacherPoMapper.updateByPrimaryKey(record);
-    }
-
 
     /**
      * 学生模糊搜索 ，左匹配 不含联系方式
@@ -270,11 +269,11 @@ public class TeacherService {
         return po2vo(po);
     }
 
-    public PageInfo<CoursePo> courseList(Long teacherId, Integer pageNo, Integer pageSize) {
+    public PageInfo<CoursePo> courseList(int loginUser,Long teacherId, Integer pageNo, Integer pageSize) {
         CourseSearchDto searchDto = new CourseSearchDto();
         searchDto.setTeacherId(teacherId);
         searchDto.setPageNo(pageNo);
         searchDto.setPageSize(pageSize);
-        return courseService.search(searchDto);
+        return courseService.search(loginUser ,searchDto);
     }
 }
