@@ -250,7 +250,7 @@ public class CourseRegistrationService {
      */
     private RegistrationExpenseDetailFlow generateFlow(int updator, RegistrationExpenseDetailPo old, ExpenseDetailFlowTypeEnum type,
                                                        RegisterExpenseDetailReqDto dto) {
-        BigDecimal delta = NumberUtil.String2Dec(dto.getAmount()).subtract(NumberUtil.String2Dec(old.getAmount());
+        BigDecimal delta = NumberUtil.String2Dec(dto.getAmount()).subtract(NumberUtil.String2Dec(old.getAmount()));
         if (BigDecimal.ZERO.compareTo(delta) >= 0) {
             log.warn("金额没有变化，不生成流水，old: [{}], dto:[{}]", old, dto);
             return null;
