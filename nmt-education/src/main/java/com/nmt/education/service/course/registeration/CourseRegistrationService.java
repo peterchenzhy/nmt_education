@@ -82,6 +82,7 @@ public class CourseRegistrationService {
             courseRegistrationPo = generateCourseRegistrationPo(dto, updator);
             this.insertSelective(courseRegistrationPo);
         } else {
+            //编辑时，仅可增加课时，不能减少
             courseRegistrationPo = selectByPrimaryKey(dto.getId());
             courseRegistrationPo.setRemark(dto.getRemark());
             courseRegistrationPo.setOperator(updator);
@@ -89,17 +90,18 @@ public class CourseRegistrationService {
             BigDecimal prepTotal = new BigDecimal(courseRegistrationPo.getTotalAmount());
             BigDecimal prepBalance = new BigDecimal(courseRegistrationPo.getBalanceAmount());
             //计算增加金额
-            BigDecimal total = BigDecimal.ZERO;
+            BigDecimal newTotal = BigDecimal.ZERO;
             int addTimes = 0;
             for (RegisterExpenseDetailReqDto e : dto.getRegisterExpenseDetail()) {
-                total = total.add(new BigDecimal(e.getAmount()));
+                newTotal = newTotal.add(new BigDecimal(e.getAmount()));
                 if (Consts.FEE_TYPE_普通单节费用.equals(e.getFeeType())) {
                     addTimes = e.getCount();
                 }
             }
-            Assert.isTrue(total.compareTo(prepTotal) >= 0, "编辑金额不能小于原订单总额");
+            Assert.isTrue(newTotal.compareTo(prepTotal) >= 0, "编辑金额不能小于原订单总额");
+            Assert.isTrue(addTimes >= courseRegistrationPo.getTimes().intValue(), "报名课时只能比原来多");
             courseRegistrationPo.setTotalAmount(calculateTotalAmount(dto.getRegisterExpenseDetail()));
-            courseRegistrationPo.setBalanceAmount(prepBalance.add(total).subtract(prepTotal).toPlainString());
+            courseRegistrationPo.setBalanceAmount(prepBalance.add(newTotal).subtract(prepTotal).toPlainString());
             courseRegistrationPo.setTimes(addTimes);
             this.updateByPrimaryKeySelective(courseRegistrationPo);
         }
@@ -177,6 +179,18 @@ public class CourseRegistrationService {
         return this.courseRegistrationPoMapper.queryByCourseStudent(courseId, studentId);
     }
 
+
+    /**
+     * 缴费明细
+     *
+     * @param expenseDetailList    费用列表
+     * @param updator              操作人
+     * @param courseRegistrationPo 报名记录
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/7/5 0:02
+     */
     private void generateRegisterExpenseDetail(List<RegisterExpenseDetailReqDto> expenseDetailList, int updator,
                                                CourseRegistrationPo courseRegistrationPo) {
         Assert.isTrue(!CollectionUtils.isEmpty(expenseDetailList), "报名时不存在费用信息");
@@ -190,18 +204,22 @@ public class CourseRegistrationService {
                 registrationExpenseDetailService.selectByIds(new ArrayList<>(reqDtoMap.keySet()));
         updateList.stream().forEach(e -> {
             RegisterExpenseDetailReqDto dto = reqDtoMap.get(e.getId());
-            e.setFeeType(dto.getFeeType());
-            e.setFeeStatus(dto.getFeeStatus());
-            e.setAmount(dto.getAmount());
-            e.setPerAmount(dto.getPerAmount());
-            e.setCount(dto.getCount());
-            e.setDiscount(dto.getDiscount());
-            e.setPayment(dto.getPayment());
-            e.setRemark(Strings.nullToEmpty(dto.getRemark()));
-            e.setOperator(updator);
-            e.setOperateTime(new Date());
-            flowList.add(generateFlow(updator, e, ExpenseDetailFlowTypeEnum.编辑));
-
+            //先生成流水
+            RegistrationExpenseDetailFlow flow = generateFlow(updator, e, ExpenseDetailFlowTypeEnum.编辑, dto);
+            if (Objects.nonNull(flow)) {
+                //在编辑金额
+                e.setFeeType(dto.getFeeType());
+                e.setFeeStatus(dto.getFeeStatus());
+                e.setAmount(dto.getAmount());
+                e.setPerAmount(dto.getPerAmount());
+                e.setCount(dto.getCount());
+                e.setDiscount(dto.getDiscount());
+                e.setPayment(dto.getPayment());
+                e.setRemark(Strings.nullToEmpty(dto.getRemark()));
+                e.setOperator(updator);
+                e.setOperateTime(new Date());
+                flowList.add(flow);
+            }
         });
 
         //处理新增记录
@@ -209,6 +227,7 @@ public class CourseRegistrationService {
             addList.add(registrationExpenseDetailService.dto2po(updator, courseRegistrationPo, e));
         });
 
+        //数据入库
         registrationExpenseDetailService.batchInsert(addList);
         registrationExpenseDetailService.updateBatch(updateList);
         addList.stream().forEach(e -> flowList.add(generateFlow(updator, e, ExpenseDetailFlowTypeEnum.新增记录)));
@@ -216,6 +235,57 @@ public class CourseRegistrationService {
 
     }
 
+    /**
+     * 生成流水 用于编辑 新增课时
+     *
+     * @param updator 操作人
+     * @param old     老数据
+     * @param type    类型
+     * @param dto     请求数据
+     * @return com.nmt.education.pojo.po.RegistrationExpenseDetailFlow
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/7/5 0:14
+     */
+    private RegistrationExpenseDetailFlow generateFlow(int updator, RegistrationExpenseDetailPo old, ExpenseDetailFlowTypeEnum type,
+                                                       RegisterExpenseDetailReqDto dto) {
+        BigDecimal delta = NumberUtil.String2Dec(dto.getAmount()).subtract(NumberUtil.String2Dec(old.getAmount());
+        if (BigDecimal.ZERO.compareTo(delta) >= 0) {
+            log.warn("金额没有变化，不生成流水，old: [{}], dto:[{}]", old, dto);
+            return null;
+        }
+        RegistrationExpenseDetailFlow flow = new RegistrationExpenseDetailFlow();
+        flow.setRegistrationId(old.getRegistrationId());
+        flow.setRegisterExpenseDetailId(old.getId());
+        flow.setFeeType(old.getFeeType());
+        flow.setType(type.getCode());
+        flow.setAmount(delta.toPlainString());
+        flow.setStatus(StatusEnum.VALID.getCode());
+        flow.setRemark(type.getDescription());
+        flow.setCreator(updator);
+        flow.setCreateTime(new Date());
+        flow.setOperator(updator);
+        flow.setOperateTime(new Date());
+        flow.setPerAmount(dto.getPerAmount());
+        flow.setCount(dto.getCount());
+        flow.setDiscount(dto.getDiscount());
+        flow.setPayment(dto.getPayment());
+        return flow;
+    }
+
+    /**
+     * 生成流水 用于新增
+     *
+     * @param updator
+     * @param e
+     * @param type
+     * @return com.nmt.education.pojo.po.RegistrationExpenseDetailFlow
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/7/5 0:11
+     */
     private RegistrationExpenseDetailFlow generateFlow(int updator, RegistrationExpenseDetailPo e, ExpenseDetailFlowTypeEnum type) {
         RegistrationExpenseDetailFlow flow = new RegistrationExpenseDetailFlow();
         flow.setRegistrationId(e.getRegistrationId());
@@ -316,7 +386,7 @@ public class CourseRegistrationService {
         }
         List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser);
         PageInfo<RegisterSummaryVo> pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> queryBySearchDto(dto
-                ,campusList));
+                , campusList));
         return pageInfo;
     }
 
@@ -333,7 +403,7 @@ public class CourseRegistrationService {
      */
     private List<RegisterSummaryVo> queryBySearchDto(RegisterSummarySearchDto dto, List<Integer> campusList) {
 
-        return this.registerationSummaryService.queryBySearchDto(dto,campusList);
+        return this.registerationSummaryService.queryBySearchDto(dto, campusList);
     }
 
 
