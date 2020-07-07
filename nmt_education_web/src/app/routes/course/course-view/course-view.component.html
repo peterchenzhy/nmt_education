@@ -105,8 +105,8 @@
             <nz-col [nzXl]="{ span: 5, offset: 1 }" [nzLg]="{ span: 6 }" [nzMd]="{ span: 12 }" nzSm="24">
               <nz-form-item>
                 <nz-form-label>单节课时长(分钟)</nz-form-label>
-                <nz-form-control nzErrorTip="请输入招生数量">
-                  <nz-input-number formControlName="perTime" (ngModelChange)="coursePerTimeChanged()"></nz-input-number>
+                <nz-form-control nzErrorTip="请输入单节课时长">
+                  <nz-input-number [nzDisabled]=true formControlName="perTime" (ngModelChange)="coursePerTimeChanged()"></nz-input-number>
                 </nz-form-control>
               </nz-form-item>
 
