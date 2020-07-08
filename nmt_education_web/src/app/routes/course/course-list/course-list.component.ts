@@ -55,6 +55,10 @@ export class CourseListComponent implements OnInit {
       },
     },
     {
+      title:'上课规律',
+      index:'courseRegular',
+    },
+    {
       title: '操作',
       buttons: [
         {
