@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -39,12 +40,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticated()
                 .and()
                 .addFilterAt(getJWTAuthenticationFilter(authenticationManagerBean()), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(getJWTRefreshFilter(authenticationManagerBean()), FilterSecurityInterceptor.class)
                 .httpBasic()
                 .authenticationEntryPoint(new NmtAuthenticationCommence())
                 .and()
                 .logout()
                 .logoutUrl(LOGOUT_URL)
-                .logoutSuccessUrl(LOGIN_PAGE)
                 .deleteCookies().clearAuthentication(true).invalidateHttpSession(true)
                 .permitAll()
                 .and()
@@ -55,6 +56,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private JWTAuthenticationFilter getJWTAuthenticationFilter(AuthenticationManager manager) throws Exception {
         JWTAuthenticationFilter filter = new JWTAuthenticationFilter(manager);
+        return filter;
+    }
+    private JWTRefreshFilter getJWTRefreshFilter(AuthenticationManager manager) throws Exception {
+        JWTRefreshFilter filter = new JWTRefreshFilter(manager);
         return filter;
     }
 

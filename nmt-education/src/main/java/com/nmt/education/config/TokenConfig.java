@@ -31,6 +31,7 @@ public class TokenConfig implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         TokenUtil.setJWT_KEY(tokenConfigProperties.getKey());
         TokenUtil.setEXPIRE_MINUTE(tokenConfigProperties.getExpireMinute());
+        TokenUtil.setREFRESH_TOKEN_MINUTE(tokenConfigProperties.getRefreshMinute());
         if (log.isDebugEnabled()) {
             log.info("加载token：" + tokenConfigProperties.getKey().substring(0, 4));
             log.info("超时时间：" + tokenConfigProperties.getExpireMinute());

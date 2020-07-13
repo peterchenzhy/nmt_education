@@ -46,7 +46,9 @@ public class NmtAuthenticationTokenProvider implements AuthenticationProvider {
         } catch (Exception ex) {
             throw new AuthenticationServiceException(ex.getMessage());
         }
-
+        //重新存入token
+        ((NmtAuthenticationToken) authentication).setToken(t.getJwtToken());
+        authentication.setAuthenticated(true);
         return authentication;
     }
 

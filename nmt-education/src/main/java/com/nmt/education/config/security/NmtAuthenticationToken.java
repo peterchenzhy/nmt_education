@@ -1,6 +1,7 @@
 package com.nmt.education.config.security;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -11,6 +12,7 @@ public class NmtAuthenticationToken extends AbstractAuthenticationToken {
     private final Object principal;
     private Object credentials;
     @Getter
+    @Setter
     private String token;
 
     public NmtAuthenticationToken(Object principal, Object credentials, String token, Collection<? extends GrantedAuthority> authorities) {

@@ -3,6 +3,7 @@ package com.nmt.education.config.security;
 import com.nmt.education.commmons.Consts;
 import com.nmt.education.commmons.utils.TokenUtil;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.util.Assert;
@@ -28,7 +29,9 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        if(request.getRequestURI().equals("/nmt-education/user/login")){
+        if(request.getRequestURI().equals("/nmt-education/user/login")
+        ||request.getRequestURI().contains("swagger")
+        ||request.getRequestURI().contains("api-docs")){
             NmtAuthenticationToken tk = new NmtAuthenticationToken(Consts.LOGIN_USER_HEAD,Consts.ROLE_ROOT,"",  Collections.emptyList());
             SecurityContextHolder.getContext().setAuthentication(tk);
             //进入下一个filter

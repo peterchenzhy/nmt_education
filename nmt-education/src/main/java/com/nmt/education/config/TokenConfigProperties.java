@@ -13,5 +13,6 @@ import org.springframework.stereotype.Component;
 public class TokenConfigProperties {
     private String key;
     private int expireMinute;
+    private int refreshMinute;
 
 }

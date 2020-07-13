@@ -35,7 +35,8 @@ public class CampusAuthorizationService {
      * @version v1
      * @since 2020/7/4 21:04
      */
-    @Cacheable(key = "'CampusAuthorizationService:'+getCampusAuthorization + 'userId:'+#userId", value = CacheManagerConfig.EhCacheNames.CACHE_10MINS, cacheManager =
+    @Cacheable(key = "'campusAuthorizationService:getCampusAuthorization:userId:'+#userId", value =
+            CacheManagerConfig.EhCacheNames.CACHE_10MINS, cacheManager =
             CacheManagerConfig.CacheManagerNames.EHCACHE_CACHE_MANAGER)
     public List<Integer> getCampusAuthorization(Integer userId) {
         Assert.isTrue(userId != null, "用户id不正确");

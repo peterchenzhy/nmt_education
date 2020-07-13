@@ -17,7 +17,8 @@ spring:
 swagger.enabled: true
 nmt.token.key: devasdie11k4nsdf
 nmt.token.expireMinute: 120
+nmt.token.refreshMinute: 2
 
 logging:
   level:
-    org.springframework.security: debug
+    org.springframework.security: info

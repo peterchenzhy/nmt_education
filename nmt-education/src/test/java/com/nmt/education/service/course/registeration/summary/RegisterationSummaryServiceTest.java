@@ -20,6 +20,7 @@ class RegisterationSummaryServiceTest extends BaseTest {
     @Test
     void queryBySearchDto1() {
         RegisterSummarySearchDto dto = new RegisterSummarySearchDto();
+        List<Integer> campusList =  Lists.newArrayList(1,2);
         System.out.println(registerationSummaryService.queryBySearchDto(dto, campusList));
     }
 

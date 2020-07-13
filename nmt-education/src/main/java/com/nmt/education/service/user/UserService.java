@@ -30,9 +30,8 @@ public class UserService {
         UserPo userPo = this.userPoMapper.queryByLoginDto(dto);
         Assert.notNull(userPo,"登录失败，用户："+dto.getCode());
         UserVo vo = new UserVo(userPo);
-        TokenUtil.Token token = new TokenUtil.Token();
-        token.setRoleId(vo.getRoleId());
-        token.setLoginUserId(vo.getLogInUser());
+        TokenUtil.Token token = new TokenUtil.Token(vo.getLogInUser(),vo.getRoleId());
+
         vo.setToken(TokenUtil.generateToken(token));
         return vo ;
     }

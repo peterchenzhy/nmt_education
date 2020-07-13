@@ -31,7 +31,7 @@
     select
     <include refid="Base_Column_List" />
     from campus_authorization
-    where status = 1 and user_id = #{userId};
+    where status = 1 and user_id = #{userId}
   </select>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.CampusAuthorizationPo" useGeneratedKeys="true">
     <!--@mbg.generated-->

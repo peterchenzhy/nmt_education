@@ -245,7 +245,7 @@
             and teacher_id = #{dto.teacherId}
         </if>
         and campus in
-        <foreach collection="campusList" item="campus" separator=";" open="(" close=")">
+        <foreach collection="campusList" item="campus" separator="," open="(" close=")">
             #{campus}
         </foreach>
     </select>

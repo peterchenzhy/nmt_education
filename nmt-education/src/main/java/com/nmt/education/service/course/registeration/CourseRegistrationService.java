@@ -385,6 +385,7 @@ public class CourseRegistrationService {
             dto.setRegisterEndDate(DateUtil.parseCloseDate(dto.getRegisterEndDate()));
         }
         List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser);
+        Assert.isTrue(!CollectionUtils.isEmpty(campusList),"没有任何校区权限进行搜索");
         PageInfo<RegisterSummaryVo> pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> queryBySearchDto(dto
                 , campusList));
         return pageInfo;

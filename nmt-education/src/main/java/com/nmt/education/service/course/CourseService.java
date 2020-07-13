@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -108,10 +109,11 @@ public class CourseService {
         if (Objects.isNull(dto)) {
             return new PageInfo();
         }
-        return PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> {
-            this.coursePoMapper.queryByDto(dto, campusAuthorizationService.getCampusAuthorization(loginUserId, dto.getCampus()));
-        });
+        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(loginUserId, dto.getCampus());
+        Assert.isTrue(!CollectionUtils.isEmpty(campusList),"没有任何校区权限进行课程搜索");
+        return PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.coursePoMapper.queryByDto(dto, campusList));
     }
+
     /**
      * 编辑课程
      *
@@ -255,7 +257,7 @@ public class CourseService {
         Assert.hasLength(name, "课程模糊搜索关键字不能为空");
         List<CoursePo> coursePoList = this.coursePoMapper.queryFuzzy(name);
         List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser);
-        return coursePoList.stream().filter(e->campusList.contains(e.getCampus())).collect(Collectors.toList());
+        return coursePoList.stream().filter(e -> campusList.contains(e.getCampus())).collect(Collectors.toList());
     }
 
 }

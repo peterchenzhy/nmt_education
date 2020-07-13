@@ -15,5 +15,6 @@ spring:
     maxWait: 60000
 
 swagger.enabled: true
-nmt.token.key: devasdie11k4nsdf
+nmt.token.key: testdbie11k4nsdf
 nmt.token.expireMinute: 120
+nmt.token.refreshMinute: 2
