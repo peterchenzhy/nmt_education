@@ -1,6 +1,6 @@
 package com.nmt.education.service.course.registeration;
 
-import com.nmt.education.pojo.po.RegistrationExpenseDetailFlow;
+import com.nmt.education.pojo.po.RegistrationExpenseDetailFlowPo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -8,13 +8,15 @@ import java.util.List;
 
 @Mapper
 interface RegistrationExpenseDetailFlowMapper {
-    int insertSelective(RegistrationExpenseDetailFlow record);
+    int insertSelective(RegistrationExpenseDetailFlowPo record);
 
-    RegistrationExpenseDetailFlow selectByPrimaryKey(Integer id);
+    RegistrationExpenseDetailFlowPo selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(RegistrationExpenseDetailFlow record);
+    int updateByPrimaryKeySelective(RegistrationExpenseDetailFlowPo record);
 
-    int updateBatchSelective(List<RegistrationExpenseDetailFlow> list);
+    int updateBatchSelective(List<RegistrationExpenseDetailFlowPo> list);
 
-    int batchInsert(@Param("list") List<RegistrationExpenseDetailFlow> list);
+    int batchInsert(@Param("list") List<RegistrationExpenseDetailFlowPo> list);
+
+    List<RegistrationExpenseDetailFlowPo> queryByRegisterId(@Param("registerId") Long registerId);
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nmt.education.service.course.registeration.RegistrationExpenseDetailFlowMapper">
-  <resultMap id="BaseResultMap" type="com.nmt.education.pojo.po.RegistrationExpenseDetailFlow">
+  <resultMap id="BaseResultMap" type="com.nmt.education.pojo.po.RegistrationExpenseDetailFlowPo">
     <!--@mbg.generated-->
     <!--@Table registration_expense_detail_flow-->
     <id column="id" jdbcType="INTEGER" property="id" />
@@ -33,7 +33,7 @@
     from registration_expense_detail_flow
     where id = #{id,jdbcType=INTEGER}
   </select>
-  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.RegistrationExpenseDetailFlow" useGeneratedKeys="true">
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.RegistrationExpenseDetailFlowPo" useGeneratedKeys="true">
     <!--@mbg.generated-->
     insert into registration_expense_detail_flow
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -131,7 +131,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.nmt.education.pojo.po.RegistrationExpenseDetailFlow">
+  <update id="updateByPrimaryKeySelective" parameterType="com.nmt.education.pojo.po.RegistrationExpenseDetailFlowPo">
     <!--@mbg.generated-->
     update registration_expense_detail_flow
     <set>
@@ -314,4 +314,7 @@
         #{item.operateTime,jdbcType=TIMESTAMP})
     </foreach>
   </insert>
+  <select id="queryByRegisterId" resultMap="BaseResultMap">
+    select * from registration_expense_detail_flow where status = 1 and registration_id = #{registerId}
+  </select>
 </mapper>

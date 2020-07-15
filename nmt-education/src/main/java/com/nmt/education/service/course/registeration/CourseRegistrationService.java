@@ -16,6 +16,7 @@ import com.nmt.education.service.course.CourseService;
 import com.nmt.education.service.course.registeration.summary.RegisterationSummaryService;
 import com.nmt.education.service.course.schedule.CourseScheduleService;
 import com.nmt.education.service.student.StudentService;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -195,7 +196,7 @@ public class CourseRegistrationService {
                                                CourseRegistrationPo courseRegistrationPo) {
         Assert.isTrue(!CollectionUtils.isEmpty(expenseDetailList), "报名时不存在费用信息");
         List<RegistrationExpenseDetailPo> addList = new ArrayList<>(expenseDetailList.size());
-        List<RegistrationExpenseDetailFlow> flowList = new ArrayList<>(expenseDetailList.size());
+        List<RegistrationExpenseDetailFlowPo> flowList = new ArrayList<>(expenseDetailList.size());
         //处理修改记录
         Map<Long, RegisterExpenseDetailReqDto> reqDtoMap =
                 expenseDetailList.stream().filter(e -> Enums.EditFlag.修改.getCode().equals(e.getEditFlag()))
@@ -205,7 +206,7 @@ public class CourseRegistrationService {
         updateList.stream().forEach(e -> {
             RegisterExpenseDetailReqDto dto = reqDtoMap.get(e.getId());
             //先生成流水
-            RegistrationExpenseDetailFlow flow = generateFlow(updator, e, ExpenseDetailFlowTypeEnum.编辑, dto);
+            RegistrationExpenseDetailFlowPo flow = generateFlow(updator, e, ExpenseDetailFlowTypeEnum.编辑, dto);
             if (Objects.nonNull(flow)) {
                 //在编辑金额
                 e.setFeeType(dto.getFeeType());
@@ -248,14 +249,14 @@ public class CourseRegistrationService {
      * @version v1
      * @since 2020/7/5 0:14
      */
-    private RegistrationExpenseDetailFlow generateFlow(int updator, RegistrationExpenseDetailPo old, ExpenseDetailFlowTypeEnum type,
-                                                       RegisterExpenseDetailReqDto dto) {
+    private RegistrationExpenseDetailFlowPo generateFlow(int updator, RegistrationExpenseDetailPo old, ExpenseDetailFlowTypeEnum type,
+                                                         RegisterExpenseDetailReqDto dto) {
         BigDecimal delta = NumberUtil.String2Dec(dto.getAmount()).subtract(NumberUtil.String2Dec(old.getAmount()));
         if (BigDecimal.ZERO.compareTo(delta) >= 0) {
             log.warn("金额没有变化，不生成流水，old: [{}], dto:[{}]", old, dto);
             return null;
         }
-        RegistrationExpenseDetailFlow flow = new RegistrationExpenseDetailFlow();
+        RegistrationExpenseDetailFlowPo flow = new RegistrationExpenseDetailFlowPo();
         flow.setRegistrationId(old.getRegistrationId());
         flow.setRegisterExpenseDetailId(old.getId());
         flow.setFeeType(old.getFeeType());
@@ -286,8 +287,8 @@ public class CourseRegistrationService {
      * @version v1
      * @since 2020/7/5 0:11
      */
-    private RegistrationExpenseDetailFlow generateFlow(int updator, RegistrationExpenseDetailPo e, ExpenseDetailFlowTypeEnum type) {
-        RegistrationExpenseDetailFlow flow = new RegistrationExpenseDetailFlow();
+    private RegistrationExpenseDetailFlowPo generateFlow(int updator, RegistrationExpenseDetailPo e, ExpenseDetailFlowTypeEnum type) {
+        RegistrationExpenseDetailFlowPo flow = new RegistrationExpenseDetailFlowPo();
         flow.setRegistrationId(e.getRegistrationId());
         flow.setRegisterExpenseDetailId(e.getId());
         flow.setFeeType(e.getFeeType());
@@ -385,7 +386,7 @@ public class CourseRegistrationService {
             dto.setRegisterEndDate(DateUtil.parseCloseDate(dto.getRegisterEndDate()));
         }
         List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser);
-        Assert.isTrue(!CollectionUtils.isEmpty(campusList),"没有任何校区权限进行搜索");
+        Assert.isTrue(!CollectionUtils.isEmpty(campusList), "没有任何校区权限进行搜索");
         PageInfo<RegisterSummaryVo> pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> queryBySearchDto(dto
                 , campusList));
         return pageInfo;
@@ -459,12 +460,18 @@ public class CourseRegistrationService {
      * @version v1
      * @since 2020/6/13 16:08
      */
+    @SneakyThrows
     public CourseRegistrationVo registerDetail(Long id, Integer logInUser) {
         if (Objects.isNull(id)) {
             return null;
         }
         CourseRegistrationVo vo = this.courseRegistrationPoMapper.queryVoById(id);
         Assert.notNull(vo, "无法查询到报名记录，id:" + id);
+
+        Thread flowThread =
+                new Thread(() -> vo.setExpenseDetailFlowVoList(this.registrationExpenseDetailService.getExpenseDetailFlowVo(vo.getId())));
+        flowThread.start();
+
         vo.setCourse(courseService.selectByPrimaryKey(vo.getCourseId()));
         vo.setStudent(studentService.detail(vo.getStudentId()));
         Map<Long, RegisterationSummaryPo> registerationSummaryMap =
@@ -485,6 +492,7 @@ public class CourseRegistrationService {
             );
         }
         vo.setRegisterExpenseDetail(registrationExpenseDetailService.queryRegisterId(id));
+        flowThread.join();
         return vo;
     }
 
@@ -655,7 +663,7 @@ public class CourseRegistrationService {
                 .multiply(NumberUtil.String2Dec(payList.get(0).getDiscount())).multiply(BigDecimal.valueOf(itemList.size()));
         Assert.isTrue(applyRefund.compareTo(maxCanRefund) <= 0, "退费金额不可大于最大可退费金额，" + maxCanRefund);
         //生成退费记录
-        RegistrationExpenseDetailFlow flow = new RegistrationExpenseDetailFlow();
+        RegistrationExpenseDetailFlowPo flow = new RegistrationExpenseDetailFlowPo();
         flow.setRegistrationId(ref.getRegistrationId());
         flow.setRegisterExpenseDetailId(ref.getId());
         flow.setFeeType(ref.getFeeType());

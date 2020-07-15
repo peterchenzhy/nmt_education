@@ -12,11 +12,11 @@ import java.util.Objects;
  * @Version 1.0
  */
 public enum ExpenseDetailFlowTypeEnum {
-    新增记录(1, "新增记录"),
-    编辑(2, "编辑"),
-    消耗(3, "消耗"),
-    还原(4, "还原"),
-    退费(5, "退费"),
+    新增记录(1, "新增记录", "支付"),
+    编辑(2, "编辑", "支付"),
+    消耗(3, "消耗", "消耗"),
+    还原(4, "还原", "还原"),
+    退费(5, "退费", "退费"),
     ;
 
 
@@ -31,6 +31,12 @@ public enum ExpenseDetailFlowTypeEnum {
      */
     @Getter
     private String description;
+
+    /**
+     * 显示值
+     */
+    @Getter
+    private String display;
 
     /**
      * 根据code生成枚举
@@ -50,9 +56,19 @@ public enum ExpenseDetailFlowTypeEnum {
         throw new IllegalArgumentException("StatusEnum code 参数非法，找不到对应的枚举,code:" + code);
     }
 
-    ExpenseDetailFlowTypeEnum(int code, String description) {
+    public static String code2Display(Integer code){
+        for (ExpenseDetailFlowTypeEnum e : ExpenseDetailFlowTypeEnum.values()) {
+            if (Objects.equals(code, e.getCode())) {
+                return e.getDisplay();
+            }
+        }
+        return "";
+    }
+
+    ExpenseDetailFlowTypeEnum(int code, String description, String display) {
         this.code = code;
         this.description = description;
+        this.display = display;
     }
 }
 

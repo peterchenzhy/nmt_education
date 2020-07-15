@@ -194,7 +194,7 @@ public class CourseScheduleService {
         }
         CourseSchedulePo po = selectByPrimaryKey(list.get(0).getCourseScheduleId());
         Assert.notNull(po, "课表信息为空，id：" + list.get(0).getCourseScheduleId());
-        List<RegistrationExpenseDetailFlow> flowList = new ArrayList<>(list.size());
+        List<RegistrationExpenseDetailFlowPo> flowList = new ArrayList<>(list.size());
         List<CourseRegistrationPo> courseRegistrationPoList = new ArrayList<>(list.size());
         List<CourseSignInItem> needUpdate = new ArrayList<>(list.size());
         //消耗记录
@@ -272,10 +272,10 @@ public class CourseScheduleService {
      * @version v1
      * @since 2020/6/13 14:45
      */
-    private RegistrationExpenseDetailFlow generateFlow(Integer operator, Long courseRegistrationId, Long courseRegistrationExpenseId,
-                                                       BigDecimal perAmount,
-                                                       ExpenseDetailFlowTypeEnum type) {
-        RegistrationExpenseDetailFlow flow = new RegistrationExpenseDetailFlow();
+    private RegistrationExpenseDetailFlowPo generateFlow(Integer operator, Long courseRegistrationId, Long courseRegistrationExpenseId,
+                                                         BigDecimal perAmount,
+                                                         ExpenseDetailFlowTypeEnum type) {
+        RegistrationExpenseDetailFlowPo flow = new RegistrationExpenseDetailFlowPo();
         flow.setRegistrationId(courseRegistrationId);
         flow.setFeeType(Consts.FEE_TYPE_普通单节费用);
         flow.setType(type.getCode());

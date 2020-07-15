@@ -1,18 +1,19 @@
 package com.nmt.education.service.course.registeration;
 
 import com.google.common.base.Strings;
+import com.nmt.education.commmons.ExpenseDetailFlowTypeEnum;
 import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.pojo.dto.req.RegisterExpenseDetailReqDto;
 import com.nmt.education.pojo.po.CourseRegistrationPo;
-import com.nmt.education.pojo.po.RegistrationExpenseDetailFlow;
+import com.nmt.education.pojo.po.RegistrationExpenseDetailFlowPo;
 import com.nmt.education.pojo.po.RegistrationExpenseDetailPo;
+import com.nmt.education.pojo.vo.ExpenseDetailFlowVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class RegistrationExpenseDetailService {
@@ -23,7 +24,26 @@ public class RegistrationExpenseDetailService {
     private RegistrationExpenseDetailFlowMapper registrationExpenseDetailFlowMapper;
 
 
-    public void batchInsertFlow(List<RegistrationExpenseDetailFlow> list) {
+    public List<ExpenseDetailFlowVo> getExpenseDetailFlowVo(Long registerId ){
+        if(Objects.isNull(registerId)){
+            return Collections.EMPTY_LIST;
+        }
+        List<RegistrationExpenseDetailFlowPo> poList = registrationExpenseDetailFlowMapper.queryByRegisterId(registerId);
+        if(CollectionUtils.isEmpty(poList)){
+            return Collections.EMPTY_LIST;
+        }
+        List<ExpenseDetailFlowVo> resultList= new ArrayList<>(poList.size());
+        poList.stream().forEach(po->{
+            ExpenseDetailFlowVo vo = new ExpenseDetailFlowVo();
+            BeanUtils.copyProperties(po,vo);
+            vo.setType(ExpenseDetailFlowTypeEnum.code2Display(po.getType()));
+            resultList.add(vo);
+        });
+        return resultList;
+    }
+
+
+    public void batchInsertFlow(List<RegistrationExpenseDetailFlowPo> list) {
         if (CollectionUtils.isEmpty(list)) {
             return;
         }

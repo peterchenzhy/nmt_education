@@ -30,4 +30,9 @@ public class CourseRegistrationVo extends CourseRegistrationPo {
 
     @ApiModelProperty(value = "缴费信息")
     private List<RegistrationExpenseDetailPo> registerExpenseDetail =Collections.emptyList();
+
+
+    @ApiModelProperty(value = "支付流水")
+    private List<ExpenseDetailFlowVo>  expenseDetailFlowVoList =Collections.emptyList();
+
 }
