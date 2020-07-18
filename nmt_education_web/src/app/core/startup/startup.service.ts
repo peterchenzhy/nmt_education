@@ -62,7 +62,7 @@ export class StartupService {
   }
 
   private viaMock(resolve: any, reject: any) {
-     const tokenData = this.tokenService.get();
+    const tokenData = this.tokenService.get();
     // if (!tokenData.token) {
     //   this.injector.get(Router).navigateByUrl('/passport/login');
     //   resolve({});
@@ -158,7 +158,10 @@ export class StartupService {
       // this.viaHttp(resolve, reject);
       // mock：请勿在生产环境中这么使用，viaMock 单纯只是为了模拟一些数据使脚手架一开始能正常运行
       this.viaMock(resolve, reject);
-      this.globalService.loadSystemEnums();
+      const tokenData = this.tokenService.get();
+      if (tokenData.token) {
+        this.globalService.loadSystemEnums();
+      }
     });
   }
 }

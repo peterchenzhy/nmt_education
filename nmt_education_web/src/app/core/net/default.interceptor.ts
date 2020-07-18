@@ -71,6 +71,10 @@ export class DefaultInterceptor implements HttpInterceptor {
     if (ev.status > 0) {
       this.injector.get(_HttpClient).end();
     }
+    let user = this.tokenService.get();
+    let newToken = ev.headers.get("token");
+    user.token = newToken;
+    this.tokenService.set(user);
     this.checkStatus(ev);
     // 业务处理：一些通用操作
     switch (ev.status) {

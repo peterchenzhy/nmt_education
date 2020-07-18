@@ -261,7 +261,7 @@ export class OrderRefundComponent implements OnInit {
         { title: '数量', index: 'count' },
         { title: '支付金额', index: 'amount' },
         { title: '支付方式', index: 'payment', render: "payment" },
-        { title: '支付状态', index: 'feeStatus', render: "feeStatus" },
+        { title: '支付状态', index: 'type' },
         { title: '支付时间', index: 'operateTime', type: 'date', dateFormat: 'YYYY-MM-DD HH:mm' },
         { title: '备注', index: 'remark' }
     ];
