@@ -3,6 +3,7 @@ import { Student } from './student.model';
 import { SysEnum } from './system.model';
 import { PAY_STATUS, ORDER_STATUS, EDIT_FLAG, ORDER_TYPE, SIGNIN, FeeDirection } from '@shared/constant/system.constant';
 
+
 export interface Order {
     id?: number;
     registrationStatus?: ORDER_STATUS;
@@ -26,7 +27,23 @@ export interface Order {
     creator?: number;
     operateTime?: Date;
     operator?: number;
+    expenseDetailFlowVoList?: ExpenseDetailFlowVo[];
 }
+export interface ExpenseDetailFlowVo {
+     id?: number;
+     registrationId?: number;
+     registerExpenseDetailId?: number;
+     feeType?:number;
+     type?: string;
+     perAmount?: string;
+     amount?: string;
+     count?: number ;
+     payment?:number;
+     discount?:string;
+     remark?:string;
+     operateTime?:Date ;
+}
+
 export interface RegisterSummary {
     balanceAmount?: string;
     courseId?: number;

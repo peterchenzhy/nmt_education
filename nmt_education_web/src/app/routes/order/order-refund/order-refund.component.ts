@@ -33,6 +33,7 @@ export class OrderRefundComponent implements OnInit {
         course: { teacher: {} },
         courseScheduleList: [],
         registerExpenseDetail: [],
+        expenseDetailFlowVoList: [],
         editFlag: EDIT_FLAG.NEW
     };
     orderRefund: OrderRefund = {
