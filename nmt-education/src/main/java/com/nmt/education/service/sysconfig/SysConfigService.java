@@ -49,11 +49,6 @@ public class SysConfigService {
     }
 
 
-    public int updateByPrimaryKey(SysConfigPo record) {
-        return sysConfigPoMapper.updateByPrimaryKey(record);
-    }
-
-
     public int updateBatch(List<SysConfigPo> list) {
         return sysConfigPoMapper.updateBatch(list);
     }
