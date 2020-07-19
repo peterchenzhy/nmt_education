@@ -83,7 +83,7 @@
             </nz-tab>
             <nz-tab nzTitle="支付流水">
                 <nz-card [nzBordered]="false">
-                    <st #payst [columns]="payDetailsColumns" [data]="order.registerExpenseDetail">
+                    <st #payst [columns]="payDetailsColumns" [data]="order.expenseDetailFlowVoList">
                         <ng-template st-row="payment" let-i>
                             {{appCtx.globalService.getPayMethodLabel(i.payment)}}
                         </ng-template>
