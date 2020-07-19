@@ -37,6 +37,7 @@ public class RegistrationExpenseDetailService {
             ExpenseDetailFlowVo vo = new ExpenseDetailFlowVo();
             BeanUtils.copyProperties(po,vo);
             vo.setType(ExpenseDetailFlowTypeEnum.code2Display(po.getType()));
+            vo.setOperateTime(po.getCreateTime());
             resultList.add(vo);
         });
         return resultList;

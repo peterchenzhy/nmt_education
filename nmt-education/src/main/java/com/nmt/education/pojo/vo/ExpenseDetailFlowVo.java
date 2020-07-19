@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.Date;
+
 
 @Getter
 @Setter
@@ -77,6 +79,12 @@ public class ExpenseDetailFlowVo  {
      */
     @ApiModelProperty(value = "备注")
     private String remark;
+
+    /**
+     * 支付时间
+     */
+    @ApiModelProperty(value = "支付时间")
+    private Date operateTime;
 
 
 }
