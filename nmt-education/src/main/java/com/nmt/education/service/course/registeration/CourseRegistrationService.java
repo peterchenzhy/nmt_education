@@ -319,6 +319,8 @@ public class CourseRegistrationService {
      * @since 2020/5/5 15:45
      */
     public PageInfo<CourseRegistrationListVo> registerSearch(RegisterSearchReqDto dto, Integer logInUser) {
+        dto.setSignInDateStart(Objects.nonNull(dto.getSignInDateStart()) ? DateUtil.parseOpenDate(dto.getSignInDateStart()) : null);
+        dto.setSignInDateEnd(Objects.nonNull(dto.getSignInDateEnd()) ? DateUtil.parseCloseDate(dto.getSignInDateEnd()) : null);
         return PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.courseRegistrationPoMapper.queryByDto(dto));
     }
 

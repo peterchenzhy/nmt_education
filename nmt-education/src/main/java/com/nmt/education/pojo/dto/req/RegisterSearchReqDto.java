@@ -1,9 +1,12 @@
 package com.nmt.education.pojo.dto.req;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.Date;
 
 /**
  * @Author: PeterChen
@@ -37,6 +40,20 @@ public class RegisterSearchReqDto extends BaseSearchPageReqDto {
      */
     @ApiModelProperty(value = "年级")
     private Integer grade;
+
+    /**
+     * 报名日期--开始
+     */
+    @ApiModelProperty(value = "报名日期--开始")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    private Date signInDateStart;
+
+    /**
+     * 报名日期--结束
+     */
+    @ApiModelProperty(value = "报名日期--结束")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    private Date signInDateEnd;
 
 
 }

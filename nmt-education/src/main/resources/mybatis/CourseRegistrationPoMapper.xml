@@ -72,6 +72,15 @@
         <if test="dto.studentId != null">
             and cr.student_id =#{dto.studentId}
         </if>
+        <if test="dto.signInDateStart != null">
+            <![CDATA[
+            and cr.create_time >= #{dto.signInDateStart}
+        ]]>
+        </if>
+        <if test="dto.signInDateEnd != null">
+            <![CDATA[
+            and cr.create_time <= #{dto.signInDateEnd}     ]]>
+        </if>
         order by cr.id desc
     </select>
 
