@@ -30,8 +30,11 @@
       <div nz-col nzMd="8" nzSm="24">
         <nz-form-item>
           <nz-form-label nzFor="signInDate">报名日期</nz-form-label>
-          <nz-form-control [formGroup]="signInDate">
-            <nz-range-picker formControlName="signInDate"></nz-range-picker>
+<!--          <nz-form-control [formGroup]="signInDate">-->
+<!--            <nz-range-picker formControlName="signInDate"></nz-range-picker>-->
+          <nz-form-control>
+            <nz-range-picker [ngModel]="searchDate" name="searchDate" (ngModelChange)="onDateRangeChanged($event)">
+            </nz-range-picker>
           </nz-form-control>
         </nz-form-item>
       </div>

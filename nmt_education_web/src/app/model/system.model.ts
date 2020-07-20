@@ -68,6 +68,8 @@ export interface RegisterQueryParam {
     studentId?: number;
     courseSubject?: number;
     courseType?: number;
+  signInDateStart?: string;
+  signInDateEnd?: string;
     grade?: number;
     pageNo?: number;
     pageSize?: number;
