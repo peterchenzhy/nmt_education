@@ -55,5 +55,11 @@ public class RegisterSearchReqDto extends BaseSearchPageReqDto {
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date signInDateEnd;
 
+    /**
+     * 订单编号
+     */
+    @ApiModelProperty(value = "订单编号")
+    private String orderCode;
+
 
 }

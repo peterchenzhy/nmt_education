@@ -81,6 +81,9 @@
             <![CDATA[
             and cr.create_time <= #{dto.signInDateEnd}     ]]>
         </if>
+        <if test="dto.orderCode != null and dto.orderCode != ''">
+            and cr.registration_number = #{dto.orderCode}
+        </if>
         order by cr.id desc
     </select>
 

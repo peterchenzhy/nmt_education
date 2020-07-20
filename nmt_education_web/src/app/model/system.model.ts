@@ -73,6 +73,7 @@ export interface RegisterQueryParam {
     grade?: number;
     pageNo?: number;
     pageSize?: number;
+    orderCode?: string;
 }
 
 export interface ResponseData {

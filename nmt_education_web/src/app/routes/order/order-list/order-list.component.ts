@@ -143,6 +143,7 @@ export class OrderListComponent implements OnInit {
       this.queryParam.signInDateEnd = null;
       this.queryParam.pageNo = 1;
       this.queryParam.pageSize=10;
+      this.queryParam.orderCode=null;
       setTimeout(() => this.getData());
     }
 
