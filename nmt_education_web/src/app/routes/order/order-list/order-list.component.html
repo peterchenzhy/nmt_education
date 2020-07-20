@@ -12,7 +12,7 @@
       </div>
       <div nz-col nzMd="8" nzSm="24">
         <nz-form-item>
-          <nz-form-label nzFor="studentId">学生编号</nz-form-label>
+          <nz-form-label nzFor="studentId">学生</nz-form-label>
           <nz-select [(ngModel)]="queryParam.studentId" name="studentId" class="enroll-selector" nzShowSearch nzServerSearch
             [nzShowArrow]="false" [nzFilterOption]="nzFilterOption" [nzDropdownMatchSelectWidth]="false"
             (nzOnSearch)="searchStudent($event)">
