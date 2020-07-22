@@ -8,6 +8,7 @@ import com.nmt.education.pojo.po.CourseRegistrationPo;
 import com.nmt.education.pojo.po.RegistrationExpenseDetailFlowPo;
 import com.nmt.education.pojo.po.RegistrationExpenseDetailPo;
 import com.nmt.education.pojo.vo.ExpenseDetailFlowVo;
+import com.nmt.education.pojo.vo.FeeStatisticsVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -24,18 +25,18 @@ public class RegistrationExpenseDetailService {
     private RegistrationExpenseDetailFlowMapper registrationExpenseDetailFlowMapper;
 
 
-    public List<ExpenseDetailFlowVo> getExpenseDetailFlowVo(Long registerId ){
-        if(Objects.isNull(registerId)){
+    public List<ExpenseDetailFlowVo> getExpenseDetailFlowVo(Long registerId) {
+        if (Objects.isNull(registerId)) {
             return Collections.EMPTY_LIST;
         }
         List<RegistrationExpenseDetailFlowPo> poList = registrationExpenseDetailFlowMapper.queryByRegisterId(registerId);
-        if(CollectionUtils.isEmpty(poList)){
+        if (CollectionUtils.isEmpty(poList)) {
             return Collections.EMPTY_LIST;
         }
-        List<ExpenseDetailFlowVo> resultList= new ArrayList<>(poList.size());
-        poList.stream().forEach(po->{
+        List<ExpenseDetailFlowVo> resultList = new ArrayList<>(poList.size());
+        poList.stream().forEach(po -> {
             ExpenseDetailFlowVo vo = new ExpenseDetailFlowVo();
-            BeanUtils.copyProperties(po,vo);
+            BeanUtils.copyProperties(po, vo);
             vo.setType(ExpenseDetailFlowTypeEnum.code2Display(po.getType()));
             vo.setOperateTime(po.getCreateTime());
             resultList.add(vo);
@@ -50,7 +51,6 @@ public class RegistrationExpenseDetailService {
         }
         registrationExpenseDetailFlowMapper.batchInsert(list);
     }
-
 
 
     public RegistrationExpenseDetailPo selectByPrimaryKey(Long id) {
@@ -107,5 +107,10 @@ public class RegistrationExpenseDetailService {
             return Collections.emptyList();
         }
         return this.registrationExpenseDetailPoMapper.selectByIds(ids);
+    }
+
+    //费用统计页面
+    public List<FeeStatisticsVo> feeStatistics(Date startDate, Date endDate, List<Integer> canpusList, List<Integer> type) {
+        return registrationExpenseDetailFlowMapper.feeStatistics(startDate, endDate, canpusList, type);
     }
 }

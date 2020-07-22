@@ -2,6 +2,8 @@ package com.nmt.education.commmons;
 
 import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -56,13 +58,32 @@ public enum ExpenseDetailFlowTypeEnum {
         throw new IllegalArgumentException("StatusEnum code 参数非法，找不到对应的枚举,code:" + code);
     }
 
-    public static String code2Display(Integer code){
+    public static String code2Display(Integer code) {
         for (ExpenseDetailFlowTypeEnum e : ExpenseDetailFlowTypeEnum.values()) {
             if (Objects.equals(code, e.getCode())) {
                 return e.getDisplay();
             }
         }
         return "";
+    }
+
+    public static List<Integer> feeStatistics2FlowType(Integer code) {
+        List<Integer> result = new ArrayList<>();
+        if (code != null) {
+            //支付
+            if (code == 1) {
+                result.add(新增记录.code);
+                result.add(编辑.code);
+            } else {
+                result.add(退费.code);
+            }
+
+        }else{
+            result.add(新增记录.code);
+            result.add(编辑.code);
+            result.add(退费.code);
+        }
+        return result;
     }
 
     ExpenseDetailFlowTypeEnum(int code, String description, String display) {

@@ -317,4 +317,41 @@
   <select id="queryByRegisterId" resultMap="BaseResultMap">
     select * from registration_expense_detail_flow where status = 1 and registration_id = #{registerId}
   </select>
+  <select id="feeStatistics" resultType="com.nmt.education.pojo.vo.FeeStatisticsVo">
+    select cr.registration_number as registrationNumber , cr.course_id as courseId ,cr.student_id as studentId
+    , c.name as courseName ,s.name as studentName ,flow.create_time as feeTime,flow.amount as amount ,flow.type as feeFlowType
+    from registration_expense_detail_flow flow
+    inner join course_registration cr on flow.registration_id = cr.id and cr.status = 1
+    inner join course c on cr.course_id = c.id and c.status = 1
+    and c.campus in
+    <if test="campusList != null and campusList.size() != 0">
+      <foreach collection="campusList" item="campus" open="(" close=")" separator=",">
+        #{campus}
+      </foreach>
+    </if>
+    <if test="campusList == null or campusList.size() == 0">
+      (-1)
+    </if>
+    inner join student s on cr.student_id = s.id
+    where flow.status = 1
+    and type in
+    <if test="typeList != null and typeList.size() != 0">
+      <foreach collection="typeList" item="type" open="(" close=")" separator=",">
+        #{type}
+      </foreach>
+    </if>
+    <if test="typeList == null or typeList.size() == 0">
+      (-1)
+    </if>
+    <if test="startDate != null">
+      <![CDATA[
+            and flow.create_time >= #{startDate}
+        ]]>
+    </if>
+    <if test="endDate != null">
+      <![CDATA[
+            and flow.create_time <= #{endDate}     ]]>
+    </if>
+    order by cr.id desc
+  </select>
 </mapper>

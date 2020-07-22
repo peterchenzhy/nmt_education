@@ -319,9 +319,17 @@ public class CourseRegistrationService {
      * @since 2020/5/5 15:45
      */
     public PageInfo<CourseRegistrationListVo> registerSearch(RegisterSearchReqDto dto, Integer logInUser) {
+        List<Integer> queryList = new ArrayList<>();
+        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser);
+        if(dto.getCampus()!=null){
+            Assert.isTrue(campusList.contains(dto.getCampus()),"该校区没有权限");
+            queryList.add(dto.getCampus());
+        }else{
+            queryList.addAll(campusList);
+        }
         dto.setSignInDateStart(Objects.nonNull(dto.getSignInDateStart()) ? DateUtil.parseOpenDate(dto.getSignInDateStart()) : null);
         dto.setSignInDateEnd(Objects.nonNull(dto.getSignInDateEnd()) ? DateUtil.parseCloseDate(dto.getSignInDateEnd()) : null);
-        return PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.courseRegistrationPoMapper.queryByDto(dto));
+        return PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.courseRegistrationPoMapper.queryByDto(dto,queryList));
     }
 
     /**

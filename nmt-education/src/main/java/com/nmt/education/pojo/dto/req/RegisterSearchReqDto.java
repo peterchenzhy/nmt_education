@@ -61,5 +61,11 @@ public class RegisterSearchReqDto extends BaseSearchPageReqDto {
     @ApiModelProperty(value = "订单编号")
     private String orderCode;
 
+    /**
+     * 校区
+     */
+    @ApiModelProperty(value = "校区")
+    private Integer campus;
+
 
 }

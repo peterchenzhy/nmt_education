@@ -28,7 +28,7 @@ interface CourseRegistrationPoMapper {
 
     int insertOrUpdateSelective(CourseRegistrationPo record);
 
-    List<CourseRegistrationPo> queryByDto(@Param("dto") RegisterSearchReqDto dto);
+    List<CourseRegistrationPo> queryByDto(@Param("dto") RegisterSearchReqDto dto, @Param("campusList") List<Integer> campusList);
 
     CourseRegistrationVo queryVoById(@Param("id") Long id);
 

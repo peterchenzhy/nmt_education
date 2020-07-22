@@ -60,6 +60,15 @@
         inner join course c on c.id= cr.course_id
         inner join student s on s.id =cr.student_id
         where cr.status = 1
+        and c.campus in
+        <if test="campusList != null and campusList.size() != 0">
+            <foreach collection="campusList" item="campus" open="(" close=")" separator=",">
+                #{campus}
+            </foreach>
+        </if>
+        <if test="campusList == null or campusList.size() == 0">
+            (-1)
+        </if>
         <if test="dto.grade != null">
             and c.grade = #{dto.grade}
         </if>
