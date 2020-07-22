@@ -352,6 +352,6 @@
       <![CDATA[
             and flow.create_time <= #{endDate}     ]]>
     </if>
-    order by cr.id desc
+    order by flow.id desc
   </select>
 </mapper>
