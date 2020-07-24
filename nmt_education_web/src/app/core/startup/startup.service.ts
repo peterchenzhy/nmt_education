@@ -134,6 +134,11 @@ export class StartupService {
                 text: "科目统计",
                 link: '/report/dailysession',
                 icon: { type: 'icon', value: 'appstore' }
+              },
+              {
+                text: "费用统计",
+                link: '/report/feestatistics',
+                icon: { type: 'icon', value: 'appstore' }
               }]
           },
           {

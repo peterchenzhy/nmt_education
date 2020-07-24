@@ -64,12 +64,22 @@ export interface RegisterSummaryQueryParam {
     pageNo?: number;
     pageSize?: number;
 }
+
+export interface FeeStatisticsQueryParam {
+    campus?: number,
+    feeFlowType?: number,
+    startDate?: string;
+    endDate?: string;
+    pageNo?: number;
+    pageSize?: number;
+}
+
 export interface RegisterQueryParam {
     studentId?: number;
     courseSubject?: number;
     courseType?: number;
-  signInDateStart?: string;
-  signInDateEnd?: string;
+    signInDateStart?: string;
+    signInDateEnd?: string;
     grade?: number;
     pageNo?: number;
     pageSize?: number;

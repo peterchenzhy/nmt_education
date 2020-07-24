@@ -11,7 +11,7 @@ import { DatePipe } from '@angular/common';
 import { SIGNIN } from '@shared/constant/system.constant';
 
 @Component({
-  selector: 'app-daily-session-report',
+  selector: 'daily-session-report',
   templateUrl: './daily-session-report.component.html',
 })
 export class DailySessionReportComponent implements OnInit {
