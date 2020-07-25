@@ -6,6 +6,7 @@ import { StudentService } from './student.service';
 import { TeacherService } from './teacher.service';
 import { CourseService } from './course.service';
 import { AppContextService } from './appcontext.service';
+import { ReportService } from './report.service';
 
 const COMPONENTS = [
 
@@ -24,6 +25,7 @@ const COMPONENTS_NOROUNT = [];
         StudentService,
         TeacherService,
         CourseService,
+        ReportService,
         HttpService],
     entryComponents: COMPONENTS_NOROUNT
 })
