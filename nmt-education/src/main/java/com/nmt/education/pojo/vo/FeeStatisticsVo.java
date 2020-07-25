@@ -32,12 +32,14 @@ public class FeeStatisticsVo {
     private String amount;
 
     /**
-     *  @see com.nmt.education.commmons.ExpenseDetailFlowTypeEnum
+     * @see com.nmt.education.commmons.ExpenseDetailFlowTypeEnum
      */
-    @ApiModelProperty(value = "费用类型 1：付费 2：退费")
+    @ApiModelProperty(value = "费用类型 1：缴费 2：退费")
     private Integer feeFlowType;
 
     @ApiModelProperty(value = "费用类型")
     private String feeFlowTypeStr;
 
+    @ApiModelProperty(value = "所在校区")
+    private int campus;
 }

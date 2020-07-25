@@ -50,6 +50,8 @@
 <nz-card [nzBordered]="false">
   <st #st [columns]="columns" [data]="data.list" [total]="data.total" [ps]="queryParam.pageSize"
   [pi]="queryParam.pageNo" [page]="pager" [loading]="loading" (change)="stChange($event)">
-    
+    <ng-template st-row="courseCampus" let-i>
+      {{appCtx.globalService.getCampusLabel(i.campus)}}
+    </ng-template>
   </st>
 </nz-card>

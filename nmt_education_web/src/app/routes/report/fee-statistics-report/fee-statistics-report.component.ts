@@ -34,6 +34,7 @@ export class FeeStatisticsReportComponent implements OnInit {
   columns: STColumn[] = [
     { title: '订单编号', index: 'registrationNumber' },
     { title: '课程名称', index: 'courseName' },
+    { title: '校区', index: 'campus', render: "courseCampus" },
     { title: '学生姓名', index: 'studentName' },
     { title: '支付金额', index: 'amount' },
     { title: '费用状态', index: 'feeFlowTypeStr' },
