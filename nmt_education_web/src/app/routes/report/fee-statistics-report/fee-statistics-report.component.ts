@@ -123,7 +123,8 @@ export class FeeStatisticsReportComponent implements OnInit {
         const link = document.createElement('a');
         const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
         link.setAttribute('href', window.URL.createObjectURL(blob));
-        link.setAttribute('download', '费用统计报表.xlsx');
+        var date = new Date();
+        link.setAttribute('download', '费用统计报表'+date.toLocaleDateString()+'.xlsx');
         link.style.visibility = 'hidden';
         document.body.appendChild(link);
         link.click();

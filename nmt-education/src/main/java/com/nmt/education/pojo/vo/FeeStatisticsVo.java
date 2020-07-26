@@ -2,7 +2,10 @@ package com.nmt.education.pojo.vo;
 
 import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.converters.bigdecimal.BigDecimalStringConverter;
+import com.alibaba.excel.converters.string.StringNumberConverter;
 import io.swagger.annotations.ApiModelProperty;
+import javafx.util.converter.NumberStringConverter;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -37,7 +40,7 @@ public class FeeStatisticsVo {
     private Date feeTime;
 
     @ApiModelProperty(value = "费用金额")
-    @ExcelProperty(value = "费用金额",index = 4)
+    @ExcelProperty(value = "费用金额",index = 4,converter = StringNumberConverter.class )
     private String amount;
 
     /**
