@@ -28,4 +28,5 @@ public interface Consts {
 
     Integer FEE_TYPE_普通单节费用 = 1;
 
+    int BATCH_100 = 100;
 }

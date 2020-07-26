@@ -113,4 +113,21 @@ export class FeeStatisticsReportComponent implements OnInit {
     this.queryParam.endDate = this.datePipe.transform(result[1], 'yyyy-MM-dd');
   }
 
+  export() {
+    this.loading = true;
+    this.appCtx.reportService.exportFeeStatistics(this.queryParam)
+      .pipe(
+        tap(() => (this.loading = false)),
+      )
+      .subscribe(((data) => {
+        const link = document.createElement('a');
+        const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
+        link.setAttribute('href', window.URL.createObjectURL(blob));
+        link.setAttribute('download', '费用统计报表.xlsx');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }));
+  }
 }
