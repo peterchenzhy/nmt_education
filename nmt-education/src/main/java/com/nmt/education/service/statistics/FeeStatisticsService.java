@@ -3,6 +3,7 @@ package com.nmt.education.service.statistics;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.Consts;
+import com.nmt.education.commmons.Enums;
 import com.nmt.education.commmons.ExpenseDetailFlowTypeEnum;
 import com.nmt.education.commmons.SysConfigEnum;
 import com.nmt.education.commmons.utils.DateUtil;
@@ -49,7 +50,10 @@ public class FeeStatisticsService {
         PageInfo<FeeStatisticsVo> pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() ->
                 registrationExpenseDetailService.feeStatistics(dto.getStartDate(), dto.getEndDate(), campusList,
                         ExpenseDetailFlowTypeEnum.feeStatistics2FlowType(dto.getFeeFlowType())));
-        pageInfo.getList().stream().forEach(e -> e.setFeeFlowTypeStr(ExpenseDetailFlowTypeEnum.codeOf(e.getFeeFlowType()).getDisplay()));
+        pageInfo.getList().stream().forEach(e -> {
+            e.setFeeFlowTypeStr(ExpenseDetailFlowTypeEnum.codeOf(e.getFeeFlowType()).getDisplay());
+            e.setPaymentStr(Enums.PaymentType.codeOf(e.getPayment()).getDesc());
+        });
         return pageInfo;
     }
 
@@ -92,6 +96,7 @@ public class FeeStatisticsService {
         pageInfo.getList().stream().forEach(e -> {
                     e.setFeeFlowTypeStr(ExpenseDetailFlowTypeEnum.codeOf(e.getFeeFlowType()).getDisplay());
                     e.setCampusStr(sysConfigService.queryByTypeValue(SysConfigEnum.校区.getCode(), e.getCampus()).getDescription());
+                    e.setPaymentStr(Enums.PaymentType.codeOf(e.getPayment()).getDesc());
                 }
         );
         return pageInfo.getList();

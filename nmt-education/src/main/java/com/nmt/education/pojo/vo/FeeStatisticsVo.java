@@ -54,11 +54,19 @@ public class FeeStatisticsVo {
     @ExcelProperty(value = "费用类型",index = 5)
     private String feeFlowTypeStr;
 
+    @ApiModelProperty(value = "支付方式--中文")
+    @ExcelProperty(value = "支付方式",index = 6)
+    private String paymentStr;
+
+    @ApiModelProperty(value = "支付方式")
+    @ExcelIgnore
+    private Integer payment;
+
     @ApiModelProperty(value = "所在校区")
     @ExcelIgnore
     private int campus;
 
     @ApiModelProperty(value = "所在校区--中文")
-    @ExcelProperty(value = "所在校区",index = 6)
+    @ExcelProperty(value = "所在校区",index = 7)
     private String campusStr;
 }

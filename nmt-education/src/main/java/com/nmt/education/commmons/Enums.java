@@ -238,5 +238,14 @@ public interface Enums {
             this.code = code;
             this.icon = icon;
         }
+
+        public static PaymentType codeOf(Integer code) {
+            for (PaymentType e : PaymentType.values()) {
+                if (Objects.equals(code, e.getCode())) {
+                    return e;
+                }
+            }
+            throw new IllegalArgumentException("PaymentType code 参数非法，找不到对应的枚举,code:" + code);
+        }
     }
 }

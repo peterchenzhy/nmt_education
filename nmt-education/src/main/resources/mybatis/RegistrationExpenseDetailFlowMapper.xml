@@ -319,7 +319,7 @@
   </select>
   <select id="feeStatistics" resultType="com.nmt.education.pojo.vo.FeeStatisticsVo">
     select cr.registration_number as registrationNumber , cr.course_id as courseId ,cr.student_id as studentId
-    ,c.campus as campus
+    ,c.campus as campus ,flow.payment as payment
     , c.name as courseName ,s.name as studentName ,flow.create_time as feeTime,flow.amount as amount ,flow.type as feeFlowType
     from registration_expense_detail_flow flow
     inner join course_registration cr on flow.registration_id = cr.id and cr.status = 1

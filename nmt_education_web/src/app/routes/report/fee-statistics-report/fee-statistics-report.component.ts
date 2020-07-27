@@ -38,6 +38,7 @@ export class FeeStatisticsReportComponent implements OnInit {
     { title: '学生姓名', index: 'studentName' },
     { title: '支付金额', index: 'amount' },
     { title: '费用状态', index: 'feeFlowTypeStr' },
+    { title: '支付方式', index: 'paymentStr' },
     {
       title: '支付时间', index: 'feeTime', type: 'date',
       sort: {

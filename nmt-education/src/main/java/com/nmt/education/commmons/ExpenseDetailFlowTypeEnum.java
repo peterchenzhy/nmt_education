@@ -55,7 +55,7 @@ public enum ExpenseDetailFlowTypeEnum {
                 return e;
             }
         }
-        throw new IllegalArgumentException("StatusEnum code 参数非法，找不到对应的枚举,code:" + code);
+        throw new IllegalArgumentException("ExpenseDetailFlowTypeEnum code 参数非法，找不到对应的枚举,code:" + code);
     }
 
     public static String code2Display(Integer code) {
