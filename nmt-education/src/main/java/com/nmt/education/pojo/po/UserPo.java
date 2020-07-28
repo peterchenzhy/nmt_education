@@ -29,6 +29,12 @@ public class UserPo {
     */
     @ApiModelProperty(value="工号")
     private Integer code;
+    /**
+     * 工号
+     */
+    @ApiModelProperty(value="角色")
+    private Integer roleId;
+
 
     /**
     * 密码

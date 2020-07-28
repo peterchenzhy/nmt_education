@@ -7,6 +7,7 @@
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="code" jdbcType="INTEGER" property="code"/>
+        <result column="role_id" jdbcType="INTEGER" property="roleId"/>
         <result column="password" jdbcType="VARCHAR" property="password"/>
         <result column="tel" jdbcType="VARCHAR" property="tel"/>
         <result column="status" jdbcType="BOOLEAN" property="status"/>
@@ -18,7 +19,8 @@
     </resultMap>
     <sql id="Base_Column_List">
         <!--@mbg.generated-->
-        id, `name`, code, `password`, tel, `status`, remark, creator, create_time, `operator`,
+        id, `name`, code, `password`, tel, `status`, remark,role_id,
+        creator, create_time, `operator`,
         operate_time
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">

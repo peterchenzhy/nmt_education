@@ -1,5 +1,6 @@
 package com.nmt.education.pojo.vo;
 
+import com.nmt.education.commmons.RoleIdEnum;
 import com.nmt.education.pojo.po.UserPo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -13,16 +14,18 @@ public class UserVo {
     private String name;
     @ApiModelProperty(value = "logInUser")
     private Integer logInUser;
-    @ApiModelProperty(value = "roleId")
+    @ApiModelProperty(value = "角色id")
     private String roleId;
+    @ApiModelProperty(value = "角色名称")
+    private String roleIdStr;
     @ApiModelProperty(value = "token")
     private String token;
 
     public UserVo(UserPo userPo) {
         this.name = userPo.getName();
         this.logInUser = userPo.getCode();
-        // TODO: 2020/5/2  roleId 暂时用工号代替
-        this.roleId = String.valueOf(userPo.getCode());
+        this.roleId = String.valueOf(userPo.getRoleId());
+        this.roleIdStr = RoleIdEnum.code2Display(userPo.getRoleId());
     }
 
     public UserVo(){

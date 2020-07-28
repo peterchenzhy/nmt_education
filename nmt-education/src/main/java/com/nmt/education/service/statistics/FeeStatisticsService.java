@@ -43,7 +43,7 @@ public class FeeStatisticsService {
      * @since 2020/7/22 22:38
      */
     public PageInfo page(FeeStatisticsReqDto dto, Integer logInUser) {
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser);
+        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser,dto.getCampus());
         if (dto.getEndDate() != null) {
             dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
         }
