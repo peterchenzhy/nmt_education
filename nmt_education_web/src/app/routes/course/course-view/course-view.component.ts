@@ -14,7 +14,7 @@ import { AppContextService } from '@shared/service/appcontext.service';
 import { ResponseData } from 'src/app/model/system.model';
 import { toNumber } from 'ng-zorro-antd';
 import { tap } from 'rxjs/operators';
-import { STComponent, STColumn } from '@delon/abc';
+import { STComponent, STColumn, STColumnTag } from '@delon/abc';
 
 @Component({
   selector: 'app-course-view',
@@ -31,6 +31,7 @@ export class CourseViewComponent implements OnInit {
   sessionParam: any = { title: "新建课时" };
 
   constructor(
+    private datePipe: DatePipe,
     public appCtx: AppContextService,
     private fb: FormBuilder,
     private activaterRouter: ActivatedRoute,
@@ -56,6 +57,7 @@ export class CourseViewComponent implements OnInit {
   selectedTeacherList: Teacher[] = [];
   classroomList: any[] = [{ value: '101', label: '101' }, { value: '202', label: '202' }, { value: '303', label: '303' }];
   loading: boolean = false;
+  signReportLoading: boolean = false;
   ngOnInit() {
     this.form = this.fb.group({
       id: [0, []],
@@ -470,6 +472,11 @@ export class CourseViewComponent implements OnInit {
     if (!this.studentLoaded && event.index == 1) {
       this.getRegisteredStudents();
     }
+    else if (!this.signReportLoaded && event.index == 2) {
+      this.getSignReport();
+    }
+
+
   }
   studentLoaded = false;
   studentList = [];
@@ -501,4 +508,49 @@ export class CourseViewComponent implements OnInit {
         this.cdr.detectChanges();
       });
   }
+
+  signReportLoaded = false;
+  signReportList = [];
+  @ViewChild('stSign', { static: true })
+  stSign: STComponent;
+  signColumns: STColumn[] = [{ title: "姓名", index: "name", width: 100 }];
+  getSignReport() {
+    if (!this.course.id || !this.course.courseScheduleList
+      || this.course.courseScheduleList.length == 0) {
+      return;
+    }
+    this.course.courseScheduleList.forEach(session => {
+      let date = this.datePipe.transform(session.courseDatetime, 'MM/dd');
+      this.stSign.columns.push({ title: date, index: session.id.toString(), type: 'tag', tag: this.TAG });
+    });
+    this.stSign.resetColumns();
+    this.signReportList = this.mockData;
+    this.signReportLoaded = true;
+    // this.signReportLoading = true;
+    // this.appCtx.courseService.getRegisteredStudents(this.course.id)
+    //   .pipe(
+    //     tap(() => (this.signReportLoading = false)),
+    //   )
+    //   .subscribe((res: any) => {
+    //     res = res || [];
+    //     res.forEach((element, i) => {
+    //       element.index = i + 1;
+    //     });
+    //     this.studentList = res;
+    //     this.studentLoaded = true;
+    //     this.cdr.detectChanges();
+    //   });
+  }
+  TAG: STColumnTag = {
+    "-1": { text: '未报名', color: 'grey' },
+    0: { text: '未签到', color: '' },
+    1: { text: '已签到', color: 'green' },
+    2: { text: '请假', color: 'orange' },
+    3: { text: '已退费', color: 'red' }
+  };
+  mockData = [
+    { name: "abc", "126": 1, "127": 1, "128": 1, "129": 1, "130": 1, "131": 1, "132": 1, "133": 1, "134": 1, "135": 1, "136": 0, "137": 0, "138": 0, "139": 0, "140": 0, "141": 0, "142": 0, "143": 0 },
+    { name: "王尼玛", "126": 1, "127": 1, "128": 1, "129": 2, "130": 1, "131": 2, "132": 1, "133": 1, "134": 1, "135": 1, "136": 0, "137": 0, "138": 0, "139": 0, "140": 0, "141": 0, "142": 0, "143": 0 },
+    { name: "郑伊帆", "126": -1, "127": -1, "128": -1, "129": 1, "130": 1, "131": 1, "132": 2, "133": 1, "134": 1, "135": 1, "136": 0, "137": 0, "138": 0, "139": 0, "140": 0, "141": 0, "142": 3, "143": 3 }
+  ]
 }

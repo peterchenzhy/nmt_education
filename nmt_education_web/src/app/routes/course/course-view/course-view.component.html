@@ -300,6 +300,12 @@
           </st>
         </nz-card>
       </nz-tab>
+      <nz-tab nzTitle="签到记录">
+        <nz-card [nzBordered]="false">
+          <st #stSign [columns]="signColumns" [scroll]="{ x: 'auto' }" [data]="signReportList" [loading]="signReportLoading">
+          </st>
+        </nz-card>
+      </nz-tab>
     </nz-tabset>
 
     <ng-template #courseStatusTemplate>
