@@ -8,10 +8,7 @@ import com.nmt.education.pojo.dto.req.RefundReqDto;
 import com.nmt.education.pojo.dto.req.RegisterSearchReqDto;
 import com.nmt.education.pojo.dto.req.RegisterSummarySearchDto;
 import com.nmt.education.pojo.po.RegisterationSummaryPo;
-import com.nmt.education.pojo.vo.CourseRegistrationListVo;
-import com.nmt.education.pojo.vo.CourseRegistrationVo;
-import com.nmt.education.pojo.vo.RegisterSummaryVo;
-import com.nmt.education.pojo.vo.StudentVo;
+import com.nmt.education.pojo.vo.*;
 import com.nmt.education.service.course.registeration.CourseRegistrationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -97,10 +94,10 @@ public class CourseRegisterController {
     }
 
 
-    @ApiOperation(value = "register/student/{id}", notes = "课程报名情况--学生情况")
+    @ApiOperation(value = "register/student/{courseId}", notes = "课程报名情况--学生情况")
     @RequestMapping(value = "register/student/{courseId}", method = RequestMethod.GET)
-    public List<StudentVo> registerStudent(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
-                                           @PathVariable(name = "courseId") Long courseId) {
+    public List<SignRecordVo> registerStudent(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
+                                              @PathVariable(name = "courseId") Long courseId) {
         return courseRegistrationService.registerStudent(courseId);
     }
 

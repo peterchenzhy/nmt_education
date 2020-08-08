@@ -37,6 +37,16 @@
         where status = 1
         and course_registration_id =#{registerId}
     </select>
+    <select id="queryByRegisterIds"  resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from registeration_summary
+        where status = 1
+        and course_registration_id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
     <select id="queryByCourseScheduleId" parameterType="java.lang.Long" resultType="com.nmt.education.pojo.vo.CourseSignInItem">
     select
     rs.id as registerSummaryId , rs.student_id as studentId, s.name as studentName,rs.sign_in as signIn

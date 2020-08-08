@@ -38,18 +38,10 @@ public class RegisterationSummaryService {
         return registerationSummaryPo;
     }
 
-    public int insertSelective(RegisterationSummaryPo record) {
-        return registerationSummaryPoMapper.insertSelective(record);
-    }
 
 
     public RegisterationSummaryPo selectByPrimaryKey(Long id) {
         return registerationSummaryPoMapper.selectByPrimaryKey(id);
-    }
-
-
-    public int updateByPrimaryKeySelective(RegisterationSummaryPo record) {
-        return registerationSummaryPoMapper.updateByPrimaryKeySelective(record);
     }
 
 
@@ -78,6 +70,13 @@ public class RegisterationSummaryService {
      */
     public List<RegisterationSummaryPo> queryByRegisterId(Long id) {
         return this.registerationSummaryPoMapper.queryByRegisterId(id);
+    }
+
+    public List<RegisterationSummaryPo> queryByRegisterIds(List<Long> ids) {
+        if(CollectionUtils.isEmpty(ids)){
+            return Collections.EMPTY_LIST;
+        }
+        return this.registerationSummaryPoMapper.queryByRegisterIds(ids);
     }
 
     /**
@@ -144,10 +143,4 @@ public class RegisterationSummaryService {
         this.registerationSummaryPoMapper.updateSignIn(ids, logInUser, signIn.getCode(),  remark);
     }
 
-    public List<RegisterationSummaryPo> selectByIds(List<Long> ids) {
-        if(CollectionUtils.isEmpty(ids)){
-            return Collections.EMPTY_LIST;
-        }
-        return this.registerationSummaryPoMapper.selectByIds(ids);
-    }
 }
