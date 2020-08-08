@@ -550,7 +550,7 @@ public class CourseRegistrationService {
                     v->new SignRecordVo.SignInfo(v.getSignIn(),v.getSignInRemark(),v.getId()),(k1,k2)->k2)) );
             //填充未报名的课程
             final Map<Long, SignRecordVo.SignInfo> noSignMap =
-                    vo.getSignInMap().keySet().stream().filter(k -> !courseScheduleMap.keySet().contains(k))
+                    courseScheduleMap.keySet().stream().filter(k->Objects.isNull(vo.getSignInMap().get(k)))
                     .collect(Collectors.toMap(k1 -> k1, v -> new SignRecordVo.SignInfo(-1, "", -1L)));
             vo.getSignInMap().putAll(noSignMap);
             voList.add(vo);
