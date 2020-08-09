@@ -44,7 +44,7 @@ export class CourseViewComponent implements OnInit {
   ) {
 
   }
-
+  Json = JSON;
   seasonList = this.appCtx.globalService.SEASON_LIST;
   courseTypeList = this.appCtx.globalService.COURSE_TYPE_LIST;
   courseSubjectList = this.appCtx.globalService.COURSE_SUBJECT_LIST;
@@ -505,6 +505,7 @@ export class CourseViewComponent implements OnInit {
         });
         this.studentList = res;
         this.studentLoaded = true;
+        this.signReportList = res.map((d) => { return { ...d.signInMap, name: d.name } });
         this.cdr.detectChanges();
       });
   }
@@ -513,7 +514,7 @@ export class CourseViewComponent implements OnInit {
   signReportList = [];
   @ViewChild('stSign', { static: true })
   stSign: STComponent;
-  signColumns: STColumn[] = [{ title: "姓名", index: "name", width: 100 }];
+  signColumns: STColumn[] = [{ title: "姓名", index: "name",fixed: 'left', width: 100 }];
   getSignReport() {
     if (!this.course.id || !this.course.courseScheduleList
       || this.course.courseScheduleList.length == 0) {
@@ -521,36 +522,19 @@ export class CourseViewComponent implements OnInit {
     }
     this.course.courseScheduleList.forEach(session => {
       let date = this.datePipe.transform(session.courseDatetime, 'MM/dd');
-      this.stSign.columns.push({ title: date, index: session.id.toString(), type: 'tag', tag: this.TAG });
+      this.stSign.columns.push({ title: date, index: session.id.toString(), render: "signInRender",tag: this.SIGNIN_TAG  });
     });
     this.stSign.resetColumns();
-    this.signReportList = this.mockData;
     this.signReportLoaded = true;
-    // this.signReportLoading = true;
-    // this.appCtx.courseService.getRegisteredStudents(this.course.id)
-    //   .pipe(
-    //     tap(() => (this.signReportLoading = false)),
-    //   )
-    //   .subscribe((res: any) => {
-    //     res = res || [];
-    //     res.forEach((element, i) => {
-    //       element.index = i + 1;
-    //     });
-    //     this.studentList = res;
-    //     this.studentLoaded = true;
-    //     this.cdr.detectChanges();
-    //   });
+    if (!this.studentLoaded) {
+      this.getRegisteredStudents();
+    }
   }
-  TAG: STColumnTag = {
+  SIGNIN_TAG: STColumnTag = {
     "-1": { text: '未报名', color: 'grey' },
     0: { text: '未签到', color: '' },
     1: { text: '已签到', color: 'green' },
     2: { text: '请假', color: 'orange' },
     3: { text: '已退费', color: 'red' }
   };
-  mockData = [
-    { name: "abc", "126": 1, "127": 1, "128": 1, "129": 1, "130": 1, "131": 1, "132": 1, "133": 1, "134": 1, "135": 1, "136": 0, "137": 0, "138": 0, "139": 0, "140": 0, "141": 0, "142": 0, "143": 0 },
-    { name: "王尼玛", "126": 1, "127": 1, "128": 1, "129": 2, "130": 1, "131": 2, "132": 1, "133": 1, "134": 1, "135": 1, "136": 0, "137": 0, "138": 0, "139": 0, "140": 0, "141": 0, "142": 0, "143": 0 },
-    { name: "郑伊帆", "126": -1, "127": -1, "128": -1, "129": 1, "130": 1, "131": 1, "132": 2, "133": 1, "134": 1, "135": 1, "136": 0, "137": 0, "138": 0, "139": 0, "140": 0, "141": 0, "142": 3, "143": 3 }
-  ]
 }
