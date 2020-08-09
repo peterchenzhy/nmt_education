@@ -2,6 +2,7 @@ package com.nmt.education.commmons;
 
 import com.google.common.collect.Lists;
 import lombok.Getter;
+import org.apache.logging.log4j.util.Strings;
 
 import java.util.List;
 import java.util.Objects;
@@ -176,6 +177,19 @@ public interface Enums {
                 }
             }
             return result;
+        }
+        public static String code2Desc(Integer code) {
+            SignInType type = null;
+            for (SignInType e : SignInType.values()) {
+                if (e.getCode().equals(code)) {
+                    type =  e;
+                }
+            }
+            if(Objects.nonNull(type)){
+                return type.getDesc();
+            }else{
+                return Strings.EMPTY;
+            }
         }
 
         @Getter

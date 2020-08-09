@@ -132,4 +132,41 @@ export class FeeStatisticsReportComponent implements OnInit {
         document.body.removeChild(link);
     }));
   }
+
+  export2() {
+    this.loading = true;
+    this.appCtx.reportService.exportScheduleTeacher(this.queryParam)
+      .pipe(
+        tap(() => (this.loading = false)),
+      )
+      .subscribe(((data) => {
+        const link = document.createElement('a');
+        const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
+        link.setAttribute('href', window.URL.createObjectURL(blob));
+        var date = new Date();
+        link.setAttribute('download', '课程明细统计'+date.toLocaleDateString()+'.xlsx');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }));
+  }
+  export3() {
+    this.loading = true;
+    this.appCtx.reportService.exportTeacherSalary(this.queryParam)
+      .pipe(
+        tap(() => (this.loading = false)),
+      )
+      .subscribe(((data) => {
+        const link = document.createElement('a');
+        const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
+        link.setAttribute('href', window.URL.createObjectURL(blob));
+        var date = new Date();
+        link.setAttribute('download', '教师课程统计'+date.toLocaleDateString()+'.xlsx');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }));
+  }
 }
