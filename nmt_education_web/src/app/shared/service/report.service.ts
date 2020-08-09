@@ -22,4 +22,12 @@ export class ReportService {
     // return this.httpClient.post('nmt-education/export/feeStatistics', T);
   }
 
+  public exportScheduleTeacher(T: FeeStatisticsQueryParam): Observable<Blob> {
+    return this.httpClient.post('nmt-education/export/schedule/teacher', T, {responseType: 'blob'});
+    // return this.httpClient.post('nmt-education/export/feeStatistics', T);
+  }
+  public exportTeacherSalary(T: FeeStatisticsQueryParam): Observable<Blob> {
+    return this.httpClient.post('nmt-education/export/schedule/teacher/salary', T, {responseType: 'blob'});
+    // return this.httpClient.post('nmt-education/export/feeStatistics', T);
+  }
 }

@@ -29,6 +29,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -321,15 +322,15 @@ public class CourseRegistrationService {
     public PageInfo<CourseRegistrationListVo> registerSearch(RegisterSearchReqDto dto, Integer logInUser) {
         List<Integer> queryList = new ArrayList<>();
         List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser);
-        if(dto.getCampus()!=null){
-            Assert.isTrue(campusList.contains(dto.getCampus()),"该校区没有权限");
+        if (dto.getCampus() != null) {
+            Assert.isTrue(campusList.contains(dto.getCampus()), "该校区没有权限");
             queryList.add(dto.getCampus());
-        }else{
+        } else {
             queryList.addAll(campusList);
         }
         dto.setSignInDateStart(Objects.nonNull(dto.getSignInDateStart()) ? DateUtil.parseOpenDate(dto.getSignInDateStart()) : null);
         dto.setSignInDateEnd(Objects.nonNull(dto.getSignInDateEnd()) ? DateUtil.parseCloseDate(dto.getSignInDateEnd()) : null);
-        return PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.courseRegistrationPoMapper.queryByDto(dto,queryList));
+        return PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.courseRegistrationPoMapper.queryByDto(dto, queryList));
     }
 
     /**
@@ -516,14 +517,44 @@ public class CourseRegistrationService {
      * @version v1
      * @since 2020/5/14 23:36
      */
-    public List<StudentVo> registerStudent(Long courseId) {
-        List<CourseRegistrationPo> registrationList = this.courseRegistrationPoMapper.queryByCourseId(courseId);
-        if (CollectionUtils.isEmpty(registrationList)) {
+    public List<SignRecordVo> registerStudent(Long courseId) {
+        Map<Long, CourseRegistrationPo> registrationMap = this.courseRegistrationPoMapper.queryByCourseId(courseId)
+                .stream().collect(Collectors.toMap(k->k.getStudentId(),v->v));
+        if (CollectionUtils.isEmpty(registrationMap)) {
             return Collections.emptyList();
         }
-        List<StudentPo> studentPoList = studentService.queryByIds(registrationList.stream().map(e -> e.getStudentId()).collect(Collectors.toList()));
-        List<StudentVo> voList = new ArrayList<>(studentPoList.size());
-        studentPoList.stream().forEach(e -> voList.add(studentService.po2vo(e)));
+
+        List<StudentPo> studentPoList =
+                studentService.queryByIds(registrationMap.values().stream().map(e -> e.getStudentId()).collect(Collectors.toList()));
+        Map<Long, List<RegisterationSummaryPo>> summaryMap =
+                registerationSummaryService.queryByRegisterIds(registrationMap.values().stream().map(e -> e.getId()).collect(Collectors.toList()))
+                .stream().collect(Collectors.groupingBy(k -> k.getStudentId()));
+
+         Map<Long, CourseSchedulePo> courseScheduleMap =
+                 courseScheduleService.queryByCourseId(courseId).stream().collect(Collectors.toMap(CourseSchedulePo::getId, Function.identity()));
+
+        List<SignRecordVo> voList = new ArrayList<>(studentPoList.size());
+        studentPoList.stream().forEach(e -> {
+            SignRecordVo vo = new SignRecordVo();
+            vo.setStudentId(e.getId());
+            vo.setName(e.getName());
+            vo.setCode(e.getStudentCode());
+            vo.setSchool(e.getSchool());
+            vo.setPhone(e.getPhone());
+            vo.setGrade(e.getGrade());
+            vo.setSex(e.getSex());
+            CourseRegistrationPo courseRegistrationPo = registrationMap.get(vo.getStudentId());
+            vo.setCourseRegisterId(courseRegistrationPo.getId());
+            //填充报名的课程
+            vo.setSignInMap(summaryMap.get(vo.getStudentId()).stream().collect(Collectors.toMap(k->k.getCourseScheduleId(),
+                    v->new SignRecordVo.SignInfo(v.getSignIn(),v.getSignInRemark(),v.getId()),(k1,k2)->k2)) );
+            //填充未报名的课程
+            final Map<Long, SignRecordVo.SignInfo> noSignMap =
+                    courseScheduleMap.keySet().stream().filter(k->Objects.isNull(vo.getSignInMap().get(k)))
+                    .collect(Collectors.toMap(k1 -> k1, v -> new SignRecordVo.SignInfo(-1, "", -1L)));
+            vo.getSignInMap().putAll(noSignMap);
+            voList.add(vo);
+        });
         return voList;
     }
 

@@ -70,6 +70,7 @@ public class FeeStatisticsService {
      * @since 2020/7/25 15:41
      */
     public List<FeeStatisticsVo> exportList(FeeStatisticsReqDto dto, Integer logInUser) {
+        //获取权限范围
         List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser);
         if (dto.getEndDate() != null) {
             dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));

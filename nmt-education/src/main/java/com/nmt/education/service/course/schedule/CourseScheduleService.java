@@ -1,17 +1,22 @@
 package com.nmt.education.service.course.schedule;
 
-import com.nmt.education.commmons.Consts;
-import com.nmt.education.commmons.Enums;
-import com.nmt.education.commmons.ExpenseDetailFlowTypeEnum;
-import com.nmt.education.commmons.StatusEnum;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.nmt.education.commmons.*;
+import com.nmt.education.commmons.utils.DateUtil;
 import com.nmt.education.pojo.dto.req.CourseScheduleReqDto;
+import com.nmt.education.pojo.dto.req.TeacherScheduleReqDto;
 import com.nmt.education.pojo.po.*;
 import com.nmt.education.pojo.vo.CourseSignInItem;
 import com.nmt.education.pojo.vo.CourseSignInVo;
+import com.nmt.education.pojo.vo.TeacherSalarySummaryDto;
+import com.nmt.education.pojo.vo.TeacherScheduleDto;
+import com.nmt.education.service.campus.authorization.CampusAuthorizationService;
 import com.nmt.education.service.course.CourseService;
 import com.nmt.education.service.course.registeration.CourseRegistrationService;
 import com.nmt.education.service.course.registeration.RegistrationExpenseDetailService;
 import com.nmt.education.service.course.registeration.summary.RegisterationSummaryService;
+import com.nmt.education.service.sysconfig.SysConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +28,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.nmt.education.commmons.Consts.SYSTEM_USER;
 
@@ -41,6 +47,10 @@ public class CourseScheduleService {
     private CourseRegistrationService courseRegistrationService;
     @Autowired
     private RegistrationExpenseDetailService registrationExpenseDetailService;
+    @Autowired
+    private CampusAuthorizationService campusAuthorizationService;
+    @Autowired
+    private SysConfigService configService;
 
     public boolean manager(List<CourseScheduleReqDto> dtoList, Long courseId, Integer operator) {
         if (CollectionUtils.isEmpty(dtoList)) {
@@ -128,11 +138,6 @@ public class CourseScheduleService {
     }
 
 
-    public int insertSelective(CourseSchedulePo record) {
-        return courseSchedulePoMapper.insertSelective(record);
-    }
-
-
     public CourseSchedulePo selectByPrimaryKey(Long id) {
         return courseSchedulePoMapper.selectByPrimaryKey(id);
     }
@@ -140,11 +145,6 @@ public class CourseScheduleService {
 
     public int updateByPrimaryKeySelective(CourseSchedulePo record) {
         return courseSchedulePoMapper.updateByPrimaryKeySelective(record);
-    }
-
-
-    public int updateBatch(List<CourseSchedulePo> list) {
-        return courseSchedulePoMapper.updateBatch(list);
     }
 
 
@@ -168,15 +168,6 @@ public class CourseScheduleService {
         courseSchedulePoMapper.batchInsert(list);
     }
 
-
-    public int insertOrUpdate(CourseSchedulePo record) {
-        return courseSchedulePoMapper.insertOrUpdate(record);
-    }
-
-
-    public int insertOrUpdateSelective(CourseSchedulePo record) {
-        return courseSchedulePoMapper.insertOrUpdateSelective(record);
-    }
 
     public List<CourseSchedulePo> queryByCourseId(Long id) {
         return this.courseSchedulePoMapper.queryByCourseId(id);
@@ -220,10 +211,10 @@ public class CourseScheduleService {
                 //设置余额
                 if (isConsumed) {
                     courseRegistrationPo.setBalanceAmount(balanceAmount.subtract(perAmount).toPlainString());
-                    flowList.add(generateFlow(operator, courseRegistrationPo.getId(),expenseDetailPo.getId(), perAmount, ExpenseDetailFlowTypeEnum.消耗));
+                    flowList.add(generateFlow(operator, courseRegistrationPo.getId(), expenseDetailPo.getId(), perAmount, ExpenseDetailFlowTypeEnum.消耗));
                 } else {
                     courseRegistrationPo.setBalanceAmount(balanceAmount.add(perAmount).toPlainString());
-                    flowList.add(generateFlow(operator, courseRegistrationPo.getId(),expenseDetailPo.getId(), perAmount, ExpenseDetailFlowTypeEnum.还原));
+                    flowList.add(generateFlow(operator, courseRegistrationPo.getId(), expenseDetailPo.getId(), perAmount, ExpenseDetailFlowTypeEnum.还原));
                 }
                 courseRegistrationPoList.add(courseRegistrationPo);
                 needUpdate.add(courseSignInItem);
@@ -253,8 +244,8 @@ public class CourseScheduleService {
             courseRegistrationService.updateBatch(courseRegistrationPoList);
             //插入流水
             registrationExpenseDetailService.batchInsertFlow(flowList);
-        }else{
-            log.info("课程签到没有状态变更，"+list);
+        } else {
+            log.info("课程签到没有状态变更，" + list);
         }
 
     }
@@ -372,4 +363,119 @@ public class CourseScheduleService {
         vo.setSignInVos(Objects.nonNull(vo.getCourseSchedule()) ? signInList(vo.getCourseSchedule().getId(), SYSTEM_USER) : Collections.EMPTY_LIST);
         return vo;
     }
+
+    /**
+     * 课程明细统计
+     *
+     * @param dto
+     * @param logInUser
+     * @return
+     */
+    public List<TeacherScheduleDto> scheduleTeacherExportList(TeacherScheduleReqDto dto, Integer logInUser) {
+        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser);
+        if (dto.getEndDate() != null) {
+            dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
+        }
+        List<TeacherScheduleDto> resultList = new ArrayList<>(Consts.BATCH_100);
+        dto.setPageNo(1);
+        dto.setPageSize(Consts.BATCH_100);
+        List<TeacherScheduleDto> dataList;
+        do {
+            dataList = getExportData(dto, campusList);
+            int pageNo = dto.getPageNo() + 1;
+            dto.setPageNo(pageNo);
+            resultList.addAll(dataList);
+        } while (!CollectionUtils.isEmpty(dataList));
+
+        return resultList;
+    }
+
+    private List<TeacherScheduleDto> getExportData(TeacherScheduleReqDto dto, List<Integer> campusList) {
+        PageInfo<TeacherScheduleDto> pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize(), false).doSelectPageInfo(() ->
+                courseSchedulePoMapper.teacherSchedule(dto.getStartDate(), dto.getEndDate(), campusList));
+        pageInfo.getList().stream().forEach(e -> {
+                    e.setCampusStr(configService.queryByTypeValue(SysConfigEnum.校区.getCode(), e.getCampus()).getDescription());
+                    e.setSubject(configService.queryByTypeValue(SysConfigEnum.课程科目.getCode(), e.getCourseSubject()).getDescription());
+                    e.setSignIn(Enums.SignInType.code2Desc(e.getSignInStatus()));
+                    e.setGradeStr(configService.queryByTypeValue(SysConfigEnum.年级.getCode(), e.getGrade()).getDescription());
+                    e.setStartDate(dto.getStartDate());
+                    e.setEndDate(dto.getEndDate());
+                }
+        );
+        return pageInfo.getList();
+    }
+
+    /**
+     * 教师费用统计
+     *
+     * @param dto
+     * @param logInUser
+     * @return
+     */
+    public List<TeacherSalarySummaryDto> teacherSummaryExportList(TeacherScheduleReqDto dto, Integer logInUser) {
+        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser);
+        if (dto.getEndDate() != null) {
+            dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
+        }
+        dto.setPageNo(1);
+        dto.setPageSize(Consts.BATCH_100);
+        List<TeacherScheduleDto> dataList;
+        Map<Long, Map<Long, TeacherSalarySummaryDto>> teacherMap = new HashMap<>();
+
+        do {
+            dataList = getExportData(dto, campusList);
+            dataList.stream()
+                    .collect(Collectors.groupingBy(TeacherScheduleDto::getTeacherId))
+                    .forEach((k, v) -> {
+                        if (teacherMap.get(k) == null) {
+                            teacherMap.put(k, new HashMap<>());
+                        }
+                        Map<Long, TeacherSalarySummaryDto> dataMap = teacherMap.get(k);
+                        v.stream().collect(Collectors.toMap(TeacherScheduleDto::getCourseId,
+                                d -> getTeacherSalarySummaryDto(d),
+                                (d1, d2) -> {
+                                    d1.setTeacherPrice(
+                                            NumberUtil.String2Dec(d1.getTeacherPrice()).add(NumberUtil.String2Dec(d2.getTeacherPrice())).toPlainString());
+                                    return d1;
+                                }
+                        )).forEach((c, b) -> {
+                            TeacherSalarySummaryDto bd = dataMap.get(c);
+                            if (Objects.nonNull(bd)) {
+                                bd.setTeacherPrice(
+                                        NumberUtil.String2Dec(bd.getTeacherPrice()).add(NumberUtil.String2Dec(b.getTeacherPrice())).toPlainString());
+                            } else {
+                                dataMap.put(c, b);
+                            }
+
+                        });
+                    });
+
+            int pageNo = dto.getPageNo() + 1;
+            dto.setPageNo(pageNo);
+        } while (!CollectionUtils.isEmpty(dataList));
+
+        return teacherMap.values().stream().flatMap(dt -> dt.values().stream())
+                .map(e -> {
+                    e.setStartDate(dto.getStartDate());
+                    e.setEndDate(dto.getEndDate());
+                    return e;
+                }).collect(Collectors.toList());
+    }
+
+    private TeacherSalarySummaryDto getTeacherSalarySummaryDto(TeacherScheduleDto d) {
+        TeacherSalarySummaryDto dt = new TeacherSalarySummaryDto();
+        dt.setCourseName(d.getCourseName());
+        dt.setSubject(d.getSubject());
+        dt.setTeacherName(d.getTeacherName());
+        dt.setGradeStr(d.getGradeStr());
+        dt.setTeacherPrice(d.getTeacherPrice());
+        dt.setCampusStr(d.getCampusStr());
+        dt.setCourseId(d.getCourseId());
+        dt.setTeacherId(d.getTeacherId());
+        dt.setCampus(d.getCampus());
+        dt.setCourseSubject(d.getCourseSubject());
+        dt.setGrade(d.getGrade());
+        return dt;
+    }
+
 }
