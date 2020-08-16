@@ -176,6 +176,7 @@
                 <st [data]="order.sessionList" [columns]="sessionListColumns" [page]="{ show: false }"></st> -->
         </nz-card>
         <footer-toolbar errorCollect>
+            <label nz-checkbox [nzDisabled]="isEditOrder" [ngModelOptions]="{standalone: true}" [(ngModel)]="continueOrder">报名成功后继续报名新课程</label>
             <button nz-button type="primary" nzType="primary" (click)="_submitForm()">提交</button>
         </footer-toolbar>
     </form>

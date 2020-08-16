@@ -26,6 +26,7 @@ export class OrderViewComponent implements OnInit {
     registrationTypeList = this.appCtx.globalService.ORDER_TYPE_LIST;
     registrationStatusList = this.appCtx.globalService.ORDER_STATUS_LIST;
     form: FormGroup;
+    continueOrder = false;
     editFeeIndex = -1;
     order: Order = {
         student: {},
@@ -285,7 +286,13 @@ export class OrderViewComponent implements OnInit {
                     nzTitle: '处理结果',
                     nzContent: '订单保存成功！',
                     nzOnOk: () => {
-                        this.router.navigate(["/order/list"]);
+                        if (this.continueOrder) {
+                            this.router.navigateByUrl('/', { skipLocationChange: true })
+                                .then(() => this.router.navigate(['/order/create', { student: this.activaterRouter.snapshot.params.student }]));
+                        }
+                        else {
+                            this.router.navigate(["/order/list"]);
+                        }
                     }
                 });
             });
