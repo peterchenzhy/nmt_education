@@ -59,7 +59,8 @@ export class TeacherViewComponent implements OnInit {
             school: [null, []],
             birthday: [null, []],
             remark: [null, []],
-            phone: [null, [Validators.required]],
+            // phone: [null, [Validators.required]],
+            phone: [null, []],
             editFlag: [EDIT_FLAG.NO_CHANGE, []],
             teacherSalaryConfigList: this.fb.array([])
         });

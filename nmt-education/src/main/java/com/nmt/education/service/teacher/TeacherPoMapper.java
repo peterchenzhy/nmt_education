@@ -10,15 +10,11 @@ import java.util.List;
 public interface TeacherPoMapper {
     int invalidByPrimaryKey(@Param("id") Long id, @Param("operator") Integer operator);
 
-    int insert(TeacherPo record);
-
     int insertSelective(TeacherPo record);
 
     TeacherPo selectByPrimaryKey(Long id);
 
     int updateByPrimaryKeySelective(TeacherPo record);
-
-    int updateByPrimaryKey(TeacherPo record);
 
     List<TeacherPo> queryFuzzy(@Param("name") String name);
 

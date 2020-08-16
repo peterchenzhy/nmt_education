@@ -30,8 +30,9 @@ export class TeacherListComponent implements OnInit {
         //{ title: '教师编号', index: 'code' },
         { title: '姓名', index: 'name' },
         { title: '性别', index: 'sex', render: "genderRender" },
-        { title: '联系电话', index: 'phone' },
-        { title: '学校', index: 'school' },
+        // { title: '联系电话', index: 'phone' },
+        // { title: '学校', index: 'school' },
+        { title: '简介', index: 'remark' },
         {
             title: '操作',
             buttons: [

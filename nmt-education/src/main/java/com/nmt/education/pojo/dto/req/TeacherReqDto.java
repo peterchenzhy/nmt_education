@@ -48,7 +48,7 @@ public class TeacherReqDto {
     /**
      * 电话
      */
-    @ApiModelProperty(value = "手机号", required = true)
+//    @ApiModelProperty(value = "手机号", required = true)
     @Size(max = 11, message = "手机号不能超过11位")
     private String phone;
     /**

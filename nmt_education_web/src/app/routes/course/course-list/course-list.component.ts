@@ -36,7 +36,7 @@ export class CourseListComponent implements OnInit {
   st: STComponent;
   columns: STColumn[] = [
     { title: '', index: 'key', type: 'checkbox' },
-    { title: '课程编号', index: 'code' },
+    // { title: '课程编号', index: 'code' },
     { title: '名称', index: 'name' },
     { title: '课程科目', index: 'courseSubject', render: "courseSubject" },
     { title: '课程类型', index: 'courseType', render: "courseType" },
@@ -47,15 +47,16 @@ export class CourseListComponent implements OnInit {
       render: 'courseStatus'
     },
     {
-      title: '开课时间',
+      title: '开课日期',
       index: 'startDate',
-      type: 'date',
+      // type: 'date',
+      render:'startDate',
       sort: {
         compare: (a: any, b: any) => a.updatedAt - b.updatedAt,
       },
     },
     {
-      title:'上课规律',
+      title:'上课时间',
       index:'courseRegular',
     },
     {

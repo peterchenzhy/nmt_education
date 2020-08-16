@@ -52,17 +52,6 @@
     update teacher set status = 0 ,operator = #{operator}  ,operateTime = now()
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.TeacherPo" useGeneratedKeys="true">
-    <!--@mbg.generated-->
-    insert into teacher (`name`, birthday, sex,
-      school, `status`, remark,phone,
-      creator, create_time, `operator`,
-      operate_time)
-    values (#{name,jdbcType=VARCHAR}, #{birthday,jdbcType=DATE}, #{sex,jdbcType=BOOLEAN},
-      #{school,jdbcType=VARCHAR}, #{status,jdbcType=BOOLEAN}, #{remark,jdbcType=VARCHAR},#{phone},
-      #{creator,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{operator,jdbcType=INTEGER},
-      #{operateTime,jdbcType=TIMESTAMP})
-  </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.TeacherPo" useGeneratedKeys="true">
     <!--@mbg.generated-->
     insert into teacher
@@ -177,19 +166,5 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.nmt.education.pojo.po.TeacherPo">
-    <!--@mbg.generated-->
-    update teacher
-    set `name` = #{name,jdbcType=VARCHAR},
-      birthday = #{birthday,jdbcType=DATE},
-      sex = #{sex,jdbcType=BOOLEAN},
-      school = #{school,jdbcType=VARCHAR},
-      `status` = #{status,jdbcType=BOOLEAN},
-      remark = #{remark,jdbcType=VARCHAR},
-      creator = #{creator,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      `operator` = #{operator,jdbcType=INTEGER},
-      operate_time = #{operateTime,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
+
 </mapper>

@@ -192,21 +192,25 @@ public class CourseScheduleService {
         for (CourseSignInItem courseSignInItem : list) {
             RegisterationSummaryPo registerationSummaryPo = registerationSummaryService.selectByPrimaryKey(courseSignInItem.getRegisterSummaryId());
             Assert.isTrue(Objects.nonNull(registerationSummaryPo), "报名课时不存在，id：" + courseSignInItem.getRegisterSummaryId());
+            CourseRegistrationPo courseRegistrationPo =
+                    courseRegistrationService.selectByPrimaryKey(registerationSummaryPo.getCourseRegistrationId());
+            Assert.isTrue(Objects.nonNull(courseRegistrationPo), "报名记录不存在，id：" + registerationSummaryPo.getCourseRegistrationId());
             Enums.SignInType target = Enums.SignInType.codeOf(courseSignInItem.getSignIn());
             Enums.SignInType source = Enums.SignInType.codeOf(registerationSummaryPo.getSignIn());
             Boolean isConsumed = Enums.SignInType.isConsumed(source, target);
             if (Objects.isNull(isConsumed)) {
                 //状态没有变化
+                if(!target.equals(source)){
+                    needUpdate.add(courseSignInItem);
+                    courseRegistrationPoList.add(courseRegistrationPo);
+                }
                 continue;
-            }
-            if (!courseSignInItem.getSignIn().equals(registerationSummaryPo.getSignIn())) {
-                CourseRegistrationPo courseRegistrationPo =
-                        courseRegistrationService.selectByPrimaryKey(registerationSummaryPo.getCourseRegistrationId());
+            } else {
                 BigDecimal balanceAmount = new BigDecimal(courseRegistrationPo.getBalanceAmount());
                 RegistrationExpenseDetailPo expenseDetailPo = registrationExpenseDetailService.queryRegisterId(courseRegistrationPo.getId())
                         .stream().filter(p -> Consts.FEE_TYPE_普通单节费用.equals(p.getFeeType()) && Enums.FeeDirection.支付.getCode().equals(p.getFeeDirection()) &&
                                 Enums.FeeStatus.已缴费.getCode().equals(p.getFeeStatus())).findFirst().get();
-                Assert.isTrue(Objects.nonNull(expenseDetailPo), "可退费的记录不存在，id：" + courseSignInItem.getRegisterSummaryId());
+                Assert.isTrue(Objects.nonNull(expenseDetailPo), "缴费记录不存在，id：" + courseSignInItem.getRegisterSummaryId());
                 BigDecimal perAmount = new BigDecimal(expenseDetailPo.getPerAmount());
                 //设置余额
                 if (isConsumed) {

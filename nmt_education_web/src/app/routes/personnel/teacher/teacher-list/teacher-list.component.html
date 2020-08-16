@@ -10,14 +10,14 @@
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div nz-col nzMd="6" nzSm="24">
-        <nz-form-item>
-          <nz-form-label nzFor="phone">联系方式</nz-form-label>
-          <nz-form-control>
-            <input nz-input [(ngModel)]="queryParam.phone" name="phone" placeholder="请输入联系方式" />
-          </nz-form-control>
-        </nz-form-item>
-      </div>
+<!--      <div nz-col nzMd="6" nzSm="24">-->
+<!--        <nz-form-item>-->
+<!--          <nz-form-label nzFor="phone">联系方式</nz-form-label>-->
+<!--          <nz-form-control>-->
+<!--            <input nz-input [(ngModel)]="queryParam.phone" name="phone" placeholder="请输入联系方式" />-->
+<!--          </nz-form-control>-->
+<!--        </nz-form-item>-->
+<!--      </div>-->
       <div nz-col [nzSpan]=" 6" [class.text-right]="expandForm">
         <button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
         <button nz-button type="reset" (click)="reset()" class="mx-sm">重置</button>

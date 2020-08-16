@@ -48,7 +48,7 @@ public class CourseScheduleController {
         return courseScheduleService.signInSelect(courseId, logInUser);
     }
 
-    @ApiOperation(value = "signin/page", notes = "签到列表数据")
+    @ApiOperation(value = "/signIn/list/", notes = "签到列表数据")
     @RequestMapping(value = "/signIn/list/{courseScheduleId}", method = RequestMethod.GET)
     public List<CourseSignInItem> signInList(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
                         @PathVariable Long courseScheduleId) {

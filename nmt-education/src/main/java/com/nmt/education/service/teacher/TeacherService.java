@@ -170,9 +170,6 @@ public class TeacherService {
     }
 
 
-    public int insert(TeacherPo record) {
-        return teacherPoMapper.insert(record);
-    }
 
 
     public int insertSelective(TeacherPo record) {

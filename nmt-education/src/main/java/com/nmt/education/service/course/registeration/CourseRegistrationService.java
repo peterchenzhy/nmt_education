@@ -436,6 +436,9 @@ public class CourseRegistrationService {
 
 
     public int updateBatch(List<CourseRegistrationPo> list) {
+        if(CollectionUtils.isEmpty(list)){
+            return 0;
+        }
         return courseRegistrationPoMapper.updateBatch(list);
     }
 
@@ -450,14 +453,7 @@ public class CourseRegistrationService {
     }
 
 
-    public int insertOrUpdate(CourseRegistrationPo record) {
-        return courseRegistrationPoMapper.insertOrUpdate(record);
-    }
 
-
-    public int insertOrUpdateSelective(CourseRegistrationPo record) {
-        return courseRegistrationPoMapper.insertOrUpdateSelective(record);
-    }
 
 
     /**
