@@ -108,7 +108,7 @@ export class OrderListComponent implements OnInit {
         this.loading = true;
         this.appCtx.courseService.registerSearch(this.queryParam)
             .pipe(
-                tap(() => (this.loading = false)),
+                tap(() => { this.loading = false; }, () => { this.loading = false; })
             )
             .subscribe((res: ResponseData) => {
                 res.list = res.list || [];

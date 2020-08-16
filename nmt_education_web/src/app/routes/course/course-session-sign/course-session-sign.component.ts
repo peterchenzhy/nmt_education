@@ -95,7 +95,7 @@ export class CourseSessionSignComponent implements OnInit {
     this.loading = true;
     this.appCtx.courseService.getSessionStudents(sessionId)
       .pipe(
-        tap(() => (this.loading = false)),
+        tap(() => { this.loading = false; }, () => { this.loading = false; })
       ).subscribe((signStudent: any) => {
         this.sessionSignStatusList.clear();
         if (!signStudent) {
@@ -144,7 +144,7 @@ export class CourseSessionSignComponent implements OnInit {
     signInStudentList = signInStudentList.filter(s => { return s.editFlag == EDIT_FLAG.UPDATE; });
     this.appCtx.courseService.sessionStudentsSignIn(signInStudentList)
       .pipe(
-        tap(() => (this.loading = false)),
+        tap(() => { this.loading = false; }, () => { this.loading = false; })
       ).subscribe((res) => {
         this.modalSrv.success({
           nzTitle: '处理结果',

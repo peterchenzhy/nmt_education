@@ -86,7 +86,7 @@ export class DailySessionReportComponent implements OnInit {
     this.loading = true;
     this.appCtx.courseService.registerSummary(this.queryParam)
       .pipe(
-        tap(() => (this.loading = false)),
+        tap(() => { this.loading = false; }, () => { this.loading = false; })
       )
       .subscribe((res: ResponseData) => {
         res.list = res.list || [];

@@ -186,7 +186,7 @@ export class StudentViewComponent implements OnInit {
         this.loading = true;
         this.appCtx.studentService.saveStudent(this.form.value)
             .pipe(
-                tap(() => (this.loading = false))
+                tap(() => { this.loading = false; }, () => { this.loading = false; })
             )
             .subscribe((res) => {
                 this.modalSrv.success({
@@ -223,7 +223,7 @@ export class StudentViewComponent implements OnInit {
         this.courseQueryParam.studentId = this.student.id;
         this.appCtx.courseService.registerSearch(this.courseQueryParam)
             .pipe(
-                tap(() => (this.loading = false)),
+                tap(() => { this.loading = false; }, () => { this.loading = false; })
             )
             .subscribe((res: ResponseData) => {
                 res.list = res.list || [];

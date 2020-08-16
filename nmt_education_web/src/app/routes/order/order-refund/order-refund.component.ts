@@ -79,7 +79,7 @@ export class OrderRefundComponent implements OnInit {
         if (orderId) {
             this.appCtx.courseService.getRegisterDetails(orderId)
                 .pipe(
-                    tap(() => (this.loading = false))
+                    tap(() => { this.loading = false; }, () => { this.loading = false; })
                 ).subscribe(res => {
                     this.order = res;
                     this.order.course.teacher = {};
@@ -242,7 +242,7 @@ export class OrderRefundComponent implements OnInit {
         this.loading = true;
         this.appCtx.courseService.refundFee(refundObj)
             .pipe(
-                tap(() => (this.loading = false))
+                tap(() => { this.loading = false; }, () => { this.loading = false; })
             ).subscribe((res) => {
                 this.modalSrv.success({
                     nzTitle: '处理结果',

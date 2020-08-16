@@ -34,6 +34,7 @@ export class OrderViewComponent implements OnInit {
         registerExpenseDetail: [],
         editFlag: EDIT_FLAG.NEW
     };
+    studentBalance = 0;
     loading: boolean = false;
     constructor(
         public appCtx: AppContextService,
@@ -70,6 +71,7 @@ export class OrderViewComponent implements OnInit {
             editFlag: [EDIT_FLAG.NO_CHANGE, [Validators.required]],
             studentId: [null, [Validators.required]],
             courseId: [null, [Validators.required]],
+            useBalance: [false, []],
             registerExpenseDetail: this.fb.array([])
         });
         let orderId = this.activaterRouter.snapshot.params.id;
@@ -77,7 +79,7 @@ export class OrderViewComponent implements OnInit {
             this.loading = true;
             this.appCtx.courseService.getRegisterDetails(orderId)
                 .pipe(
-                    tap(() => (this.loading = false))
+                    tap(() => { this.loading = false; }, () => { this.loading = false; })
                 ).subscribe(res => {
                     this.order = res;
                     this.order.courseScheduleIds = this.order.courseScheduleList.map(s => s.id);
@@ -155,7 +157,7 @@ export class OrderViewComponent implements OnInit {
         this.loading = true;
         this.appCtx.courseService.getCourseDetails(value)
             .pipe(
-                tap(() => (this.loading = false))
+                tap(() => { this.loading = false; }, () => { this.loading = false; })
             ).subscribe((res: Course) => {
                 this.order.courseId = res.id;
                 this.order.course = res;
@@ -276,8 +278,9 @@ export class OrderViewComponent implements OnInit {
         this.loading = true;
         this.appCtx.courseService.registerCourse(submitObj)
             .pipe(
-                tap(() => (this.loading = false))
-            ).subscribe((res) => {
+                tap(() => { this.loading = false; }, () => { this.loading = false; })
+            )
+            .subscribe((res) => {
                 this.modalSrv.success({
                     nzTitle: '处理结果',
                     nzContent: '订单保存成功！',

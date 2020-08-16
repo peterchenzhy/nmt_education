@@ -28,7 +28,7 @@ for (let i = 0; i < 46; i += 1) {
         },
         registerExpenseDetail: [],
         courseScheduleIds: [],
-        totalPrice: 1000,
+        totalAmount: 1000,
         balance: 300
     });
 }
