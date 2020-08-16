@@ -79,8 +79,7 @@ public class CourseRegistrationService {
         //生成报名记录
         CourseRegistrationPo courseRegistrationPo;
         if (Enums.EditFlag.新增.getCode().equals(dto.getEditFlag())) {
-            Assert.notNull(dto.getRegisterExpenseDetail().stream().filter(e -> Consts.FEE_TYPE_普通单节费用.equals(e.getFeeType())).findAny().get(),
-                    "报名必须含有单节收费项目");
+            Assert.isTrue(dto.getRegisterExpenseDetail().stream().anyMatch(e -> Consts.FEE_TYPE_普通单节费用.equals(e.getFeeType())),"报名必须含有单节收费项目");
             courseRegistrationPo = generateCourseRegistrationPo(dto, updator);
             this.insertSelective(courseRegistrationPo);
         } else {
@@ -436,7 +435,7 @@ public class CourseRegistrationService {
 
 
     public int updateBatch(List<CourseRegistrationPo> list) {
-        if(CollectionUtils.isEmpty(list)){
+        if (CollectionUtils.isEmpty(list)) {
             return 0;
         }
         return courseRegistrationPoMapper.updateBatch(list);
@@ -451,9 +450,6 @@ public class CourseRegistrationService {
     public int batchInsert(List<CourseRegistrationPo> list) {
         return courseRegistrationPoMapper.batchInsert(list);
     }
-
-
-
 
 
     /**
@@ -515,7 +511,7 @@ public class CourseRegistrationService {
      */
     public List<SignRecordVo> registerStudent(Long courseId) {
         Map<Long, CourseRegistrationPo> registrationMap = this.courseRegistrationPoMapper.queryByCourseId(courseId)
-                .stream().collect(Collectors.toMap(k->k.getStudentId(),v->v));
+                .stream().collect(Collectors.toMap(k -> k.getStudentId(), v -> v));
         if (CollectionUtils.isEmpty(registrationMap)) {
             return Collections.emptyList();
         }
@@ -524,10 +520,10 @@ public class CourseRegistrationService {
                 studentService.queryByIds(registrationMap.values().stream().map(e -> e.getStudentId()).collect(Collectors.toList()));
         Map<Long, List<RegisterationSummaryPo>> summaryMap =
                 registerationSummaryService.queryByRegisterIds(registrationMap.values().stream().map(e -> e.getId()).collect(Collectors.toList()))
-                .stream().collect(Collectors.groupingBy(k -> k.getStudentId()));
+                        .stream().collect(Collectors.groupingBy(k -> k.getStudentId()));
 
-         Map<Long, CourseSchedulePo> courseScheduleMap =
-                 courseScheduleService.queryByCourseId(courseId).stream().collect(Collectors.toMap(CourseSchedulePo::getId, Function.identity()));
+        Map<Long, CourseSchedulePo> courseScheduleMap =
+                courseScheduleService.queryByCourseId(courseId).stream().collect(Collectors.toMap(CourseSchedulePo::getId, Function.identity()));
 
         List<SignRecordVo> voList = new ArrayList<>(studentPoList.size());
         studentPoList.stream().forEach(e -> {
@@ -542,12 +538,12 @@ public class CourseRegistrationService {
             CourseRegistrationPo courseRegistrationPo = registrationMap.get(vo.getStudentId());
             vo.setCourseRegisterId(courseRegistrationPo.getId());
             //填充报名的课程
-            vo.setSignInMap(summaryMap.get(vo.getStudentId()).stream().collect(Collectors.toMap(k->k.getCourseScheduleId(),
-                    v->new SignRecordVo.SignInfo(v.getSignIn(),v.getSignInRemark(),v.getId()),(k1,k2)->k2)) );
+            vo.setSignInMap(summaryMap.get(vo.getStudentId()).stream().collect(Collectors.toMap(k -> k.getCourseScheduleId(),
+                    v -> new SignRecordVo.SignInfo(v.getSignIn(), v.getSignInRemark(), v.getId()), (k1, k2) -> k2)));
             //填充未报名的课程
             final Map<Long, SignRecordVo.SignInfo> noSignMap =
-                    courseScheduleMap.keySet().stream().filter(k->Objects.isNull(vo.getSignInMap().get(k)))
-                    .collect(Collectors.toMap(k1 -> k1, v -> new SignRecordVo.SignInfo(-1, "", -1L)));
+                    courseScheduleMap.keySet().stream().filter(k -> Objects.isNull(vo.getSignInMap().get(k)))
+                            .collect(Collectors.toMap(k1 -> k1, v -> new SignRecordVo.SignInfo(-1, "", -1L)));
             vo.getSignInMap().putAll(noSignMap);
             voList.add(vo);
         });

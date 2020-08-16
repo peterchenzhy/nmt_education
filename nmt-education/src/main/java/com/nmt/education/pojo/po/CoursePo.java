@@ -162,5 +162,5 @@ public class CoursePo {
     private Date operateTime;
 
     @ApiModelProperty(value = "上课规律")
-    private String course ;
+    private String courseRegular ;
 }
