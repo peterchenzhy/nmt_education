@@ -156,6 +156,17 @@
                             </td> -->
                     </tr>
                 </tbody>
+                <tfoot *ngIf="registerExpenseDetail.controls.length>0">
+                    <tr style="padding-top: 10px;">
+                        <th colspan="6"></th>
+                        <th style="padding-top:10px;" colspan="">
+                            <div [formGroup]="form"><label nz-checkbox [nzDisabled]="isEditOrder" formControlName="useBalance">余额
+                                    {{studentBalance}}</label></div>
+                        </th>
+                        <th style="padding-top:10px;">共支付: {{order.totalPay}}</th>
+                        <th style="padding-top:10px;">总金额: {{order.totalAmount}}</th>
+                    </tr>
+                </tfoot>
             </nz-table>
             <!-- <button nz-button [nzType]="'dashed'" (click)="addFee()" nzBlock class="mt-md">
                     <i nz-icon nzType="plus"></i>
@@ -165,6 +176,7 @@
                 <st [data]="order.sessionList" [columns]="sessionListColumns" [page]="{ show: false }"></st> -->
         </nz-card>
         <footer-toolbar errorCollect>
+            <label nz-checkbox [nzDisabled]="isEditOrder" [ngModelOptions]="{standalone: true}" [(ngModel)]="continueOrder">报名成功后继续报名新课程</label>
             <button nz-button type="primary" nzType="primary" (click)="_submitForm()">提交</button>
         </footer-toolbar>
     </form>

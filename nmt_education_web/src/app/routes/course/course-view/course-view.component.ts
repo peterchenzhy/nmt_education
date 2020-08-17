@@ -91,7 +91,7 @@ export class CourseViewComponent implements OnInit {
       this.loading = true;
       this.appCtx.courseService.getCourseDetails(courseId)
         .pipe(
-          tap(() => (this.loading = false)),
+          tap(() => { this.loading = false; }, () => { this.loading = false; })
         ).subscribe(res => {
           this.course = res;
           let year: number = toNumber(this.course.year.toString());
@@ -394,7 +394,7 @@ export class CourseViewComponent implements OnInit {
     this.loading = true;
     this.appCtx.courseService.saveCourse(this.course)
       .pipe(
-        tap(() => (this.loading = false)),
+        tap(() => { this.loading = false; }, () => { this.loading = false; })
       ).subscribe((res) => {
         this.modalSrv.success({
           nzTitle: '处理结果',
@@ -496,7 +496,7 @@ export class CourseViewComponent implements OnInit {
     this.loading = true;
     this.appCtx.courseService.getRegisteredStudents(this.course.id)
       .pipe(
-        tap(() => (this.loading = false)),
+        tap(() => { this.loading = false; }, () => { this.loading = false; })
       )
       .subscribe((res: any) => {
         res = res || [];

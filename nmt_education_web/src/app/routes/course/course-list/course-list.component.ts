@@ -102,7 +102,7 @@ export class CourseListComponent implements OnInit {
     this.loading = true;
     this.appCtx.courseService.queryCourses(this.queryParam)
       .pipe(
-        tap(() => (this.loading = false)),
+        tap(() => { this.loading = false; }, () => { this.loading = false; })
       )
       .subscribe((res: ResponseData) => {
         res.list = res.list || [];

@@ -73,7 +73,7 @@ export class StudentListComponent implements OnInit {
         this.loading = true;
         this.studentService.queryStudents(this.queryParam)
             .pipe(
-                tap(() => (this.loading = false)),
+                tap(() => { this.loading = false; }, () => { this.loading = false; })
             )
             .subscribe((res: ResponseData) => {
                 this.data = res;

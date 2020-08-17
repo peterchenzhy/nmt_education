@@ -76,7 +76,7 @@ export class FeeStatisticsReportComponent implements OnInit {
     this.loading = true;
     this.appCtx.reportService.queryFeeStatistics(this.queryParam)
       .pipe(
-        tap(() => (this.loading = false)),
+        tap(() => { this.loading = false; }, () => { this.loading = false; })
       )
       .subscribe((res: ResponseData) => {
         res.list = res.list || [];
@@ -118,7 +118,7 @@ export class FeeStatisticsReportComponent implements OnInit {
     this.loading = true;
     this.appCtx.reportService.exportFeeStatistics(this.queryParam)
       .pipe(
-        tap(() => (this.loading = false)),
+        tap(() => { this.loading = false; }, () => { this.loading = false; })
       )
       .subscribe(((data) => {
         const link = document.createElement('a');
@@ -137,7 +137,7 @@ export class FeeStatisticsReportComponent implements OnInit {
     this.loading = true;
     this.appCtx.reportService.exportScheduleTeacher(this.queryParam)
       .pipe(
-        tap(() => (this.loading = false)),
+        tap(() => { this.loading = false; }, () => { this.loading = false; })
       )
       .subscribe(((data) => {
         const link = document.createElement('a');
@@ -155,7 +155,7 @@ export class FeeStatisticsReportComponent implements OnInit {
     this.loading = true;
     this.appCtx.reportService.exportTeacherSalary(this.queryParam)
       .pipe(
-        tap(() => (this.loading = false)),
+        tap(() => { this.loading = false; }, () => { this.loading = false; })
       )
       .subscribe(((data) => {
         const link = document.createElement('a');

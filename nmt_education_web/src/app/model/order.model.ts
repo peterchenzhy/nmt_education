@@ -18,8 +18,10 @@ export interface Order {
     courseScheduleList?: OrderSession[];
     courseScheduleIds?: number[];
     feeStatus?: PAY_STATUS;
-    totalPrice?: number;
+    totalAmount?: number;
+    totalPay?: number;
     balance?: number;
+    useBalance?: boolean;
     campus?: number;
     remark?: string;
     editFlag?: EDIT_FLAG;
@@ -30,18 +32,18 @@ export interface Order {
     expenseDetailFlowVoList?: ExpenseDetailFlowVo[];
 }
 export interface ExpenseDetailFlowVo {
-     id?: number;
-     registrationId?: number;
-     registerExpenseDetailId?: number;
-     feeType?:number;
-     type?: string;
-     perAmount?: string;
-     amount?: string;
-     count?: number ;
-     payment?:number;
-     discount?:string;
-     remark?:string;
-     operateTime?:Date ;
+    id?: number;
+    registrationId?: number;
+    registerExpenseDetailId?: number;
+    feeType?: number;
+    type?: string;
+    perAmount?: string;
+    amount?: string;
+    count?: number;
+    payment?: number;
+    discount?: string;
+    remark?: string;
+    operateTime?: Date;
 }
 
 export interface RegisterSummary {
@@ -69,7 +71,7 @@ export interface RegisterSummary {
 export interface Payment {
     id?: string;
     feeType?: number;
-    feeDirection?:FeeDirection;
+    feeDirection?: FeeDirection;
     payment?: number;
     feeStatus?: PAY_STATUS;
     perAmount?: number;

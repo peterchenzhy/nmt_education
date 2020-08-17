@@ -151,7 +151,7 @@ export class TeacherViewComponent implements OnInit {
         this.loading = true;
         this.appCtx.teacherService.saveTeacher(this.form.value)
             .pipe(
-                tap(() => (this.loading = false))
+                tap(() => { this.loading = false; }, () => { this.loading = false; })
             ).subscribe((res) => {
                 this.modalSrv.success({
                     nzTitle: '处理结果',
@@ -187,7 +187,7 @@ export class TeacherViewComponent implements OnInit {
         this.courseQueryParam.teacherId = this.teacher.id;
         this.appCtx.teacherService.getCourseList(this.courseQueryParam)
             .pipe(
-                tap(() => (this.loading = false)),
+                tap(() => { this.loading = false; }, () => { this.loading = false; })
             )
             .subscribe((res: ResponseData) => {
                 res.list = res.list || [];
