@@ -272,7 +272,7 @@ export class OrderViewComponent implements OnInit {
         });
         if (this.form.invalid) return;
         let submitObj = { ...this.form.value };
-        submitObj.registerExpenseDetail = submitObj.registerExpenseDetail.filter(f => f.amount > 0);
+        //submitObj.registerExpenseDetail = submitObj.registerExpenseDetail.filter(f => f.amount > 0);
         this.loading = true;
         this.appCtx.courseService.registerCourse(submitObj)
             .pipe(
