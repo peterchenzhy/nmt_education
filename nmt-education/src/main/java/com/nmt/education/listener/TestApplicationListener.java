@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class TestApplicationListener {
 
-    @EventListener
+    @EventListener(TestApplicationEvent.class)
     public void event(TestApplicationEvent event){
       log.warn( "listener:" +  event.getMessage());
     }

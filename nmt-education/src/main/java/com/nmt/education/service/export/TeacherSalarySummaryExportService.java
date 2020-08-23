@@ -22,7 +22,7 @@ public class TeacherSalarySummaryExportService extends AbstractExportService<Tea
 
     @Override
     public String getFileName() {
-        return "教师工资费用统计";
+        return "教师课程统计";
     }
 
     @Override

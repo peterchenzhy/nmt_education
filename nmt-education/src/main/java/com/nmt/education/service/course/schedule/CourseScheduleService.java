@@ -4,6 +4,8 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.*;
 import com.nmt.education.commmons.utils.DateUtil;
+import com.nmt.education.commmons.utils.SpringContextUtil;
+import com.nmt.education.listener.event.CourseStatusChangeEvent;
 import com.nmt.education.pojo.dto.req.CourseScheduleReqDto;
 import com.nmt.education.pojo.dto.req.TeacherScheduleReqDto;
 import com.nmt.education.pojo.po.*;
@@ -22,6 +24,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
@@ -179,6 +182,7 @@ public class CourseScheduleService {
      * @param list
      * @param operator
      */
+    @Transactional(rollbackFor = Exception.class)
     public void signIn(List<CourseSignInItem> list, Integer operator) {
         if (CollectionUtils.isEmpty(list)) {
             return;
@@ -211,14 +215,15 @@ public class CourseScheduleService {
                         .stream().filter(p -> Consts.FEE_TYPE_普通单节费用.equals(p.getFeeType()) && Enums.FeeDirection.支付.getCode().equals(p.getFeeDirection()) &&
                                 Enums.FeeStatus.已缴费.getCode().equals(p.getFeeStatus())).findFirst().get();
                 Assert.isTrue(Objects.nonNull(expenseDetailPo), "缴费记录不存在，id：" + courseSignInItem.getRegisterSummaryId());
-                BigDecimal perAmount = new BigDecimal(expenseDetailPo.getPerAmount());
+//                BigDecimal perAmount = new BigDecimal(expenseDetailPo.getPerAmount());
+                BigDecimal perAmount = NumberUtil.mutify(expenseDetailPo.getPerAmount(),expenseDetailPo.getDiscount());
                 //设置余额
                 if (isConsumed) {
                     courseRegistrationPo.setBalanceAmount(balanceAmount.subtract(perAmount).toPlainString());
-                    flowList.add(generateFlow(operator, courseRegistrationPo.getId(), expenseDetailPo.getId(), perAmount, ExpenseDetailFlowTypeEnum.消耗));
+                    flowList.add(generateFlow(operator, courseRegistrationPo.getId(), expenseDetailPo, perAmount, ExpenseDetailFlowTypeEnum.消耗));
                 } else {
                     courseRegistrationPo.setBalanceAmount(balanceAmount.add(perAmount).toPlainString());
-                    flowList.add(generateFlow(operator, courseRegistrationPo.getId(), expenseDetailPo.getId(), perAmount, ExpenseDetailFlowTypeEnum.还原));
+                    flowList.add(generateFlow(operator, courseRegistrationPo.getId(), expenseDetailPo, perAmount, ExpenseDetailFlowTypeEnum.还原));
                 }
                 courseRegistrationPoList.add(courseRegistrationPo);
                 needUpdate.add(courseSignInItem);
@@ -252,6 +257,9 @@ public class CourseScheduleService {
             log.info("课程签到没有状态变更，" + list);
         }
 
+        //课程状态event
+        SpringContextUtil.getApplicationContext().publishEvent(new CourseStatusChangeEvent(po.getCourseId()));
+
     }
 
     /**
@@ -267,7 +275,7 @@ public class CourseScheduleService {
      * @version v1
      * @since 2020/6/13 14:45
      */
-    private RegistrationExpenseDetailFlowPo generateFlow(Integer operator, Long courseRegistrationId, Long courseRegistrationExpenseId,
+    private RegistrationExpenseDetailFlowPo generateFlow(Integer operator, Long courseRegistrationId, RegistrationExpenseDetailPo registrationExpenseDetailPo,
                                                          BigDecimal perAmount,
                                                          ExpenseDetailFlowTypeEnum type) {
         RegistrationExpenseDetailFlowPo flow = new RegistrationExpenseDetailFlowPo();
@@ -275,7 +283,7 @@ public class CourseScheduleService {
         flow.setFeeType(Consts.FEE_TYPE_普通单节费用);
         flow.setType(type.getCode());
         flow.setAmount(perAmount.toPlainString());
-        flow.setRegisterExpenseDetailId(courseRegistrationExpenseId);
+        flow.setRegisterExpenseDetailId(registrationExpenseDetailPo.getId());
         flow.setStatus(StatusEnum.VALID.getCode());
         flow.setRemark(type.getDescription());
         flow.setCreator(operator);
@@ -284,7 +292,7 @@ public class CourseScheduleService {
         flow.setOperateTime(new Date());
         flow.setPerAmount(perAmount.toPlainString());
         flow.setCount(1);
-        flow.setDiscount("1");
+        flow.setDiscount(registrationExpenseDetailPo.getDiscount());
         flow.setPayment(SYSTEM_USER);
         return flow;
     }
