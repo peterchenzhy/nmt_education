@@ -20,7 +20,7 @@ public class SysConfigService {
     }
 
     // TODO: 2020/3/31 这里可以搞成内存缓存的的
-    @Cacheable(key = "'sysConfig_type:'+#typeCode + 'value:'+#value", value = CacheManagerConfig.EhCacheNames.CACHE_10MINS, cacheManager =
+    @Cacheable(key = "'sysConfig_type:'+#type + 'value:'+#value", value = CacheManagerConfig.EhCacheNames.CACHE_10MINS, cacheManager =
             CacheManagerConfig.CacheManagerNames.EHCACHE_CACHE_MANAGER)
     public SysConfigPo queryByTypeValue(Integer type, Integer value) {
         return this.sysConfigPoMapper.queryByTypeValue(type, value);
