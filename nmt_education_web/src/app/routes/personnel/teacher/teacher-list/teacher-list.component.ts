@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { GlobalService } from '@shared/service/global.service';
 import { TeacherQueryParam, ResponseData } from 'src/app/model/system.model';
 import { TeacherService } from '@shared/service/teacher.service';
+import { AppContextService } from '@shared/service/appcontext.service';
 
 @Component({
     selector: 'app-teacher-list',
@@ -49,6 +50,7 @@ export class TeacherListComponent implements OnInit {
     expandForm = false;
 
     constructor(
+        public appCtx: AppContextService,
         public globalService: GlobalService,
         private teacherService: TeacherService,
         private router: Router,
@@ -59,6 +61,7 @@ export class TeacherListComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+        this.queryParam = this.appCtx.storageService.get("TeacherQuery") || this.queryParam;
         this.getData();
     }
     startQueryData() {
@@ -75,6 +78,7 @@ export class TeacherListComponent implements OnInit {
                 this.data = res;
                 this.data.list = this.data.list == null ? [] : this.data.list;
                 this.cdr.detectChanges();
+                this.appCtx.storageService.set("TeacherQuery",this.queryParam);
             });
     }
 

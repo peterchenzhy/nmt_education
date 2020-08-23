@@ -50,14 +50,14 @@ export class CourseListComponent implements OnInit {
       title: '开课日期',
       index: 'startDate',
       // type: 'date',
-      render:'startDate',
+      render: 'startDate',
       sort: {
         compare: (a: any, b: any) => a.updatedAt - b.updatedAt,
       },
     },
     {
-      title:'上课时间',
-      index:'courseRegular',
+      title: '上课时间',
+      index: 'courseRegular',
     },
     {
       title: '操作',
@@ -90,6 +90,7 @@ export class CourseListComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.queryParam = this.appCtx.storageService.get("CourseQuery") || this.queryParam;
     this.getData();
   }
 
@@ -111,6 +112,7 @@ export class CourseListComponent implements OnInit {
         });
         this.data = res;
         this.cdr.detectChanges();
+        this.appCtx.storageService.set("CourseQuery", this.queryParam);
       });
   }
 
