@@ -4,6 +4,7 @@ package com.nmt.education.commmons;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,6 +40,19 @@ public class NumberUtil {
         return true;
     }
 
+    public static BigDecimal mutify(String... strs){
+        if(Objects.isNull(strs)||strs.length==0){
+            return BigDecimal.ZERO;
+        }
+        BigDecimal result = BigDecimal.ONE;
+        for (String s : strs) {
+            result = String2Dec(s).multiply(result);
+        }
+        return result;
+    }
+
+
+
 
     /**
      * 判断字符串是否为数字
@@ -52,8 +66,7 @@ public class NumberUtil {
     }
 
     public static void main(String[] args) {
-        String str = "1.10";
-        System.out.println(isNumeric(str));
+        System.out.println(mutify("-2","5","0"));
     }
     /**
      * 超过11位，截取前11位

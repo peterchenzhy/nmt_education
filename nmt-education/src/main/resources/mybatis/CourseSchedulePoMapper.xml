@@ -230,6 +230,7 @@
         </foreach>
     inner join teacher t on c.teacher_id = t.id
     where 1=1
+    and cs.status = 1
     <if test="startDate != null">
       <![CDATA[
       and  cs.course_datetime >= #{startDate}

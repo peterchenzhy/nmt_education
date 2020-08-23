@@ -110,7 +110,7 @@ public class CourseService {
             return new PageInfo();
         }
         List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(loginUserId, dto.getCampus());
-        Assert.isTrue(!CollectionUtils.isEmpty(campusList),"没有任何校区权限进行课程搜索");
+        Assert.isTrue(!CollectionUtils.isEmpty(campusList), "没有任何校区权限进行课程搜索");
         return PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.coursePoMapper.queryByDto(dto, campusList));
     }
 
@@ -259,5 +259,31 @@ public class CourseService {
         List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser);
         return coursePoList.stream().filter(e -> campusList.contains(e.getCampus())).collect(Collectors.toList());
     }
+
+    /**
+     * 自动调整课程状态-->未开课==>已开课
+     *
+     * @param courseId 课程状态id
+     */
+    public void adjustCourseStatus(long courseId) {
+        final CourseSchedulePo courseSchedulePo = this.courseScheduleService.queryByCourseId(courseId)
+                .stream().filter(e -> Enums.SignInType.已签到.getCode().equals(e.getSignIn())).findAny().orElse(null);
+        final CoursePo coursePo = this.selectByPrimaryKey(courseId);
+        if (Objects.nonNull(courseSchedulePo)) {
+            if (Objects.nonNull(courseId)) {
+                if (Enums.CourseStatus.未开课.getCode().equals(coursePo.getCourseStatus())) {
+                    coursePo.setCourseStatus(Enums.CourseStatus.已开学.getCode());
+                    coursePo.setOperateTime(new Date());
+                    this.updateByPrimaryKeySelective(coursePo);
+                }
+            } else {
+                log.warn("课程不存在，课程id:" + courseId);
+            }
+        } else {
+            log.warn("课程未开始，课程id:" + courseId);
+        }
+
+    }
+
 
 }

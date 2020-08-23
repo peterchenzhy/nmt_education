@@ -21,7 +21,7 @@ public class ScheduleTeacherExportService extends AbstractExportService<TeacherS
 
     @Override
     public String getFileName() {
-        return "下载课程明细统计";
+        return "课程明细统计";
     }
 
     @Override
