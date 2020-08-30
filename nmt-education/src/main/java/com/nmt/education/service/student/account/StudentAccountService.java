@@ -19,6 +19,14 @@ public class StudentAccountService {
     private StudentAccountFlowPoMapper studentAccountFlowPoMapper;
 
 
+    /**
+     * 根据课程结转增加结余数据
+     * 
+     * @param logInUser
+     * @param courseId
+     */
+    public void addByCourseFinish(Integer logInUser, Long courseId) {
+    }
 
 
 

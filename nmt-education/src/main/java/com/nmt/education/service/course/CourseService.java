@@ -17,6 +17,7 @@ import com.nmt.education.service.CodeService;
 import com.nmt.education.service.campus.authorization.CampusAuthorizationService;
 import com.nmt.education.service.course.expense.CourseExpenseService;
 import com.nmt.education.service.course.schedule.CourseScheduleService;
+import com.nmt.education.service.student.account.StudentAccountService;
 import com.nmt.education.service.teacher.TeacherService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -46,6 +47,8 @@ public class CourseService {
     private TeacherService teacherService;
     @Autowired
     private CampusAuthorizationService campusAuthorizationService;
+    @Autowired
+    private StudentAccountService studentAccountService;
 
     private final static ThreadLocal<List<BaseEvent>> eventList = ThreadLocal.withInitial(() -> new ArrayList<>(5));
 
@@ -286,4 +289,21 @@ public class CourseService {
     }
 
 
+    /**
+     * 结课逻辑
+     *
+     * @param logInUser
+     * @param courseId
+     */
+    public void finish(Integer logInUser, Long courseId) {
+        final CoursePo coursePo = this.coursePoMapper.selectByPrimaryKey(courseId);
+        Assert.isTrue(Objects.nonNull(coursePo),"课程信息为空，id:"+courseId);
+        Assert.isTrue(logInUser.equals(coursePo.getCreator()),"非次课程创建人不可结课");
+        //结余数据增加
+        studentAccountService.addByCourseFinish(logInUser,courseId);
+        //更新课程状态
+        coursePo.setCourseStatus(Enums.CourseStatus.已结课.getCode());
+        coursePo.setOperateTime(new Date());
+        coursePo.setOperator(logInUser);
+    }
 }

@@ -33,7 +33,6 @@ public class SysConfigService {
     }
 
 
-
     public int insertSelective(SysConfigPo record) {
         return sysConfigPoMapper.insertSelective(record);
     }
@@ -64,14 +63,6 @@ public class SysConfigService {
     }
 
 
-    public int insertOrUpdate(SysConfigPo record) {
-        return sysConfigPoMapper.insertOrUpdate(record);
-    }
-
-
-    public int insertOrUpdateSelective(SysConfigPo record) {
-        return sysConfigPoMapper.insertOrUpdateSelective(record);
-    }
 
 
 }

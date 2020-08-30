@@ -67,5 +67,12 @@ public class CourseController {
         return courseService.detail(logInUser, courseId);
     }
 
+    @ApiOperation(value = "finish", notes = "结课")
+    @RequestMapping(value = "/finish/{courseId}", method = RequestMethod.GET)
+    public void finish(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
+            , @PathVariable Long courseId) {
+          courseService.finish(logInUser, courseId);
+    }
+
 
 }
