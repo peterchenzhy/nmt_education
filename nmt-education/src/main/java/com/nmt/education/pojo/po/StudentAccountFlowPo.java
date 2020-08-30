@@ -22,7 +22,7 @@ public class StudentAccountFlowPo {
     * 账户id
     */
     @ApiModelProperty(value="账户id")
-    private Integer studentAccountId;
+    private Long studentAccountId;
 
     /**
     * 操作类型
@@ -34,7 +34,7 @@ public class StudentAccountFlowPo {
     * 关联id
     */
     @ApiModelProperty(value="关联id")
-    private Integer refId;
+    private Long refId;
 
     /**
     * 金额
@@ -52,7 +52,7 @@ public class StudentAccountFlowPo {
     * 有效：1 无效：0
     */
     @ApiModelProperty(value="有效：1 无效：0")
-    private Boolean status;
+    private Integer status;
 
     /**
     * 备注

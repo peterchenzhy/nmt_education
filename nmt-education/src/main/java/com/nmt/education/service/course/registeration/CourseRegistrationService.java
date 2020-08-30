@@ -79,7 +79,7 @@ public class CourseRegistrationService {
         //生成报名记录
         CourseRegistrationPo courseRegistrationPo;
         if (Enums.EditFlag.新增.getCode().equals(dto.getEditFlag())) {
-            Assert.isTrue(dto.getRegisterExpenseDetail().stream().anyMatch(e -> Consts.FEE_TYPE_普通单节费用.equals(e.getFeeType())),"报名必须含有单节收费项目");
+            Assert.isTrue(dto.getRegisterExpenseDetail().stream().anyMatch(e -> Consts.FEE_TYPE_普通单节费用.equals(e.getFeeType())), "报名必须含有单节收费项目");
             courseRegistrationPo = generateCourseRegistrationPo(dto, updator);
             this.insertSelective(courseRegistrationPo);
         } else {
@@ -155,7 +155,7 @@ public class CourseRegistrationService {
         Assert.notNull(studentService.selectByPrimaryKey(dto.getStudentId()), "学生信息不存在！id:" + dto.getStudentId());
         CoursePo coursePo = courseService.selectByPrimaryKey(dto.getCourseId());
         campusAuthorizationService.getCampusAuthorization(loginUserId, coursePo.getCampus());
-        Assert.notNull(coursePo, "学生信息不存在！id:" + dto.getCourseId());
+        Assert.notNull(coursePo, "课程信息不存在！id:" + dto.getCourseId());
         Assert.notEmpty(dto.getCourseScheduleIds(), "报名课时必填！id:" + dto.getCourseId());
         if (Enums.EditFlag.新增.getCode().equals(dto.getEditFlag())) {
             CourseRegistrationListVo vo = queryByCourseStudent(dto.getCourseId(), dto.getStudentId());
@@ -163,6 +163,8 @@ public class CourseRegistrationService {
                 Assert.isTrue(Enums.RegistrationStatus.已退费.getCode().equals(vo.getRegistrationStatus()), "报名记录已经存在，不能重复报名！id：" + vo.getId());
             }
         }
+        Assert.isTrue(!Enums.CourseStatus.已结课.getCode().equals(coursePo.getCourseStatus()) &&
+                !Enums.CourseStatus.已取消.getCode().equals(coursePo.getCourseStatus()), "课程已经结课或者取消!");
     }
 
     /**
@@ -584,6 +586,10 @@ public class CourseRegistrationService {
         Assert.isTrue(Objects.nonNull(courseRegistrationPo), "报名信息不存在，id：" + dto.getRegisterId());
         Assert.isTrue(!Enums.RegistrationStatus.已退费.getCode().equals(courseRegistrationPo.getRegistrationStatus()),
                 "已退费的订单无法重复退费，id：" + dto.getRegisterId());
+        CoursePo coursePo = courseService.selectByPrimaryKey(courseRegistrationPo.getCourseId());
+        Assert.isTrue(!Enums.CourseStatus.已结课.getCode().equals(coursePo.getCourseStatus()) &&
+                !Enums.CourseStatus.已取消.getCode().equals(coursePo.getCourseStatus()), "课程已经结课或者取消!");
+
         List<RefundItemReqDto> dtoList = dto.getItemList();
         if (CollectionUtils.isEmpty(dtoList)) {
             return;

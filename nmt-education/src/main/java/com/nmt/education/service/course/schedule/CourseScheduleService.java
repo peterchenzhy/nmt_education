@@ -189,6 +189,11 @@ public class CourseScheduleService {
         }
         CourseSchedulePo po = selectByPrimaryKey(list.get(0).getCourseScheduleId());
         Assert.notNull(po, "课表信息为空，id：" + list.get(0).getCourseScheduleId());
+
+        CoursePo coursePo = courseService.selectByPrimaryKey(po.getCourseId());
+        Assert.isTrue(!Enums.CourseStatus.已结课.getCode().equals(coursePo.getCourseStatus()) &&
+                !Enums.CourseStatus.已取消.getCode().equals(coursePo.getCourseStatus()), "课程已经结课或者取消!");
+
         List<RegistrationExpenseDetailFlowPo> flowList = new ArrayList<>(list.size());
         List<CourseRegistrationPo> courseRegistrationPoList = new ArrayList<>(list.size());
         List<CourseSignInItem> needUpdate = new ArrayList<>(list.size());
@@ -204,7 +209,7 @@ public class CourseScheduleService {
             Boolean isConsumed = Enums.SignInType.isConsumed(source, target);
             if (Objects.isNull(isConsumed)) {
                 //状态没有变化
-                if(!target.equals(source)){
+                if (!target.equals(source)) {
                     needUpdate.add(courseSignInItem);
                     courseRegistrationPoList.add(courseRegistrationPo);
                 }
@@ -216,7 +221,7 @@ public class CourseScheduleService {
                                 Enums.FeeStatus.已缴费.getCode().equals(p.getFeeStatus())).findFirst().get();
                 Assert.isTrue(Objects.nonNull(expenseDetailPo), "缴费记录不存在，id：" + courseSignInItem.getRegisterSummaryId());
 //                BigDecimal perAmount = new BigDecimal(expenseDetailPo.getPerAmount());
-                BigDecimal perAmount = NumberUtil.mutify(expenseDetailPo.getPerAmount(),expenseDetailPo.getDiscount());
+                BigDecimal perAmount = NumberUtil.mutify(expenseDetailPo.getPerAmount(), expenseDetailPo.getDiscount());
                 //设置余额
                 if (isConsumed) {
                     courseRegistrationPo.setBalanceAmount(balanceAmount.subtract(perAmount).toPlainString());
@@ -384,7 +389,7 @@ public class CourseScheduleService {
      * @return
      */
     public List<TeacherScheduleDto> scheduleTeacherExportList(TeacherScheduleReqDto dto, Integer logInUser) {
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser,dto.getCampus());
+        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
         if (dto.getEndDate() != null) {
             dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
         }
@@ -425,7 +430,7 @@ public class CourseScheduleService {
      * @return
      */
     public List<TeacherSalarySummaryDto> teacherSummaryExportList(TeacherScheduleReqDto dto, Integer logInUser) {
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser,dto.getCampus());
+        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
         if (dto.getEndDate() != null) {
             dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
         }

@@ -11,6 +11,7 @@ import com.nmt.education.pojo.dto.req.CourseReqDto;
 import com.nmt.education.pojo.dto.req.CourseScheduleReqDto;
 import com.nmt.education.pojo.dto.req.CourseSearchDto;
 import com.nmt.education.pojo.po.CoursePo;
+import com.nmt.education.pojo.po.CourseRegistrationPo;
 import com.nmt.education.pojo.po.CourseSchedulePo;
 import com.nmt.education.pojo.vo.CourseDetailVo;
 import com.nmt.education.service.CodeService;
@@ -132,6 +133,8 @@ public class CourseService {
         Assert.notNull(dto.getId(), "课程id不存在");
         CoursePo coursePo = selectByPrimaryKey(dto.getId());
         Assert.notNull(coursePo, "课程信息不存在" + dto.getId());
+        Assert.isTrue(!Enums.CourseStatus.已结课.getCode().equals( coursePo.getCourseStatus())&&
+                !Enums.CourseStatus.已取消.getCode().equals( coursePo.getCourseStatus()) ,"课程已经结课或者取消，无法再进行编辑");
         Enums.EditFlag editFlag = Enums.EditFlag.codeOf(dto.getEditFlag());
         switch (editFlag) {
             case 需要删除:
@@ -298,12 +301,15 @@ public class CourseService {
     public void finish(Integer logInUser, Long courseId) {
         final CoursePo coursePo = this.coursePoMapper.selectByPrimaryKey(courseId);
         Assert.isTrue(Objects.nonNull(coursePo),"课程信息为空，id:"+courseId);
-        Assert.isTrue(logInUser.equals(coursePo.getCreator()),"非次课程创建人不可结课");
+//        Assert.isTrue(logInUser.equals(coursePo.getCreator()),"非次课程创建人不可结课");
+        Assert.isTrue(!Enums.CourseStatus.已结课.getCode().equals( coursePo.getCourseStatus())&&
+                !Enums.CourseStatus.已取消.getCode().equals( coursePo.getCourseStatus()) ,"课程已经结课或者取消，无法再进行编辑");
         //结余数据增加
         studentAccountService.addByCourseFinish(logInUser,courseId);
         //更新课程状态
         coursePo.setCourseStatus(Enums.CourseStatus.已结课.getCode());
         coursePo.setOperateTime(new Date());
         coursePo.setOperator(logInUser);
+        this.updateByPrimaryKeySelective(coursePo);
     }
 }

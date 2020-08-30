@@ -4,8 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.nmt.education.BaseTest;
 import com.nmt.education.pojo.dto.req.StudentReqDto;
 import com.nmt.education.pojo.po.StudentPo;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import springfox.documentation.spring.web.json.Json;
 
 import java.util.Date;
 
@@ -15,6 +17,7 @@ import java.util.Date;
  * @Version 1.0
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Slf4j
 class StudentServiceTest extends BaseTest {
 
     @Autowired
@@ -75,5 +78,10 @@ class StudentServiceTest extends BaseTest {
         dto.setSex(1);
         dto.setRemark("remark");
         System.out.println( studentService.editStudent(loginUser,dto) );
+    }
+
+    @Test
+    void accountPage1() {
+        log.warn(JSON.toJSONString(this.studentService.accountPage(null,1,10)));
     }
 }

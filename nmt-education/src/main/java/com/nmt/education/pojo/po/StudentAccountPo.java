@@ -22,7 +22,7 @@ public class StudentAccountPo {
     * 员工id
     */
     @ApiModelProperty(value="员工id")
-    private Integer userId;
+    private Long userId;
 
     /**
     * 工号
@@ -40,7 +40,7 @@ public class StudentAccountPo {
     * 有效：1 无效：0
     */
     @ApiModelProperty(value="有效：1 无效：0")
-    private Boolean status;
+    private Integer status;
 
     /**
     * 备注

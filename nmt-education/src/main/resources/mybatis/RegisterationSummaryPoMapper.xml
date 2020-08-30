@@ -30,6 +30,18 @@
         from registeration_summary
         where id = #{id,jdbcType=BIGINT}
     </select>
+    <select id="queryByCourseId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from registeration_summary
+        where status = 1 and course_id = #{courseId}
+        <if test="signList != null and signList.size() != 0">
+            and sign_in in
+            <foreach collection="signList" item="sign" open="(" close=")" separator=",">
+                #{sign}
+            </foreach>
+        </if>
+    </select>
     <select id="queryByRegisterId" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>

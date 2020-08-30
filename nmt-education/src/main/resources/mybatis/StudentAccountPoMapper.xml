@@ -18,17 +18,58 @@
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, user_id, user_code, amount, `status`, remark, creator, create_time, `operator`, 
+    id, user_id, user_code, amount, `status`, remark, creator, create_time, `operator`,
     operate_time, version
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     <!--@mbg.generated-->
-    select 
+    select
     <include refid="Base_Column_List" />
     from student_account
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <insert id="insertSelective" parameterType="com.nmt.education.pojo.po.StudentAccountPo">
+  <update id="updateByVersion">
+    update student_account
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userCode != null">
+        user_code = #{userCode,jdbcType=INTEGER},
+      </if>
+      <if test="amount != null">
+        amount = #{amount,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=BOOLEAN},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null">
+        creator = #{creator,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operator != null">
+        `operator` = #{operator,jdbcType=INTEGER},
+      </if>
+      <if test="operateTime != null">
+        operate_time = #{operateTime,jdbcType=TIMESTAMP},
+      </if>
+        version = #{version} +1,
+    </set>
+    where id = #{id,jdbcType=BIGINT} and version = #{version}
+  </update>
+  <select id="querybyUserId" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from student_account
+    where status= 1
+    and user_id = #{userId}
+  </select>
+  <insert id="insertSelective" parameterType="com.nmt.education.pojo.po.StudentAccountPo" keyColumn="id" keyProperty="id"  useGeneratedKeys="true">
     <!--@mbg.generated-->
     insert into student_account
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -222,14 +263,23 @@
   <insert id="batchInsert" parameterType="map">
     <!--@mbg.generated-->
     insert into student_account
-    (id, user_id, user_code, amount, `status`, remark, creator, create_time, `operator`, 
+    (id, user_id, user_code, amount, `status`, remark, creator, create_time, `operator`,
       operate_time, version)
     values
     <foreach collection="list" item="item" separator=",">
-      (#{item.id,jdbcType=BIGINT}, #{item.userId,jdbcType=INTEGER}, #{item.userCode,jdbcType=INTEGER}, 
-        #{item.amount,jdbcType=VARCHAR}, #{item.status,jdbcType=BOOLEAN}, #{item.remark,jdbcType=VARCHAR}, 
-        #{item.creator,jdbcType=INTEGER}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.operator,jdbcType=INTEGER}, 
+      (#{item.id,jdbcType=BIGINT}, #{item.userId,jdbcType=INTEGER}, #{item.userCode,jdbcType=INTEGER},
+        #{item.amount,jdbcType=VARCHAR}, #{item.status,jdbcType=BOOLEAN}, #{item.remark,jdbcType=VARCHAR},
+        #{item.creator,jdbcType=INTEGER}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.operator,jdbcType=INTEGER},
         #{item.operateTime,jdbcType=TIMESTAMP}, #{item.version,jdbcType=INTEGER})
     </foreach>
   </insert>
+  <select id="queryAccount" resultType="com.nmt.education.pojo.vo.StudentAccountVo">
+    select sa.id as id ,s.id as studentId ,s.student_code as studentCode,s.name as studentName,
+    sa.amount as amount,sa.status as status ,sa.remark as remark
+    from student_account sa ,student s
+    where sa.user_id = s.id
+    <if test="studentId != null">
+      and sa.user_id = #{studentId,jdbcType=BIGINT}
+    </if>
+  </select>
 </mapper>

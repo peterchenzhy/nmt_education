@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.utils.ReqDtoCheckUtil;
 import com.nmt.education.pojo.dto.req.StudentReqDto;
 import com.nmt.education.pojo.dto.req.StudentSearchReqDto;
+import com.nmt.education.pojo.vo.StudentAccountVo;
 import com.nmt.education.pojo.vo.StudentVo;
 import com.nmt.education.service.student.StudentService;
 import io.swagger.annotations.Api;
@@ -38,7 +39,7 @@ public class StudentController {
     @ApiOperation(value = "manager", notes = "学生管理")
     @RequestMapping(value = "/manager", method = RequestMethod.POST)
     public Boolean studentManager(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
-                              @RequestBody @Validated StudentReqDto dto, BindingResult bindingResult) {
+                                  @RequestBody @Validated StudentReqDto dto, BindingResult bindingResult) {
         ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
         return studentService.studentManager(logInUser, dto);
     }
@@ -55,16 +56,26 @@ public class StudentController {
 
     @ApiOperation(value = "search/fuzzy", notes = "学生模糊搜索，左匹配，不含联系方式")
     @RequestMapping(value = "/search/fuzzy", method = RequestMethod.GET)
-    public List<StudentVo> searchStudent(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser,@RequestParam(value = "name") String name) {
-        return studentService.searchFuzzy(logInUser,name);
+    public List<StudentVo> searchStudent(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestParam(value = "name") String name) {
+        return studentService.searchFuzzy(logInUser, name);
     }
 
 
     @ApiOperation(value = "detail", notes = "学生明细")
     @RequestMapping(value = "/detail/{studentId}", method = RequestMethod.POST)
     public StudentVo detail(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
-            , @PathVariable Long studentId ) {
+            , @PathVariable Long studentId) {
         return studentService.detail(studentId);
+    }
+
+    @ApiOperation(value = "amount", notes = "学生账户")
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    public PageInfo<StudentAccountVo> accountPage(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
+                                             @RequestParam("studentId") Long studentId,
+                                             @RequestParam(value = "pageNo" ,required = false ,defaultValue = "1") Integer pageNo,
+                                             @RequestParam(value = "pageSize",required = false,defaultValue = "10") Integer pageSize
+                                                  ) {
+        return studentService.accountPage(studentId,pageNo,pageSize);
     }
 
 }

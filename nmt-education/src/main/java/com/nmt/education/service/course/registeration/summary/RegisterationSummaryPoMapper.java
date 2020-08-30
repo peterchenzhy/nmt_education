@@ -7,6 +7,7 @@ import com.nmt.education.pojo.vo.RegisterSummaryVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Mapper
@@ -34,4 +35,6 @@ interface RegisterationSummaryPoMapper {
     void updateSignIn(@Param("ids") List<Long> ids, @Param("logInUser") Integer logInUser, @Param("code") Integer code, @Param("remark") String remark);
 
     List<RegisterationSummaryPo> selectByIds(@Param("ids") List<Long> ids);
+
+    List<RegisterationSummaryPo> queryByCourseId(@Param("courseId") Long courseId, @Param("signList") List<Integer> signList);
 }
