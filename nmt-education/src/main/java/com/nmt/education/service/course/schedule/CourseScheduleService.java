@@ -384,7 +384,7 @@ public class CourseScheduleService {
      * @return
      */
     public List<TeacherScheduleDto> scheduleTeacherExportList(TeacherScheduleReqDto dto, Integer logInUser) {
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser);
+        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser,dto.getCampus());
         if (dto.getEndDate() != null) {
             dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
         }
@@ -425,7 +425,7 @@ public class CourseScheduleService {
      * @return
      */
     public List<TeacherSalarySummaryDto> teacherSummaryExportList(TeacherScheduleReqDto dto, Integer logInUser) {
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser);
+        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser,dto.getCampus());
         if (dto.getEndDate() != null) {
             dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
         }
