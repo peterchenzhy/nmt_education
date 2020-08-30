@@ -11,6 +11,7 @@ import { GlobalService } from '@shared/service/global.service';
 import { ResponseData, StudentQueryParam } from 'src/app/model/system.model';
 import { StudentService } from '@shared/service/student.service';
 import { StudentViewComponent } from '../student-view/student-view.component';
+import { AppContextService } from '@shared/service/appcontext.service';
 
 @Component({
     selector: 'app-student-list',
@@ -33,7 +34,7 @@ export class StudentListComponent implements OnInit {
         { title: '性别', index: 'sex', render: "genderRender" },
         { title: '联系电话', index: 'phone' },
         { title: '所在学校', index: 'school' },
-        { title: '年级', index: 'grade',render:"gradeRender" },
+        { title: '年级', index: 'grade', render: "gradeRender" },
         {
             title: '操作',
             buttons: [
@@ -53,16 +54,18 @@ export class StudentListComponent implements OnInit {
     expandForm = false;
 
     constructor(
+        public appCtx: AppContextService,
         public globalService: GlobalService,
         private studentService: StudentService,
         private router: Router,
         private http: _HttpClient,
         public msg: NzMessageService,
         private modalSrv: NzModalService,
-        private cdr: ChangeDetectorRef,
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit() {
+        this.queryParam = this.appCtx.storageService.get("StudentQuery") || this.queryParam;
         this.getData();
     }
     startQueryData() {
@@ -79,6 +82,7 @@ export class StudentListComponent implements OnInit {
                 this.data = res;
                 this.data.list = this.data.list == null ? [] : this.data.list;
                 this.cdr.detectChanges();
+                this.appCtx.storageService.set("StudentQuery", this.queryParam);
             });
     }
 

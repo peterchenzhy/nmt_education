@@ -138,7 +138,7 @@ export class CourseViewComponent implements OnInit {
       courseId: [this.course.id, []],
       teacherId: [null, []],
       courseDatetime: [null, [Validators.required]],
-      perTime: [null, [Validators.required]],
+      perTime: [0, [Validators.required]],
       teacherPrice: [0, [Validators.required]],
       courseTimes: [0, [Validators.required]],
       signIn: [0, []],
@@ -208,6 +208,7 @@ export class CourseViewComponent implements OnInit {
       nzWidth: 350,
       nzOnOk: () => {
         debugger;
+        this.form.get("perTime").setValue(this.sessionParam.perTime);
         let currentDate = new Date();
         for (let i = 0; i < this.sessions.length;) {
           let session = this.sessions.at(i);
@@ -281,8 +282,9 @@ export class CourseViewComponent implements OnInit {
           let endTime = new Date(new Date(this.sessionParam.startTime).setMinutes(regularTime)).toTimeString().substring(0, 5);
           regular = "每周" + selectDays.map(d => d.label.replace("星期", "")).join("、") + " " + startTime + "-" + endTime;
         }
-
-        this.form.patchValue({ times: existsSessions.length, startDate: courseStartDate, courseRegular: regular, perTime: this.sessionParam.perTime });
+        this.form.get("times").setValue(existsSessions.length);
+        this.form.get("startDate").setValue(courseStartDate);
+        this.form.get("courseRegular").setValue(regular);
       },
     });
   }

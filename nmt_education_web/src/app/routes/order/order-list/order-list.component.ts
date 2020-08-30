@@ -10,7 +10,7 @@ import { Order } from 'src/app/model/order.model';
 import { GlobalService } from '@shared/service/global.service';
 import { CourseQueryParam, RegisterQueryParam, RegisterSummaryQueryParam, ResponseData } from "../../../model/system.model";
 import { AppContextService } from "@shared/service/appcontext.service";
-import {DatePipe} from "@angular/common";
+import { DatePipe } from "@angular/common";
 
 @Component({
     selector: 'app-order-list',
@@ -24,7 +24,7 @@ export class OrderListComponent implements OnInit {
     courseDate = new FormGroup({
         courseDate: new FormControl()
     });
-  searchDate: Date[];
+    searchDate: Date[];
     pager = {
         front: false
     };
@@ -91,7 +91,7 @@ export class OrderListComponent implements OnInit {
     expandForm = false;
 
     constructor(
-      private datePipe: DatePipe,
+        private datePipe: DatePipe,
         public appCtx: AppContextService,
         public globalService: GlobalService,
         private router: Router,
@@ -101,6 +101,7 @@ export class OrderListComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+        this.queryParam = this.appCtx.storageService.get("OrderQuery") || this.queryParam;
         this.getData();
     }
 
@@ -117,6 +118,7 @@ export class OrderListComponent implements OnInit {
                 // });
                 this.data = res;
                 this.cdr.detectChanges();
+                this.appCtx.storageService.set("OrderQuery", this.queryParam);
             });
     }
 
@@ -136,15 +138,15 @@ export class OrderListComponent implements OnInit {
 
     reset() {
         // wait form reset updated finished
-      this.queryParam.courseSubject = null;
-      this.queryParam.courseType = null;
-      this.queryParam.grade = null;
-      this.queryParam.signInDateStart = null;
-      this.queryParam.signInDateEnd = null;
-      this.queryParam.pageNo = 1;
-      this.queryParam.pageSize=10;
-      this.queryParam.orderCode=null;
-      setTimeout(() => this.getData());
+        this.queryParam.courseSubject = null;
+        this.queryParam.courseType = null;
+        this.queryParam.grade = null;
+        this.queryParam.signInDateStart = null;
+        this.queryParam.signInDateEnd = null;
+        this.queryParam.pageNo = 1;
+        this.queryParam.pageSize = 10;
+        this.queryParam.orderCode = null;
+        setTimeout(() => this.getData());
     }
 
 
@@ -160,8 +162,8 @@ export class OrderListComponent implements OnInit {
             });
     }
 
-  onDateRangeChanged(result: Date): void {
-    this.queryParam.signInDateStart = this.datePipe.transform(result[0], 'yyyy-MM-dd');
-    this.queryParam.signInDateEnd = this.datePipe.transform(result[1], 'yyyy-MM-dd');
-  }
+    onDateRangeChanged(result: Date): void {
+        this.queryParam.signInDateStart = this.datePipe.transform(result[0], 'yyyy-MM-dd');
+        this.queryParam.signInDateEnd = this.datePipe.transform(result[1], 'yyyy-MM-dd');
+    }
 }
