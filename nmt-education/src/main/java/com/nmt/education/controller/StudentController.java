@@ -69,9 +69,9 @@ public class StudentController {
     }
 
     @ApiOperation(value = "amount", notes = "学生账户")
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    @RequestMapping(value = "/amountPage", method = RequestMethod.GET)
     public PageInfo<StudentAccountVo> accountPage(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
-                                             @RequestParam("studentId") Long studentId,
+                                             @RequestParam(value = "studentId" ,required = false) Long studentId,
                                              @RequestParam(value = "pageNo" ,required = false ,defaultValue = "1") Integer pageNo,
                                              @RequestParam(value = "pageSize",required = false,defaultValue = "10") Integer pageSize
                                                   ) {
