@@ -68,8 +68,8 @@ public class StudentController {
         return studentService.detail(studentId);
     }
 
-    @ApiOperation(value = "amount", notes = "学生账户")
-    @RequestMapping(value = "/amountPage", method = RequestMethod.GET)
+    @ApiOperation(value = "accountPage", notes = "学生账户分页接口")
+    @RequestMapping(value = "/accountPage", method = RequestMethod.GET)
     public PageInfo<StudentAccountVo> accountPage(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
                                              @RequestParam(value = "studentId" ,required = false) Long studentId,
                                              @RequestParam(value = "pageNo" ,required = false ,defaultValue = "1") Integer pageNo,
@@ -78,4 +78,10 @@ public class StudentController {
         return studentService.accountPage(studentId,pageNo,pageSize);
     }
 
+    @ApiOperation(value = "account", notes = "学生账户")
+    @RequestMapping(value = "/account/{studentId}", method = RequestMethod.POST)
+    public StudentAccountVo account(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
+            , @PathVariable Long studentId) {
+        return studentService.account(studentId);
+    }
 }

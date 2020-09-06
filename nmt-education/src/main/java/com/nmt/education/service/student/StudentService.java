@@ -249,4 +249,21 @@ public class StudentService {
     public PageInfo<StudentAccountVo> accountPage(Long studentId, Integer pageNo, Integer pageSize) {
         return PageHelper.startPage(pageNo, pageSize).doSelectPageInfo(() -> this.studentAccountService.queryAccount(studentId));
     }
+
+    /**
+     * 学生账户
+     * @param studentId
+     * @return
+     */
+    public StudentAccountVo account(Long studentId) {
+        if(Objects.isNull(studentId)){
+            return null ;
+        }
+        final List<StudentAccountVo> studentAccountVos = studentAccountService.queryAccount(studentId);
+        if(CollectionUtils.isEmpty(studentAccountVos)){
+            return null ;
+        }else{
+            return studentAccountVos.get(0);
+        }
+    }
 }
