@@ -204,7 +204,7 @@ public class CourseScheduleService {
             Boolean isConsumed = Enums.SignInType.isConsumed(source, target);
             if (Objects.isNull(isConsumed)) {
                 //状态没有变化
-                if(!target.equals(source)){
+                if (!target.equals(source)) {
                     needUpdate.add(courseSignInItem);
                     courseRegistrationPoList.add(courseRegistrationPo);
                 }
@@ -216,7 +216,7 @@ public class CourseScheduleService {
                                 Enums.FeeStatus.已缴费.getCode().equals(p.getFeeStatus())).findFirst().get();
                 Assert.isTrue(Objects.nonNull(expenseDetailPo), "缴费记录不存在，id：" + courseSignInItem.getRegisterSummaryId());
 //                BigDecimal perAmount = new BigDecimal(expenseDetailPo.getPerAmount());
-                BigDecimal perAmount = NumberUtil.mutify(expenseDetailPo.getPerAmount(),expenseDetailPo.getDiscount());
+                BigDecimal perAmount = NumberUtil.mutify(expenseDetailPo.getPerAmount(), expenseDetailPo.getDiscount());
                 //设置余额
                 if (isConsumed) {
                     courseRegistrationPo.setBalanceAmount(balanceAmount.subtract(perAmount).toPlainString());
@@ -384,7 +384,7 @@ public class CourseScheduleService {
      * @return
      */
     public List<TeacherScheduleDto> scheduleTeacherExportList(TeacherScheduleReqDto dto, Integer logInUser) {
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser,dto.getCampus());
+        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
         if (dto.getEndDate() != null) {
             dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
         }
@@ -425,7 +425,8 @@ public class CourseScheduleService {
      * @return
      */
     public List<TeacherSalarySummaryDto> teacherSummaryExportList(TeacherScheduleReqDto dto, Integer logInUser) {
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser,dto.getCampus());
+        //先获取数据范围
+        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
         if (dto.getEndDate() != null) {
             dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
         }
@@ -448,6 +449,7 @@ public class CourseScheduleService {
                                 (d1, d2) -> {
                                     d1.setTeacherPrice(
                                             NumberUtil.String2Dec(d1.getTeacherPrice()).add(NumberUtil.String2Dec(d2.getTeacherPrice())).toPlainString());
+                                    d1.setTimes(d1.getTimes() + 1);
                                     return d1;
                                 }
                         )).forEach((c, b) -> {
@@ -455,6 +457,7 @@ public class CourseScheduleService {
                             if (Objects.nonNull(bd)) {
                                 bd.setTeacherPrice(
                                         NumberUtil.String2Dec(bd.getTeacherPrice()).add(NumberUtil.String2Dec(b.getTeacherPrice())).toPlainString());
+                                bd.setTimes(bd.getTimes() + b.getTimes());
                             } else {
                                 dataMap.put(c, b);
                             }
@@ -487,6 +490,8 @@ public class CourseScheduleService {
         dt.setCampus(d.getCampus());
         dt.setCourseSubject(d.getCourseSubject());
         dt.setGrade(d.getGrade());
+        dt.setPerTime(d.getPerTime());
+        dt.setTeacherPerPrice(d.getTeacherPrice());
         return dt;
     }
 
