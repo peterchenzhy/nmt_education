@@ -22,6 +22,7 @@ import { STComponent, STColumn, STColumnTag } from '@delon/abc';
 })
 export class CourseViewComponent implements OnInit {
   pageHeader: string = "课程信息编辑";
+  editable: boolean = true;
   course: Course = { editFlag: EDIT_FLAG.NEW, courseExpenseList: [], courseScheduleList: [] };
   editSessionIndex = -1;
   editSessionObj = {};
@@ -73,6 +74,7 @@ export class CourseViewComponent implements OnInit {
       courseSubject: [null, [Validators.required]],
       courseClassification: [null, [Validators.required]],
       courseRegular: [null, []],
+      courseStatus: [COURSE_STATUS.PENDING, []],
       status: [COURSE_STATUS.PENDING, []],
       perTime: [0, [Validators.required]],
       teacherId: [null, []],
@@ -97,6 +99,7 @@ export class CourseViewComponent implements OnInit {
           let year: number = toNumber(this.course.year.toString());
           this.course.year = new Date().setFullYear(year);
           this.course.editFlag = EDIT_FLAG.UPDATE;
+          this.editable = this.course.courseStatus != COURSE_STATUS.COMPLETE;
           this.pageHeader = `课程信息编辑 [${this.course.name}--${this.course.code}]`;
           if (this.course.teacher) {
             this.teacherList.push(this.course.teacher);
@@ -516,7 +519,7 @@ export class CourseViewComponent implements OnInit {
   signReportList = [];
   @ViewChild('stSign', { static: true })
   stSign: STComponent;
-  signColumns: STColumn[] = [{ title: "姓名", index: "name",fixed: 'left', width: 100 }];
+  signColumns: STColumn[] = [{ title: "姓名", index: "name", fixed: 'left', width: 100 }];
   getSignReport() {
     if (!this.course.id || !this.course.courseScheduleList
       || this.course.courseScheduleList.length == 0) {
@@ -524,7 +527,7 @@ export class CourseViewComponent implements OnInit {
     }
     this.course.courseScheduleList.forEach(session => {
       let date = this.datePipe.transform(session.courseDatetime, 'MM/dd');
-      this.stSign.columns.push({ title: date, index: session.id.toString(), render: "signInRender",tag: this.SIGNIN_TAG  });
+      this.stSign.columns.push({ title: date, index: session.id.toString(), render: "signInRender", tag: this.SIGNIN_TAG });
     });
     this.stSign.resetColumns();
     this.signReportLoaded = true;

@@ -29,6 +29,10 @@ export class CourseService {
         return this.httpClient.post('nmt-education/course/manager', T);
     }
 
+    public finishCourse(courseId: number): Observable<Object> {
+        return this.httpClient.get(`nmt-education/course/finish/${courseId}?t=${new Date().getTime()}`);
+    }
+
     public getCourseDetails(id: number): Observable<Object> {
         return this.httpClient.post(`nmt-education/course/detail/${id}`, id);
     }
@@ -57,7 +61,7 @@ export class CourseService {
         return this.httpClient.post('nmt-education/course/schedule/signIn', list);
     }
 
-    public refundFee(feeList:any):Observable<Object>{
+    public refundFee(feeList: any): Observable<Object> {
         return this.httpClient.post('nmt-education/course/register/refund', feeList)
 
     }
