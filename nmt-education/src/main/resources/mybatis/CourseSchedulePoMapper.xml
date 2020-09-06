@@ -221,7 +221,7 @@
   <select id="teacherSchedule" resultType="com.nmt.education.pojo.vo.TeacherScheduleDto">
     select cs.course_id as courseId ,c.name as courseName ,c.course_subject as courseSubject
     ,t.name as teacherName,c.grade as grade,cs.teacher_price as teacherPrice,cs.sign_in as signInStatus
-    ,c.campus as campus ,cs.course_datetime as courseDate,cs.teacher_id as teacherId
+    ,c.campus as campus ,cs.course_datetime as courseDate,cs.teacher_id as teacherId,c.per_time as perTime
     from course_schedule cs
     inner join course c on cs.course_id = c.id and c.status =1
         and c.campus in

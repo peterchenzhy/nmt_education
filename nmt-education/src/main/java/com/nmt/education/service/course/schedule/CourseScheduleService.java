@@ -430,6 +430,8 @@ public class CourseScheduleService {
      * @return
      */
     public List<TeacherSalarySummaryDto> teacherSummaryExportList(TeacherScheduleReqDto dto, Integer logInUser) {
+
+        //先获取数据范围
         List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
         if (dto.getEndDate() != null) {
             dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
@@ -453,6 +455,7 @@ public class CourseScheduleService {
                                 (d1, d2) -> {
                                     d1.setTeacherPrice(
                                             NumberUtil.String2Dec(d1.getTeacherPrice()).add(NumberUtil.String2Dec(d2.getTeacherPrice())).toPlainString());
+                                    d1.setTimes(d1.getTimes() + 1);
                                     return d1;
                                 }
                         )).forEach((c, b) -> {
@@ -460,6 +463,7 @@ public class CourseScheduleService {
                             if (Objects.nonNull(bd)) {
                                 bd.setTeacherPrice(
                                         NumberUtil.String2Dec(bd.getTeacherPrice()).add(NumberUtil.String2Dec(b.getTeacherPrice())).toPlainString());
+                                bd.setTimes(bd.getTimes() + b.getTimes());
                             } else {
                                 dataMap.put(c, b);
                             }
@@ -492,6 +496,8 @@ public class CourseScheduleService {
         dt.setCampus(d.getCampus());
         dt.setCourseSubject(d.getCourseSubject());
         dt.setGrade(d.getGrade());
+        dt.setPerTime(d.getPerTime());
+        dt.setTeacherPerPrice(d.getTeacherPrice());
         return dt;
     }
 
