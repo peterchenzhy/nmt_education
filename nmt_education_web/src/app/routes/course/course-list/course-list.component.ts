@@ -8,6 +8,8 @@ import { Router } from '@angular/router';
 import { AppContextService } from '@shared/service/appcontext.service';
 import { CourseQueryParam, ResponseData } from 'src/app/model/system.model';
 import { DatePipe } from '@angular/common';
+import { Course } from 'src/app/model/course.model';
+import { COURSE_STATUS } from '@shared/constant/system.constant';
 
 @Component({
   selector: 'app-course-list',
@@ -43,7 +45,7 @@ export class CourseListComponent implements OnInit {
     { title: '校区', index: 'campus', render: "courseCampus" },
     {
       title: '状态',
-      index: 'status',
+      index: 'courseStatus',
       render: 'courseStatus'
     },
     {
@@ -63,12 +65,18 @@ export class CourseListComponent implements OnInit {
       title: '操作',
       buttons: [
         {
-          text: '编辑',
+          text: (item: any) => item.courseStatus != COURSE_STATUS.COMPLETE ? '编辑' : '查看',
           click: (item: any) => this.router.navigate([`/course/edit/${item.id}`]),
         },
         {
           text: '签到',
+          iif: (item: any) => item.courseStatus != COURSE_STATUS.COMPLETE,
           click: (item: any) => this.router.navigate([`/course/signsession/${item.id}`]),
+        },
+        {
+          text: '结课',
+          iif: (item: any) => item.courseStatus != COURSE_STATUS.COMPLETE,
+          click: (item: any) => this.finishCourse(item)
         }
       ],
     },
@@ -150,4 +158,19 @@ export class CourseListComponent implements OnInit {
     this.router.navigate([`/course/create`]);
   }
 
+  finishCourse(course: Course) {
+    this.modalSrv.confirm({
+      nzTitle: "结课确认",
+      nzContent: `是否确认结课[${course.name}]? 结课后，课程信息不可再编辑/签到，未消耗课时将计入学生账户余额。`,
+      nzOnOk: () => {
+        this.loading = true;
+        this.appCtx.courseService.finishCourse(course.id).pipe(
+          tap(() => { this.loading = false; }, () => { this.loading = false; })
+        )
+          .subscribe((res: ResponseData) => {
+            this.getData()
+          });;
+      }
+    });
+  }
 }

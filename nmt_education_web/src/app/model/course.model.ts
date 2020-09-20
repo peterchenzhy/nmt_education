@@ -17,6 +17,7 @@ export interface Course {
     grade?: number;
     courseSubject?: number;
     courseType?: COURSE_TYPE;
+    courseStatus?: COURSE_STATUS;
     status?: COURSE_STATUS;
     statusDetail?: SysEnum;
     teacher?: Teacher;

@@ -30,7 +30,7 @@
               <span>{{ sessionSignStatusList.value[i].studentName }}</span>
             </td>
             <td>
-              <nz-select style="width: 25%;" formControlName="signIn" [nzPlaceHolder]="'请选签到状态'"
+              <nz-select [nzDisabled]="editable!=true" style="width: 25%;" formControlName="signIn" [nzPlaceHolder]="'请选签到状态'"
                 (ngModelChange)="onSignInfoChanged(i)">
                 <nz-option *ngFor="let status of signInStatusList" [nzLabel]="status.label" [nzValue]="status.value">
                 </nz-option>

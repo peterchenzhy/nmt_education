@@ -38,7 +38,7 @@ export class CourseSessionSignComponent implements OnInit {
   ) {
 
   }
-
+  editable: boolean = true;
   seasonList = this.appCtx.globalService.SEASON_LIST;
   courseTypeList = this.appCtx.globalService.COURSE_TYPE_LIST;
   courseSubjectList = this.appCtx.globalService.COURSE_SUBJECT_LIST;
@@ -63,6 +63,7 @@ export class CourseSessionSignComponent implements OnInit {
       this.appCtx.courseService.getCourseDetails(courseId)
         .subscribe(res => {
           this.course = res;
+          this.editable = this.course.courseStatus != COURSE_STATUS.COMPLETE;
           if (this.course.teacher) {
             this.teacherList.push(this.course.teacher);
             this.selectedTeacherList.push(this.course.teacher);
