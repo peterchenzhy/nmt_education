@@ -83,7 +83,7 @@ public class RegistrationExpenseDetailPo {
     * 备注
     */
     @ApiModelProperty(value="备注")
-    private String remark;
+    private String remark="";
 
     /**
     * 创建人

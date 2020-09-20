@@ -29,4 +29,6 @@ public interface Consts {
     Integer FEE_TYPE_普通单节费用 = 1;
 
     int BATCH_100 = 100;
+
+    String 结余消耗模板="其中消耗结余：<%s>元";
 }

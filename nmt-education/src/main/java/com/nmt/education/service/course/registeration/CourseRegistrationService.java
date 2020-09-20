@@ -16,6 +16,7 @@ import com.nmt.education.service.course.CourseService;
 import com.nmt.education.service.course.registeration.summary.RegisterationSummaryService;
 import com.nmt.education.service.course.schedule.CourseScheduleService;
 import com.nmt.education.service.student.StudentService;
+import com.nmt.education.service.student.account.StudentAccountService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -57,6 +58,8 @@ public class CourseRegistrationService {
     private CourseScheduleService courseScheduleService;
     @Autowired
     private CampusAuthorizationService campusAuthorizationService;
+    @Autowired
+    private StudentAccountService studentAccountService;
 
 
     /**
@@ -83,7 +86,7 @@ public class CourseRegistrationService {
             courseRegistrationPo = generateCourseRegistrationPo(dto, updator);
             this.insertSelective(courseRegistrationPo);
         } else {
-            //编辑时，仅可增加课时，不能减少
+            //编辑时，总课时仅可增加课时，不能减少
             courseRegistrationPo = selectByPrimaryKey(dto.getId());
             courseRegistrationPo.setRemark(dto.getRemark());
             courseRegistrationPo.setOperator(updator);
@@ -110,8 +113,7 @@ public class CourseRegistrationService {
                 "课程：" + dto.getCourseId());
 
         //缴费记录明细
-        generateRegisterExpenseDetail(dto.getRegisterExpenseDetail(), updator,
-                courseRegistrationPo);
+        generateRegisterExpenseDetail(dto.getRegisterExpenseDetail(), updator, courseRegistrationPo, dto.isUseAccount());
 
         //汇总课表
         registerationSummaryService.batchInsert(generateRegisterationSummary(dto, updator, courseRegistrationPo));
@@ -195,47 +197,138 @@ public class CourseRegistrationService {
      * @since 2020/7/5 0:02
      */
     private void generateRegisterExpenseDetail(List<RegisterExpenseDetailReqDto> expenseDetailList, int updator,
-                                               CourseRegistrationPo courseRegistrationPo) {
+                                               CourseRegistrationPo courseRegistrationPo, boolean useAccount) {
         Assert.isTrue(!CollectionUtils.isEmpty(expenseDetailList), "报名时不存在费用信息");
-        List<RegistrationExpenseDetailPo> addList = new ArrayList<>(expenseDetailList.size());
+//        List<RegistrationExpenseDetailPo> addList = new ArrayList<>(expenseDetailList.size());
         List<RegistrationExpenseDetailFlowPo> flowList = new ArrayList<>(expenseDetailList.size());
+
+        //取结余
+        BigDecimal account = BigDecimal.ZERO;
+        //取结余流水
+        List<StudentAccountFlowPo> accountFlowList = new ArrayList();
+        StudentAccountPo studentAccountPo = null;
+        if (useAccount) {
+            studentAccountPo = studentAccountService.querybyUserId(courseRegistrationPo.getStudentId());
+            if (Objects.nonNull(studentAccountPo)) {
+                account = account.add(NumberUtil.String2Dec(studentAccountPo.getAmount()));
+            }
+        }
+        //是否使用结余表中
+        boolean useAccountFlg = account.compareTo(BigDecimal.ZERO) > 0 && useAccount;
         //处理修改记录
         Map<Long, RegisterExpenseDetailReqDto> reqDtoMap =
                 expenseDetailList.stream().filter(e -> Enums.EditFlag.修改.getCode().equals(e.getEditFlag()))
                         .collect(Collectors.toMap(k -> k.getId(), v -> v));
         List<RegistrationExpenseDetailPo> updateList =
                 registrationExpenseDetailService.selectByIds(new ArrayList<>(reqDtoMap.keySet()));
-        updateList.stream().forEach(e -> {
-            RegisterExpenseDetailReqDto dto = reqDtoMap.get(e.getId());
-            //先生成流水
-            RegistrationExpenseDetailFlowPo flow = generateFlow(updator, e, ExpenseDetailFlowTypeEnum.编辑, dto);
-            if (Objects.nonNull(flow)) {
-                //在编辑金额
-                e.setFeeType(dto.getFeeType());
-                e.setFeeStatus(dto.getFeeStatus());
-                e.setAmount(dto.getAmount());
-                e.setPerAmount(dto.getPerAmount());
-                e.setCount(dto.getCount());
-                e.setDiscount(dto.getDiscount());
-                e.setPayment(dto.getPayment());
-                e.setRemark(Strings.nullToEmpty(dto.getRemark()));
-                e.setOperator(updator);
-                e.setOperateTime(new Date());
+        for (RegistrationExpenseDetailPo expenseDetailPo : updateList) {
+            RegisterExpenseDetailReqDto dto = reqDtoMap.get(expenseDetailPo.getId());
+            //增量金额
+            BigDecimal delta = NumberUtil.String2Dec(dto.getAmount()).subtract(NumberUtil.String2Dec(expenseDetailPo.getAmount()));
+            if (BigDecimal.ZERO.compareTo(delta) >= 0) {
+                log.warn("金额没有变化，不生成流水，old: [{}], dto:[{}]", expenseDetailPo, dto);
+                continue;
+            } else {
+                //先生成流水
+                RegistrationExpenseDetailFlowPo flow = generateFlow(updator, expenseDetailPo, ExpenseDetailFlowTypeEnum.编辑, dto, delta.toPlainString());
                 flowList.add(flow);
+                //消耗 结余 逻辑
+                if (useAccountFlg && account.compareTo(BigDecimal.ZERO) > 0) {
+                    account = studentAccountCost(updator, courseRegistrationPo, account, accountFlowList, studentAccountPo, delta, flow);
+                }
+                //再编辑金额
+                expenseDetailPo.setFeeType(dto.getFeeType());
+                expenseDetailPo.setFeeStatus(dto.getFeeStatus());
+                expenseDetailPo.setAmount(dto.getAmount());
+                expenseDetailPo.setPerAmount(dto.getPerAmount());
+                expenseDetailPo.setCount(dto.getCount());
+                expenseDetailPo.setDiscount(dto.getDiscount());
+                expenseDetailPo.setPayment(dto.getPayment());
+                expenseDetailPo.setRemark(expenseDetailPo.getRemark() + Consts.分号 + Strings.nullToEmpty(dto.getRemark()));
+                expenseDetailPo.setOperator(updator);
+                expenseDetailPo.setOperateTime(new Date());
             }
-        });
+        }
 
         //处理新增记录
-        expenseDetailList.stream().filter(e -> Enums.EditFlag.新增.getCode().equals(e.getEditFlag())).forEach(e -> {
-            addList.add(registrationExpenseDetailService.dto2po(updator, courseRegistrationPo, e));
-        });
+        for (RegisterExpenseDetailReqDto e : expenseDetailList) {
+            if (Enums.EditFlag.新增.getCode().equals(e.getEditFlag())) {
+
+                RegistrationExpenseDetailPo expenseDetailPo = registrationExpenseDetailService.dto2po(updator, courseRegistrationPo, e);
+                registrationExpenseDetailService.batchInsert(Lists.newArrayList(expenseDetailPo));
+                RegistrationExpenseDetailFlowPo flowPo = generateFlow(updator, expenseDetailPo, ExpenseDetailFlowTypeEnum.新增记录);
+                //消耗 结余 逻辑
+                if (useAccountFlg && account.compareTo(BigDecimal.ZERO) > 0) {
+                    account = studentAccountCost(updator, courseRegistrationPo, account, accountFlowList, studentAccountPo,
+                            new BigDecimal(flowPo.getAmount()), flowPo);
+                }
+//                addList.add(expenseDetailPo);
+                flowList.add(flowPo);
+            }
+        }
 
         //数据入库
-        registrationExpenseDetailService.batchInsert(addList);
+//        registrationExpenseDetailService.batchInsert(addList);
         registrationExpenseDetailService.updateBatch(updateList);
-        addList.stream().forEach(e -> flowList.add(generateFlow(updator, e, ExpenseDetailFlowTypeEnum.新增记录)));
         registrationExpenseDetailService.batchInsertFlow(flowList);
+        //更新结余
+        if (Objects.nonNull(studentAccountPo) && !CollectionUtils.isEmpty(accountFlowList)) {
+            studentAccountPo.setOperateTime(new Date());
+            studentAccountPo.setOperator(updator);
+            studentAccountPo.setAmount(account.toPlainString());
+            if (studentAccountService.updateByVersion(studentAccountPo) <= 0) {
+                throw new RuntimeException("更新结余账户异常！");
+            }
+            studentAccountService.addFlow(accountFlowList);
+        }
 
+    }
+
+    /**
+     * 学生结余账户 逻辑
+     *
+     * @param updator
+     * @param courseRegistrationPo
+     * @param account
+     * @param accountFlowList
+     * @param studentAccountPo
+     * @param delta
+     * @param flow
+     * @return java.math.BigDecimal
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/9/6 16:14
+     */
+    private BigDecimal studentAccountCost(int updator, CourseRegistrationPo courseRegistrationPo, BigDecimal account, List<StudentAccountFlowPo> accountFlowList,
+                                          StudentAccountPo studentAccountPo, BigDecimal delta, RegistrationExpenseDetailFlowPo flow) {
+        //计算消耗金额
+        BigDecimal cost = calculateCost(account, delta);
+        BigDecimal lastAmount = account;
+        flow.setRemark(flow.getRemark() + String.format(Consts.结余消耗模板, cost.toPlainString()));
+        //生成结余流水
+        accountFlowList.add(studentAccountService.generateFlow(updator, studentAccountPo.getId(), cost.toPlainString(),
+                ExpenseDetailFlowTypeEnum.消耗,
+                courseRegistrationPo.getId(), lastAmount.toPlainString()));
+        //更新账户余额
+        account = account.subtract(cost);
+        return account;
+    }
+
+    /**
+     * 计算消耗
+     *
+     * @param account 账户余额
+     * @param delta   消耗金额
+     * @return
+     */
+    private BigDecimal calculateCost(BigDecimal account, BigDecimal delta) {
+        BigDecimal temp = account.subtract(delta);
+        if (temp.compareTo(BigDecimal.ZERO) >= 0) {
+            return delta;
+        } else {
+            return account;
+        }
     }
 
     /**
@@ -252,18 +345,14 @@ public class CourseRegistrationService {
      * @since 2020/7/5 0:14
      */
     private RegistrationExpenseDetailFlowPo generateFlow(int updator, RegistrationExpenseDetailPo old, ExpenseDetailFlowTypeEnum type,
-                                                         RegisterExpenseDetailReqDto dto) {
-        BigDecimal delta = NumberUtil.String2Dec(dto.getAmount()).subtract(NumberUtil.String2Dec(old.getAmount()));
-        if (BigDecimal.ZERO.compareTo(delta) >= 0) {
-            log.warn("金额没有变化，不生成流水，old: [{}], dto:[{}]", old, dto);
-            return null;
-        }
+                                                         RegisterExpenseDetailReqDto dto, String delta) {
+
         RegistrationExpenseDetailFlowPo flow = new RegistrationExpenseDetailFlowPo();
         flow.setRegistrationId(old.getRegistrationId());
         flow.setRegisterExpenseDetailId(old.getId());
         flow.setFeeType(old.getFeeType());
         flow.setType(type.getCode());
-        flow.setAmount(delta.toPlainString());
+        flow.setAmount(delta);
         flow.setStatus(StatusEnum.VALID.getCode());
         flow.setRemark(type.getDescription());
         flow.setCreator(updator);
@@ -477,6 +566,10 @@ public class CourseRegistrationService {
                 new Thread(() -> vo.setExpenseDetailFlowVoList(this.registrationExpenseDetailService.getExpenseDetailFlowVo(vo.getId())));
         flowThread.start();
 
+        Thread flowThread2 =
+                new Thread(() -> vo.setExpenseDetailFlowVoList(this.studentAccountService.queryFlowByRegisterId(vo.getId())));
+        flowThread2.start();
+
         vo.setCourse(courseService.selectByPrimaryKey(vo.getCourseId()));
         vo.setStudent(studentService.detail(vo.getStudentId()));
         Map<Long, RegisterationSummaryPo> registerationSummaryMap =
@@ -498,6 +591,7 @@ public class CourseRegistrationService {
         }
         vo.setRegisterExpenseDetail(registrationExpenseDetailService.queryRegisterId(id));
         flowThread.join();
+        flowThread2.join();
         return vo;
     }
 

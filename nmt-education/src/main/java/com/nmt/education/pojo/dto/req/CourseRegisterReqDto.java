@@ -45,5 +45,8 @@ public class CourseRegisterReqDto {
     @ApiModelProperty(value = "支付信息")
     private List<RegisterExpenseDetailReqDto> registerExpenseDetail;
 
+    @ApiModelProperty(value = "是否使用结余")
+    private boolean useAccount = false;
+
 
 }

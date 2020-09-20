@@ -24,7 +24,9 @@ interface StudentAccountPoMapper {
 
     StudentAccountPo querybyUserId(@Param("userId") Long userId);
 
-    void updateByVersion(StudentAccountPo accountPo);
+    int updateByVersion(StudentAccountPo accountPo);
 
     List<StudentAccountVo> queryAccount(@Param("studentId") Long studentId);
+
+
 }

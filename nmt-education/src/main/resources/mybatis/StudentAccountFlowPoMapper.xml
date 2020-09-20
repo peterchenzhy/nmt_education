@@ -29,6 +29,12 @@
     from student_account_flow
     where id = #{id,jdbcType=BIGINT}
   </select>
+  <select id="queryByRegisterId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from student_account_flow
+    where ref_id = #{registerId}
+  </select>
   <insert id="insertSelective" parameterType="com.nmt.education.pojo.po.StudentAccountFlowPo">
     <!--@mbg.generated-->
     insert into student_account_flow

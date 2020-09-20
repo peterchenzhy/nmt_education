@@ -2,11 +2,11 @@ package com.nmt.education.service.student.account;
 
 import com.google.common.collect.Lists;
 import com.nmt.education.commmons.*;
-import com.nmt.education.pojo.dto.req.StudentSearchReqDto;
 import com.nmt.education.pojo.po.RegisterationSummaryPo;
 import com.nmt.education.pojo.po.RegistrationExpenseDetailPo;
 import com.nmt.education.pojo.po.StudentAccountFlowPo;
 import com.nmt.education.pojo.po.StudentAccountPo;
+import com.nmt.education.pojo.vo.ExpenseDetailFlowVo;
 import com.nmt.education.pojo.vo.StudentAccountVo;
 import com.nmt.education.service.course.registeration.RegistrationExpenseDetailService;
 import com.nmt.education.service.course.registeration.summary.RegisterationSummaryService;
@@ -19,10 +19,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -78,19 +75,21 @@ public class StudentAccountService {
         StudentAccountPo accountPo = querybyUserId(userId);
         if (Objects.isNull(accountPo)) {
             accountPo = newStudentAccountPo(logInUser, userId, amount, registerId);
-        }else{
+        } else {
             String lastAmount = accountPo.getAmount();
             accountPo.setAmount(amount.add(NumberUtil.String2Dec(accountPo.getAmount())).toPlainString());
             accountPo.setOperator(logInUser);
             accountPo.setOperateTime(new Date());
             this.updateByVersion(accountPo);
-            Account2Flow(logInUser,accountPo,ExpenseDetailFlowTypeEnum.编辑,registerId,lastAmount);
+            StudentAccountFlowPo flowPo = generateFlow(logInUser, accountPo.getId(),accountPo.getAmount(), ExpenseDetailFlowTypeEnum.编辑, registerId,
+                    lastAmount);
+            this.studentAccountFlowPoMapper.insertSelective(flowPo);
 
         }
     }
 
-    private void updateByVersion(StudentAccountPo accountPo) {
-        this.studentAccountPoMapper.updateByVersion(accountPo);
+    public int updateByVersion(StudentAccountPo accountPo) {
+        return this.studentAccountPoMapper.updateByVersion(accountPo);
     }
 
     /**
@@ -117,29 +116,31 @@ public class StudentAccountService {
         po.setOperateTime(new Date());
         po.setVersion(1);
         this.insertSelective(po);
-        Account2Flow(logInUser, po, ExpenseDetailFlowTypeEnum.新增记录 ,registerId, BigDecimal.ZERO.toPlainString());
+        StudentAccountFlowPo flowPo = generateFlow(logInUser, po.getId(),po.getAmount(), ExpenseDetailFlowTypeEnum.新增记录, registerId,
+                BigDecimal.ZERO.toPlainString());
+        this.studentAccountFlowPoMapper.insertSelective(flowPo);
 
         return po;
     }
 
-    private StudentAccountFlowPo Account2Flow(Integer logInUser, StudentAccountPo po, ExpenseDetailFlowTypeEnum type, Long registerId,
-                                              String lastAmount) {
+    public StudentAccountFlowPo generateFlow(Integer logInUser, long studentAccountId , String amount, ExpenseDetailFlowTypeEnum type, Long registerId,
+                                             String lastAmount) {
         StudentAccountFlowPo flowPo = new StudentAccountFlowPo();
-        flowPo.setStudentAccountId(po.getId());
+        flowPo.setStudentAccountId(studentAccountId);
         flowPo.setType(type.getCode());
         flowPo.setRefId(registerId);
-        flowPo.setAmount(po.getAmount());
+        flowPo.setAmount(amount);
         flowPo.setBeforeAmount(lastAmount);
         flowPo.setStatus(StatusEnum.VALID.getCode());
         flowPo.setCreator(logInUser);
         flowPo.setCreateTime(new Date());
         flowPo.setOperator(logInUser);
         flowPo.setOperateTime(new Date());
-        this.studentAccountFlowPoMapper.insertSelective(flowPo);
+
         return flowPo;
     }
 
-    private StudentAccountPo querybyUserId(Long userId) {
+    public StudentAccountPo querybyUserId(Long userId) {
         return this.studentAccountPoMapper.querybyUserId(userId);
     }
 
@@ -170,7 +171,28 @@ public class StudentAccountService {
         return studentAccountPoMapper.batchInsert(list);
     }
 
-    public List<StudentAccountVo> queryAccount(Long  studentId) {
+    public List<StudentAccountVo> queryAccount(Long studentId) {
         return this.studentAccountPoMapper.queryAccount(studentId);
+    }
+
+
+    public void addFlow(List<StudentAccountFlowPo> accountFlowList) {
+        if(CollectionUtils.isEmpty(accountFlowList)){
+            return ;
+        }
+        this.studentAccountFlowPoMapper.batchInsert(accountFlowList);
+    }
+
+    /**
+     * 根据报名记录查询 结余消耗流水
+     *
+     * @param registerId
+     * @return
+     */
+    public List<ExpenseDetailFlowVo> queryFlowByRegisterId(Long registerId) {
+        if(Objects.isNull(registerId)){
+            return Collections.emptyList();
+        }
+        return this.studentAccountFlowPoMapper.queryByRegisterId(registerId);
     }
 }
