@@ -28,4 +28,8 @@ export class StudentService {
     public fuzzyQueryStudents(query: String): Observable<Object> {
         return this.httpClient.get('nmt-education/student/search/fuzzy?name=' + query);
     }
+
+    public getBalance(studentId: number): Observable<Object> {
+        return this.httpClient.post(`nmt-education//student/account/${studentId}`, null);
+    }
 }

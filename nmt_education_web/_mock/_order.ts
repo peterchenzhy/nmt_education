@@ -29,7 +29,7 @@ for (let i = 0; i < 46; i += 1) {
         registerExpenseDetail: [],
         courseScheduleIds: [],
         totalAmount: 1000,
-        balance: 300
+        balanceAmount: 300
     });
 }
 
