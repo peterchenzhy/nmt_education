@@ -113,7 +113,7 @@ public class CourseRegistrationService {
                 "课程：" + dto.getCourseId());
 
         //缴费记录明细
-        generateRegisterExpenseDetail(dto.getRegisterExpenseDetail(), updator, courseRegistrationPo, dto.isUseAccount());
+        generateRegisterExpenseDetail(dto.getRegisterExpenseDetail(), updator, courseRegistrationPo, dto.isUseAccount(),dto.getAmount());
 
         //汇总课表
         registerationSummaryService.batchInsert(generateRegisterationSummary(dto, updator, courseRegistrationPo));
@@ -191,15 +191,15 @@ public class CourseRegistrationService {
      * @param expenseDetailList    费用列表
      * @param updator              操作人
      * @param courseRegistrationPo 报名记录
+     * @param studentAmount 结余账户的钱
      * @author PeterChen
      * @modifier PeterChen
      * @version v1
      * @since 2020/7/5 0:02
      */
     private void generateRegisterExpenseDetail(List<RegisterExpenseDetailReqDto> expenseDetailList, int updator,
-                                               CourseRegistrationPo courseRegistrationPo, boolean useAccount) {
+                                               CourseRegistrationPo courseRegistrationPo, boolean useAccount, BigDecimal studentAmount) {
         Assert.isTrue(!CollectionUtils.isEmpty(expenseDetailList), "报名时不存在费用信息");
-//        List<RegistrationExpenseDetailPo> addList = new ArrayList<>(expenseDetailList.size());
         List<RegistrationExpenseDetailFlowPo> flowList = new ArrayList<>(expenseDetailList.size());
 
         //取结余
@@ -210,6 +210,7 @@ public class CourseRegistrationService {
         if (useAccount) {
             studentAccountPo = studentAccountService.querybyUserId(courseRegistrationPo.getStudentId());
             if (Objects.nonNull(studentAccountPo)) {
+                Assert.isTrue( NumberUtil.String2Dec( studentAccountPo.getAmount()).compareTo(studentAmount)==0, "结余已变动，请重新编辑");
                 account = account.add(NumberUtil.String2Dec(studentAccountPo.getAmount()));
             }
         }
@@ -309,7 +310,7 @@ public class CourseRegistrationService {
         //生成结余流水
         accountFlowList.add(studentAccountService.generateFlow(updator, studentAccountPo.getId(), cost.toPlainString(),
                 ExpenseDetailFlowTypeEnum.消耗,
-                courseRegistrationPo.getId(), lastAmount.toPlainString()));
+                courseRegistrationPo.getId(), lastAmount.toPlainString(),flow.getRemark()));
         //更新账户余额
         account = account.subtract(cost);
         return account;

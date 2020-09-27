@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -47,6 +48,9 @@ public class CourseRegisterReqDto {
 
     @ApiModelProperty(value = "是否使用结余")
     private boolean useAccount = false;
+
+    @ApiModelProperty(value = "结余金额")
+    private BigDecimal amount = BigDecimal.ZERO;
 
 
 }

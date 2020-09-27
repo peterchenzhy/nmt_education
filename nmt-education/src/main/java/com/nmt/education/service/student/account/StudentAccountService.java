@@ -1,5 +1,6 @@
 package com.nmt.education.service.student.account;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.nmt.education.commmons.*;
 import com.nmt.education.pojo.po.RegisterationSummaryPo;
@@ -82,7 +83,7 @@ public class StudentAccountService {
             accountPo.setOperateTime(new Date());
             this.updateByVersion(accountPo);
             StudentAccountFlowPo flowPo = generateFlow(logInUser, accountPo.getId(),accountPo.getAmount(), ExpenseDetailFlowTypeEnum.编辑, registerId,
-                    lastAmount);
+                    lastAmount,"结转增加金额");
             this.studentAccountFlowPoMapper.insertSelective(flowPo);
 
         }
@@ -117,14 +118,14 @@ public class StudentAccountService {
         po.setVersion(1);
         this.insertSelective(po);
         StudentAccountFlowPo flowPo = generateFlow(logInUser, po.getId(),po.getAmount(), ExpenseDetailFlowTypeEnum.新增记录, registerId,
-                BigDecimal.ZERO.toPlainString());
+                BigDecimal.ZERO.toPlainString(),ExpenseDetailFlowTypeEnum.新增记录.getDescription());
         this.studentAccountFlowPoMapper.insertSelective(flowPo);
 
         return po;
     }
 
     public StudentAccountFlowPo generateFlow(Integer logInUser, long studentAccountId , String amount, ExpenseDetailFlowTypeEnum type, Long registerId,
-                                             String lastAmount) {
+                                             String lastAmount,String remark) {
         StudentAccountFlowPo flowPo = new StudentAccountFlowPo();
         flowPo.setStudentAccountId(studentAccountId);
         flowPo.setType(type.getCode());
@@ -136,6 +137,7 @@ public class StudentAccountService {
         flowPo.setCreateTime(new Date());
         flowPo.setOperator(logInUser);
         flowPo.setOperateTime(new Date());
+        flowPo.setRemark(Strings.nullToEmpty(remark));
 
         return flowPo;
     }
