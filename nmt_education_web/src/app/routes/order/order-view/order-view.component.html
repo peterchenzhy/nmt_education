@@ -159,13 +159,11 @@
                 </tbody>
                 <tfoot *ngIf="registerExpenseDetail.controls.length>0">
                     <tr style="padding-top: 10px;">
-                        <th colspan="6"></th>
+                        <th colspan="7"></th>
                         <th style="padding-top:10px;" colspan="">
-                            <div [formGroup]="form"><label nz-checkbox [nzDisabled]="isEditOrder"
-                                    formControlName="useAccount" (ngModelChange)="calTotalAmout()">余额
+                            <div [formGroup]="form"><label nz-checkbox formControlName="useAccount">余额
                                     {{order.balanceAmount}}</label></div>
                         </th>
-                        <th style="padding-top:10px;">共支付: {{order.totalPay}}</th>
                         <th style="padding-top:10px;">总金额: {{order.totalAmount}}</th>
                     </tr>
                 </tfoot>

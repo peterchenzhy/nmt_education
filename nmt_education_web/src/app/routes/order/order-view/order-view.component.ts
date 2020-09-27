@@ -100,6 +100,7 @@ export class OrderViewComponent implements OnInit {
                             field.patchValue(i);
                             this.registerExpenseDetail.push(field);
                         });
+                    this.getCurrentBalance();
                 });
             return;
         }
@@ -107,6 +108,7 @@ export class OrderViewComponent implements OnInit {
         if (studentStr) {
             this.order.student = JSON.parse(studentStr);
             this.order.studentId = this.order.student.id;
+            this.getCurrentBalance();
         }
         let courseStr = this.activaterRouter.snapshot.params.course;
         if (courseStr) {
@@ -115,6 +117,17 @@ export class OrderViewComponent implements OnInit {
         }
         this.form.patchValue(this.order);
     }
+
+    getCurrentBalance() {
+        this.appCtx.studentService.getBalance(this.order.studentId)
+            .pipe(
+                tap(() => { this.loading = false; this.timer = null; }, () => { this.loading = false; this.timer = null; })
+            )
+            .subscribe((res: any) => {
+                this.order.balanceAmount = parseFloat(res.amount || 0)
+            });
+    }
+
     createPay(): FormGroup {
         return this.fb.group({
             id: [null],
@@ -200,8 +213,8 @@ export class OrderViewComponent implements OnInit {
         this.selectedSessions = [];
         this.registerExpenseDetail.clear();
         this.order.totalAmount = 0;
-        this.order.totalPay = 0;
-        this.order.balanceAmount = 0;
+        // this.order.totalPay = 0;
+        // this.order.balanceAmount = 0;
     }
 
     onPayInfoChanged(index: number, refreshTotalAmount: boolean, event: any) {
@@ -233,30 +246,30 @@ export class OrderViewComponent implements OnInit {
         let expenseList = this.form.get("registerExpenseDetail").value;
         this.order.totalAmount = 0;
         expenseList.forEach(element => this.order.totalAmount += parseFloat(element.amount || 0));
-        if (!this.form.get("useAccount").value) {
-            this.order.totalPay = this.order.totalAmount;
-        }
-        else {
-            if (this.timer != null) {
-                return;
-            }
-            this.loading = true;
-            this.timer = setTimeout(() => {
-                this.appCtx.studentService.getBalance(this.order.studentId)
-                    .pipe(
-                        tap(() => { this.loading = false; this.timer = null; }, () => { this.loading = false; this.timer = null; })
-                    )
-                    .subscribe((res: any) => {
-                        this.order.balanceAmount = this.originalBalanceAmount;
-                        this.order.balanceAmount += parseFloat(res.amount || 0);
-                        if (this.order.balanceAmount > this.order.totalAmount) {
-                            this.order.balanceAmount = this.order.totalAmount;
-                        }
-                        this.order.totalPay = this.order.totalAmount - this.order.balanceAmount;
-                    });
-            }, 500);
+        // if (!this.form.get("useAccount").value) {
+        //     this.order.totalPay = this.order.totalAmount;
+        // }
+        // else {
+        //     if (this.timer != null) {
+        //         return;
+        //     }
+        //     this.loading = true;
+        //     this.timer = setTimeout(() => {
+        //         this.appCtx.studentService.getBalance(this.order.studentId)
+        //             .pipe(
+        //                 tap(() => { this.loading = false; this.timer = null; }, () => { this.loading = false; this.timer = null; })
+        //             )
+        //             .subscribe((res: any) => {
+        //                 this.order.balanceAmount = this.originalBalanceAmount;
+        //                 this.order.balanceAmount += parseFloat(res.amount || 0);
+        //                 if (this.order.balanceAmount > this.order.totalAmount) {
+        //                     this.order.balanceAmount = this.order.totalAmount;
+        //                 }
+        //                 this.order.totalPay = this.order.totalAmount - this.order.balanceAmount;
+        //             });
+        //     }, 500);
 
-        }
+        // }
 
     }
 
@@ -318,6 +331,7 @@ export class OrderViewComponent implements OnInit {
         if (this.form.invalid) return;
         let submitObj = { ...this.form.value };
         submitObj.registerExpenseDetail = submitObj.registerExpenseDetail.filter(f => f.amount > 0);
+        submitObj.balanceAmount = this.order.balanceAmount;
         this.loading = true;
         this.appCtx.courseService.registerCourse(submitObj)
             .pipe(
