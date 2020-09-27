@@ -89,7 +89,7 @@
                         <td>
                             <span nz-form-control>
                                 <nz-input-number style="width: 80px;" formControlName="perAmount"
-                                    (ngModelChange)="onPayInfoChanged(i,$event)">
+                                    (ngModelChange)="onPayInfoChanged(i,true,$event)">
                                 </nz-input-number>
                             </span>
                         </td>
@@ -97,7 +97,7 @@
                             <span nz-form-control>
                                 <nz-input-number style="width: 80px;"
                                     [nzDisabled]="registerExpenseDetail.value[i].feeType == 1" formControlName="count"
-                                    (ngModelChange)="onPayInfoChanged(i,$event)">
+                                    (ngModelChange)="onPayInfoChanged(i,true,$event)">
                                 </nz-input-number>
                                 <i *ngIf="registerExpenseDetail.value[i].feeType == 1" nz-icon nzType="edit"
                                     nzTheme="outline" title="选择报名课程"
@@ -107,7 +107,7 @@
                         <td>
                             <span nz-form-control>
                                 <nz-input-number style="width: 80px;" formControlName="discount"
-                                    (ngModelChange)="onPayInfoChanged(i,$event)">
+                                    (ngModelChange)="onPayInfoChanged(i,true,$event)">
                                 </nz-input-number>
                             </span>
                         </td>
@@ -126,7 +126,7 @@
                                 <nz-form-control nzErrorTip="">
                                     <nz-select style="width: 100px;" formControlName="payment"
                                         [nzPlaceHolder]="'请选支付方式'" [nzShowSearch]="true"
-                                        (ngModelChange)="onPayInfoChanged(i,$event)">
+                                        (ngModelChange)="onPayInfoChanged(i,false,$event)">
                                         <nz-option *ngFor="let i of payMethodList" [nzLabel]="i.label"
                                             [nzValue]="i.value">
                                         </nz-option>
@@ -138,7 +138,7 @@
                             <span nz-form-control>
                                 <nz-select [nzDisabled]=true style="width: 100px;" formControlName="feeStatus"
                                     [nzPlaceHolder]="'请选支付状态'" [nzShowSearch]="true"
-                                    (ngModelChange)="onPayInfoChanged(i,$event)">
+                                    (ngModelChange)="onPayInfoChanged(i,false,$event)">
                                     <nz-option *ngFor="let i of payStatusList" [nzLabel]="i.label" [nzValue]="i.value">
                                     </nz-option>
                                 </nz-select>
@@ -146,7 +146,8 @@
                         </td>
                         <td>
                             <span nz-form-control>
-                                <input nz-input formControlName="remark" (ngModelChange)="onPayInfoChanged(i,$event)" />
+                                <input nz-input formControlName="remark"
+                                    (ngModelChange)="onPayInfoChanged(i,false,$event)" />
                             </span>
                         </td>
                         <!-- <td>
@@ -160,8 +161,9 @@
                     <tr style="padding-top: 10px;">
                         <th colspan="6"></th>
                         <th style="padding-top:10px;" colspan="">
-                            <div [formGroup]="form"><label nz-checkbox [nzDisabled]="isEditOrder" formControlName="useBalance">余额
-                                    {{studentBalance}}</label></div>
+                            <div [formGroup]="form"><label nz-checkbox [nzDisabled]="isEditOrder"
+                                    formControlName="useAccount" (ngModelChange)="calTotalAmout()">余额
+                                    {{order.balanceAmount}}</label></div>
                         </th>
                         <th style="padding-top:10px;">共支付: {{order.totalPay}}</th>
                         <th style="padding-top:10px;">总金额: {{order.totalAmount}}</th>
@@ -176,7 +178,8 @@
                 <st [data]="order.sessionList" [columns]="sessionListColumns" [page]="{ show: false }"></st> -->
         </nz-card>
         <footer-toolbar errorCollect>
-            <label nz-checkbox [nzDisabled]="isEditOrder" [ngModelOptions]="{standalone: true}" [(ngModel)]="continueOrder">报名成功后继续报名新课程</label>
+            <label nz-checkbox [nzDisabled]="isEditOrder" [ngModelOptions]="{standalone: true}"
+                [(ngModel)]="continueOrder">报名成功后继续报名新课程</label>
             <button nz-button type="primary" nzType="primary" (click)="_submitForm()">提交</button>
         </footer-toolbar>
     </form>

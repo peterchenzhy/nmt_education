@@ -10,6 +10,7 @@ export interface Order {
     statusDetail?: SysEnum;
     registrationType?: ORDER_TYPE;
     times?: number;
+    useAccount?: boolean;
     courseId?: number;
     course?: Course;
     studentId?: number;
@@ -20,8 +21,7 @@ export interface Order {
     feeStatus?: PAY_STATUS;
     totalAmount?: number;
     totalPay?: number;
-    balance?: number;
-    useBalance?: boolean;
+    balanceAmount?: number;
     campus?: number;
     remark?: string;
     editFlag?: EDIT_FLAG;

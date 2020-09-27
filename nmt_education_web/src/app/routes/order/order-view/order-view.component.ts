@@ -33,9 +33,11 @@ export class OrderViewComponent implements OnInit {
         course: {},
         courseScheduleIds: [],
         registerExpenseDetail: [],
+        totalAmount: 0,
+        totalPay: 0,
+        balanceAmount: 0,
         editFlag: EDIT_FLAG.NEW
     };
-    studentBalance = 0;
     loading: boolean = false;
     constructor(
         public appCtx: AppContextService,
@@ -60,6 +62,7 @@ export class OrderViewComponent implements OnInit {
     ];
     sessionsSTData: STData[] = [];
     selectedSessions: STData[] = [];
+    originalBalanceAmount = 0;
     ngOnInit(): void {
         this.form = this.fb.group({
             id: [null, []],
@@ -72,7 +75,7 @@ export class OrderViewComponent implements OnInit {
             editFlag: [EDIT_FLAG.NO_CHANGE, [Validators.required]],
             studentId: [null, [Validators.required]],
             courseId: [null, [Validators.required]],
-            useBalance: [false, []],
+            useAccount: [false, []],
             registerExpenseDetail: this.fb.array([])
         });
         let orderId = this.activaterRouter.snapshot.params.id;
@@ -85,6 +88,7 @@ export class OrderViewComponent implements OnInit {
                     this.order = res;
                     this.order.courseScheduleIds = this.order.courseScheduleList.map(s => s.id);
                     this.order.campus = this.order.course.campus;
+                    this.originalBalanceAmount = this.order.balanceAmount;
                     this.order.editFlag = EDIT_FLAG.UPDATE;
                     this.form.patchValue(this.order);
                     this.selectedSessions = this.order.courseScheduleList;
@@ -195,16 +199,21 @@ export class OrderViewComponent implements OnInit {
         this.form.patchValue({ courseScheduleIds: [] });
         this.selectedSessions = [];
         this.registerExpenseDetail.clear();
+        this.order.totalAmount = 0;
+        this.order.totalPay = 0;
+        this.order.balanceAmount = 0;
     }
 
-    onPayInfoChanged(index: number, event: any) {
+    onPayInfoChanged(index: number, refreshTotalAmount: boolean, event: any) {
         let payObject = this.registerExpenseDetail.at(index) as FormGroup;
         let newValue = this.calPayAmount(payObject.value);
         payObject.get("receivable").setValue(newValue.receivable);
         payObject.get("amount").setValue(newValue.amount);
         payObject.markAsDirty();
 
-
+        if (refreshTotalAmount) {
+            this.calTotalAmout();
+        }
     }
     calPayAmount(payVal: any): any {
         let perAmount = payVal.perAmount || 0;
@@ -218,6 +227,39 @@ export class OrderViewComponent implements OnInit {
         }
         return payVal;
     }
+
+    timer = null;
+    calTotalAmout() {
+        let expenseList = this.form.get("registerExpenseDetail").value;
+        this.order.totalAmount = 0;
+        expenseList.forEach(element => this.order.totalAmount += parseFloat(element.amount || 0));
+        if (!this.form.get("useAccount").value) {
+            this.order.totalPay = this.order.totalAmount;
+        }
+        else {
+            if (this.timer != null) {
+                return;
+            }
+            this.loading = true;
+            this.timer = setTimeout(() => {
+                this.appCtx.studentService.getBalance(this.order.studentId)
+                    .pipe(
+                        tap(() => { this.loading = false; this.timer = null; }, () => { this.loading = false; this.timer = null; })
+                    )
+                    .subscribe((res: any) => {
+                        this.order.balanceAmount = this.originalBalanceAmount;
+                        this.order.balanceAmount += parseFloat(res.amount || 0);
+                        if (this.order.balanceAmount > this.order.totalAmount) {
+                            this.order.balanceAmount = this.order.totalAmount;
+                        }
+                        this.order.totalPay = this.order.totalAmount - this.order.balanceAmount;
+                    });
+            }, 500);
+
+        }
+
+    }
+
     stChange(e: STChange) {
         switch (e.type) {
             case 'checkbox':
