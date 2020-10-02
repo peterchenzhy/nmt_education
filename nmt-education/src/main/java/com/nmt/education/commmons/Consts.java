@@ -27,8 +27,9 @@ public interface Consts {
     String 订单前缀 = "CR";
 
     Integer FEE_TYPE_普通单节费用 = 1;
+    Integer FEE_TYPE_费用类型 = 7;
 
     int BATCH_100 = 100;
 
-    String 结余消耗模板="--其中消耗结余：<%s>元";
+    String 结余消耗模板="--科目：<%s>，金额：<%s>元";
 }

@@ -17,6 +17,7 @@ import com.nmt.education.service.course.registeration.summary.RegisterationSumma
 import com.nmt.education.service.course.schedule.CourseScheduleService;
 import com.nmt.education.service.student.StudentService;
 import com.nmt.education.service.student.account.StudentAccountService;
+import com.nmt.education.service.sysconfig.SysConfigService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -60,6 +61,9 @@ public class CourseRegistrationService {
     private CampusAuthorizationService campusAuthorizationService;
     @Autowired
     private StudentAccountService studentAccountService;
+    @Autowired
+    @Lazy
+    private SysConfigService sysConfigService;
 
 
     /**
@@ -113,7 +117,7 @@ public class CourseRegistrationService {
                 "课程：" + dto.getCourseId());
 
         //缴费记录明细
-        generateRegisterExpenseDetail(dto.getRegisterExpenseDetail(), updator, courseRegistrationPo, dto.isUseAccount(),dto.getBalanceAmount());
+        generateRegisterExpenseDetail(dto.getRegisterExpenseDetail(), updator, courseRegistrationPo, dto.isUseAccount(), dto.getBalanceAmount());
 
         //汇总课表
         registerationSummaryService.batchInsert(generateRegisterationSummary(dto, updator, courseRegistrationPo));
@@ -191,7 +195,7 @@ public class CourseRegistrationService {
      * @param expenseDetailList    费用列表
      * @param updator              操作人
      * @param courseRegistrationPo 报名记录
-     * @param studentAmount 结余账户的钱
+     * @param studentAmount        结余账户的钱
      * @author PeterChen
      * @modifier PeterChen
      * @version v1
@@ -210,7 +214,7 @@ public class CourseRegistrationService {
         if (useAccount) {
             studentAccountPo = studentAccountService.querybyUserId(courseRegistrationPo.getStudentId());
             if (Objects.nonNull(studentAccountPo)) {
-                Assert.isTrue( NumberUtil.String2Dec( studentAccountPo.getAmount()).compareTo(studentAmount)==0, "结余已变动，请重新编辑");
+                Assert.isTrue(NumberUtil.String2Dec(studentAccountPo.getAmount()).compareTo(studentAmount) == 0, "结余已变动，请重新编辑");
                 account = account.add(NumberUtil.String2Dec(studentAccountPo.getAmount()));
             }
         }
@@ -286,12 +290,12 @@ public class CourseRegistrationService {
     /**
      * 学生结余账户 逻辑
      *
-     * @param updator 操作人
+     * @param updator              操作人
      * @param courseRegistrationPo 报名po
-     * @param account 账户金额
+     * @param account              账户金额
      * @param accountFlowList
      * @param studentAccountPo
-     * @param delta 消耗
+     * @param delta                消耗
      * @param flow
      * @return java.math.BigDecimal
      * @author PeterChen
@@ -304,11 +308,12 @@ public class CourseRegistrationService {
         //计算消耗金额
         BigDecimal cost = calculateCost(account, delta);
         BigDecimal lastAmount = account;
-        flow.setRemark(flow.getRemark() + String.format(Consts.结余消耗模板, cost.toPlainString()));
+        flow.setRemark(String.format(Consts.结余消耗模板, sysConfigService.queryByTypeValue(7, flow.getFeeType()).getDescription(),
+                cost.toPlainString()));
         //生成结余流水
         accountFlowList.add(studentAccountService.generateFlow(updator, studentAccountPo.getId(), cost.toPlainString(),
                 ExpenseDetailFlowTypeEnum.消耗,
-                courseRegistrationPo.getId(), lastAmount.toPlainString(),flow.getRemark()));
+                courseRegistrationPo.getId(), lastAmount.toPlainString(), flow.getRemark()));
         //更新账户余额
         account = account.subtract(cost);
         return account;
