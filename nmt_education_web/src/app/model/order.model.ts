@@ -20,6 +20,8 @@ export interface Order {
     courseScheduleIds?: number[];
     feeStatus?: PAY_STATUS;
     totalAmount?: number;
+    lastTotalAmount?: number;
+    payActually?:number;
     totalPay?: number;
     balanceAmount?: number;
     balanceAccountAmount?: number;

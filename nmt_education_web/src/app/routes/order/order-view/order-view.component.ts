@@ -36,7 +36,8 @@ export class OrderViewComponent implements OnInit {
         totalAmount: 0,
         totalPay: 0,
         balanceAmount: 0,
-        editFlag: EDIT_FLAG.NEW
+        editFlag: EDIT_FLAG.NEW,
+        payActually: 0
     };
     loading: boolean = false;
     constructor(
@@ -101,7 +102,11 @@ export class OrderViewComponent implements OnInit {
                             this.registerExpenseDetail.push(field);
                         });
                     this.getCurrentBalance();
+                    this.order.lastTotalAmount=this.order.totalAmount;
+              //计算本次支付
+              this.calculatePayActually();
                 });
+
             return;
         }
         let studentStr = this.activaterRouter.snapshot.params.student;
@@ -251,7 +256,9 @@ export class OrderViewComponent implements OnInit {
         let expenseList = this.form.get("registerExpenseDetail").value;
         this.order.totalAmount = 0;
         expenseList.forEach(element => this.order.totalAmount += parseFloat(element.amount || 0));
-        // if (!this.form.get("useAccount").value) {
+        //计算本次支付
+      this.calculatePayActually();
+      // if (!this.form.get("useAccount").value) {
         //     this.order.totalPay = this.order.totalAmount;
         // }
         // else {
@@ -278,7 +285,14 @@ export class OrderViewComponent implements OnInit {
 
     }
 
-    stChange(e: STChange) {
+  private  calculatePayActually() {
+    this.order.payActually = this.order.totalAmount - this.order.lastTotalAmount - this.order.balanceAccountAmount;
+    if (this.order.payActually < 0) {
+      this.order.payActually = 0;
+    }
+  }
+
+  stChange(e: STChange) {
         switch (e.type) {
             case 'checkbox':
                 this.selectedSessions = this.order.courseScheduleList || [];
