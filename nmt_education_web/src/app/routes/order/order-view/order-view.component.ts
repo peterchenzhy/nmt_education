@@ -124,7 +124,12 @@ export class OrderViewComponent implements OnInit {
                 tap(() => { this.loading = false; this.timer = null; }, () => { this.loading = false; this.timer = null; })
             )
             .subscribe((res: any) => {
-                this.order.balanceAmount = parseFloat(res.amount || 0)
+              if(res==null){
+                this.order.balanceAccountAmount=0;
+              }else{
+                this.order.balanceAccountAmount = parseFloat(res.amount || 0);
+              }
+
             });
     }
 

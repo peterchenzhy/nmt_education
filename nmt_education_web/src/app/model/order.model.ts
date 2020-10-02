@@ -22,6 +22,7 @@ export interface Order {
     totalAmount?: number;
     totalPay?: number;
     balanceAmount?: number;
+    balanceAccountAmount?: number;
     campus?: number;
     remark?: string;
     editFlag?: EDIT_FLAG;
