@@ -113,7 +113,7 @@ public class CourseRegistrationService {
                 "课程：" + dto.getCourseId());
 
         //缴费记录明细
-        generateRegisterExpenseDetail(dto.getRegisterExpenseDetail(), updator, courseRegistrationPo, dto.isUseAccount(),dto.getAmount());
+        generateRegisterExpenseDetail(dto.getRegisterExpenseDetail(), updator, courseRegistrationPo, dto.isUseAccount(),dto.getBalanceAmount());
 
         //汇总课表
         registerationSummaryService.batchInsert(generateRegisterationSummary(dto, updator, courseRegistrationPo));
@@ -263,13 +263,11 @@ public class CourseRegistrationService {
                     account = studentAccountCost(updator, courseRegistrationPo, account, accountFlowList, studentAccountPo,
                             new BigDecimal(flowPo.getAmount()), flowPo);
                 }
-//                addList.add(expenseDetailPo);
                 flowList.add(flowPo);
             }
         }
 
         //数据入库
-//        registrationExpenseDetailService.batchInsert(addList);
         registrationExpenseDetailService.updateBatch(updateList);
         registrationExpenseDetailService.batchInsertFlow(flowList);
         //更新结余
@@ -288,12 +286,12 @@ public class CourseRegistrationService {
     /**
      * 学生结余账户 逻辑
      *
-     * @param updator
-     * @param courseRegistrationPo
-     * @param account
+     * @param updator 操作人
+     * @param courseRegistrationPo 报名po
+     * @param account 账户金额
      * @param accountFlowList
      * @param studentAccountPo
-     * @param delta
+     * @param delta 消耗
      * @param flow
      * @return java.math.BigDecimal
      * @author PeterChen

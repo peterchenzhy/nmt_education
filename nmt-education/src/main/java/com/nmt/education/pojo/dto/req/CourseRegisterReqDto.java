@@ -50,7 +50,7 @@ public class CourseRegisterReqDto {
     private boolean useAccount = false;
 
     @ApiModelProperty(value = "结余金额")
-    private BigDecimal amount = BigDecimal.ZERO;
+    private BigDecimal balanceAmount = BigDecimal.ZERO;
 
 
 }
