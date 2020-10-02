@@ -31,5 +31,7 @@ public interface Consts {
 
     int BATCH_100 = 100;
 
-    String 结余消耗模板="--科目：<%s>，金额：<%s>元";
+
+    String ZERO = "0";
+    String 结余消耗模板="--科目：<%s>，结余金额：<%s>元";
 }

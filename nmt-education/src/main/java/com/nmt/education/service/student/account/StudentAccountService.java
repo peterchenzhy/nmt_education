@@ -191,7 +191,7 @@ public class StudentAccountService {
      * @param registerId
      * @return
      */
-    public List<ExpenseDetailFlowVo> queryFlowByRegisterId(Long registerId) {
+    public List<StudentAccountFlowPo> queryFlowByRegisterId(Long registerId) {
         if(Objects.isNull(registerId)){
             return Collections.emptyList();
         }

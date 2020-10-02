@@ -20,5 +20,5 @@ interface StudentAccountFlowPoMapper {
 
     int batchInsert(@Param("list") List<StudentAccountFlowPo> list);
 
-  List<ExpenseDetailFlowVo> queryByRegisterId(@Param("registerId") Long registerId);
+  List<StudentAccountFlowPo> queryByRegisterId(@Param("registerId") Long registerId);
 }

@@ -111,6 +111,7 @@ public class CourseRegistrationService {
             courseRegistrationPo.setTotalAmount(calculateTotalAmount(dto.getRegisterExpenseDetail()));
             courseRegistrationPo.setBalanceAmount(prepBalance.add(newTotal).subtract(prepTotal).toPlainString());
             courseRegistrationPo.setTimes(addTimes);
+            courseRegistrationPo.setRegistrationStatus(Enums.RegistrationStatus.正常.getCode());
             this.updateByPrimaryKeySelective(courseRegistrationPo);
         }
         Assert.isTrue(Objects.nonNull(courseRegistrationPo), "非新增报名时，报名信息不存在，学生：" + dto.getStudentId() +
@@ -297,7 +298,7 @@ public class CourseRegistrationService {
      * @param studentAccountPo
      * @param delta                消耗
      * @param flow
-     * @return java.math.BigDecimal
+     * @return java.math.BigDecimal 剩下的结余账户
      * @author PeterChen
      * @modifier PeterChen
      * @version v1
@@ -308,8 +309,9 @@ public class CourseRegistrationService {
         //计算消耗金额
         BigDecimal cost = calculateCost(account, delta);
         BigDecimal lastAmount = account;
-        flow.setRemark(String.format(Consts.结余消耗模板, sysConfigService.queryByTypeValue(7, flow.getFeeType()).getDescription(),
+        flow.setRemark(String.format(Consts.结余消耗模板, sysConfigService.queryByTypeValue(Consts.FEE_TYPE_费用类型, flow.getFeeType()).getDescription(),
                 cost.toPlainString()));
+        flow.setAccountAmount(cost.toPlainString());
         //生成结余流水
         accountFlowList.add(studentAccountService.generateFlow(updator, studentAccountPo.getId(), cost.toPlainString(),
                 ExpenseDetailFlowTypeEnum.消耗,
@@ -571,7 +573,7 @@ public class CourseRegistrationService {
         flowThread.start();
 
         Thread flowThread2 =
-                new Thread(() -> vo.setExpenseDetailFlowVoList(this.studentAccountService.queryFlowByRegisterId(vo.getId())));
+                new Thread(() -> vo.setStudentAccountFlowPoList(this.studentAccountService.queryFlowByRegisterId(vo.getId())));
         flowThread2.start();
 
         vo.setCourse(courseService.selectByPrimaryKey(vo.getCourseId()));
@@ -821,6 +823,7 @@ public class CourseRegistrationService {
         flow.setOperator(logInUser);
         flow.setOperateTime(new Date());
         flow.setPayment(dto.getPayment());
+        flow.setAccountAmount(Consts.ZERO);
         registrationExpenseDetailService.batchInsertFlow(Lists.newArrayList(flow));
 
         //如果所有的钱都退了那么就改变退费状态
