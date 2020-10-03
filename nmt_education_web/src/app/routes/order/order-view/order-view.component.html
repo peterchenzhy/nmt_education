@@ -159,15 +159,15 @@
                 </tbody>
                 <tfoot *ngIf="registerExpenseDetail.controls.length>0">
                     <tr style="padding-top: 10px;">
-                        <th colspan="7"></th>
+                        <th colspan="6"></th>
                         <th style="padding-top:10px;" colspan="">
                             <div [formGroup]="form"><label nz-checkbox formControlName="useAccount">结余账户：
                                     {{order.balanceAccountAmount}}</label></div>
                         </th>
                         <th style="padding-top:10px;">总金额: {{order.totalAmount}}</th>
-                        <th style="padding-top:10px;">本次支付:{{order.payActually}} = {{order.totalAmount}} - {{order.lastTotalAmount}} -
+                        <th style="padding-top:10px;">本次支付: {{order.payActually}} = {{order.totalAmount}} - {{order.lastTotalAmount}} -
                           {{order.balanceAccountAmount}}
-                          <br> 总金额-上次支付金额-结余金额
+                          <br> 本次支付: 总金额-上次支付金额-结余金额
                          </th>
                     </tr>
                 </tfoot>
