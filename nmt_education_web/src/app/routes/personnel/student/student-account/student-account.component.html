@@ -1,0 +1,101 @@
+<page-header [title]="'学生管理'"></page-header>
+<nz-card [nzBordered]="false">
+  <form nz-form [nzLayout]="'inline'" (ngSubmit)="startQueryData()" class="search__form">
+    <div nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 24, xl: 48, xxl: 48 }">
+      <!-- <div nz-col nzMd="6" nzSm="24">
+        <nz-form-item>
+          <nz-form-label nzFor="no">学生编号</nz-form-label>
+          <nz-form-control>
+            <input nz-input [(ngModel)]="q.no" name="no" placeholder="请输入" id="no" />
+          </nz-form-control>
+        </nz-form-item>
+      </div> -->
+      <div nz-col nzMd="6" nzSm="24">
+        <nz-form-item>
+          <nz-form-label nzFor="no">学生姓名</nz-form-label>
+          <nz-form-control>
+            <input nz-input [(ngModel)]="queryParam.name" name="name" placeholder="请输入" id="name" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzMd="6" nzSm="24">
+        <nz-form-item>
+          <nz-form-label nzFor="phone">联系方式</nz-form-label>
+          <nz-form-control>
+            <input nz-input [(ngModel)]="queryParam.phone" name="phone" placeholder="请输入" id="phone" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <!-- <div nz-col nzMd="6" nzSm="24" *ngIf="expandForm">
+        <nz-form-item>
+          <nz-form-label nzFor="status">学生状态</nz-form-label>
+          <nz-form-control>
+            <nz-select [(ngModel)]="q.status" name="status" id="status" [nzPlaceHolder]="'请选择'" [nzShowSearch]="true">
+              <nz-option *ngFor="let i of status;" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+
+      </div>
+      <div nz-col nzMd="6" nzSm="24" *ngIf="expandForm">
+        <nz-form-item>
+          <nz-form-label nzFor="phone">联系方式</nz-form-label>
+          <nz-form-control>
+            <input nz-input [(ngModel)]="q.phone" name="phone" placeholder="请输入" id="phone" />
+          </nz-form-control>
+        </nz-form-item>
+      </div> -->
+      <div nz-col [nzSpan]="expandForm ? 24 : 6" [class.text-right]="expandForm">
+        <button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
+        <button nz-button type="reset" (click)="reset()" class="mx-sm">重置</button>
+        <!-- <a (click)="expandForm = !expandForm">
+          {{ expandForm ? '收起' : '展开' }}
+          <i nz-icon [nzType]="expandForm ? 'up' : 'down'"></i>
+        </a> -->
+      </div>
+    </div>
+  </form>
+  <button nz-button (click)="addNewStudent()" [nzType]="'primary'">
+    <i nz-icon nzType="plus"></i>
+    <span>添加学生</span>
+  </button>
+  <!-- <ng-container *ngIf="selectedRows.length > 0">
+    <button nz-button>批量操作</button>
+    <button nz-button nz-dropdown [nzDropdownMenu]="batchMenu" nzPlacement="bottomLeft">
+      更多操作
+      <i nz-icon nzType="down"></i>
+    </button>
+    <nz-dropdown-menu #batchMenu="nzDropdownMenu">
+      <ul nz-menu>
+        <li nz-menu-item (click)="remove()">删除</li>
+        <li nz-menu-item (click)="approval()">批量审批</li>
+      </ul>
+    </nz-dropdown-menu>
+  </ng-container>
+  <div class="my-md">
+    <nz-alert [nzType]="'info'" [nzShowIcon]="true" [nzMessage]="message">
+      <ng-template #message>
+        已选择
+        <strong class="text-primary">{{ selectedRows.length }}</strong> 项
+        <a *ngIf="totalCallNo > 0" (click)="st.clearCheck()" class="ml-lg">清空</a>
+      </ng-template>
+    </nz-alert>
+  </div> -->
+  <st #st [columns]="columns" [data]="data.list" [total]="data.total" [ps]="queryParam.pageSize" [pi]="queryParam.pageNo" [page]="pager"
+    [loading]="loading" (change)="stChange($event)">
+    <ng-template st-row="genderRender" let-i>
+      <span>{{globalService.getGenderLabel(i.sex)}}</span>
+    </ng-template>
+    <ng-template st-row="gradeRender" let-i>
+      <span>{{globalService.getGradeLabel(i.grade)}}</span>
+    </ng-template>
+  </st>
+  <!-- </nz-card>
+<ng-template #modalContent>
+  <nz-form-item>
+    <nz-form-label nzFor="no">描述</nz-form-label>
+    <nz-form-control>
+      <input nz-input [(ngModel)]="description" name="description" placeholder="请输入" id="no" />
+    </nz-form-control>
+  </nz-form-item>
+</ng-template> -->

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { StudentAccountComponent } from './student/student-account/student-account.component';
 import { StudentListComponent } from './student/student-list/student-list.component';
 import { StudentViewComponent } from './student/student-view/student-view.component';
 import { TeacherListComponent } from './teacher/teacher-list/teacher-list.component';
@@ -10,6 +11,7 @@ const routes: Routes = [
         path: 'student',
         children: [
             { path: 'list', component: StudentListComponent },
+            { path: 'account', component: StudentAccountComponent },
             { path: 'view/:id', component: StudentViewComponent, data: { title: '学生信息' } },
             { path: 'edit/:id', component: StudentViewComponent, data: { title: '学生信息编辑' } },
             { path: 'create', component: StudentViewComponent, data: { title: '学生信息创建' } }
