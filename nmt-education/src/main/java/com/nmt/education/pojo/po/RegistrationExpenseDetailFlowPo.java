@@ -55,6 +55,12 @@ public class RegistrationExpenseDetailFlowPo {
     private String amount;
 
     /**
+     * 结余抵扣
+     */
+    @ApiModelProperty(value="结余抵扣")
+    private String accountAmount;
+
+    /**
      * 数量
      */
     @ApiModelProperty(value = "数量")

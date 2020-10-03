@@ -87,7 +87,7 @@ export class CourseListComponent implements OnInit {
   expandForm = false;
 
   constructor(
-    private datePipe: DatePipe,
+    public datePipe: DatePipe,
     public appCtx: AppContextService,
     private router: Router,
     private http: _HttpClient,

@@ -2,6 +2,7 @@ package com.nmt.education.service.course.registeration;
 
 import com.google.common.base.Strings;
 import com.nmt.education.commmons.ExpenseDetailFlowTypeEnum;
+import com.nmt.education.commmons.NumberUtil;
 import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.pojo.dto.req.RegisterExpenseDetailReqDto;
 import com.nmt.education.pojo.po.CourseRegistrationPo;
@@ -39,6 +40,7 @@ public class RegistrationExpenseDetailService {
             BeanUtils.copyProperties(po, vo);
             vo.setType(ExpenseDetailFlowTypeEnum.code2Display(po.getType()));
             vo.setOperateTime(po.getCreateTime());
+            vo.setAmountPayActually(NumberUtil.String2Dec(vo.getAmount()).subtract(NumberUtil.String2Dec(vo.getAccountAmount())).toPlainString());
             resultList.add(vo);
         });
         return resultList;

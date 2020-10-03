@@ -7,9 +7,11 @@ import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.pojo.dto.req.StudentReqDto;
 import com.nmt.education.pojo.dto.req.StudentSearchReqDto;
 import com.nmt.education.pojo.po.StudentPo;
+import com.nmt.education.pojo.vo.StudentAccountVo;
 import com.nmt.education.pojo.vo.StudentVo;
 import com.nmt.education.service.CodeService;
 import com.nmt.education.service.campus.authorization.CampusAuthorizationService;
+import com.nmt.education.service.student.account.StudentAccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,8 @@ public class StudentService {
     private StudentService self;
     @Autowired
     private CampusAuthorizationService campusAuthorizationService;
+    @Autowired
+    private StudentAccountService studentAccountService;
 
     public Boolean studentManager(Integer operator, StudentReqDto dto) {
         campusAuthorizationService.getCampusAuthorization(operator, dto.getCampus());
@@ -216,7 +220,7 @@ public class StudentService {
     }
 
     public List<StudentVo> searchFuzzy(Integer logInUser, String name) {
-        return this.searchFuzzy(name,campusAuthorizationService.getCampusAuthorization(logInUser));
+        return this.searchFuzzy(name, campusAuthorizationService.getCampusAuthorization(logInUser));
     }
 
 
@@ -242,4 +246,24 @@ public class StudentService {
     }
 
 
+    public PageInfo<StudentAccountVo> accountPage(Long studentId, Integer pageNo, Integer pageSize) {
+        return PageHelper.startPage(pageNo, pageSize).doSelectPageInfo(() -> this.studentAccountService.queryAccount(studentId));
+    }
+
+    /**
+     * 学生账户
+     * @param studentId
+     * @return
+     */
+    public StudentAccountVo account(Long studentId) {
+        if(Objects.isNull(studentId)){
+            return null ;
+        }
+        final List<StudentAccountVo> studentAccountVos = studentAccountService.queryAccount(studentId);
+        if(CollectionUtils.isEmpty(studentAccountVos)){
+            return null ;
+        }else{
+            return studentAccountVos.get(0);
+        }
+    }
 }

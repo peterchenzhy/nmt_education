@@ -30,6 +30,6 @@ export class StudentService {
     }
 
     public getBalance(studentId: number): Observable<Object> {
-        return this.httpClient.post(`nmt-education//student/account/${studentId}`, null);
+        return this.httpClient.post(`nmt-education/student/account/${studentId}`, null);
     }
 }

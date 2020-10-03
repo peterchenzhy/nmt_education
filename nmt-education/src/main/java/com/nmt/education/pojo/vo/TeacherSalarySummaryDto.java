@@ -24,16 +24,25 @@ public class TeacherSalarySummaryDto {
     @ExcelProperty(value = "年级", index = 3)
     private String gradeStr;
 
-    @ExcelProperty(value = "课时费", index = 4, converter = StringNumberConverter.class)
+    @ExcelProperty(value = "每节课时间--分钟", index = 4)
+    private Integer perTime;
+
+    @ExcelProperty(value = "课次", index = 5)
+    private Integer times = 1 ;
+
+    @ExcelProperty(value = "单次课时费", index = 6, converter = StringNumberConverter.class)
+    private String teacherPerPrice;
+
+    @ExcelProperty(value = "总课时费", index = 7, converter = StringNumberConverter.class)
     private String teacherPrice;
 
-    @ExcelProperty(value = "所在校区", index = 5)
+    @ExcelProperty(value = "所在校区", index = 8)
     private String campusStr;
 
-    @ExcelProperty(value = "统计开始日期", index = 6)
+    @ExcelProperty(value = "统计开始日期", index = 9)
     private Date startDate;
 
-    @ExcelProperty(value = "统计结束日期", index = 7)
+    @ExcelProperty(value = "统计结束日期", index = 10)
     private Date endDate;
 
     @ExcelIgnore

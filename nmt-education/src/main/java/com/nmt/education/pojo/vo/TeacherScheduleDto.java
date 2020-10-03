@@ -3,6 +3,7 @@ package com.nmt.education.pojo.vo;
 import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.converters.string.StringNumberConverter;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -57,4 +58,10 @@ public class TeacherScheduleDto {
     private int signInStatus;
     @ExcelIgnore
     private int grade;
+
+    /**
+     * 每节课时间 (单位分钟)
+     */
+    @ExcelIgnore
+    private Integer perTime;
 }

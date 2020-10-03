@@ -11,12 +11,14 @@ import com.nmt.education.pojo.dto.req.CourseReqDto;
 import com.nmt.education.pojo.dto.req.CourseScheduleReqDto;
 import com.nmt.education.pojo.dto.req.CourseSearchDto;
 import com.nmt.education.pojo.po.CoursePo;
+import com.nmt.education.pojo.po.CourseRegistrationPo;
 import com.nmt.education.pojo.po.CourseSchedulePo;
 import com.nmt.education.pojo.vo.CourseDetailVo;
 import com.nmt.education.service.CodeService;
 import com.nmt.education.service.campus.authorization.CampusAuthorizationService;
 import com.nmt.education.service.course.expense.CourseExpenseService;
 import com.nmt.education.service.course.schedule.CourseScheduleService;
+import com.nmt.education.service.student.account.StudentAccountService;
 import com.nmt.education.service.teacher.TeacherService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -46,6 +48,8 @@ public class CourseService {
     private TeacherService teacherService;
     @Autowired
     private CampusAuthorizationService campusAuthorizationService;
+    @Autowired
+    private StudentAccountService studentAccountService;
 
     private final static ThreadLocal<List<BaseEvent>> eventList = ThreadLocal.withInitial(() -> new ArrayList<>(5));
 
@@ -110,7 +114,7 @@ public class CourseService {
             return new PageInfo();
         }
         List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(loginUserId, dto.getCampus());
-        Assert.isTrue(!CollectionUtils.isEmpty(campusList),"没有任何校区权限进行课程搜索");
+        Assert.isTrue(!CollectionUtils.isEmpty(campusList), "没有任何校区权限进行课程搜索");
         return PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.coursePoMapper.queryByDto(dto, campusList));
     }
 
@@ -129,6 +133,8 @@ public class CourseService {
         Assert.notNull(dto.getId(), "课程id不存在");
         CoursePo coursePo = selectByPrimaryKey(dto.getId());
         Assert.notNull(coursePo, "课程信息不存在" + dto.getId());
+        Assert.isTrue(!Enums.CourseStatus.已结课.getCode().equals( coursePo.getCourseStatus())&&
+                !Enums.CourseStatus.已取消.getCode().equals( coursePo.getCourseStatus()) ,"课程已经结课或者取消，无法再进行编辑");
         Enums.EditFlag editFlag = Enums.EditFlag.codeOf(dto.getEditFlag());
         switch (editFlag) {
             case 需要删除:
@@ -260,4 +266,50 @@ public class CourseService {
         return coursePoList.stream().filter(e -> campusList.contains(e.getCampus())).collect(Collectors.toList());
     }
 
+    /**
+     * 自动调整课程状态-->未开课==>已开课
+     *
+     * @param courseId 课程状态id
+     */
+    public void adjustCourseStatus(long courseId) {
+        final CourseSchedulePo courseSchedulePo = this.courseScheduleService.queryByCourseId(courseId)
+                .stream().filter(e -> Enums.SignInType.已签到.getCode().equals(e.getSignIn())).findAny().orElse(null);
+        final CoursePo coursePo = this.selectByPrimaryKey(courseId);
+        if (Objects.nonNull(courseSchedulePo)) {
+            if (Objects.nonNull(courseId)) {
+                if (Enums.CourseStatus.未开课.getCode().equals(coursePo.getCourseStatus())) {
+                    coursePo.setCourseStatus(Enums.CourseStatus.已开学.getCode());
+                    coursePo.setOperateTime(new Date());
+                    this.updateByPrimaryKeySelective(coursePo);
+                }
+            } else {
+                log.warn("课程不存在，课程id:" + courseId);
+            }
+        } else {
+            log.warn("课程未开始，课程id:" + courseId);
+        }
+
+    }
+
+
+    /**
+     * 结课逻辑
+     *
+     * @param logInUser
+     * @param courseId
+     */
+    public void finish(Integer logInUser, Long courseId) {
+        final CoursePo coursePo = this.coursePoMapper.selectByPrimaryKey(courseId);
+        Assert.isTrue(Objects.nonNull(coursePo),"课程信息为空，id:"+courseId);
+//        Assert.isTrue(logInUser.equals(coursePo.getCreator()),"非次课程创建人不可结课");
+        Assert.isTrue(!Enums.CourseStatus.已结课.getCode().equals( coursePo.getCourseStatus())&&
+                !Enums.CourseStatus.已取消.getCode().equals( coursePo.getCourseStatus()) ,"课程已经结课或者取消，无法再进行编辑");
+        //结余数据增加
+        studentAccountService.addByCourseFinish(logInUser,courseId);
+        //更新课程状态
+        coursePo.setCourseStatus(Enums.CourseStatus.已结课.getCode());
+        coursePo.setOperateTime(new Date());
+        coursePo.setOperator(logInUser);
+        this.updateByPrimaryKeySelective(coursePo);
+    }
 }

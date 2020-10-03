@@ -10,13 +10,8 @@ import java.util.List;
 
 @Mapper
 interface RegistrationExpenseDetailFlowMapper {
-    int insertSelective(RegistrationExpenseDetailFlowPo record);
 
     RegistrationExpenseDetailFlowPo selectByPrimaryKey(Integer id);
-
-    int updateByPrimaryKeySelective(RegistrationExpenseDetailFlowPo record);
-
-    int updateBatchSelective(List<RegistrationExpenseDetailFlowPo> list);
 
     int batchInsert(@Param("list") List<RegistrationExpenseDetailFlowPo> list);
 

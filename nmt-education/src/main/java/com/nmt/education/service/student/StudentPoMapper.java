@@ -25,4 +25,5 @@ public interface StudentPoMapper {
     void invalidByPrimaryKey(@Param("operator") Integer operator, @Param("id") Long id);
 
     List<StudentPo> queryByIds(@Param("ids") List<Long> ids);
+
 }

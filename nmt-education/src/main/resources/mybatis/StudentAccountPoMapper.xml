@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nmt.education.service.student.account.StudentAccountPoMapper">
+  <resultMap id="BaseResultMap" type="com.nmt.education.pojo.po.StudentAccountPo">
+    <!--@mbg.generated-->
+    <!--@Table student_account-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="user_code" jdbcType="INTEGER" property="userCode" />
+    <result column="amount" jdbcType="VARCHAR" property="amount" />
+    <result column="status" jdbcType="BOOLEAN" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="creator" jdbcType="INTEGER" property="creator" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="operator" jdbcType="INTEGER" property="operator" />
+    <result column="operate_time" jdbcType="TIMESTAMP" property="operateTime" />
+    <result column="version" jdbcType="INTEGER" property="version" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, user_id, user_code, amount, `status`, remark, creator, create_time, `operator`,
+    operate_time, version
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select
+    <include refid="Base_Column_List" />
+    from student_account
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <update id="updateByVersion">
+    update student_account
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userCode != null">
+        user_code = #{userCode,jdbcType=INTEGER},
+      </if>
+      <if test="amount != null">
+        amount = #{amount,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=BOOLEAN},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null">
+        creator = #{creator,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operator != null">
+        `operator` = #{operator,jdbcType=INTEGER},
+      </if>
+      <if test="operateTime != null">
+        operate_time = #{operateTime,jdbcType=TIMESTAMP},
+      </if>
+        version = #{version} +1,
+    </set>
+    where id = #{id,jdbcType=BIGINT} and version = #{version}
+  </update>
+  <select id="querybyUserId" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from student_account
+    where status= 1
+    and user_id = #{userId}
+  </select>
+  <insert id="insertSelective" parameterType="com.nmt.education.pojo.po.StudentAccountPo" keyColumn="id" keyProperty="id"  useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into student_account
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="userCode != null">
+        user_code,
+      </if>
+      <if test="amount != null">
+        amount,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="creator != null">
+        creator,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="operator != null">
+        `operator`,
+      </if>
+      <if test="operateTime != null">
+        operate_time,
+      </if>
+      <if test="version != null">
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userCode != null">
+        #{userCode,jdbcType=INTEGER},
+      </if>
+      <if test="amount != null">
+        #{amount,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=BOOLEAN},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operator != null">
+        #{operator,jdbcType=INTEGER},
+      </if>
+      <if test="operateTime != null">
+        #{operateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="version != null">
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.nmt.education.pojo.po.StudentAccountPo">
+    <!--@mbg.generated-->
+    update student_account
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userCode != null">
+        user_code = #{userCode,jdbcType=INTEGER},
+      </if>
+      <if test="amount != null">
+        amount = #{amount,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=BOOLEAN},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null">
+        creator = #{creator,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operator != null">
+        `operator` = #{operator,jdbcType=INTEGER},
+      </if>
+      <if test="operateTime != null">
+        operate_time = #{operateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="version != null">
+        version = #{version,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateBatchSelective" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update student_account
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="user_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.userId != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.userId,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="user_code = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.userCode != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.userCode,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="amount = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.amount != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.amount,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="`status` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.status != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.status,jdbcType=BOOLEAN}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="remark = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.remark != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.remark,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="creator = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.creator != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.creator,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="create_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.createTime != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.createTime,jdbcType=TIMESTAMP}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="`operator` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.operator != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.operator,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="operate_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.operateTime != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.operateTime,jdbcType=TIMESTAMP}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="version = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.version != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.version,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+  <insert id="batchInsert" parameterType="map">
+    <!--@mbg.generated-->
+    insert into student_account
+    (id, user_id, user_code, amount, `status`, remark, creator, create_time, `operator`,
+      operate_time, version)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.id,jdbcType=BIGINT}, #{item.userId,jdbcType=INTEGER}, #{item.userCode,jdbcType=INTEGER},
+        #{item.amount,jdbcType=VARCHAR}, #{item.status,jdbcType=BOOLEAN}, #{item.remark,jdbcType=VARCHAR},
+        #{item.creator,jdbcType=INTEGER}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.operator,jdbcType=INTEGER},
+        #{item.operateTime,jdbcType=TIMESTAMP}, #{item.version,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+  <select id="queryAccount" resultType="com.nmt.education.pojo.vo.StudentAccountVo">
+    select sa.id as id ,s.id as studentId ,s.student_code as studentCode,s.name as studentName,
+    sa.amount as amount,sa.status as status ,sa.remark as remark
+    from student_account sa ,student s
+    where sa.user_id = s.id
+    <if test="studentId != null">
+      and sa.user_id = #{studentId,jdbcType=BIGINT}
+    </if>
+  </select>
+</mapper>

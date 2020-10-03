@@ -143,4 +143,7 @@ public class RegisterationSummaryService {
         this.registerationSummaryPoMapper.updateSignIn(ids, logInUser, signIn.getCode(),  remark);
     }
 
+    public List<RegisterationSummaryPo> queryByCourseId(Long courseId, ArrayList<Integer> signList) {
+        return this.registerationSummaryPoMapper.queryByCourseId(courseId,signList);
+    }
 }

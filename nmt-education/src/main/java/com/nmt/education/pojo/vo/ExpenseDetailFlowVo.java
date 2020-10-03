@@ -56,6 +56,18 @@ public class ExpenseDetailFlowVo  {
     private String amount;
 
     /**
+     * 结余抵扣
+     */
+    @ApiModelProperty(value="结余抵扣")
+    private String accountAmount;
+
+    /**
+     * 实际支付
+     */
+    @ApiModelProperty(value="实际支付")
+    private String amountPayActually;
+
+    /**
      * 数量
      */
     @ApiModelProperty(value = "数量")

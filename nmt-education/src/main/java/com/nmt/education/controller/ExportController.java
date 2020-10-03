@@ -51,6 +51,7 @@ public class ExportController {
         checkRole(roleId);
         feeStatisticsExportService.doExport(dto, logInUser, response);
     }
+
     @ApiOperation(value = "课程明细统计", notes = "课程明细统计")
     @RequestMapping(value = "/schedule/teacher", method = RequestMethod.POST)
     public void scheduleTeacher(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
@@ -59,7 +60,8 @@ public class ExportController {
         checkRole(roleId);
         scheduleTeacher.doExport(dto, logInUser, response);
     }
-    @ApiOperation(value = "老师课时费统计", notes = "老师课时费统计")
+
+    @ApiOperation(value = "教师课时费统计", notes = "教师课时费统计")
     @RequestMapping(value = "/schedule/teacher/salary", method = RequestMethod.POST)
     public void scheduleTeacherSalary(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
             , @RequestBody @Validated TeacherScheduleReqDto dto, BindingResult bindingResult, HttpServletResponse response) throws IOException {
