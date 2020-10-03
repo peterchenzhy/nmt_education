@@ -20,7 +20,7 @@ import { tap } from 'rxjs/operators';
     ::ng-deep .enroll-selector .ant-select-selection__rendered{line-height:20px;}`]
 })
 export class OrderViewComponent implements OnInit {
-    feeTypeList = this.appCtx.globalService.FEE_TYPE_LIST;
+    feeTypeList = this.appCtx.globalService.FEE_TYPE_LIST ;
     payStatusList = this.appCtx.globalService.PAY_STATUS_LIST;
     payMethodList = this.appCtx.globalService.PAY_METHOD_LIST;
     registrationTypeList = this.appCtx.globalService.ORDER_TYPE_LIST;
