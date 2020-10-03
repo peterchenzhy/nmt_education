@@ -28,6 +28,12 @@ export interface StudentQueryParam {
     phone?: string;
 }
 
+export interface StudentAccountQueryParam {
+    studentId?: number;
+    pageNo?: number;
+    pageSize?: number;
+}
+
 export interface TeacherQueryParam {
     name?: string;
     pageNo?: number;
