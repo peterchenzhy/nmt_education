@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 import { Student } from 'src/app/model/student.model';
 import { Buffer } from 'buffer';
 import { GlobalService } from '@shared/service/global.service';
-import { ResponseData, StudentQueryParam } from 'src/app/model/system.model';
+import { ResponseData, StudentAccountQueryParam } from 'src/app/model/system.model';
 import { StudentService } from '@shared/service/student.service';
 import { AppContextService } from '@shared/service/appcontext.service';
 
@@ -21,33 +21,31 @@ export class StudentAccountComponent implements OnInit {
     pager = {
         front: false
     };
-    queryParam: StudentQueryParam = { pageNo: 1, pageSize: 10 };
+    queryParam: StudentAccountQueryParam = { pageNo: 1, pageSize: 10 };
     data: ResponseData = { list: [], total: 0 };
     genderList = this.globalService.GENDER_LIST;
     @ViewChild('st', { static: true })
+
     st: STComponent;
     columns: STColumn[] = [
-        { title: '', index: 'id', type: 'checkbox' },
-        { title: '学生编号', index: 'code' },
-        { title: '姓名', index: 'name' },
-        { title: '性别', index: 'sex', render: "genderRender" },
-        { title: '联系电话', index: 'phone' },
-        { title: '所在学校', index: 'school' },
-        { title: '年级', index: 'grade', render: "gradeRender" },
-        {
-            title: '操作',
-            buttons: [
-                {
-                    text: '编辑',
-                    click: (item: any) => this.router.navigate([`/personnel/student/edit/${item.id}`, { student: JSON.stringify({ ...item, _values: undefined }) }])
-                },
-                {
-                    text: '报名',
-                    click: (item: Student) => this.router.navigate(['/order/create', { student: JSON.stringify({ ...item, _values: undefined }) }])
+        { title: '学生编号', index: 'studentCode' },
+        { title: '姓名', index: 'studentName' },
+        { title: '账户余额', index: 'amount' },
+        { title: '备注', index: 'remark' },
+        // {
+        //     title: '操作',
+        //     buttons: [
+        //         {
+        //             text: '编辑',
+        //             click: (item: any) => this.router.navigate([`/personnel/student/edit/${item.id}`, { student: JSON.stringify({ ...item, _values: undefined }) }])
+        //         },
+        //         {
+        //             text: '报名',
+        //             click: (item: Student) => this.router.navigate(['/order/create', { student: JSON.stringify({ ...item, _values: undefined }) }])
 
-                },
-            ],
-        },
+        //         },
+        //     ],
+        // },
     ];
     selectedRows: STData[] = [];
     expandForm = false;
@@ -64,7 +62,7 @@ export class StudentAccountComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.queryParam = this.appCtx.storageService.get("StudentQuery") || this.queryParam;
+        //this.queryParam = this.appCtx.storageService.get("StudentAccountQuery") || this.queryParam;
         this.getData();
     }
     startQueryData() {
@@ -73,7 +71,7 @@ export class StudentAccountComponent implements OnInit {
     }
     getData() {
         this.loading = true;
-        this.studentService.queryStudents(this.queryParam)
+        this.studentService.queryStudentAccount(this.queryParam)
             .pipe(
                 tap(() => { this.loading = false; }, () => { this.loading = false; })
             )
@@ -81,7 +79,7 @@ export class StudentAccountComponent implements OnInit {
                 this.data = res;
                 this.data.list = this.data.list == null ? [] : this.data.list;
                 this.cdr.detectChanges();
-                this.appCtx.storageService.set("StudentQuery", this.queryParam);
+                //this.appCtx.storageService.set("StudentAccountQuery", this.queryParam);
             });
     }
 
@@ -99,15 +97,22 @@ export class StudentAccountComponent implements OnInit {
 
     }
 
-    addNewStudent() {
-        this.router.navigate([`/personnel/student/create`]);
-    }
-
     reset() {
         // wait form reset updated finished
-        this.queryParam.name = "";
-        this.queryParam.phone = "";
+        this.queryParam.studentId = null;
         this.queryParam.pageNo = 1;
         setTimeout(() => this.getData());
+    }
+
+    studentsOfOption: Array<Student> = [];
+    nzFilterOption = () => true;
+    searchStudent(value: string): void {
+        if (!value || value == "") {
+            return;
+        }
+        this.appCtx.studentService.fuzzyQueryStudents(value)
+            .subscribe((data: Student[]) => {
+                this.studentsOfOption = data;
+            });
     }
 }

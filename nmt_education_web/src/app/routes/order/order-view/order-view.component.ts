@@ -20,7 +20,7 @@ import { tap } from 'rxjs/operators';
     ::ng-deep .enroll-selector .ant-select-selection__rendered{line-height:20px;}`]
 })
 export class OrderViewComponent implements OnInit {
-    feeTypeList = this.appCtx.globalService.FEE_TYPE_LIST ;
+    feeTypeList = this.appCtx.globalService.FEE_TYPE_LIST;
     payStatusList = this.appCtx.globalService.PAY_STATUS_LIST;
     payMethodList = this.appCtx.globalService.PAY_METHOD_LIST;
     registrationTypeList = this.appCtx.globalService.ORDER_TYPE_LIST;
@@ -36,8 +36,7 @@ export class OrderViewComponent implements OnInit {
         totalAmount: 0,
         totalPay: 0,
         balanceAmount: 0,
-        editFlag: EDIT_FLAG.NEW,
-        payActually: 0
+        editFlag: EDIT_FLAG.NEW
     };
     loading: boolean = false;
     constructor(
@@ -63,7 +62,9 @@ export class OrderViewComponent implements OnInit {
     ];
     sessionsSTData: STData[] = [];
     selectedSessions: STData[] = [];
-    originalBalanceAmount = 0;
+    useBalanceAmount = 0;
+    lastTotalAmount = 0;
+    payActually: 0;
     ngOnInit(): void {
         this.form = this.fb.group({
             id: [null, []],
@@ -89,7 +90,6 @@ export class OrderViewComponent implements OnInit {
                     this.order = res;
                     this.order.courseScheduleIds = this.order.courseScheduleList.map(s => s.id);
                     this.order.campus = this.order.course.campus;
-                    this.originalBalanceAmount = this.order.balanceAmount;
                     this.order.editFlag = EDIT_FLAG.UPDATE;
                     this.form.patchValue(this.order);
                     this.selectedSessions = this.order.courseScheduleList;
@@ -102,9 +102,9 @@ export class OrderViewComponent implements OnInit {
                             this.registerExpenseDetail.push(field);
                         });
                     this.getCurrentBalance();
-                    this.order.lastTotalAmount=this.order.totalAmount;
-              //计算本次支付
-              this.calculatePayActually();
+                    this.lastTotalAmount = this.order.totalAmount;
+                    //计算本次支付
+                    this.calTotalAmout();
                 });
 
             return;
@@ -129,11 +129,11 @@ export class OrderViewComponent implements OnInit {
                 tap(() => { this.loading = false; this.timer = null; }, () => { this.loading = false; this.timer = null; })
             )
             .subscribe((res: any) => {
-              if(res==null){
-                this.order.balanceAccountAmount=0;
-              }else{
-                this.order.balanceAccountAmount = parseFloat(res.amount || 0);
-              }
+                if (res == null) {
+                    this.order.balanceAmount = 0;
+                } else {
+                    this.order.balanceAmount = parseFloat(res.amount || 0);
+                }
 
             });
     }
@@ -223,8 +223,10 @@ export class OrderViewComponent implements OnInit {
         this.selectedSessions = [];
         this.registerExpenseDetail.clear();
         this.order.totalAmount = 0;
-        // this.order.totalPay = 0;
-        // this.order.balanceAmount = 0;
+        this.order.totalPay = 0;
+        this.order.balanceAmount = 0;
+        this.useBalanceAmount = 0;
+        this.lastTotalAmount = 0;
     }
 
     onPayInfoChanged(index: number, refreshTotalAmount: boolean, event: any) {
@@ -257,42 +259,35 @@ export class OrderViewComponent implements OnInit {
         this.order.totalAmount = 0;
         expenseList.forEach(element => this.order.totalAmount += parseFloat(element.amount || 0));
         //计算本次支付
-      this.calculatePayActually();
-      // if (!this.form.get("useAccount").value) {
-        //     this.order.totalPay = this.order.totalAmount;
-        // }
-        // else {
-        //     if (this.timer != null) {
-        //         return;
-        //     }
-        //     this.loading = true;
-        //     this.timer = setTimeout(() => {
-        //         this.appCtx.studentService.getBalance(this.order.studentId)
-        //             .pipe(
-        //                 tap(() => { this.loading = false; this.timer = null; }, () => { this.loading = false; this.timer = null; })
-        //             )
-        //             .subscribe((res: any) => {
-        //                 this.order.balanceAmount = this.originalBalanceAmount;
-        //                 this.order.balanceAmount += parseFloat(res.amount || 0);
-        //                 if (this.order.balanceAmount > this.order.totalAmount) {
-        //                     this.order.balanceAmount = this.order.totalAmount;
-        //                 }
-        //                 this.order.totalPay = this.order.totalAmount - this.order.balanceAmount;
-        //             });
-        //     }, 500);
+        //this.calculatePayActually();
+        if (!this.form.get("useAccount").value) {
+            this.order.totalPay = this.order.totalAmount - this.lastTotalAmount;
+        }
+        else {
+            if (this.timer != null) {
+                return;
+            }
+            this.loading = true;
+            this.timer = setTimeout(() => {
+                this.appCtx.studentService.getBalance(this.order.studentId)
+                    .pipe(
+                        tap(() => { this.loading = false; this.timer = null; }, () => { this.loading = false; this.timer = null; })
+                    )
+                    .subscribe((res: any) => {
+                        this.order.totalPay = this.order.totalAmount - this.lastTotalAmount;
+                        this.useBalanceAmount = this.order.balanceAmount;
+                        if (this.order.balanceAmount > this.order.totalPay) {
+                            this.useBalanceAmount = this.order.totalPay;
+                        }
+                        this.order.totalPay = this.order.totalPay - this.useBalanceAmount;
+                    });
+            }, 500);
 
-        // }
+        }
 
     }
 
-  private  calculatePayActually() {
-    this.order.payActually = this.order.totalAmount - this.order.lastTotalAmount - this.order.balanceAccountAmount;
-    if (this.order.payActually < 0) {
-      this.order.payActually = 0;
-    }
-  }
-
-  stChange(e: STChange) {
+    stChange(e: STChange) {
         switch (e.type) {
             case 'checkbox':
                 this.selectedSessions = this.order.courseScheduleList || [];
@@ -350,7 +345,7 @@ export class OrderViewComponent implements OnInit {
         if (this.form.invalid) return;
         let submitObj = { ...this.form.value };
         submitObj.registerExpenseDetail = submitObj.registerExpenseDetail.filter(f => f.amount > 0);
-        submitObj.balanceAmount = this.order.balanceAccountAmount;
+        submitObj.balanceAmount = this.order.balanceAmount;
         this.loading = true;
         this.appCtx.courseService.registerCourse(submitObj)
             .pipe(

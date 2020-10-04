@@ -101,6 +101,11 @@ export class StartupService {
                 icon: { type: 'icon', value: 'appstore' }
               },
               {
+                text: "学生账户",
+                link: '/personnel/student/account',
+                icon: { type: 'icon', value: 'appstore' }
+              },
+              {
                 text: "教师列表",
                 link: '/personnel/teacher/list',
                 icon: { type: 'icon', value: 'appstore' }

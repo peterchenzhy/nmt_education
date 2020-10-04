@@ -1,4 +1,4 @@
-<page-header [title]="'学生管理'"></page-header>
+<page-header [title]="'学生账户管理'"></page-header>
 <nz-card [nzBordered]="false">
   <form nz-form [nzLayout]="'inline'" (ngSubmit)="startQueryData()" class="search__form">
     <div nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 24, xl: 48, xxl: 48 }">
@@ -14,18 +14,26 @@
         <nz-form-item>
           <nz-form-label nzFor="no">学生姓名</nz-form-label>
           <nz-form-control>
-            <input nz-input [(ngModel)]="queryParam.name" name="name" placeholder="请输入" id="name" />
+            <nz-select [(ngModel)]="queryParam.studentId" name="studentId" class="enroll-selector" nzShowSearch nzServerSearch
+            [nzShowArrow]="false" [nzFilterOption]="nzFilterOption" [nzDropdownMatchSelectWidth]="false"
+            (nzOnSearch)="searchStudent($event)">
+            <nz-option *ngFor="let o of studentsOfOption" nzCustomContent [nzLabel]="o.name" [nzValue]="o.id">
+              <!-- <div style="width: 200px; float: left;">{{o.code}}</div> -->
+              <div style="float: left">{{o.code}}</div>
+              <div style="float: right"> {{o.name}} </div>
+            </nz-option>
+          </nz-select>
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div nz-col nzMd="6" nzSm="24">
+      <!-- <div nz-col nzMd="6" nzSm="24">
         <nz-form-item>
           <nz-form-label nzFor="phone">联系方式</nz-form-label>
           <nz-form-control>
             <input nz-input [(ngModel)]="queryParam.phone" name="phone" placeholder="请输入" id="phone" />
           </nz-form-control>
         </nz-form-item>
-      </div>
+      </div> -->
       <!-- <div nz-col nzMd="6" nzSm="24" *ngIf="expandForm">
         <nz-form-item>
           <nz-form-label nzFor="status">学生状态</nz-form-label>
@@ -55,10 +63,6 @@
       </div>
     </div>
   </form>
-  <button nz-button (click)="addNewStudent()" [nzType]="'primary'">
-    <i nz-icon nzType="plus"></i>
-    <span>添加学生</span>
-  </button>
   <!-- <ng-container *ngIf="selectedRows.length > 0">
     <button nz-button>批量操作</button>
     <button nz-button nz-dropdown [nzDropdownMenu]="batchMenu" nzPlacement="bottomLeft">
@@ -83,12 +87,6 @@
   </div> -->
   <st #st [columns]="columns" [data]="data.list" [total]="data.total" [ps]="queryParam.pageSize" [pi]="queryParam.pageNo" [page]="pager"
     [loading]="loading" (change)="stChange($event)">
-    <ng-template st-row="genderRender" let-i>
-      <span>{{globalService.getGenderLabel(i.sex)}}</span>
-    </ng-template>
-    <ng-template st-row="gradeRender" let-i>
-      <span>{{globalService.getGradeLabel(i.grade)}}</span>
-    </ng-template>
   </st>
   <!-- </nz-card>
 <ng-template #modalContent>
