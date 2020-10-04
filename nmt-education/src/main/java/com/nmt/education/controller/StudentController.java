@@ -1,7 +1,10 @@
 package com.nmt.education.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.nmt.education.commmons.NumberUtil;
 import com.nmt.education.commmons.utils.ReqDtoCheckUtil;
+import com.nmt.education.commmons.utils.RoleUtils;
+import com.nmt.education.pojo.dto.req.AccountEditReqDto;
 import com.nmt.education.pojo.dto.req.StudentReqDto;
 import com.nmt.education.pojo.dto.req.StudentSearchReqDto;
 import com.nmt.education.pojo.vo.StudentAccountVo;
@@ -10,6 +13,7 @@ import com.nmt.education.service.student.StudentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -71,11 +75,11 @@ public class StudentController {
     @ApiOperation(value = "accountPage", notes = "学生账户分页接口")
     @RequestMapping(value = "/accountPage", method = RequestMethod.GET)
     public PageInfo<StudentAccountVo> accountPage(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
-                                             @RequestParam(value = "studentId" ,required = false) Long studentId,
-                                             @RequestParam(value = "pageNo" ,required = false ,defaultValue = "1") Integer pageNo,
-                                             @RequestParam(value = "pageSize",required = false,defaultValue = "10") Integer pageSize
-                                                  ) {
-        return studentService.accountPage(studentId,pageNo,pageSize);
+                                                  @RequestParam(value = "studentId", required = false) Long studentId,
+                                                  @RequestParam(value = "pageNo", required = false, defaultValue = "1") Integer pageNo,
+                                                  @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize
+    ) {
+        return studentService.accountPage(studentId, pageNo, pageSize);
     }
 
     @ApiOperation(value = "account", notes = "学生账户")
@@ -83,5 +87,15 @@ public class StudentController {
     public StudentAccountVo account(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
             , @PathVariable Long studentId) {
         return studentService.account(studentId);
+    }
+
+    @ApiOperation(value = "accountEdit", notes = "学生账户编辑")
+    @RequestMapping(value = "/account/edit", method = RequestMethod.POST)
+    public void account(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
+            , @RequestBody @Validated AccountEditReqDto accountEditReqDto, BindingResult bindingResult) {
+        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
+        RoleUtils.check校长财务(roleId);
+        Assert.isTrue(NumberUtil.isNumeric(accountEditReqDto.getAmount()), "账户金额不正确！" + accountEditReqDto.getAmount());
+        studentService.accountEdit(accountEditReqDto,logInUser);
     }
 }

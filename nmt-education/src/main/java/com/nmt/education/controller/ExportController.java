@@ -1,17 +1,15 @@
 package com.nmt.education.controller;
 
-import com.nmt.education.commmons.RoleIdEnum;
 import com.nmt.education.commmons.utils.ReqDtoCheckUtil;
+import com.nmt.education.commmons.utils.RoleUtils;
 import com.nmt.education.pojo.dto.req.FeeStatisticsReqDto;
 import com.nmt.education.pojo.dto.req.TeacherScheduleReqDto;
-import com.nmt.education.service.export.AbstractExportService;
 import com.nmt.education.service.export.FeeStatisticsExportService;
 import com.nmt.education.service.export.ScheduleTeacherExportService;
 import com.nmt.education.service.export.TeacherSalarySummaryExportService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Assert;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -48,7 +46,7 @@ public class ExportController {
     public void feeStatistics(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
             , @RequestBody @Validated FeeStatisticsReqDto dto, BindingResult bindingResult, HttpServletResponse response) throws IOException {
         ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
-        checkRole(roleId);
+        RoleUtils.check校长财务(roleId);
         feeStatisticsExportService.doExport(dto, logInUser, response);
     }
 
@@ -57,7 +55,7 @@ public class ExportController {
     public void scheduleTeacher(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
             , @RequestBody @Validated TeacherScheduleReqDto dto, BindingResult bindingResult, HttpServletResponse response) throws IOException {
         ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
-        checkRole(roleId);
+        RoleUtils.check校长财务(roleId);
         scheduleTeacher.doExport(dto, logInUser, response);
     }
 
@@ -66,17 +64,8 @@ public class ExportController {
     public void scheduleTeacherSalary(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
             , @RequestBody @Validated TeacherScheduleReqDto dto, BindingResult bindingResult, HttpServletResponse response) throws IOException {
         ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
-        checkRole(roleId);
+        RoleUtils.check校长财务(roleId);
         teacherSalarySummaryExportService.doExport(dto, logInUser, response);
-    }
-
-    /**
-     * 校验角色
-     * @param roleId
-     */
-    private void checkRole(@RequestHeader(ROLE_ID_HEAD) String roleId) {
-        Assert.isTrue(Integer.valueOf(roleId).intValue() == RoleIdEnum.校长.getCode()
-                || Integer.valueOf(roleId).intValue() == RoleIdEnum.财务.getCode(), "您没有该功能权限");
     }
 
 

@@ -34,4 +34,5 @@ public interface Consts {
 
     String ZERO = "0";
     String 结余消耗模板="--科目：<%s>，结余金额：<%s>元";
+    String 账户金额更新模板="账户金额更新,备注：";
 }

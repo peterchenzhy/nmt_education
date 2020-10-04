@@ -2,10 +2,15 @@ package com.nmt.education.service.student;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.nmt.education.commmons.Consts;
 import com.nmt.education.commmons.Enums;
+import com.nmt.education.commmons.ExpenseDetailFlowTypeEnum;
 import com.nmt.education.commmons.StatusEnum;
+import com.nmt.education.pojo.dto.req.AccountEditReqDto;
 import com.nmt.education.pojo.dto.req.StudentReqDto;
 import com.nmt.education.pojo.dto.req.StudentSearchReqDto;
+import com.nmt.education.pojo.po.StudentAccountFlowPo;
+import com.nmt.education.pojo.po.StudentAccountPo;
 import com.nmt.education.pojo.po.StudentPo;
 import com.nmt.education.pojo.vo.StudentAccountVo;
 import com.nmt.education.pojo.vo.StudentVo;
@@ -17,6 +22,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -252,18 +258,41 @@ public class StudentService {
 
     /**
      * 学生账户
+     *
      * @param studentId
      * @return
      */
     public StudentAccountVo account(Long studentId) {
-        if(Objects.isNull(studentId)){
-            return null ;
+        if (Objects.isNull(studentId)) {
+            return null;
         }
         final List<StudentAccountVo> studentAccountVos = studentAccountService.queryAccount(studentId);
-        if(CollectionUtils.isEmpty(studentAccountVos)){
-            return null ;
-        }else{
+        if (CollectionUtils.isEmpty(studentAccountVos)) {
+            return null;
+        } else {
             return studentAccountVos.get(0);
         }
+    }
+
+    /**
+     * 编辑学生账户
+     *
+     * @param accountEditReqDto
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/10/3 22:21
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void accountEdit(AccountEditReqDto accountEditReqDto,int logInUser) {
+        StudentAccountPo accountPo = studentAccountService.querybyUserId(accountEditReqDto.getStudentId());
+        Assert.notNull(accountPo,"学生账户不存在！");
+        accountPo.setAmount(accountEditReqDto.getAmount());
+        accountPo.setRemark(accountEditReqDto.getRemark());
+        studentAccountService.updateByVersion(accountPo);
+        //插入流水
+        StudentAccountFlowPo flowPo = studentAccountService.generateFlow(logInUser, accountPo.getId(), accountEditReqDto.getAmount(),
+                ExpenseDetailFlowTypeEnum.编辑, -1L, accountPo.getAmount(), Consts.账户金额更新模板+ accountEditReqDto.getRemark());
+        studentAccountService.insertFlow(flowPo);
     }
 }

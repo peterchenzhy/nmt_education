@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -84,12 +85,17 @@ public class StudentAccountService {
             this.updateByVersion(accountPo);
             StudentAccountFlowPo flowPo = generateFlow(logInUser, accountPo.getId(),accountPo.getAmount(), ExpenseDetailFlowTypeEnum.编辑, registerId,
                     lastAmount,"结转增加金额");
-            this.studentAccountFlowPoMapper.insertSelective(flowPo);
+            insertFlow(flowPo);
 
         }
     }
 
+    public  void insertFlow(StudentAccountFlowPo flowPo) {
+        this.studentAccountFlowPoMapper.insertSelective(flowPo);
+    }
+
     public int updateByVersion(StudentAccountPo accountPo) {
+        Assert.notNull(accountPo,"账号不存在！");
         return this.studentAccountPoMapper.updateByVersion(accountPo);
     }
 
@@ -119,7 +125,7 @@ public class StudentAccountService {
         this.insertSelective(po);
         StudentAccountFlowPo flowPo = generateFlow(logInUser, po.getId(),po.getAmount(), ExpenseDetailFlowTypeEnum.新增记录, registerId,
                 BigDecimal.ZERO.toPlainString(),ExpenseDetailFlowTypeEnum.新增记录.getDescription());
-        this.studentAccountFlowPoMapper.insertSelective(flowPo);
+        insertFlow(flowPo);
 
         return po;
     }

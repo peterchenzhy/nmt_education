@@ -2,6 +2,7 @@ package com.nmt.education.service.student;
 
 import com.alibaba.fastjson.JSON;
 import com.nmt.education.BaseTest;
+import com.nmt.education.pojo.dto.req.AccountEditReqDto;
 import com.nmt.education.pojo.dto.req.StudentReqDto;
 import com.nmt.education.pojo.po.StudentPo;
 import lombok.extern.slf4j.Slf4j;
@@ -83,5 +84,14 @@ class StudentServiceTest extends BaseTest {
     @Test
     void accountPage1() {
         log.warn(JSON.toJSONString(this.studentService.accountPage(null,1,10)));
+    }
+
+    @Test
+    void accountEdit1() {
+        AccountEditReqDto accountEditReqDto = new AccountEditReqDto();
+        accountEditReqDto.setStudentId(5L);
+        accountEditReqDto.setAmount("1500");
+        accountEditReqDto.setRemark("test2");
+        studentService.accountEdit(accountEditReqDto,loginUser);
     }
 }
