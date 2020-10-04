@@ -135,6 +135,10 @@ export class CourseViewComponent implements OnInit {
     return this.form.value.editFlag != EDIT_FLAG.NEW;
   }
 
+  get canEditSalary() {
+    return this.appCtx.entitlementService.canEditTeacherSalary();
+  }
+
   createSession(): FormGroup {
     return this.fb.group({
       id: [0, []],
@@ -185,7 +189,7 @@ export class CourseViewComponent implements OnInit {
       perTime: this.form.value.perTime,
       dayOfWeek: [{ label: '星期日', value: 0 }, { label: '星期一', value: 1 }, { label: '星期二', value: 2 },
       { label: '星期三', value: 3 }, { label: '星期四', value: 4 }, { label: '星期五', value: 5 }, { label: '星期六', value: 6 }],
-      price: 0,
+      teacherPrice: 0,
       teacherId: this.form.value.teacherId
     };
     let currentDate = new Date();
@@ -196,6 +200,7 @@ export class CourseViewComponent implements OnInit {
       this.sessionParam.startDate = new Date(activeSessions[0].courseDatetime);
       this.sessionParam.startTime = new Date(activeSessions[0].courseDatetime);
       this.sessionParam.perTime = this.form.value.perTime;
+      this.sessionParam.teacherPrice = activeSessions[0].teacherPrice;
       // this.sessionParam.teacherId = activeSessions[0].teacherId;
       activeSessions.forEach(s => {
         let day = new Date(s.courseDatetime).getDay();
@@ -204,13 +209,12 @@ export class CourseViewComponent implements OnInit {
     }
 
     let singleFee = this.feeList.value.find(f => { return f.type == 1 && f.editFlag != EDIT_FLAG.DELETE; });
-    this.sessionParam.price = singleFee ? singleFee.price : 0;
+    //this.sessionParam.price = singleFee ? singleFee.price : 0;
     this.modalSrv.create({
       nzTitle: this.sessionParam.title,
       nzContent: tpl,
       nzWidth: 350,
       nzOnOk: () => {
-        debugger;
         this.form.get("perTime").setValue(this.sessionParam.perTime);
         let currentDate = new Date();
         for (let i = 0; i < this.sessions.length;) {
@@ -232,7 +236,7 @@ export class CourseViewComponent implements OnInit {
                 if (this.sessionParam.dayOfWeek.find(d => { return d.checked && d.value == day; })) {
                   session.get("perTime").setValue(this.sessionParam.perTime);
                   session.get("teacherId").setValue(this.sessionParam.teacherId);
-                  //session.value.teacherPrice = this.sessionParam.price;
+                  session.get("teacherPrice").setValue(this.sessionParam.teacherPrice);
                   let dateStr = this.sessionParam.startDate.toLocaleDateString();
                   let timeStr = this.sessionParam.startTime.toTimeString();
                   session.get("courseDatetime").setValue(new Date(dateStr + " " + timeStr));
@@ -261,7 +265,7 @@ export class CourseViewComponent implements OnInit {
             newSession.courseId = this.form.value.id;
             newSession.teacherId = this.sessionParam.teacherId;
             newSession.perTime = this.sessionParam.perTime;
-            newSession.teacherPrice = this.sessionParam.price;
+            newSession.teacherPrice = this.sessionParam.teacherPrice;
             let dateStr = this.sessionParam.startDate.toLocaleDateString();
             let timeStr = this.sessionParam.startTime.toTimeString();
             newSession.courseDatetime = new Date(dateStr + " " + timeStr);

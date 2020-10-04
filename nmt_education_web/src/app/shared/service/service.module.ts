@@ -8,6 +8,7 @@ import { CourseService } from './course.service';
 import { AppContextService } from './appcontext.service';
 import { ReportService } from './report.service';
 import { StorageService } from './storage.service';
+import { EntitlementService } from './entitlement.service';
 
 const COMPONENTS = [
 
@@ -23,6 +24,7 @@ const COMPONENTS_NOROUNT = [];
     providers: [
         AppContextService,
         GlobalService,
+        EntitlementService,
         StudentService,
         TeacherService,
         CourseService,

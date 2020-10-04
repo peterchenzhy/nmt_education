@@ -106,7 +106,8 @@
               <nz-form-item>
                 <nz-form-label>单节课时长(分钟)</nz-form-label>
                 <nz-form-control nzErrorTip="请输入单节课时长">
-                  <nz-input-number [nzDisabled]=true formControlName="perTime" (ngModelChange)="coursePerTimeChanged()"></nz-input-number>
+                  <nz-input-number [nzDisabled]=true formControlName="perTime" (ngModelChange)="coursePerTimeChanged()">
+                  </nz-input-number>
                 </nz-form-control>
               </nz-form-item>
 
@@ -221,7 +222,7 @@
                 <th>教师</th>
                 <th>上课时间</th>
                 <th>时长(分钟)</th>
-                <!-- <th>薪资</th> -->
+                <th *ngIf="canEditSalary">薪资</th>
                 <th *ngIf="editable==true">操作</th>
               </tr>
             </thead>
@@ -259,12 +260,12 @@
                       <nz-input-number formControlName="perTime" placeholder="请输入时长"></nz-input-number>
                     </span>
                   </td>
-                  <!-- <td>
-                <span *ngIf="editSessionIndex !== i">{{ sessions.value[i].price }}</span>
-                <span *ngIf="editSessionIndex === i" nz-form-control nzErrorTip="请输入薪资">
-                  <nz-input-number formControlName="price" placeholder="请输入薪资"></nz-input-number>
-                </span>
-              </td> -->
+                  <td  *ngIf="canEditSalary">
+                    <span *ngIf="editSessionIndex !== i">{{ sessions.value[i].teacherPrice }}</span>
+                    <span *ngIf="editSessionIndex === i" nz-form-control nzErrorTip="请输教师入薪资">
+                      <nz-input-number formControlName="teacherPrice" placeholder="请输入教师薪资"></nz-input-number>
+                    </span>
+                  </td>
                   <td *ngIf="editable==true">
                     <span *ngIf="editSessionIndex !== i">
                       <a *ngIf="isEditCourse" (click)="signIn(i)">签到</a>
@@ -302,9 +303,11 @@
       </nz-tab>
       <nz-tab nzTitle="签到记录">
         <nz-card [nzBordered]="false">
-          <st #stSign [columns]="signColumns" [scroll]="{ x: 'auto' }" [data]="signReportList" [loading]="signReportLoading">
+          <st #stSign [columns]="signColumns" [scroll]="{ x: 'auto' }" [data]="signReportList"
+            [loading]="signReportLoading">
             <ng-template st-row="signInRender" let-i let-column="column">
-              <nz-tag nzColor="{{column.tag[i[column.index].signIn].color}}">{{column.tag[i[column.index].signIn].text}}</nz-tag>
+              <nz-tag nzColor="{{column.tag[i[column.index].signIn].color}}">{{column.tag[i[column.index].signIn].text}}
+              </nz-tag>
             </ng-template>
           </st>
         </nz-card>
@@ -361,25 +364,25 @@
         <span *ngIf="sessionParam.teacherId == null" style="color: red;">请先选择任课教师</span>
       </nz-form-control>
     </nz-form-item>
-    <!-- <nz-form-item>
+    <nz-form-item *ngIf="canEditSalary">
       <nz-form-label>教师薪资 (元)</nz-form-label>
       <nz-form-control>
-        <span *ngIf="sessionParam.price == 0" style="color: red;">请先配置[普通单节费用]</span>
-        <span *ngIf="sessionParam.price > 0">{{sessionParam.price}} </span>
+        <nz-input-number style="width: 100%;" [(ngModel)]="sessionParam.teacherPrice" placeholder="请输入教师薪资">
+        </nz-input-number>
       </nz-form-control>
-    </nz-form-item> -->
+    </nz-form-item>
   </div>
 </ng-template>
 <ng-template #sessionButtonsTemplate>
-  <button  *ngIf="editable==true" style="margin: 0 !important;" [disabled]="editSessionIndex > -1" nz-button [nzType]="'primary'"
-    (click)="addSessions(modalCreateSession)" nzBlock class="mt-md">
+  <button *ngIf="editable==true" style="margin: 0 !important;" [disabled]="editSessionIndex > -1" nz-button
+    [nzType]="'primary'" (click)="addSessions(modalCreateSession)" nzBlock class="mt-md">
     <i nz-icon nzType="plus"></i>
     <span>{{sessionParam.title}}</span>
   </button>
 </ng-template>
 <ng-template #feeButtonsTemplate>
-  <button *ngIf="editable==true" style="margin: 0 !important;" [disabled]="editFeeIndex > -1" nz-button [nzType]="'primary'" (click)="addFee()"
-    nzBlock class="mt-md">
+  <button *ngIf="editable==true" style="margin: 0 !important;" [disabled]="editFeeIndex > -1" nz-button
+    [nzType]="'primary'" (click)="addFee()" nzBlock class="mt-md">
     <i nz-icon nzType="plus"></i>
     <span>新增费用</span>
   </button>
