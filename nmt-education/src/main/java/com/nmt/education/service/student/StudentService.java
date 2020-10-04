@@ -12,6 +12,7 @@ import com.nmt.education.pojo.dto.req.StudentSearchReqDto;
 import com.nmt.education.pojo.po.StudentAccountFlowPo;
 import com.nmt.education.pojo.po.StudentAccountPo;
 import com.nmt.education.pojo.po.StudentPo;
+import com.nmt.education.pojo.vo.StudentAccountDetailVo;
 import com.nmt.education.pojo.vo.StudentAccountVo;
 import com.nmt.education.pojo.vo.StudentVo;
 import com.nmt.education.service.CodeService;
@@ -29,6 +30,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Author: PeterChen
@@ -284,15 +286,48 @@ public class StudentService {
      * @since 2020/10/3 22:21
      */
     @Transactional(rollbackFor = Exception.class)
-    public void accountEdit(AccountEditReqDto accountEditReqDto,int logInUser) {
+    public void accountEdit(AccountEditReqDto accountEditReqDto, int logInUser) {
         StudentAccountPo accountPo = studentAccountService.querybyUserId(accountEditReqDto.getStudentId());
-        Assert.notNull(accountPo,"学生账户不存在！");
+        Assert.notNull(accountPo, "学生账户不存在！");
         accountPo.setAmount(accountEditReqDto.getAmount());
         accountPo.setRemark(accountEditReqDto.getRemark());
         studentAccountService.updateByVersion(accountPo);
         //插入流水
         StudentAccountFlowPo flowPo = studentAccountService.generateFlow(logInUser, accountPo.getId(), accountEditReqDto.getAmount(),
-                ExpenseDetailFlowTypeEnum.编辑, -1L, accountPo.getAmount(), Consts.账户金额更新模板+ accountEditReqDto.getRemark());
+                ExpenseDetailFlowTypeEnum.编辑, -1L, accountPo.getAmount(), Consts.账户金额更新模板 + accountEditReqDto.getRemark());
         studentAccountService.insertFlow(flowPo);
+    }
+
+
+    public PageInfo<StudentAccountDetailVo> accountDetail(Long studentId, Integer pageNo, Integer pageSize) {
+        Assert.notNull(studentId, "学生id不能为空");
+        StudentPo studentPo = this.selectByPrimaryKey(studentId);
+        Assert.notNull(studentPo, "学生信息不存在");
+        PageInfo<StudentAccountDetailVo> pageInfo = new PageInfo<>();
+        StudentAccountPo accountPo = this.studentAccountService.querybyUserId(studentId);
+        if (accountPo == null) {
+            return new PageInfo<>();
+        }
+        PageInfo<StudentAccountFlowPo> flowPageInfo =
+                PageHelper.startPage(pageNo, pageSize).doSelectPageInfo(() -> studentAccountService.queryAccountFlowByAccountId(accountPo.getId()));
+        if (!CollectionUtils.isEmpty(flowPageInfo.getList())) {
+            BeanUtils.copyProperties(flowPageInfo, pageInfo);
+            pageInfo.setList(flowPageInfo.getList().stream().map(po -> {
+                StudentAccountDetailVo vo = new StudentAccountDetailVo();
+                vo.setStudentId(studentPo.getId());
+                vo.setStudentName(studentPo.getName());
+                vo.setId(po.getId());
+                vo.setStudentAccountId(po.getStudentAccountId());
+                vo.setType(ExpenseDetailFlowTypeEnum.code2Desc(po.getType()));
+                vo.setRefId(po.getRefId());
+                vo.setAmount(po.getAmount());
+                vo.setBeforeAmount(po.getBeforeAmount());
+                vo.setRemark(po.getRemark());
+                vo.setCreateTime(po.getCreateTime());
+                return vo;
+            }).collect(Collectors.toList()));
+        }
+
+        return pageInfo;
     }
 }

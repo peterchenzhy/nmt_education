@@ -7,7 +7,6 @@ import com.nmt.education.pojo.po.RegisterationSummaryPo;
 import com.nmt.education.pojo.po.RegistrationExpenseDetailPo;
 import com.nmt.education.pojo.po.StudentAccountFlowPo;
 import com.nmt.education.pojo.po.StudentAccountPo;
-import com.nmt.education.pojo.vo.ExpenseDetailFlowVo;
 import com.nmt.education.pojo.vo.StudentAccountVo;
 import com.nmt.education.service.course.registeration.RegistrationExpenseDetailService;
 import com.nmt.education.service.course.registeration.summary.RegisterationSummaryService;
@@ -83,19 +82,19 @@ public class StudentAccountService {
             accountPo.setOperator(logInUser);
             accountPo.setOperateTime(new Date());
             this.updateByVersion(accountPo);
-            StudentAccountFlowPo flowPo = generateFlow(logInUser, accountPo.getId(),accountPo.getAmount(), ExpenseDetailFlowTypeEnum.编辑, registerId,
-                    lastAmount,"结转增加金额");
+            StudentAccountFlowPo flowPo = generateFlow(logInUser, accountPo.getId(), accountPo.getAmount(), ExpenseDetailFlowTypeEnum.编辑, registerId,
+                    lastAmount, "结转增加金额");
             insertFlow(flowPo);
 
         }
     }
 
-    public  void insertFlow(StudentAccountFlowPo flowPo) {
+    public void insertFlow(StudentAccountFlowPo flowPo) {
         this.studentAccountFlowPoMapper.insertSelective(flowPo);
     }
 
     public int updateByVersion(StudentAccountPo accountPo) {
-        Assert.notNull(accountPo,"账号不存在！");
+        Assert.notNull(accountPo, "账号不存在！");
         return this.studentAccountPoMapper.updateByVersion(accountPo);
     }
 
@@ -123,15 +122,15 @@ public class StudentAccountService {
         po.setOperateTime(new Date());
         po.setVersion(1);
         this.insertSelective(po);
-        StudentAccountFlowPo flowPo = generateFlow(logInUser, po.getId(),po.getAmount(), ExpenseDetailFlowTypeEnum.新增记录, registerId,
-                BigDecimal.ZERO.toPlainString(),ExpenseDetailFlowTypeEnum.新增记录.getDescription());
+        StudentAccountFlowPo flowPo = generateFlow(logInUser, po.getId(), po.getAmount(), ExpenseDetailFlowTypeEnum.新增记录, registerId,
+                BigDecimal.ZERO.toPlainString(), ExpenseDetailFlowTypeEnum.新增记录.getDescription());
         insertFlow(flowPo);
 
         return po;
     }
 
-    public StudentAccountFlowPo generateFlow(Integer logInUser, long studentAccountId , String amount, ExpenseDetailFlowTypeEnum type, Long registerId,
-                                             String lastAmount,String remark) {
+    public StudentAccountFlowPo generateFlow(Integer logInUser, long studentAccountId, String amount, ExpenseDetailFlowTypeEnum type, Long registerId,
+                                             String lastAmount, String remark) {
         StudentAccountFlowPo flowPo = new StudentAccountFlowPo();
         flowPo.setStudentAccountId(studentAccountId);
         flowPo.setType(type.getCode());
@@ -185,8 +184,8 @@ public class StudentAccountService {
 
 
     public void addFlow(List<StudentAccountFlowPo> accountFlowList) {
-        if(CollectionUtils.isEmpty(accountFlowList)){
-            return ;
+        if (CollectionUtils.isEmpty(accountFlowList)) {
+            return;
         }
         this.studentAccountFlowPoMapper.batchInsert(accountFlowList);
     }
@@ -198,9 +197,15 @@ public class StudentAccountService {
      * @return
      */
     public List<StudentAccountFlowPo> queryFlowByRegisterId(Long registerId) {
-        if(Objects.isNull(registerId)){
+        if (Objects.isNull(registerId)) {
             return Collections.emptyList();
         }
         return this.studentAccountFlowPoMapper.queryByRegisterId(registerId);
+    }
+
+    public List<StudentAccountFlowPo> queryAccountFlowByAccountId(Long accountId) {
+
+        List<StudentAccountFlowPo> list = this.studentAccountFlowPoMapper.queryByAccountId(accountId);
+        return list;
     }
 }

@@ -33,7 +33,14 @@
     select
     <include refid="Base_Column_List" />
     from student_account_flow
-    where ref_id = #{registerId}
+    where ref_id = #{registerId} and status = 1
+  </select>
+
+  <select id="queryByAccountId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from student_account_flow
+    where student_account_id = #{accountId} and status = 1
   </select>
   <insert id="insertSelective" parameterType="com.nmt.education.pojo.po.StudentAccountFlowPo">
     <!--@mbg.generated-->

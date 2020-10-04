@@ -94,4 +94,9 @@ class StudentServiceTest extends BaseTest {
         accountEditReqDto.setRemark("test2");
         studentService.accountEdit(accountEditReqDto,loginUser);
     }
+
+    @Test
+    void accountDetail1() {
+        System.out.println(JSON.toJSONString(studentService.accountDetail(5L,1,100)));
+    }
 }

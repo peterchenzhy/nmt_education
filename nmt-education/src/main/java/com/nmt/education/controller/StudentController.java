@@ -7,6 +7,7 @@ import com.nmt.education.commmons.utils.RoleUtils;
 import com.nmt.education.pojo.dto.req.AccountEditReqDto;
 import com.nmt.education.pojo.dto.req.StudentReqDto;
 import com.nmt.education.pojo.dto.req.StudentSearchReqDto;
+import com.nmt.education.pojo.vo.StudentAccountDetailVo;
 import com.nmt.education.pojo.vo.StudentAccountVo;
 import com.nmt.education.pojo.vo.StudentVo;
 import com.nmt.education.service.student.StudentService;
@@ -89,6 +90,16 @@ public class StudentController {
         return studentService.account(studentId);
     }
 
+    @ApiOperation(value = "account", notes = "学生账户明细")
+    @RequestMapping(value = "/account/detail/{studentId}", method = RequestMethod.POST)
+    public PageInfo<StudentAccountDetailVo> accountDetail(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
+            , @PathVariable Long studentId,
+                                                          @RequestParam(value = "pageNo", required = false, defaultValue = "1") Integer pageNo,
+                                                          @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+        return studentService.accountDetail(studentId,pageNo,pageSize);
+    }
+
+
     @ApiOperation(value = "accountEdit", notes = "学生账户编辑")
     @RequestMapping(value = "/account/edit", method = RequestMethod.POST)
     public void account(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
@@ -96,6 +107,6 @@ public class StudentController {
         ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
         RoleUtils.check校长财务(roleId);
         Assert.isTrue(NumberUtil.isNumeric(accountEditReqDto.getAmount()), "账户金额不正确！" + accountEditReqDto.getAmount());
-        studentService.accountEdit(accountEditReqDto,logInUser);
+        studentService.accountEdit(accountEditReqDto, logInUser);
     }
 }

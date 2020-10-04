@@ -67,6 +67,15 @@ public enum ExpenseDetailFlowTypeEnum {
         return "";
     }
 
+    public static String code2Desc(Integer code) {
+        for (ExpenseDetailFlowTypeEnum e : ExpenseDetailFlowTypeEnum.values()) {
+            if (Objects.equals(code, e.getCode())) {
+                return e.getDescription();
+            }
+        }
+        return "";
+    }
+
     public static List<Integer> feeStatistics2FlowType(Integer code) {
         List<Integer> result = new ArrayList<>();
         if (code != null) {
