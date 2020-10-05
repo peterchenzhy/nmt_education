@@ -5,6 +5,7 @@ import { TeacherService } from './teacher.service';
 import { CourseService } from './course.service';
 import { ReportService } from './report.service';
 import { StorageService } from './storage.service';
+import { EntitlementService } from './entitlement.service';
 
 @Injectable()
 export class AppContextService {
@@ -14,6 +15,7 @@ export class AppContextService {
         public teacherService: TeacherService,
         public courseService: CourseService,
         public reportService: ReportService,
+        public entitlementService: EntitlementService,
         public storageService: StorageService
     ) {
     }

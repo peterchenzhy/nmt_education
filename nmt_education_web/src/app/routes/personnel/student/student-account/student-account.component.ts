@@ -17,6 +17,7 @@ import { AppContextService } from '@shared/service/appcontext.service';
     templateUrl: './student-account.component.html',
 })
 export class StudentAccountComponent implements OnInit {
+    errorMsg = "";
     loading = false;
     pager = {
         front: false
@@ -24,29 +25,21 @@ export class StudentAccountComponent implements OnInit {
     queryParam: StudentAccountQueryParam = { pageNo: 1, pageSize: 10 };
     data: ResponseData = { list: [], total: 0 };
     genderList = this.globalService.GENDER_LIST;
-    @ViewChild('st', { static: true })
 
+    @ViewChild('editTpl', { static: true })
+    editTpl: TemplateRef<any>;
+
+    @ViewChild('st', { static: true })
     st: STComponent;
+
     columns: STColumn[] = [
         { title: '学生编号', index: 'studentCode' },
         { title: '姓名', index: 'studentName' },
         { title: '账户余额', index: 'amount' },
         { title: '备注', index: 'remark' },
-        // {
-        //     title: '操作',
-        //     buttons: [
-        //         {
-        //             text: '编辑',
-        //             click: (item: any) => this.router.navigate([`/personnel/student/edit/${item.id}`, { student: JSON.stringify({ ...item, _values: undefined }) }])
-        //         },
-        //         {
-        //             text: '报名',
-        //             click: (item: Student) => this.router.navigate(['/order/create', { student: JSON.stringify({ ...item, _values: undefined }) }])
-
-        //         },
-        //     ],
-        // },
     ];
+
+    editRow: STData = null;
     selectedRows: STData[] = [];
     expandForm = false;
 
@@ -62,9 +55,56 @@ export class StudentAccountComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+
         //this.queryParam = this.appCtx.storageService.get("StudentAccountQuery") || this.queryParam;
+        this.columns = [
+            { title: '学生编号', index: 'studentCode' },
+            { title: '姓名', index: 'studentName' },
+            { title: '账户余额', index: 'amount' },
+            { title: '备注', index: 'remark' },
+            {
+                title: '操作',
+                buttons: [
+                    {
+                        text: '编辑',
+                        icon: 'edit',
+                        click: (_record) => {
+                            this.errorMsg = "";
+                            this.editRow = { ..._record };
+                            this.modalSrv.create({
+                                nzContent: this.editTpl,
+                                nzMaskClosable: false,
+                                nzClosable: false,
+                                nzOnOk: () => this.saveBalanceAccount()
+                            })
+                        },
+                    }
+                ],
+            },
+        ];
         this.getData();
     }
+    saveBalanceAccount() {
+        let obj = {
+            amount: this.editRow.amount,
+            remark: this.editRow.remark,
+            studentId: this.editRow.studentId
+        };
+        if (obj.amount == "" || parseFloat(obj.amount) < 0) {
+            this.errorMsg = "余额不能为空或小于0";
+            return false;
+        }
+        this.loading = true;
+        this.studentService.saveBalanceAccount(obj)
+            .pipe(
+                tap(() => { this.loading = false; }, () => { this.loading = false; })
+            )
+            .subscribe((res: ResponseData) => {
+                this.getData();
+                //this.appCtx.storageService.set("StudentAccountQuery", this.queryParam);
+            });
+    }
+
     startQueryData() {
         this.queryParam.pageNo = 1;
         this.getData();
