@@ -20,6 +20,7 @@ import com.nmt.education.service.student.account.StudentAccountService;
 import com.nmt.education.service.sysconfig.SysConfigService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -311,6 +312,7 @@ public class CourseRegistrationService {
         BigDecimal lastAmount = account;
         flow.setRemark(String.format(Consts.结余消耗模板, sysConfigService.queryByTypeValue(Consts.FEE_TYPE_费用类型, flow.getFeeType()).getDescription(),
                 cost.toPlainString()));
+        //设置结余消耗金额
         flow.setAccountAmount(cost.toPlainString());
         //生成结余流水
         accountFlowList.add(studentAccountService.generateFlow(updator, studentAccountPo.getId(), cost.toPlainString(),
@@ -369,6 +371,7 @@ public class CourseRegistrationService {
         flow.setCount(dto.getCount());
         flow.setDiscount(dto.getDiscount());
         flow.setPayment(dto.getPayment());
+        flow.setAccountAmount(Consts.ZERO);
         return flow;
     }
 
@@ -401,6 +404,7 @@ public class CourseRegistrationService {
         flow.setCount(e.getCount());
         flow.setDiscount(e.getDiscount());
         flow.setPayment(e.getPayment());
+        flow.setAccountAmount(Consts.ZERO);
         return flow;
     }
 

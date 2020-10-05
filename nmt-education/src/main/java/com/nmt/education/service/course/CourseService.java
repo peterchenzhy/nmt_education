@@ -298,6 +298,7 @@ public class CourseService {
      * @param logInUser
      * @param courseId
      */
+    @Transactional(rollbackFor = Exception.class)
     public void finish(Integer logInUser, Long courseId) {
         final CoursePo coursePo = this.coursePoMapper.selectByPrimaryKey(courseId);
         Assert.isTrue(Objects.nonNull(coursePo),"课程信息为空，id:"+courseId);

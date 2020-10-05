@@ -299,6 +299,7 @@ public class CourseScheduleService {
         flow.setCount(1);
         flow.setDiscount(registrationExpenseDetailPo.getDiscount());
         flow.setPayment(SYSTEM_USER);
+        flow.setAccountAmount(Consts.ZERO);
         return flow;
     }
 
