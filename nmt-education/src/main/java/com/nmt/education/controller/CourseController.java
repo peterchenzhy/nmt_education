@@ -6,6 +6,7 @@ import com.nmt.education.pojo.dto.req.CourseReqDto;
 import com.nmt.education.pojo.dto.req.CourseSearchDto;
 import com.nmt.education.pojo.po.CoursePo;
 import com.nmt.education.pojo.vo.CourseDetailVo;
+import com.nmt.education.pojo.vo.CourseVo;
 import com.nmt.education.service.course.CourseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -47,7 +48,7 @@ public class CourseController {
 
     @ApiOperation(value = "search", notes = "课程查询")
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public PageInfo<CoursePo> search(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
+    public PageInfo<CourseVo> search(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
                                      @RequestBody @Validated CourseSearchDto dto, BindingResult bindingResult) {
         ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
         return courseService.search(logInUser,dto);

@@ -702,4 +702,8 @@
             </if>
         </trim>
     </insert>
+    <select id="countStudentByCourse" resultType="com.nmt.education.pojo.po.CourseRegisterCount">
+        select course_id as courseId ,count(*) as count from course_registration
+        where status = 1 and registration_status = 1 GROUP BY course_id
+    </select>
 </mapper>

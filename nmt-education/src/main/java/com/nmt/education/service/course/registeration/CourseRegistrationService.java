@@ -843,4 +843,11 @@ public class CourseRegistrationService {
         return true;
     }
 
+    public List<CourseRegisterCount> countStudentByCourse(List<Long> courseIds) {
+        if(CollectionUtils.isEmpty(courseIds)){
+            return Collections.emptyList();
+        }
+        return this.courseRegistrationPoMapper.countStudentByCourse(courseIds);
+
+    }
 }

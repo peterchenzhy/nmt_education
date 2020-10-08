@@ -10,6 +10,7 @@ import com.nmt.education.pojo.dto.req.TeacherReqDto;
 import com.nmt.education.pojo.dto.req.TeacherSearchReqDto;
 import com.nmt.education.pojo.po.CoursePo;
 import com.nmt.education.pojo.po.TeacherPo;
+import com.nmt.education.pojo.vo.CourseVo;
 import com.nmt.education.pojo.vo.TeacherVo;
 import com.nmt.education.service.campus.authorization.CampusAuthorizationService;
 import com.nmt.education.service.course.CourseService;
@@ -266,7 +267,7 @@ public class TeacherService {
         return po2vo(po);
     }
 
-    public PageInfo<CoursePo> courseList(int loginUser,Long teacherId, Integer pageNo, Integer pageSize) {
+    public PageInfo<CourseVo> courseList(int loginUser, Long teacherId, Integer pageNo, Integer pageSize) {
         CourseSearchDto searchDto = new CourseSearchDto();
         searchDto.setTeacherId(teacherId);
         searchDto.setPageNo(pageNo);

@@ -11,18 +11,21 @@ import com.nmt.education.pojo.dto.req.CourseReqDto;
 import com.nmt.education.pojo.dto.req.CourseScheduleReqDto;
 import com.nmt.education.pojo.dto.req.CourseSearchDto;
 import com.nmt.education.pojo.po.CoursePo;
-import com.nmt.education.pojo.po.CourseRegistrationPo;
+import com.nmt.education.pojo.po.CourseRegisterCount;
 import com.nmt.education.pojo.po.CourseSchedulePo;
 import com.nmt.education.pojo.vo.CourseDetailVo;
+import com.nmt.education.pojo.vo.CourseVo;
 import com.nmt.education.service.CodeService;
 import com.nmt.education.service.campus.authorization.CampusAuthorizationService;
 import com.nmt.education.service.course.expense.CourseExpenseService;
+import com.nmt.education.service.course.registeration.CourseRegistrationService;
 import com.nmt.education.service.course.schedule.CourseScheduleService;
 import com.nmt.education.service.student.account.StudentAccountService;
 import com.nmt.education.service.teacher.TeacherService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -50,6 +53,9 @@ public class CourseService {
     private CampusAuthorizationService campusAuthorizationService;
     @Autowired
     private StudentAccountService studentAccountService;
+    @Autowired
+    @Lazy
+    private CourseRegistrationService courseRegistrationService;
 
     private final static ThreadLocal<List<BaseEvent>> eventList = ThreadLocal.withInitial(() -> new ArrayList<>(5));
 
@@ -109,13 +115,37 @@ public class CourseService {
      * @version v1
      * @since 2020/4/25 20:16
      */
-    public PageInfo<CoursePo> search(int loginUserId, CourseSearchDto dto) {
+    public PageInfo<CourseVo> search(int loginUserId, CourseSearchDto dto) {
         if (Objects.isNull(dto)) {
             return new PageInfo();
         }
         List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(loginUserId, dto.getCampus());
         Assert.isTrue(!CollectionUtils.isEmpty(campusList), "没有任何校区权限进行课程搜索");
-        return PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.coursePoMapper.queryByDto(dto, campusList));
+        PageInfo<CoursePo> poPage = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.coursePoMapper.queryByDto(dto,
+                campusList));
+        if(CollectionUtils.isEmpty(poPage.getList())){
+           return new PageInfo<>() ;
+        }
+        PageInfo<CourseVo> voPageInfo = new PageInfo<>();
+        BeanUtils.copyProperties(poPage,voPageInfo);
+        voPageInfo.setList(poPage.getList().stream().map(po->{
+                CourseVo vo = new CourseVo();
+                BeanUtils.copyProperties(po,vo);
+                return vo ;
+        }).collect(Collectors.toList()));
+        Map<Long, CourseRegisterCount> collect =
+                courseRegistrationService.countStudentByCourse(voPageInfo.getList().stream().map(vo -> vo.getId()).collect(Collectors.toList()))
+                .stream().collect(Collectors.toMap(k -> k.getCourseId(), v -> v));
+        voPageInfo.getList().stream().forEach(v->{
+            CourseRegisterCount courseRegisterCount = collect.get(v.getId());
+            if(Objects.nonNull(courseRegisterCount)){
+                v.setRegisterNum(courseRegisterCount.getCount());
+            }else{
+                v.setRegisterNum(0);
+            }
+        });
+        return voPageInfo;
+
     }
 
     /**
@@ -133,8 +163,8 @@ public class CourseService {
         Assert.notNull(dto.getId(), "课程id不存在");
         CoursePo coursePo = selectByPrimaryKey(dto.getId());
         Assert.notNull(coursePo, "课程信息不存在" + dto.getId());
-        Assert.isTrue(!Enums.CourseStatus.已结课.getCode().equals( coursePo.getCourseStatus())&&
-                !Enums.CourseStatus.已取消.getCode().equals( coursePo.getCourseStatus()) ,"课程已经结课或者取消，无法再进行编辑");
+        Assert.isTrue(!Enums.CourseStatus.已结课.getCode().equals(coursePo.getCourseStatus()) &&
+                !Enums.CourseStatus.已取消.getCode().equals(coursePo.getCourseStatus()), "课程已经结课或者取消，无法再进行编辑");
         Enums.EditFlag editFlag = Enums.EditFlag.codeOf(dto.getEditFlag());
         switch (editFlag) {
             case 需要删除:
@@ -301,12 +331,12 @@ public class CourseService {
     @Transactional(rollbackFor = Exception.class)
     public void finish(Integer logInUser, Long courseId) {
         final CoursePo coursePo = this.coursePoMapper.selectByPrimaryKey(courseId);
-        Assert.isTrue(Objects.nonNull(coursePo),"课程信息为空，id:"+courseId);
+        Assert.isTrue(Objects.nonNull(coursePo), "课程信息为空，id:" + courseId);
 //        Assert.isTrue(logInUser.equals(coursePo.getCreator()),"非次课程创建人不可结课");
-        Assert.isTrue(!Enums.CourseStatus.已结课.getCode().equals( coursePo.getCourseStatus())&&
-                !Enums.CourseStatus.已取消.getCode().equals( coursePo.getCourseStatus()) ,"课程已经结课或者取消，无法再进行编辑");
+        Assert.isTrue(!Enums.CourseStatus.已结课.getCode().equals(coursePo.getCourseStatus()) &&
+                !Enums.CourseStatus.已取消.getCode().equals(coursePo.getCourseStatus()), "课程已经结课或者取消，无法再进行编辑");
         //结余数据增加
-        studentAccountService.addByCourseFinish(logInUser,courseId);
+        studentAccountService.addByCourseFinish(logInUser, courseId);
         //更新课程状态
         coursePo.setCourseStatus(Enums.CourseStatus.已结课.getCode());
         coursePo.setOperateTime(new Date());

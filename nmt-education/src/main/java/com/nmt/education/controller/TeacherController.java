@@ -5,6 +5,7 @@ import com.nmt.education.commmons.utils.ReqDtoCheckUtil;
 import com.nmt.education.pojo.dto.req.TeacherReqDto;
 import com.nmt.education.pojo.dto.req.TeacherSearchReqDto;
 import com.nmt.education.pojo.po.CoursePo;
+import com.nmt.education.pojo.vo.CourseVo;
 import com.nmt.education.pojo.vo.TeacherVo;
 import com.nmt.education.service.teacher.TeacherService;
 import io.swagger.annotations.Api;
@@ -72,7 +73,7 @@ public class TeacherController {
 
     @ApiOperation(value = "course", notes = "老师授课明细")
     @RequestMapping(value = "/course/list/{teacherId}", method = RequestMethod.POST)
-    public PageInfo<CoursePo> courseList(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
+    public PageInfo<CourseVo> courseList(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
             , @PathVariable Long teacherId, @RequestParam(value = "pageNo", required = false, defaultValue = "1") Integer pageNo,
                                          @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
         return teacherService.courseList(logInUser,teacherId,pageNo,pageSize);

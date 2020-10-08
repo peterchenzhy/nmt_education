@@ -1,15 +1,13 @@
 package com.nmt.education.service.course.registeration;
 
+import com.google.common.collect.Lists;
 import com.nmt.education.BaseTest;
 import com.nmt.education.commmons.Enums;
 import com.nmt.education.pojo.dto.req.CourseRegisterReqDto;
 import com.nmt.education.pojo.dto.req.RegisterExpenseDetailReqDto;
-import com.nmt.education.pojo.po.RegistrationExpenseDetailPo;
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 class CourseRegistrationServiceTest extends BaseTest {
     @Autowired
@@ -53,5 +51,10 @@ class CourseRegistrationServiceTest extends BaseTest {
     @Test
     void registerSummaryByRegisterId1() {
         System.out.println(registrationService.registerSummaryByRegisterId(2L,1,1,5));
+    }
+
+    @Test
+    void countStudentByCourse1() {
+        System.out.println(   registrationService.countStudentByCourse( Lists.newArrayList(1L,2L)));
     }
 }

@@ -1,6 +1,7 @@
 package com.nmt.education.service.course.registeration;
 
 import com.nmt.education.pojo.dto.req.RegisterSearchReqDto;
+import com.nmt.education.pojo.po.CourseRegisterCount;
 import com.nmt.education.pojo.po.CourseRegistrationPo;
 
 import java.util.List;
@@ -35,4 +36,6 @@ interface CourseRegistrationPoMapper {
     CourseRegistrationListVo queryByCourseStudent(@Param("courseId") Long courseId, @Param("studentId") Long studentId);
 
     List<CourseRegistrationPo> queryByCourseId(@Param("courseId") Long courseId);
+
+    List<CourseRegisterCount> countStudentByCourse(@Param("courseIds") List<Long> courseIds);
 }
