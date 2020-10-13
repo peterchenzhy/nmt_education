@@ -212,6 +212,11 @@ export class StudentViewComponent implements OnInit {
     onSelectedTabChanged(event: any) {
         if (!this.courseLoaded && event.index == 1) {
             this.getRegisteredCourses();
+            return;
+        }
+        if (!this.accountLoaded && event.index == 2) {
+            this.getAccountDetails();
+            return;
         }
     }
 
@@ -240,6 +245,56 @@ export class StudentViewComponent implements OnInit {
             case 'pi':
                 this.courseQueryParam.pageNo = e.pi;
                 this.getRegisteredCourses();
+                break;
+        }
+    }
+
+
+    accountColumns: STColumn[] = [
+        {
+            title: '时间',
+            index: 'createTime',
+            type: 'date',
+            sort: {
+                compare: (a: any, b: any) => a.updatedAt - b.updatedAt,
+            },
+        },
+        {
+            title: '类型',
+            index: 'type'
+        },
+        { title: '变化前余额', index: 'beforeAmount' },
+        { title: '变化后余额', index: 'amount' },
+        { title: '备注', index: 'remark' }
+    ];
+    accountLoaded = false;
+    accountQueryParam: RegisterQueryParam = { pageNo: 1, pageSize: 10 };
+    account: ResponseData = { list: [], total: 0 };
+    getAccountDetails() {
+        if (!this.student.id) {
+            return;
+        }
+        this.loading = true;
+        //this.accountQueryParam.studentId = this.student.id;
+        this.appCtx.studentService.getAccountDetails(this.student.id)
+            .pipe(
+                tap(() => { this.loading = false; }, () => { this.loading = false; })
+            )
+            .subscribe((res: ResponseData) => {
+                res.list = res.list || [];
+                this.accountLoaded = true;
+                this.account = res;
+                this.cdr.detectChanges();
+            });
+    }
+
+    accountStChange(e: STChange) {
+        switch (e.type) {
+            case 'checkbox':
+                break;
+            case 'pi':
+                this.accountQueryParam.pageNo = e.pi;
+                this.getAccountDetails();
                 break;
         }
     }
