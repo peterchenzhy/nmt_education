@@ -30,6 +30,7 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         if(request.getRequestURI().equals("/nmt-education/user/login")
+        ||request.getRequestURI().contains("/nmt-education/user/update/password")
         ||request.getRequestURI().contains("swagger")
         ||request.getRequestURI().contains("api-docs")){
             NmtAuthenticationToken tk = new NmtAuthenticationToken(Consts.LOGIN_USER_HEAD,Consts.ROLE_ROOT,"",  Collections.emptyList());

@@ -29,7 +29,6 @@ public class UserLoginDto {
      * 密码
      */
     @NotNull(message = "密码不能为空")
-    @Size(max = 20,min = 6,message = "密码长度必须大于6位，小于20位")
     @ApiModelProperty(value = "登录密码", required = true)
     private String password;
 

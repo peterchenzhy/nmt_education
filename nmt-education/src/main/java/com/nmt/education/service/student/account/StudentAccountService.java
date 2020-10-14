@@ -75,7 +75,8 @@ public class StudentAccountService {
     public void addAmount(Integer logInUser, Long userId, BigDecimal amount, Long registerId) {
         StudentAccountPo accountPo = querybyUserId(userId);
         if (Objects.isNull(accountPo)) {
-            accountPo = newStudentAccountPo(logInUser, userId, amount, registerId);
+            //新建账户
+             newStudentAccountPo(logInUser, userId, amount, registerId);
         } else {
             String lastAmount = accountPo.getAmount();
             accountPo.setAmount(amount.add(NumberUtil.String2Dec(accountPo.getAmount())).toPlainString());

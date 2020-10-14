@@ -10,11 +10,20 @@ import com.nmt.education.pojo.vo.CourseVo;
 import com.nmt.education.service.course.CourseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.SneakyThrows;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.codec.digest.MessageDigestAlgorithms;
+import org.apache.ibatis.logging.stdout.StdOutImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Base64Utils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.security.MessageDigest;
+import java.util.Base64;
 import java.util.List;
 
 import static com.nmt.education.commmons.Consts.LOGIN_USER_HEAD;
@@ -51,14 +60,14 @@ public class CourseController {
     public PageInfo<CourseVo> search(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
                                      @RequestBody @Validated CourseSearchDto dto, BindingResult bindingResult) {
         ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
-        return courseService.search(logInUser,dto);
+        return courseService.search(logInUser, dto);
     }
 
     @ApiOperation(value = "/search/fuzzy", notes = "根据课程编号或者课程名称，课程模糊查询")
     @RequestMapping(value = "/search/fuzzy", method = RequestMethod.GET)
     public List<CoursePo> searchFuzzy(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
                                       @RequestParam String name) {
-        return courseService.searchFuzzy(logInUser,name);
+        return courseService.searchFuzzy(logInUser, name);
     }
 
     @ApiOperation(value = "detail", notes = "课程明细")
@@ -72,8 +81,26 @@ public class CourseController {
     @RequestMapping(value = "/finish/{courseId}", method = RequestMethod.GET)
     public void finish(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
             , @PathVariable Long courseId) {
-          courseService.finish(logInUser, courseId);
+        courseService.finish(logInUser, courseId);
     }
 
+    @SneakyThrows
+    public static void main(String[] args) {
+        String str2 = "123";
+        String str = Base64Utils.encodeToString(str2.getBytes());
+        System.out.println(str);
+         //---------
+        String md51 = DigestUtils.md5Hex(DigestUtils.md5Hex(str));
+        System.out.println(md51);
+        System.out.println(DigestUtils.md5Hex(DigestUtils.md5Hex(md51)));
+        System.out.println(md51.length());
 
+//        System.out.println( DigestUtils.md5Hex(str));
+
+//
+//        String t = "123";
+//        System.out.println(DigestUtils.md5Hex(t));
+
+
+    }
 }
