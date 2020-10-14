@@ -7,6 +7,8 @@ import { SocialService, SocialOpenType, ITokenService, DA_SERVICE_TOKEN } from '
 import { ReuseTabService } from '@delon/abc';
 import { environment } from '@env/environment';
 import { StartupService } from '@core';
+import { Md5 } from "ts-md5";
+import { Base64 } from 'js-base64/base64'
 
 @Component({
   selector: 'passport-login',
@@ -105,14 +107,17 @@ export class UserLoginComponent implements OnDestroy {
         return;
       }
     }
-
+    
     // 默认配置中对所有HTTP请求都会强制 [校验](https://ng-alain.com/auth/getting-started) 用户 Token
     // 然一般来说登录请求不需要校验，因此可以在请求URL加上：`/login?_allow_anonymous=true` 表示不触发用户 Token 校验
+    let encriptPwd: string | Int32Array = Base64.encode(this.password.value);
+    encriptPwd = Md5.hashStr(encriptPwd);
+    encriptPwd = Md5.hashStr(encriptPwd.toString());
     this.http
       .post('nmt-education/user/login?_allow_anonymous=true', {
         type: this.type,
         code: this.userName.value,
-        password: this.password.value,
+        password: encriptPwd
       })
       .subscribe((res: any) => {
         if (!res) {
@@ -126,11 +131,11 @@ export class UserLoginComponent implements OnDestroy {
         this.tokenService.set(res);
         // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响
         this.startupSrv.load().then(() => {
-        let url = this.tokenService.referrer!.url || '/';
-        if (url.includes('/passport')) {
-          url = '/';
-        }
-        this.router.navigateByUrl(url);
+          let url = this.tokenService.referrer!.url || '/';
+          if (url.includes('/passport')) {
+            url = '/';
+          }
+          this.router.navigateByUrl(url);
         });
       });
   }

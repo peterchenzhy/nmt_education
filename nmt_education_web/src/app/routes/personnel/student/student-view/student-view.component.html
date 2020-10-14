@@ -154,6 +154,18 @@
                     </st>
                 </nz-card>
             </nz-tab>
+            <nz-tab nzTitle="账户流水">
+                <nz-card [nzBordered]="true">
+                    <st #st [columns]="accountColumns" [data]="account.list" [total]="account.total"
+                        [ps]="accountQueryParam.pageSize" [pi]="accountQueryParam.pageNo" [page]="pager"
+                        [loading]="loading" (change)="accountStChange($event)">
+                        <ng-template st-row="registrationStatus" let-i>
+                            <!-- <nz-badge [nzStatus]="i.registrationStatusDetail.type" [nzText]="i.registrationStatusDetail.label"></nz-badge> -->
+                            <span>{{appCtx.globalService.getOrderStatusLabel(i.registrationStatus)}}</span>
+                          </ng-template>
+                    </st>
+                </nz-card>
+            </nz-tab>
         </nz-tabset>
     </form>
 </nz-spin>

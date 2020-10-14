@@ -45,4 +45,7 @@ export class StudentService {
         return this.httpClient.post(`nmt-education/student/account/edit`, T);
     }
     
+    public getAccountDetails(studentId: number): Observable<Object> {
+        return this.httpClient.post(`nmt-education/student/account/detail/${studentId}`, null);
+    }
 }
