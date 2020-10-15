@@ -40,7 +40,7 @@ export class CourseListComponent implements OnInit {
     { title: '', index: 'key', type: 'checkbox' },
     // { title: '课程编号', index: 'code' },
     { title: '名称', index: 'name' },
-    { title: '课程科目', index: 'courseSubject', render: "courseSubject" },
+    // { title: '课程科目', index: 'courseSubject', render: "courseSubject" },
     { title: '报名人数', index: 'registerNum', render: "registerNum" },
     { title: '课程类型', index: 'courseType', render: "courseType" },
     { title: '校区', index: 'campus', render: "courseCampus" },
