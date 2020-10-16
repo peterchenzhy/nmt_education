@@ -39,6 +39,12 @@
     from student
     where status = 1
     and name like concat('%',#{name},'%')
+    <if test="campusList != null and campusList.size() != 0">
+      and campus in
+      <foreach collection="campusList" item="campus" open="(" close=")" separator=",">
+        #{campus}
+      </foreach>
+    </if>
   </select>
   <select id="queryByIds" resultMap="BaseResultMap">
     <!--@mbg.generated-->

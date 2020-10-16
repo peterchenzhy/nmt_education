@@ -175,7 +175,7 @@ public class StudentService {
             }
         }
         if (CollectionUtils.isEmpty(pageInfo.getList())) {
-            return new PageInfo<>();
+            return new PageInfo<>(Collections.emptyList());
         }
         List<StudentVo> voList = new ArrayList<>(pageInfo.getList().size());
         pageInfo.getList().stream().forEach(e -> voList.add(po2vo(e)));
@@ -216,7 +216,7 @@ public class StudentService {
      */
     public List<StudentVo> searchFuzzy(String name, List<Integer> campusList) {
         if (StringUtils.hasLength(name)) {
-            List<StudentPo> list = this.studentPoMapper.queryFuzzy(name);
+            List<StudentPo> list = this.studentPoMapper.queryFuzzy(name,campusList);
             List<StudentVo> result = new ArrayList<>(list.size());
             list.stream().filter(e -> campusList.contains(e.getCampus())).forEach(e -> {
                 StudentVo vo = po2vo(e);
