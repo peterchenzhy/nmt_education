@@ -5,6 +5,7 @@ import com.nmt.education.commmons.utils.TokenUtil;
 import com.nmt.education.pojo.dto.req.UserLoginDto;
 import com.nmt.education.pojo.po.UserPo;
 import com.nmt.education.pojo.vo.UserVo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Service
+@Slf4j
 public class UserService {
 
     @Resource
@@ -40,8 +42,9 @@ public class UserService {
         Assert.notNull(userPo,"登录失败，用户："+dto.getCode());
         UserVo vo = new UserVo(userPo);
         TokenUtil.Token token = new TokenUtil.Token(vo.getLogInUser(),vo.getRoleId());
-
         vo.setToken(TokenUtil.generateToken(token));
+        log.info("用户登录成功,id:[{}] ,姓名:[{}]",userPo.getId(),userPo.getName());
+
         return vo ;
     }
 

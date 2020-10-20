@@ -7,11 +7,13 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.nmt.education.commmons.Consts;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
 
 import static com.auth0.jwt.impl.PublicClaims.EXPIRES_AT;
 
+@Slf4j
 public class TokenUtil {
 
     @Setter
@@ -49,7 +51,9 @@ public class TokenUtil {
             throw new RuntimeException("登录过期，请重新登录！");
         } else {
             if (expireDate.getTime() - now.getTime() <= REFRESH_TOKEN_MINUTE * 60 * 1000) {
-                t.setJwtToken(generateToken(new Token(t.getLoginUserId(), t.getRoleId())));
+                String newToken = generateToken(new Token(t.getLoginUserId(), t.getRoleId())) ;
+                log.info("刷新token,User:[{}]，原token：[{}],新token:[{}]",jwt.getClaims().get(Consts.LOGIN_USER_HEAD).asInt() ,t.getJwtToken(),newToken);
+                t.setJwtToken(newToken);
             }
         }
         return t;

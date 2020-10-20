@@ -48,4 +48,6 @@ mybatis:
 
 #日志配置
 logging.level.com.nmt.education.service: debug
-
+logging:
+  file:
+    path: logs

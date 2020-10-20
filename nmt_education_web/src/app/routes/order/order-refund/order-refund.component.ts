@@ -90,7 +90,7 @@ export class OrderRefundComponent implements OnInit {
                     this.orderFeeSTData.forEach(s => {
                         s.disabled = s.studentSignIn == SIGNIN.SIGNIN || s.studentSignIn == SIGNIN.REFUND;
                         if (sessionFee.length > 0) {
-                            s.amount = sessionFee[0].perAmount;
+                            s.amount = (sessionFee[0].perAmount * sessionFee[0].discount).toFixed(2);
                             s.feeType = sessionFee[0].feeType;
                             s.payment = sessionFee[0].payment;
                             s.feeStatus = sessionFee[0].feeStatus;;
@@ -259,6 +259,7 @@ export class OrderRefundComponent implements OnInit {
     payDetailsColumns: STColumn[] = [
         { title: '费用类型', index: 'feeType', render: "feeType" },
         { title: '原价', index: 'perAmount' },
+        { title: '折扣', index: 'discount' },
         { title: '数量', index: 'count' },
         { title: '总金额', index: 'amount' },
         { title: '实际支付', index: 'amountPayActually' },

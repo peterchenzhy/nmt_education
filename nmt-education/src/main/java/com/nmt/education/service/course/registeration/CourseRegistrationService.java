@@ -600,6 +600,7 @@ public class CourseRegistrationService {
             );
         }
         vo.setRegisterExpenseDetail(registrationExpenseDetailService.queryRegisterId(id));
+        //等待异步线程完成
         flowThread.join();
         flowThread2.join();
         return vo;
