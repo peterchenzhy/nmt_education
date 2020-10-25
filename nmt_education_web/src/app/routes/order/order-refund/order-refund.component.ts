@@ -218,9 +218,10 @@ export class OrderRefundComponent implements OnInit {
         this.selectedFee.forEach(f => {
             refundAmount += parseFloat(f.amount);
         });
+        let refundAmountShow =  refundAmount.toFixed(2);
         this.modalSrv.confirm({
             nzTitle: "退费确认",
-            nzContent: `共退费[${refundAmount}]元`,
+            nzContent: `共退费[${refundAmountShow}]元`,
             nzOnOk: () => {
                 this._submitForm();
             }
