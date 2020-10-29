@@ -51,6 +51,9 @@
         <include refid="Base_Column_List"/>
         from course_registration
         where status = 1
+        <if test="registerStatus != null">
+            and registration_status = #{registerStatus}
+        </if>
         and course_id = #{courseId}
     </select>
     <select id="queryByDto" parameterType="com.nmt.education.pojo.dto.req.RegisterSearchReqDto"

@@ -617,7 +617,7 @@ public class CourseRegistrationService {
      * @since 2020/5/14 23:36
      */
     public List<SignRecordVo> registerStudent(Long courseId) {
-        Map<Long, CourseRegistrationPo> registrationMap = this.courseRegistrationPoMapper.queryByCourseId(courseId)
+        Map<Long, CourseRegistrationPo> registrationMap = this.courseRegistrationPoMapper.queryByCourseId(courseId,Enums.RegistrationStatus.正常.getCode())
                 .stream().collect(Collectors.toMap(k -> k.getStudentId(), v -> v));
         if (CollectionUtils.isEmpty(registrationMap)) {
             return Collections.emptyList();
