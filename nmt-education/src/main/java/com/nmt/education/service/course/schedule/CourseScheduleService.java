@@ -25,6 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
@@ -34,6 +36,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.nmt.education.commmons.Consts.SYSTEM_USER;
+import static com.nmt.education.commmons.Enums.EditFlag.修改;
+import static com.nmt.education.commmons.Enums.EditFlag.需要删除;
 
 @Service
 @Slf4j
@@ -90,6 +94,26 @@ public class CourseScheduleService {
         }
         updateBatchSelective(editList);
         batchInsert(addList);
+        //课程排序
+        if(editFlag==修改||editFlag==需要删除){
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+                @Override
+                public void afterCommit() {
+                    List<CourseSchedulePo> list =
+                            queryByCourseId(courseId).stream()
+                                    .sorted(Comparator.comparing(CourseSchedulePo::getCourseDatetime)).collect(Collectors.toList());
+                    if(CollectionUtils.isEmpty(list)){
+                        return ;
+                    }
+                    int i = 1 ;
+                    for (CourseSchedulePo e : list) {
+                        e.setCourseTimes(i);
+                        i++;
+                    }
+                    updateBatchSelective(list);
+                }
+            });
+        }
 
     }
 

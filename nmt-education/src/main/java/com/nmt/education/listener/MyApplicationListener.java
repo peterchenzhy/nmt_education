@@ -26,6 +26,7 @@ public class MyApplicationListener {
         log.info("处理完毕TeacherChangeEvent：" + event);
     }
 
+    //自动调整课程状态-->未开课==>已开课
     @EventListener(CourseStatusChangeEvent.class)
     public void event(CourseStatusChangeEvent event) {
         log.info("收到CourseStatusChangeEvent：" + event);

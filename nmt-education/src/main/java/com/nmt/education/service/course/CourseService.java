@@ -123,24 +123,24 @@ public class CourseService {
         Assert.isTrue(!CollectionUtils.isEmpty(campusList), "没有任何校区权限进行课程搜索");
         PageInfo<CoursePo> poPage = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.coursePoMapper.queryByDto(dto,
                 campusList));
-        if(CollectionUtils.isEmpty(poPage.getList())){
-           return new PageInfo<>() ;
+        if (CollectionUtils.isEmpty(poPage.getList())) {
+            return new PageInfo<>();
         }
         PageInfo<CourseVo> voPageInfo = new PageInfo<>();
-        BeanUtils.copyProperties(poPage,voPageInfo);
-        voPageInfo.setList(poPage.getList().stream().map(po->{
-                CourseVo vo = new CourseVo();
-                BeanUtils.copyProperties(po,vo);
-                return vo ;
+        BeanUtils.copyProperties(poPage, voPageInfo);
+        voPageInfo.setList(poPage.getList().stream().map(po -> {
+            CourseVo vo = new CourseVo();
+            BeanUtils.copyProperties(po, vo);
+            return vo;
         }).collect(Collectors.toList()));
         Map<Long, CourseRegisterCount> collect =
                 courseRegistrationService.countStudentByCourse(voPageInfo.getList().stream().map(vo -> vo.getId()).collect(Collectors.toList()))
-                .stream().collect(Collectors.toMap(k -> k.getCourseId(), v -> v));
-        voPageInfo.getList().stream().forEach(v->{
+                        .stream().collect(Collectors.toMap(k -> k.getCourseId(), v -> v));
+        voPageInfo.getList().stream().forEach(v -> {
             CourseRegisterCount courseRegisterCount = collect.get(v.getId());
-            if(Objects.nonNull(courseRegisterCount)){
+            if (Objects.nonNull(courseRegisterCount)) {
                 v.setRegisterNum(courseRegisterCount.getCount());
-            }else{
+            } else {
                 v.setRegisterNum(0);
             }
         });
@@ -268,7 +268,7 @@ public class CourseService {
         CourseDetailVo vo = new CourseDetailVo();
         BeanUtils.copyProperties(po, vo);
         vo.getCourseExpenseList().addAll(courseExpenseService.queryByCourseId(id));
-        vo.getCourseScheduleList().addAll(courseScheduleService.queryByCourseId(id));
+        vo.getCourseScheduleList().addAll(courseScheduleService.queryByCourseId(id).stream().sorted(Comparator.comparing(CourseSchedulePo::getCourseDatetime)).collect(Collectors.toList()));
         if (Objects.nonNull(po.getTeacherId()) && Consts.DEFAULT_LONG != po.getTeacherId()) {
             vo.setTeacher(teacherService.detail(po.getTeacherId()));
         }

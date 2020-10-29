@@ -58,12 +58,12 @@
   <update id="invalidByCourseId">
     update course_schedule
     set status = 0 ,operator =#{operator},operate_time = now()
-    where status =1  and course_id = #{courseId}
+    where status =1  and course_id = #{courseId} and sign_in = 0
   </update>
   <update id="changeTeacher">
     update course_schedule
     set operator =0,operate_time = now(),teacher_id = #{newTeacherId}
-    where status =1  and course_id = #{courseId}
+    where status =1  and course_id = #{courseId} and
   </update>
 
   <update id="updateByPrimaryKeySelective" parameterType="com.nmt.education.pojo.po.CourseSchedulePo">
