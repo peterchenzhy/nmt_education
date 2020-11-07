@@ -36,8 +36,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.nmt.education.commmons.Consts.SYSTEM_USER;
-import static com.nmt.education.commmons.Enums.EditFlag.修改;
-import static com.nmt.education.commmons.Enums.EditFlag.需要删除;
 
 @Service
 @Slf4j
@@ -64,7 +62,26 @@ public class CourseScheduleService {
             invalidByCourseId(courseId, operator);
             return true;
         }
-        dtoList.stream().filter(e -> !Enums.SignInType.已签到.getCode().equals(e.getSignIn())).forEach(e -> manager(e, courseId, operator));
+        dtoList.forEach(e -> manager(e, courseId, operator));
+
+        //课程排序
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+            @Override
+            public void afterCommit() {
+                List<CourseSchedulePo> list =
+                        queryByCourseId(courseId).stream()
+                                .sorted(Comparator.comparing(CourseSchedulePo::getCourseDatetime)).collect(Collectors.toList());
+                if (CollectionUtils.isEmpty(list)) {
+                    return;
+                }
+                int i = 1;
+                for (CourseSchedulePo e : list) {
+                    e.setCourseTimes(i);
+                    i++;
+                }
+                updateBatchSelective(list);
+            }
+        });
         return true;
     }
 
@@ -94,31 +111,11 @@ public class CourseScheduleService {
         }
         updateBatchSelective(editList);
         batchInsert(addList);
-        //课程排序
-        if(editFlag==修改||editFlag==需要删除){
-            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
-                @Override
-                public void afterCommit() {
-                    List<CourseSchedulePo> list =
-                            queryByCourseId(courseId).stream()
-                                    .sorted(Comparator.comparing(CourseSchedulePo::getCourseDatetime)).collect(Collectors.toList());
-                    if(CollectionUtils.isEmpty(list)){
-                        return ;
-                    }
-                    int i = 1 ;
-                    for (CourseSchedulePo e : list) {
-                        e.setCourseTimes(i);
-                        i++;
-                    }
-                    updateBatchSelective(list);
-                }
-            });
-        }
-
     }
 
     private CourseSchedulePo delSchedule(Integer operator, CourseScheduleReqDto dto) {
         CourseSchedulePo po = checkExist(dto);
+        Assert.isTrue(po.getSignIn() == 0, "课表已经签到，无法进行删除,id:" + dto.getId());
         po.setStatus(StatusEnum.INVALID.getCode());
         po.setOperator(operator);
         po.setOperateTime(new Date());
@@ -138,7 +135,6 @@ public class CourseScheduleService {
         Assert.notNull(dto.getId(), "编辑课程信息缺少id");
         CourseSchedulePo po = selectByPrimaryKey(dto.getId());
         Assert.notNull(po, "课程信息不存在" + dto.getId());
-        Assert.isTrue(po.getSignIn() == 0, "课表已经签到，无法进行修改或者删除,id:" + dto.getId());
         return po;
     }
 
