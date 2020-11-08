@@ -100,7 +100,7 @@ export class CourseViewComponent implements OnInit {
           this.course.year = new Date().setFullYear(year);
           this.course.editFlag = EDIT_FLAG.UPDATE;
           this.editable = this.course.courseStatus != COURSE_STATUS.COMPLETE;
-          this.pageHeader = `课程信息编辑 [${this.course.name}--${this.course.code}]`;
+          this.pageHeader = `课程信息编辑 [${this.course.name}--${this.course.code}]`; debugger;
           if (this.course.teacher) {
             this.teacherList.push(this.course.teacher);
             this.selectedTeacherList.push(this.course.teacher);
@@ -111,6 +111,7 @@ export class CourseViewComponent implements OnInit {
             const field = this.createSession();
             field.patchValue(i);
             this.sessions.push(field);
+            this.initSelectedTeacherList(i.teacherId);
           });
 
           this.course.courseExpenseList.forEach(i => {
@@ -312,6 +313,7 @@ export class CourseViewComponent implements OnInit {
     }
     this.editSessionObj = { ...this.sessions.at(index).value };
     this.editSessionIndex = index;
+    this.teacherList = this.selectedTeacherList;
   }
 
   save(index: number) {
@@ -325,6 +327,7 @@ export class CourseViewComponent implements OnInit {
       sessionObj.value.editFlag = EDIT_FLAG.UPDATE;
     }
     this.editSessionIndex = -1;
+    this.teacherList = this.selectedTeacherList;
   }
 
   cancel(index: number) {
@@ -334,6 +337,7 @@ export class CourseViewComponent implements OnInit {
       this.sessions.at(index).patchValue(this.editSessionObj);
     }
     this.editSessionIndex = -1;
+    this.teacherList = this.selectedTeacherList;
   }
 
   signIn(index: number) {
@@ -422,6 +426,19 @@ export class CourseViewComponent implements OnInit {
     let teacher = this.selectedTeacherList.find(t => { return t.id == id; });
     return teacher ? teacher.name : "";
   }
+  initSelectedTeacherList(id: number) {
+    if (this.getTeacherName(id) == "") {
+      this.appCtx.teacherService.getTeacherDetails(id).subscribe((data: Teacher) => {
+        let teacher = this.selectedTeacherList.find(t => { return t.id == id; });
+        let index = this.selectedTeacherList.indexOf(teacher);
+        this.selectedTeacherList.splice(index, 1);
+        this.teacherList.push(data);
+        this.selectedTeacherList.push(data);
+      });
+      this.selectedTeacherList.push({ id: id });
+    }
+  }
+
 
   nzFilterOption = () => true;
   searchTeacher(value: string): void {
@@ -442,6 +459,12 @@ export class CourseViewComponent implements OnInit {
       return;
     }
     let selectedTeacher = this.teacherList.find(c => { return c.id == value; });
+    if (!selectedTeacher) {
+      return;
+    }
+    if (this.selectedTeacherList.find(c => { return c.id == value; })) {
+      return;
+    }
     this.selectedTeacherList.push(selectedTeacher);
     this.updateSessionByCourseProperties();
     //this.course.teacherId = this.teacherList.find(c => { return c.id == value; });
