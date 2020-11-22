@@ -522,4 +522,10 @@ public class CourseScheduleService {
         return dt;
     }
 
+    //获取一段时间内 教师课时费
+    public List<String> getTeacherPay(TeacherScheduleReqDto dto, Integer logInUser) {
+        //先获取数据范围
+        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
+        return this.courseSchedulePoMapper.getTeacherPay(dto,campusList);
+    }
 }

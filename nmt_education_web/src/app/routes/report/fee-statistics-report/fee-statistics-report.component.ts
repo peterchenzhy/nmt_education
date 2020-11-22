@@ -6,7 +6,7 @@ import { STChange, STColumn, STComponent, STData } from '@delon/abc';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AppContextService } from '@shared/service/appcontext.service';
-import { ResponseData, FeeStatisticsQueryParam } from 'src/app/model/system.model';
+import {ResponseData, FeeStatisticsQueryParam, FeeSummary} from 'src/app/model/system.model';
 import { DatePipe } from '@angular/common';
 import { SIGNIN } from '@shared/constant/system.constant';
 
@@ -26,6 +26,7 @@ export class FeeStatisticsReportComponent implements OnInit {
   };
   queryParam: FeeStatisticsQueryParam = { pageNo: 1, pageSize: 10 };
   data: ResponseData = { list: [], total: 0 };
+  summaryData : FeeSummary;
   campusList = this.appCtx.globalService.CAMPUS_LIST;
   feeFlowList = [{ label: "退费", value: 0 }, { label: "缴费", value: 1 }];
 
@@ -82,6 +83,16 @@ export class FeeStatisticsReportComponent implements OnInit {
         res.list = res.list || [];
         this.data = res;
         this.cdr.detectChanges();
+      });
+    this.appCtx.reportService.queryFeeSummary(this.queryParam)
+      .pipe(
+        tap(() => { this.loading = false; }, () => { this.loading = false; })
+      )
+      .subscribe((res: FeeSummary) => {
+        this.summaryData = res;
+        // res.list = res.list || [];
+        // this.data = res;
+        // this.cdr.detectChanges();
       });
   }
 

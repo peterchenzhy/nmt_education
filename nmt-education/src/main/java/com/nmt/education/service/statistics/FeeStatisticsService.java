@@ -2,15 +2,15 @@ package com.nmt.education.service.statistics;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.nmt.education.commmons.Consts;
-import com.nmt.education.commmons.Enums;
-import com.nmt.education.commmons.ExpenseDetailFlowTypeEnum;
-import com.nmt.education.commmons.SysConfigEnum;
+import com.nmt.education.commmons.*;
 import com.nmt.education.commmons.utils.DateUtil;
 import com.nmt.education.pojo.dto.req.FeeStatisticsReqDto;
+import com.nmt.education.pojo.dto.req.TeacherScheduleReqDto;
 import com.nmt.education.pojo.vo.FeeStatisticsVo;
+import com.nmt.education.pojo.vo.FeeSummaryVo;
 import com.nmt.education.service.campus.authorization.CampusAuthorizationService;
 import com.nmt.education.service.course.registeration.RegistrationExpenseDetailService;
+import com.nmt.education.service.course.schedule.CourseScheduleService;
 import com.nmt.education.service.sysconfig.SysConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -30,6 +31,8 @@ public class FeeStatisticsService {
     private CampusAuthorizationService campusAuthorizationService;
     @Autowired
     private SysConfigService sysConfigService;
+    @Autowired
+    private CourseScheduleService courseScheduleService;
 
     /**
      * 分页查询接口
@@ -43,7 +46,7 @@ public class FeeStatisticsService {
      * @since 2020/7/22 22:38
      */
     public PageInfo page(FeeStatisticsReqDto dto, Integer logInUser) {
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser,dto.getCampus());
+        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
         if (dto.getEndDate() != null) {
             dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
         }
@@ -71,7 +74,7 @@ public class FeeStatisticsService {
      */
     public List<FeeStatisticsVo> exportList(FeeStatisticsReqDto dto, Integer logInUser) {
         //获取权限范围
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser,dto.getCampus());
+        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
         if (dto.getEndDate() != null) {
             dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
         }
@@ -101,5 +104,31 @@ public class FeeStatisticsService {
                 }
         );
         return pageInfo.getList();
+    }
+
+    //一段时间内 收费 退费 教师课时费统计
+    public FeeSummaryVo summary(FeeStatisticsReqDto dto, Integer logInUser) {
+        Date startDate = DateUtil.parseOpenDate(dto.getStartDate());
+        Date endDate = DateUtil.parseCloseDate(dto.getEndDate());
+        FeeSummaryVo vo = new FeeSummaryVo();
+        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
+
+        List<String> payList = registrationExpenseDetailService.flowSummary(startDate, endDate, campusList,
+                ExpenseDetailFlowTypeEnum.新增记录.getCode(), ExpenseDetailFlowTypeEnum.编辑.getCode());
+        vo.setPay(NumberUtil.addStringList(payList).toPlainString());
+
+        List<String> refundList = registrationExpenseDetailService.flowSummary(startDate, endDate, campusList,
+                ExpenseDetailFlowTypeEnum.退费.getCode());
+        vo.setRefund(NumberUtil.addStringList(refundList).toPlainString());
+
+        TeacherScheduleReqDto teacherScheduleReqDto = new TeacherScheduleReqDto();
+        teacherScheduleReqDto.setStartDate(startDate);
+        teacherScheduleReqDto.setEndDate(endDate);
+        List<String> teacherPay = courseScheduleService.getTeacherPay(teacherScheduleReqDto, logInUser);
+        vo.setTeacherPay(NumberUtil.addStringList(teacherPay).toPlainString());
+
+        vo.setStartDate(DateUtil.formatDate(startDate));
+        vo.setStartDate(DateUtil.formatDate(endDate));
+        return vo;
     }
 }

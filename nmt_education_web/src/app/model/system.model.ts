@@ -102,3 +102,10 @@ export interface ResponseData {
     startRow?: number;
     total?: number;
 }
+export interface FeeSummary {
+  pay?: string;
+  refund?: string;
+  teacherPay?: string;
+  startDate?: string;
+  endData?: string;
+}

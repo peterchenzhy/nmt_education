@@ -242,4 +242,28 @@
         ]]>
     </if>
   </select>
+
+  <select id="getTeacherPay" resultType="java.lang.String">
+    select cs.teacher_price
+    from course_schedule cs
+    inner join course c on cs.course_id = c.id and c.status =1
+    and c.campus in
+    <foreach collection="campusList" item="campus" open="(" close=")" separator=",">
+      #{campus}
+    </foreach>
+    inner join teacher t on c.teacher_id = t.id
+    where 1=1
+    and cs.status = 1
+    <if test="dto.startDate != null">
+      <![CDATA[
+      and  cs.course_datetime >= #{dto.startDate}
+        ]]>
+    </if>
+    <if test="dto.endDate!=null">
+      <![CDATA[
+      and cs.course_datetime <= #{dto.endDate}
+        ]]>
+    </if>
+  </select>
+
 </mapper>

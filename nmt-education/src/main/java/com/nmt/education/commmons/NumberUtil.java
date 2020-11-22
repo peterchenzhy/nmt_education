@@ -2,9 +2,11 @@ package com.nmt.education.commmons;
 
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -141,6 +143,18 @@ public class NumberUtil {
     }
 
 
+    public static BigDecimal addStringList(List<String> stringList){
+        BigDecimal result = BigDecimal.ZERO;
+        if(!CollectionUtils.isEmpty(stringList)){
+            for (String e : stringList) {
+                if(StringUtils.isBlank(e)){
+                    continue;
+                }
+                result = result.add(new BigDecimal(e));
+            }
+        }
+        return result;
+    }
 
 
 }

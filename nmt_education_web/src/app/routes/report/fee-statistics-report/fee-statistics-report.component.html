@@ -56,6 +56,12 @@
   </form>
 </nz-card>
 <nz-card [nzBordered]="false">
+  <sv-container  size="large" title="费用统计">
+    <sv label="总付费">{{summaryData.pay}}</sv>
+    <sv label="总退费">{{summaryData.refund}}</sv>
+    <sv label="课时费">{{summaryData.teacherPay}}</sv>
+  </sv-container>
+  <nz-divider></nz-divider>
   <st #st [columns]="columns" [data]="data.list" [total]="data.total" [ps]="queryParam.pageSize"
       [pi]="queryParam.pageNo" [page]="pager" [loading]="loading" (change)="stChange($event)">
     <ng-template st-row="courseCampus" let-i>

@@ -18,7 +18,6 @@ public class ScheduleTeacherExportService extends AbstractExportService<TeacherS
         List<TeacherScheduleDto> dataList = courseScheduleService.scheduleTeacherExportList(dto, logInUser);
         return dataList;
     }
-
     @Override
     public String getFileName() {
         return "课程明细统计";

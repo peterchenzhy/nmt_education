@@ -17,6 +17,10 @@ export class ReportService {
     return this.httpClient.post('nmt-education/statistics/fee', T);
   }
 
+  public queryFeeSummary(T: FeeStatisticsQueryParam): Observable<Object> {
+    return this.httpClient.post('nmt-education/statistics/fee/summary', T);
+  }
+
   public exportFeeStatistics(T: FeeStatisticsQueryParam): Observable<Blob> {
     return this.httpClient.post('nmt-education/export/feeStatistics', T, {responseType: 'blob'});
     // return this.httpClient.post('nmt-education/export/feeStatistics', T);

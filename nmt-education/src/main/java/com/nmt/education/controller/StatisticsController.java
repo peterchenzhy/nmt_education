@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.RoleIdEnum;
 import com.nmt.education.commmons.utils.ReqDtoCheckUtil;
 import com.nmt.education.pojo.dto.req.FeeStatisticsReqDto;
+import com.nmt.education.pojo.vo.FeeSummaryVo;
 import com.nmt.education.service.statistics.FeeStatisticsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -43,6 +44,15 @@ public class StatisticsController {
         return feeStatisticsService.page(dto, logInUser);
     }
 
+    @ApiOperation(value = "费用统计--收费，退费，课时费", notes = "费用统计--收费，退费，课时费")
+    @RequestMapping(value = "/fee/summary", method = RequestMethod.POST)
+    public FeeSummaryVo feeSummary(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
+            , @RequestBody @Validated FeeStatisticsReqDto dto, BindingResult bindingResult) {
+        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
+        Assert.isTrue(Integer.valueOf(roleId).intValue() == RoleIdEnum.校长.getCode()
+                || Integer.valueOf(roleId).intValue() == RoleIdEnum.财务.getCode(), "您没有该功能权限");
+        return feeStatisticsService.summary(dto, logInUser);
+    }
 
 
 }

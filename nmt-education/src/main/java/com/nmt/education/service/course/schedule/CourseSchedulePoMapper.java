@@ -1,5 +1,6 @@
 package com.nmt.education.service.course.schedule;
 
+import com.nmt.education.pojo.dto.req.TeacherScheduleReqDto;
 import com.nmt.education.pojo.po.CourseSchedulePo;
 import com.nmt.education.pojo.vo.TeacherScheduleDto;
 import org.apache.ibatis.annotations.Mapper;
@@ -21,7 +22,6 @@ interface CourseSchedulePoMapper {
     int batchInsert(@Param("list") List<CourseSchedulePo> list);
 
 
-
     List<CourseSchedulePo> queryByCourseId(@Param("id") Long id);
 
     int signIn(@Param("id") Long id, @Param("operator") Integer operator);
@@ -34,4 +34,6 @@ interface CourseSchedulePoMapper {
 
     List<TeacherScheduleDto> teacherSchedule(@Param("startDate") Date startDate, @Param("endDate") Date endDate,
                                              @Param("campusList") List<Integer> campusList);
+
+    List<String> getTeacherPay(@Param("dto") TeacherScheduleReqDto dto, @Param("campusList") List<Integer> campusList);
 }

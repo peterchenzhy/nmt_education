@@ -19,4 +19,8 @@ interface RegistrationExpenseDetailFlowMapper {
 
     List<FeeStatisticsVo> feeStatistics(@Param("startDate") Date startDate, @Param("endDate") Date endDate,
                                         @Param("campusList") List<Integer> campusList, @Param("typeList") List<Integer> typeList);
+
+    List<String> flowSummary(@Param("startDate") Date startDate, @Param("endDate") Date endDate,
+                             @Param("campusList") List<Integer> campusList,
+                             @Param("type") int[] type);
 }
