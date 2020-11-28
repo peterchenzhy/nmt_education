@@ -8,4 +8,7 @@ import lombok.Data;
 public class CourseVo  extends CoursePo {
     @ApiModelProperty(value = "报名人数")
     private int registerNum;
+    @ApiModelProperty(value = "课程进度")
+    private String progress ="-";
+
 }

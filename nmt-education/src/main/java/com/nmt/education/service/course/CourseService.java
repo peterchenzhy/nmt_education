@@ -59,6 +59,8 @@ public class CourseService {
 
     private final static ThreadLocal<List<BaseEvent>> eventList = ThreadLocal.withInitial(() -> new ArrayList<>(5));
 
+    private static String PROGRESS = "%s/%s";
+
     /**
      * 课程新增，修改，删除接口
      * 编辑标志；0：无变化，1：新增，2：编辑，3：需要删除
@@ -133,9 +135,15 @@ public class CourseService {
             BeanUtils.copyProperties(po, vo);
             return vo;
         }).collect(Collectors.toList()));
+        //统计报名人数
         Map<Long, CourseRegisterCount> collect =
                 courseRegistrationService.countStudentByCourse(voPageInfo.getList().stream().map(vo -> vo.getId()).collect(Collectors.toList()))
                         .stream().collect(Collectors.toMap(k -> k.getCourseId(), v -> v));
+        //课程进展
+        Map<Long, List<CourseSchedulePo>> courseScheduleMap =
+                courseScheduleService.queryByIds(voPageInfo.getList().stream().map(CoursePo::getId).collect(Collectors.toList()))
+                        .stream().collect(Collectors.groupingBy(CourseSchedulePo::getCourseId));
+
         voPageInfo.getList().stream().forEach(v -> {
             CourseRegisterCount courseRegisterCount = collect.get(v.getId());
             if (Objects.nonNull(courseRegisterCount)) {
@@ -143,6 +151,12 @@ public class CourseService {
             } else {
                 v.setRegisterNum(0);
             }
+            List<CourseSchedulePo> courseSchedulePoList = courseScheduleMap.get(v.getId());
+            if (!CollectionUtils.isEmpty(courseSchedulePoList)) {
+                long count = courseSchedulePoList.stream().filter(e -> e.getSignIn().equals(Enums.SignInType.已签到.getCode())).count();
+                v.setProgress(String.format(PROGRESS, count, courseSchedulePoList.size()));
+            }
+
         });
         return voPageInfo;
 
