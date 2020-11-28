@@ -39,6 +39,18 @@
     and course_id = #{id}
     order by id
   </select>
+  <select id="queryByCourseIds"  resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select
+    <include refid="Base_Column_List" />
+    from course_schedule
+    where status= 1
+    and course_id in
+    <foreach collection="ids" item="id" separator="," open="(" close=")">
+      #{id}
+    </foreach>
+    order by id
+  </select>
   <select id="queryByIds"  resultMap="BaseResultMap">
   <!--@mbg.generated-->
   select

@@ -195,6 +195,9 @@ public class CourseScheduleService {
     public List<CourseSchedulePo> queryByCourseId(Long id) {
         return this.courseSchedulePoMapper.queryByCourseId(id);
     }
+    public List<CourseSchedulePo> queryByCourseIds(List<Long> ids) {
+        return this.courseSchedulePoMapper.queryByCourseIds(ids);
+    }
 
     /**
      * 签到

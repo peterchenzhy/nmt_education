@@ -44,6 +44,7 @@ export class CourseListComponent implements OnInit {
     { title: '报名人数', index: 'registerNum', render: "registerNum" },
     { title: '课程类型', index: 'courseType', render: "courseType" },
     { title: '校区', index: 'campus', render: "courseCampus" },
+    { title: '进度', index: 'progress', render: "progress" },
     {
       title: '状态',
       index: 'courseStatus',

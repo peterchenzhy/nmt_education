@@ -141,7 +141,7 @@ public class CourseService {
                         .stream().collect(Collectors.toMap(k -> k.getCourseId(), v -> v));
         //课程进展
         Map<Long, List<CourseSchedulePo>> courseScheduleMap =
-                courseScheduleService.queryByIds(voPageInfo.getList().stream().map(CoursePo::getId).collect(Collectors.toList()))
+                courseScheduleService.queryByCourseIds(voPageInfo.getList().stream().map(CoursePo::getId).collect(Collectors.toList()))
                         .stream().collect(Collectors.groupingBy(CourseSchedulePo::getCourseId));
 
         voPageInfo.getList().stream().forEach(v -> {

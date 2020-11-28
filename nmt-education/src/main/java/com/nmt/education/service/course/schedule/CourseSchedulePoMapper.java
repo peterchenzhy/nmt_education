@@ -23,6 +23,7 @@ interface CourseSchedulePoMapper {
 
 
     List<CourseSchedulePo> queryByCourseId(@Param("id") Long id);
+    List<CourseSchedulePo> queryByCourseIds(@Param("ids") List<Long> ids);
 
     int signIn(@Param("id") Long id, @Param("operator") Integer operator);
 
