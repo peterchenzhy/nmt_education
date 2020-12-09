@@ -54,6 +54,16 @@ public class CourseSearchDto {
     @ApiModelProperty(value = "校区")
     private Integer campus;
     /**
+     * 年度
+     */
+    @ApiModelProperty(value = "年度")
+    private Integer year;
+    /**
+     * 季度
+     */
+    @ApiModelProperty(value = "季度")
+    private Integer season;
+    /**
      * 结束日期
      */
     @ApiModelProperty(value = "结束日期")

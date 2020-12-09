@@ -244,6 +244,12 @@
         <if test="dto.teacherId != null">
             and teacher_id = #{dto.teacherId}
         </if>
+        <if test="dto.year != null">
+            and year = #{dto.year}
+        </if>
+        <if test="dto.season != null">
+            and season = #{dto.season}
+        </if>
         and campus in
         <foreach collection="campusList" item="campus" separator="," open="(" close=")">
             #{campus}

@@ -54,6 +54,8 @@ export interface CourseQueryParam {
     grade?: number;
     startDate?: string;
     endDate?: string;
+    year?: number;
+    season?: number;
     pageNo?: number;
     pageSize?: number;
 }

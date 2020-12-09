@@ -20,6 +20,7 @@ export class CourseListComponent implements OnInit {
     courseDate: new FormControl()
   });
   searchDate: Date[];
+  year: Date;
   loading = false;
   pager = {
     front: false
@@ -33,6 +34,8 @@ export class CourseListComponent implements OnInit {
   feeTypeList = this.appCtx.globalService.FEE_TYPE_LIST;
   gradeList = this.appCtx.globalService.GRADE_LIST;
   campusList = this.appCtx.globalService.CAMPUS_LIST;
+  seasonList = this.appCtx.globalService.SEASON_LIST;
+
 
   @ViewChild('st', { static: true })
   st: STComponent;
@@ -111,6 +114,10 @@ export class CourseListComponent implements OnInit {
 
   getData() {
     this.loading = true;
+    if(this.year != null){
+      this.queryParam.year = new Date(this.year).getFullYear();
+    }
+
     this.appCtx.courseService.queryCourses(this.queryParam)
       .pipe(
         tap(() => { this.loading = false; }, () => { this.loading = false; })
@@ -147,6 +154,8 @@ export class CourseListComponent implements OnInit {
     this.queryParam.grade = null;
     this.queryParam.startDate = null;
     this.queryParam.endDate = null;
+    this.queryParam.year = null;
+    this.queryParam.season = null;
     this.queryParam.pageNo = 1;
     setTimeout(() => this.getData());
   }
