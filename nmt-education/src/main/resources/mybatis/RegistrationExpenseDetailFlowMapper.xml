@@ -57,6 +57,7 @@
         select cr.registration_number as registrationNumber , cr.course_id as courseId ,cr.student_id as studentId
         ,c.campus as campus ,flow.payment as payment
         , c.name as courseName ,s.name as studentName ,flow.create_time as feeTime,flow.amount as amount ,flow.type as feeFlowType
+        ,cr.remark as remark
         from registration_expense_detail_flow flow
         inner join course_registration cr on flow.registration_id = cr.id and cr.status = 1
         inner join course c on cr.course_id = c.id and c.status = 1
@@ -89,6 +90,12 @@
             <![CDATA[
             and flow.create_time <= #{endDate}     ]]>
         </if>
+        <if test="year != null">
+            and c.year = #{year}
+        </if>
+        <if test="season != null">
+            and c.season = #{season}
+        </if>
         order by flow.id desc
     </select>
     <select id="flowSummary" resultType="java.lang.String">
@@ -113,6 +120,12 @@
         <if test="endDate != null">
             <![CDATA[
             and flow.create_time <= #{endDate}     ]]>
+        </if>
+        <if test="year != null">
+            and c.year = #{year}
+        </if>
+        <if test="season != null">
+            and c.season = #{season}
         </if>
     </select>
 </mapper>

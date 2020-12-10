@@ -2,15 +2,30 @@
 <nz-card [nzBordered]="false">
   <form nz-form [nzLayout]="'inline'" (ngSubmit)="getData()" class="search__form">
     <div nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 24, xl: 48, xxl: 48 }">
-      <div nz-col nzMd="8" nzSm="24">
+      <div nz-col nzMd="4" nzSm="24">
         <nz-form-item>
-          <nz-form-label nzFor="orderCode">订单编号</nz-form-label>
-          <nz-form-control>
-            <input nz-input [(ngModel)]="queryParam.orderCode" name="orderCode" placeholder="请输入" id="orderCode" />
+          <nz-form-label>年度</nz-form-label>
+          <nz-form-control nzErrorTip="请选择年度">
+            <nz-year-picker  [(ngModel)]="year" name="year" nzPlaceHolder="请选择年度" nzAllowClear="false"></nz-year-picker>
+          </nz-form-control>
+          <!--          <nz-form-control nzErrorTip="请选择年度">-->
+          <!--            <nz-select [(ngModel)]="queryParam.year" name="grade" [nzPlaceHolder]="'请选择年级'" [nzShowSearch]="true">-->
+          <!--              <nz-option *ngFor="let i of gradeList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>-->
+          <!--            </nz-select>-->
+          <!--          </nz-form-control>-->
+        </nz-form-item>
+      </div>
+      <div nz-col nzMd="4" nzSm="24">
+        <nz-form-item>
+          <nz-form-label>季度</nz-form-label>
+          <nz-form-control nzErrorTip="请选择季度">
+            <nz-select [(ngModel)]="queryParam.season" name="season" [nzPlaceHolder]="'请选择季度'" [nzShowSearch]="true">
+              <nz-option *ngFor="let i of seasonList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+            </nz-select>
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div nz-col nzMd="8" nzSm="24">
+      <div nz-col nzMd="4" nzSm="24">
         <nz-form-item>
           <nz-form-label nzFor="studentId">学生</nz-form-label>
           <nz-select [(ngModel)]="queryParam.studentId" name="studentId" class="enroll-selector" nzShowSearch nzServerSearch
@@ -39,7 +54,7 @@
         </nz-form-item>
       </div>
       <div nz-col nzMd="24" nzSm="24"></div>
-      <div nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
+      <div nz-col nzMd="4" nzSm="24" *ngIf="expandForm">
         <nz-form-item>
           <nz-form-label nzFor="courseSubject">课程科目</nz-form-label>
           <nz-form-control nzErrorTip="请输入课程科目">
@@ -50,7 +65,7 @@
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
+      <div nz-col nzMd="4" nzSm="24" *ngIf="expandForm">
         <nz-form-item>
           <nz-form-label nzFor="courseType">课程类型</nz-form-label>
           <nz-form-control nzErrorTip="请输入课程类型">
@@ -61,13 +76,21 @@
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
+      <div nz-col nzMd="4" nzSm="24" *ngIf="expandForm">
         <nz-form-item>
           <nz-form-label>年级</nz-form-label>
           <nz-form-control nzErrorTip="年级">
             <nz-select [(ngModel)]="queryParam.grade" name="grade" [nzPlaceHolder]="'请选择年级'" [nzShowSearch]="true">
               <nz-option *ngFor="let i of gradeList" [nzLabel]="i.label" [nzValue]="i.value"> </nz-option>
             </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
+        <nz-form-item>
+          <nz-form-label nzFor="orderCode">订单编号</nz-form-label>
+          <nz-form-control>
+            <input nz-input [(ngModel)]="queryParam.orderCode" name="orderCode" placeholder="请输入" id="orderCode" />
           </nz-form-control>
         </nz-form-item>
       </div>

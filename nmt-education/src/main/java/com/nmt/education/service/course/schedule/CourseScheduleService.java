@@ -433,7 +433,7 @@ public class CourseScheduleService {
 
     private List<TeacherScheduleDto> getExportData(TeacherScheduleReqDto dto, List<Integer> campusList) {
         PageInfo<TeacherScheduleDto> pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize(), false).doSelectPageInfo(() ->
-                courseSchedulePoMapper.teacherSchedule(dto.getStartDate(), dto.getEndDate(), campusList));
+                courseSchedulePoMapper.teacherSchedule(dto, campusList));
         pageInfo.getList().stream().forEach(e -> {
                     e.setCampusStr(configService.queryByTypeValue(SysConfigEnum.校区.getCode(), e.getCampus()).getDescription());
                     e.setSubject(configService.queryByTypeValue(SysConfigEnum.课程科目.getCode(), e.getCourseSubject()).getDescription());

@@ -112,11 +112,12 @@ public class RegistrationExpenseDetailService {
     }
 
     //费用统计页面
-    public List<FeeStatisticsVo> feeStatistics(Date startDate, Date endDate, List<Integer> canpusList, List<Integer> type) {
-        return registrationExpenseDetailFlowMapper.feeStatistics(startDate, endDate, canpusList, type);
+    public List<FeeStatisticsVo> feeStatistics(Date startDate, Date endDate,Integer year ,Integer season, List<Integer> campusList,
+                                               List<Integer> type) {
+        return registrationExpenseDetailFlowMapper.feeStatistics(startDate, endDate, year,season,campusList, type);
     }
     //根据类型统计收入费用数据
-    public List<String> flowSummary(Date startDate, Date endDate, List<Integer> campusList, int... type){
-        return this.registrationExpenseDetailFlowMapper.flowSummary(startDate,endDate,campusList,type);
+    public List<String> flowSummary(Date startDate, Date endDate,Integer year ,Integer season , List<Integer> campusList, int... type){
+        return this.registrationExpenseDetailFlowMapper.flowSummary(startDate,endDate,year,season,campusList,type);
     }
 }

@@ -23,6 +23,7 @@ interface CourseSchedulePoMapper {
 
 
     List<CourseSchedulePo> queryByCourseId(@Param("id") Long id);
+
     List<CourseSchedulePo> queryByCourseIds(@Param("ids") List<Long> ids);
 
     int signIn(@Param("id") Long id, @Param("operator") Integer operator);
@@ -33,7 +34,7 @@ interface CourseSchedulePoMapper {
 
     List<CourseSchedulePo> queryByIds(@Param("ids") List<Long> ids);
 
-    List<TeacherScheduleDto> teacherSchedule(@Param("startDate") Date startDate, @Param("endDate") Date endDate,
+    List<TeacherScheduleDto> teacherSchedule(@Param("dto") TeacherScheduleReqDto dto,
                                              @Param("campusList") List<Integer> campusList);
 
     List<String> getTeacherPay(@Param("dto") TeacherScheduleReqDto dto, @Param("campusList") List<Integer> campusList);

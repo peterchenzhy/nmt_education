@@ -146,6 +146,12 @@
                 #{campus}
             </foreach>
         </if>
+        <if test="dto.season != null">
+            and c.season = #{dto.season}
+        </if>
+        <if test="dto.year !=null" >
+            and c.year = #{dto.year}
+        </if>
         order by rs.id desc
 
     </select>

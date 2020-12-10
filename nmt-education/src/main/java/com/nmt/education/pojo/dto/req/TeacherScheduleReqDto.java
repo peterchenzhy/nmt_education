@@ -22,4 +22,10 @@ public class TeacherScheduleReqDto extends BaseSearchPageReqDto {
     @ApiModelProperty(value = "课程所在校区")
     private Integer campus;
 
+    @ApiModelProperty(value = "年度")
+    private Integer year;
+
+    @ApiModelProperty(value = "季度")
+    private Integer season;
+
 }

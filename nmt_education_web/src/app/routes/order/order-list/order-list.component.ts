@@ -28,6 +28,7 @@ export class OrderListComponent implements OnInit {
     pager = {
         front: false
     };
+    year: Date;
     queryParam: RegisterQueryParam = { pageNo: 1, pageSize: 10 };
     courseTypeList = this.appCtx.globalService.COURSE_TYPE_LIST;
     courseSubjectList = this.appCtx.globalService.COURSE_SUBJECT_LIST;
@@ -35,6 +36,7 @@ export class OrderListComponent implements OnInit {
     courseStatusList = this.appCtx.globalService.COURSE_STATUS_LIST;
     feeTypeList = this.appCtx.globalService.FEE_TYPE_LIST;
     gradeList = this.appCtx.globalService.GRADE_LIST;
+    seasonList = this.appCtx.globalService.SEASON_LIST;
     q: any = {
         pi: 1,
         ps: 10,
@@ -107,6 +109,9 @@ export class OrderListComponent implements OnInit {
 
     getData() {
         this.loading = true;
+        if(this.year != null){
+          this.queryParam.year = new Date(this.year).getFullYear();
+        }
         this.appCtx.courseService.registerSearch(this.queryParam)
             .pipe(
                 tap(() => { this.loading = false; }, () => { this.loading = false; })
@@ -146,6 +151,8 @@ export class OrderListComponent implements OnInit {
         this.queryParam.pageNo = 1;
         this.queryParam.pageSize = 10;
         this.queryParam.orderCode = null;
+        this.queryParam.year = null;
+        this.queryParam.season = null ;
         setTimeout(() => this.getData());
     }
 

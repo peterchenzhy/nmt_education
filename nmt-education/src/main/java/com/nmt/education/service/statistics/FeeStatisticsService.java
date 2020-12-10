@@ -51,7 +51,7 @@ public class FeeStatisticsService {
             dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
         }
         PageInfo<FeeStatisticsVo> pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() ->
-                registrationExpenseDetailService.feeStatistics(dto.getStartDate(), dto.getEndDate(), campusList,
+                registrationExpenseDetailService.feeStatistics(dto.getStartDate(), dto.getEndDate(), dto.getYear(),dto.getSeason(),campusList,
                         ExpenseDetailFlowTypeEnum.feeStatistics2FlowType(dto.getFeeFlowType())));
         pageInfo.getList().stream().forEach(e -> {
             e.setFeeFlowTypeStr(ExpenseDetailFlowTypeEnum.codeOf(e.getFeeFlowType()).getDisplay());
@@ -95,7 +95,7 @@ public class FeeStatisticsService {
 
     private List<FeeStatisticsVo> getExportData(FeeStatisticsReqDto dto, List<Integer> campusList) {
         PageInfo<FeeStatisticsVo> pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize(), false).doSelectPageInfo(() ->
-                registrationExpenseDetailService.feeStatistics(dto.getStartDate(), dto.getEndDate(), campusList,
+                registrationExpenseDetailService.feeStatistics(dto.getStartDate(), dto.getEndDate(),dto.getYear(),dto.getSeason(), campusList,
                         ExpenseDetailFlowTypeEnum.feeStatistics2FlowType(dto.getFeeFlowType())));
         pageInfo.getList().stream().forEach(e -> {
                     e.setFeeFlowTypeStr(ExpenseDetailFlowTypeEnum.codeOf(e.getFeeFlowType()).getDisplay());
@@ -113,17 +113,19 @@ public class FeeStatisticsService {
         FeeSummaryVo vo = new FeeSummaryVo();
         List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
 
-        List<String> payList = registrationExpenseDetailService.flowSummary(startDate, endDate, campusList,
+        List<String> payList = registrationExpenseDetailService.flowSummary(startDate, endDate, dto.getYear(), dto.getSeason(), campusList,
                 ExpenseDetailFlowTypeEnum.新增记录.getCode(), ExpenseDetailFlowTypeEnum.编辑.getCode());
         vo.setPay(NumberUtil.addStringList(payList).toPlainString());
 
-        List<String> refundList = registrationExpenseDetailService.flowSummary(startDate, endDate, campusList,
+        List<String> refundList = registrationExpenseDetailService.flowSummary(startDate, endDate, dto.getYear(), dto.getSeason(), campusList,
                 ExpenseDetailFlowTypeEnum.退费.getCode());
         vo.setRefund(NumberUtil.addStringList(refundList).toPlainString());
 
         TeacherScheduleReqDto teacherScheduleReqDto = new TeacherScheduleReqDto();
         teacherScheduleReqDto.setStartDate(startDate);
         teacherScheduleReqDto.setEndDate(endDate);
+        teacherScheduleReqDto.setYear(dto.getYear());
+        teacherScheduleReqDto.setSeason(dto.getSeason());
         List<String> teacherPay = courseScheduleService.getTeacherPay(teacherScheduleReqDto, logInUser);
         vo.setTeacherPay(NumberUtil.addStringList(teacherPay).toPlainString());
 

@@ -71,6 +71,8 @@ export interface RegisterSummaryQueryParam {
     signIn?: number;
     pageNo?: number;
     pageSize?: number;
+    year?: number;
+    season?: number;
 }
 
 export interface FeeStatisticsQueryParam {
@@ -80,6 +82,8 @@ export interface FeeStatisticsQueryParam {
     endDate?: string;
     pageNo?: number;
     pageSize?: number;
+    year?: number;
+    season?: number;
 }
 
 export interface RegisterQueryParam {
@@ -92,6 +96,8 @@ export interface RegisterQueryParam {
     pageNo?: number;
     pageSize?: number;
     orderCode?: string;
+    year?: number;
+    season?: number;
 }
 
 export interface ResponseData {

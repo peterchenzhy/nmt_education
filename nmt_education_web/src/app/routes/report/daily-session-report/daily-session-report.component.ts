@@ -18,6 +18,7 @@ export class DailySessionReportComponent implements OnInit {
   courseDate = new FormGroup({
     courseDate: new FormControl()
   });
+  year: Date;
   startDate: Date[] = [new Date(), new Date()];
   registerDate: Date[];
   loading = false;
@@ -36,6 +37,7 @@ export class DailySessionReportComponent implements OnInit {
   feeTypeList = this.appCtx.globalService.FEE_TYPE_LIST;
   gradeList = this.appCtx.globalService.GRADE_LIST;
   signInList = this.appCtx.globalService.SIGNIN_STATUS_LIST;
+  seasonList = this.appCtx.globalService.SEASON_LIST;
 
   @ViewChild('st', { static: true })
   st: STComponent;
@@ -84,6 +86,9 @@ export class DailySessionReportComponent implements OnInit {
 
   getData() {
     this.loading = true;
+    if(this.year != null){
+      this.queryParam.year = new Date(this.year).getFullYear();
+    }
     this.appCtx.courseService.registerSummary(this.queryParam)
       .pipe(
         tap(() => { this.loading = false; }, () => { this.loading = false; })
@@ -125,6 +130,8 @@ export class DailySessionReportComponent implements OnInit {
     this.queryParam.pageNo = 1;
     this.queryParam.registerStartDate = null;
     this.queryParam.registerEndDate = null;
+    this.queryParam.season = null;
+    this.queryParam.year = null;
     setTimeout(() => this.getData());
   }
 

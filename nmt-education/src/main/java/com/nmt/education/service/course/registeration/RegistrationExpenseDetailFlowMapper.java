@@ -18,9 +18,11 @@ interface RegistrationExpenseDetailFlowMapper {
     List<RegistrationExpenseDetailFlowPo> queryByRegisterId(@Param("registerId") Long registerId);
 
     List<FeeStatisticsVo> feeStatistics(@Param("startDate") Date startDate, @Param("endDate") Date endDate,
+                                        @Param("year") Integer year, @Param("season") Integer season,
                                         @Param("campusList") List<Integer> campusList, @Param("typeList") List<Integer> typeList);
 
     List<String> flowSummary(@Param("startDate") Date startDate, @Param("endDate") Date endDate,
+                             @Param("year") Integer year, @Param("season") Integer season,
                              @Param("campusList") List<Integer> campusList,
                              @Param("type") int[] type);
 }

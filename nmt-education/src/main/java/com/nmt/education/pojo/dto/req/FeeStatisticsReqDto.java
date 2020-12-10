@@ -22,6 +22,12 @@ public class FeeStatisticsReqDto extends BaseSearchPageReqDto {
     @ApiModelProperty(value = "课程所在校区")
     private Integer campus;
 
+    @ApiModelProperty(value = "年度")
+    private Integer year;
+
+    @ApiModelProperty(value = "季节")
+    private Integer season;
+
     @ApiModelProperty(value="费用类型 1：付费 2：退费" )
     private Integer feeFlowType;
 

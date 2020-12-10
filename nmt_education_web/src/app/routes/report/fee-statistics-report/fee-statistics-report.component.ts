@@ -8,7 +8,6 @@ import { Router } from '@angular/router';
 import { AppContextService } from '@shared/service/appcontext.service';
 import {ResponseData, FeeStatisticsQueryParam, FeeSummary} from 'src/app/model/system.model';
 import { DatePipe } from '@angular/common';
-import { SIGNIN } from '@shared/constant/system.constant';
 
 @Component({
   selector: 'fee-statistics-report',
@@ -24,10 +23,12 @@ export class FeeStatisticsReportComponent implements OnInit {
   pager = {
     front: false
   };
+  year: Date;
   queryParam: FeeStatisticsQueryParam = { pageNo: 1, pageSize: 10 };
   data: ResponseData = { list: [], total: 0 };
   summaryData : FeeSummary;
   campusList = this.appCtx.globalService.CAMPUS_LIST;
+  seasonList = this.appCtx.globalService.SEASON_LIST;
   feeFlowList = [{ label: "退费", value: 0 }, { label: "缴费", value: 1 }];
 
   @ViewChild('st', { static: true })
@@ -75,6 +76,10 @@ export class FeeStatisticsReportComponent implements OnInit {
 
   getData() {
     this.loading = true;
+    if(this.year != null){
+      this.queryParam.year = new Date(this.year).getFullYear();
+    }
+
     this.appCtx.reportService.queryFeeStatistics(this.queryParam)
       .pipe(
         tap(() => { this.loading = false; }, () => { this.loading = false; })
@@ -117,6 +122,8 @@ export class FeeStatisticsReportComponent implements OnInit {
     this.queryParam.startDate = null;
     this.queryParam.endDate = null;
     this.queryParam.pageNo = 1;
+    this.queryParam.season=null;
+    this.queryParam.year=null;
     setTimeout(() => this.getData());
   }
 
@@ -127,6 +134,10 @@ export class FeeStatisticsReportComponent implements OnInit {
 
   export() {
     this.loading = true;
+    if(this.year != null){
+      this.queryParam.year = new Date(this.year).getFullYear();
+    }
+
     this.appCtx.reportService.exportFeeStatistics(this.queryParam)
       .pipe(
         tap(() => { this.loading = false; }, () => { this.loading = false; })
@@ -146,6 +157,9 @@ export class FeeStatisticsReportComponent implements OnInit {
 
   export2() {
     this.loading = true;
+    if(this.year != null){
+      this.queryParam.year = new Date(this.year).getFullYear();
+    }
     this.appCtx.reportService.exportScheduleTeacher(this.queryParam)
       .pipe(
         tap(() => { this.loading = false; }, () => { this.loading = false; })
@@ -164,6 +178,10 @@ export class FeeStatisticsReportComponent implements OnInit {
   }
   export3() {
     this.loading = true;
+    if(this.year != null){
+      this.queryParam.year = new Date(this.year).getFullYear();
+    }
+
     this.appCtx.reportService.exportTeacherSalary(this.queryParam)
       .pipe(
         tap(() => { this.loading = false; }, () => { this.loading = false; })

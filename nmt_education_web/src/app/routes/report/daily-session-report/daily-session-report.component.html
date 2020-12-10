@@ -2,18 +2,27 @@
 <nz-card [nzBordered]="false">
   <form nz-form [nzLayout]="'inline'" (ngSubmit)="startQueryData()" class="search__form">
     <div nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 24, xl: 48, xxl: 48 }">
-      <div nz-col nzMd="8" nzSm="24">
-        <div>
-          <nz-form-item>
-            <nz-form-label nzFor="startDate">上课日期</nz-form-label>
-            <nz-form-control>
-              <nz-range-picker [ngModel]="startDate" name="startDate" (ngModelChange)="onDateRangeChanged($event)">
-              </nz-range-picker>
-            </nz-form-control>
-          </nz-form-item>
-        </div>
+
+      <div nz-col nzMd="4" nzSm="24">
+        <nz-form-item>
+          <nz-form-label>年度</nz-form-label>
+          <nz-form-control nzErrorTip="请选择年度">
+            <nz-year-picker  [(ngModel)]="year" name="year" nzPlaceHolder="请选择年度" nzAllowClear="false"></nz-year-picker>
+          </nz-form-control>
+        </nz-form-item>
       </div>
-      <div nz-col nzMd="8" nzSm="24">
+      <div nz-col nzMd="4" nzSm="24">
+        <nz-form-item>
+          <nz-form-label>季度</nz-form-label>
+          <nz-form-control nzErrorTip="请选择季度">
+            <nz-select [(ngModel)]="queryParam.season" name="season" [nzPlaceHolder]="'请选择季度'" [nzShowSearch]="true">
+              <nz-option *ngFor="let i of seasonList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col nzMd="4" nzSm="24">
         <nz-form-item>
           <nz-form-label nzFor="courseSubject">课程科目</nz-form-label>
           <nz-form-control nzErrorTip="请输入课程科目">
@@ -24,7 +33,7 @@
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div nz-col nzMd="8" nzSm="24">
+      <div nz-col nzMd="4" nzSm="24">
         <nz-form-item>
           <nz-form-label nzFor="courseType">课程类型</nz-form-label>
           <nz-form-control nzErrorTip="请输入课程类型">
@@ -36,7 +45,7 @@
         </nz-form-item>
       </div>
       <div nz-col nzMd="24" nzSm="24"></div>
-      <div nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
+      <div nz-col nzMd="4" nzSm="24" *ngIf="expandForm">
         <nz-form-item>
           <nz-form-label>针对年级</nz-form-label>
           <nz-form-control nzErrorTip="请选择年级">
@@ -46,7 +55,7 @@
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
+      <div nz-col nzMd="4" nzSm="24" *ngIf="expandForm">
         <nz-form-item>
           <nz-form-label>签到状态</nz-form-label>
           <nz-form-control nzErrorTip="请选择签到状态">
@@ -55,6 +64,17 @@
             </nz-select>
           </nz-form-control>
         </nz-form-item>
+      </div>
+      <div nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
+        <div>
+          <nz-form-item>
+            <nz-form-label nzFor="startDate">上课日期</nz-form-label>
+            <nz-form-control>
+              <nz-range-picker [ngModel]="startDate" name="startDate" (ngModelChange)="onDateRangeChanged($event)">
+              </nz-range-picker>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
       </div>
       <div nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
         <div>

@@ -66,6 +66,10 @@ public class RegisterSummarySearchDto {
      */
     @ApiModelProperty(value = "签到状态")
     private Integer signIn;
+    @ApiModelProperty(value = "季度")
+    private Integer season;
+    @ApiModelProperty(value = "年度")
+    private Integer year;
 
     @ApiModelProperty(value = "分页 页码")
     private Integer pageNo = 1;

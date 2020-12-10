@@ -69,4 +69,9 @@ public class FeeStatisticsVo {
     @ApiModelProperty(value = "所在校区--中文")
     @ExcelProperty(value = "所在校区",index = 7)
     private String campusStr;
+
+
+    @ApiModelProperty(value = "备注")
+    @ExcelProperty(value = "备注",index = 8)
+    private String remark;
 }
