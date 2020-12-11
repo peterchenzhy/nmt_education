@@ -75,7 +75,7 @@
   <update id="changeTeacher">
     update course_schedule
     set operator =0,operate_time = now(),teacher_id = #{newTeacherId}
-    where status =1  and course_id = #{courseId} and
+    where status =1  and course_id = #{courseId}
   </update>
 
   <update id="updateByPrimaryKeySelective" parameterType="com.nmt.education.pojo.po.CourseSchedulePo">

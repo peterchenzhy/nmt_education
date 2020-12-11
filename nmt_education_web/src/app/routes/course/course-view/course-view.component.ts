@@ -427,6 +427,9 @@ export class CourseViewComponent implements OnInit {
     return teacher ? teacher.name : "";
   }
   initSelectedTeacherList(id: number) {
+    if(id == -1){
+      return ;
+    }
     if (this.getTeacherName(id) == "") {
       this.appCtx.teacherService.getTeacherDetails(id).subscribe((data: Teacher) => {
         let teacher = this.selectedTeacherList.find(t => { return t.id == id; });
