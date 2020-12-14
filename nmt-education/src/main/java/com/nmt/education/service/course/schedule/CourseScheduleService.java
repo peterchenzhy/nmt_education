@@ -33,6 +33,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.nmt.education.commmons.Consts.SYSTEM_USER;
@@ -68,18 +69,34 @@ public class CourseScheduleService {
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
             @Override
             public void afterCommit() {
-                List<CourseSchedulePo> list =
-                        queryByCourseId(courseId).stream()
-                                .sorted(Comparator.comparing(CourseSchedulePo::getCourseDatetime)).collect(Collectors.toList());
+                List<CourseSchedulePo> list = queryByCourseId(courseId);
                 if (CollectionUtils.isEmpty(list)) {
                     return;
                 }
+                List<CourseSchedulePo> newPoList = new ArrayList<>(list.size());
+                List<CourseSchedulePo> sortList = list.stream()
+                        .sorted(Comparator.comparing(CourseSchedulePo::getCourseDatetime)).collect(Collectors.toList());
+                Map<Integer, CourseSchedulePo> idMap = list.stream().collect(Collectors.toMap(CourseSchedulePo::getCourseTimes, Function.identity()));
                 int i = 1;
-                for (CourseSchedulePo e : list) {
-                    e.setCourseTimes(i);
+                for (CourseSchedulePo e : sortList) {
+                    if (e.getCourseTimes() == i) {
+                        i++;
+                        continue;
+                    }
+                    CourseSchedulePo newPo = new CourseSchedulePo();
+                    BeanUtils.copyProperties(e, newPo);
+                    newPo.setSignIn(idMap.get(i).getSignIn());
+                    newPo.setOperateTime(idMap.get(i).getOperateTime());
+                    newPo.setOperator(idMap.get(i).getOperator());
+                    newPo.setCourseTimes(i);
+                    newPoList.add(newPo);
                     i++;
                 }
-                updateBatchSelective(list);
+                if(!CollectionUtils.isEmpty(newPoList)){
+                    log.info("调整课程编号，员工：[{}],数据:{}",operator,newPoList);
+                    updateBatchSelective(newPoList);
+                }
+
             }
         });
         return true;
@@ -124,7 +141,9 @@ public class CourseScheduleService {
 
     private CourseSchedulePo editSchedule(Integer operator, CourseScheduleReqDto dto) {
         CourseSchedulePo po = checkExist(dto);
+        int courseTimes = po.getCourseTimes();
         BeanUtils.copyProperties(dto, po);
+        po.setCourseTimes(courseTimes);
         po.setStatus(StatusEnum.VALID.getCode());
         po.setOperator(operator);
         po.setOperateTime(new Date());
@@ -195,6 +214,7 @@ public class CourseScheduleService {
     public List<CourseSchedulePo> queryByCourseId(Long id) {
         return this.courseSchedulePoMapper.queryByCourseId(id);
     }
+
     public List<CourseSchedulePo> queryByCourseIds(List<Long> ids) {
         return this.courseSchedulePoMapper.queryByCourseIds(ids);
     }
@@ -529,6 +549,6 @@ public class CourseScheduleService {
     public List<String> getTeacherPay(TeacherScheduleReqDto dto, Integer logInUser) {
         //先获取数据范围
         List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
-        return this.courseSchedulePoMapper.getTeacherPay(dto,campusList);
+        return this.courseSchedulePoMapper.getTeacherPay(dto, campusList);
     }
 }

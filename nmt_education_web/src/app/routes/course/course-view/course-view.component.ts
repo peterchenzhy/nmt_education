@@ -100,7 +100,7 @@ export class CourseViewComponent implements OnInit {
           this.course.year = new Date().setFullYear(year);
           this.course.editFlag = EDIT_FLAG.UPDATE;
           this.editable = this.course.courseStatus != COURSE_STATUS.COMPLETE;
-          this.pageHeader = `课程信息编辑 [${this.course.name}--${this.course.code}]`; debugger;
+          this.pageHeader = `课程信息编辑 [${this.course.name}--${this.course.code}]`;
           if (this.course.teacher) {
             this.teacherList.push(this.course.teacher);
             this.selectedTeacherList.push(this.course.teacher);
