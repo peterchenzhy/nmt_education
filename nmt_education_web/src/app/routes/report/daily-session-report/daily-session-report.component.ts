@@ -6,7 +6,7 @@ import { STChange, STColumn, STComponent, STData } from '@delon/abc';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AppContextService } from '@shared/service/appcontext.service';
-import { ResponseData, RegisterSummaryQueryParam } from 'src/app/model/system.model';
+import {ResponseData, RegisterSummaryQueryParam, RegisterSummaryTotal} from 'src/app/model/system.model';
 import { DatePipe } from '@angular/common';
 import { SIGNIN } from '@shared/constant/system.constant';
 
@@ -18,8 +18,11 @@ export class DailySessionReportComponent implements OnInit {
   courseDate = new FormGroup({
     courseDate: new FormControl()
   });
+  pager = {
+    front: false
+  };
   year: Date;
-  startDate: Date[] = [new Date(), new Date()];
+  startDate: Date[] ;
   registerDate: Date[];
   loading = false;
   total = 0;
@@ -28,8 +31,9 @@ export class DailySessionReportComponent implements OnInit {
   // pager = {
   //   front: false
   // };
-  queryParam: RegisterSummaryQueryParam = { pageNo: 1, pageSize: 0 };
-  data: [];//ResponseData = { list: [], total: 0 };
+  queryParam: RegisterSummaryQueryParam = { pageNo: 1, pageSize: 10 };
+  // data: [];//ResponseData = { list: [], total: 0 };
+  data: ResponseData = { list: [], total: 0 };
   courseTypeList = this.appCtx.globalService.COURSE_TYPE_LIST;
   courseSubjectList = this.appCtx.globalService.COURSE_SUBJECT_LIST;
   courseClassificationList = this.appCtx.globalService.COURSE_CLASSIFICATION_LIST;
@@ -59,7 +63,6 @@ export class DailySessionReportComponent implements OnInit {
   ];
   selectedRows: STData[] = [];
   description = '';
-  totalCallNo = 0;
   expandForm = false;
 
   constructor(
@@ -74,8 +77,8 @@ export class DailySessionReportComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.queryParam.startDate = this.datePipe.transform(this.startDate[0], 'yyyy-MM-dd');
-    this.queryParam.endDate = this.datePipe.transform(this.startDate[1], 'yyyy-MM-dd');
+    // this.queryParam.startDate = this.datePipe.transform(this.startDate[0], 'yyyy-MM-dd');
+    // this.queryParam.endDate = this.datePipe.transform(this.startDate[1], 'yyyy-MM-dd');
     this.getData();
   }
 
@@ -98,12 +101,23 @@ export class DailySessionReportComponent implements OnInit {
         res.list.forEach(element => {
           element.statusDetail = this.appCtx.globalService.getOrderStatus(element.registrationStatus);
         });
-        this.data = res.list;
-        this.total = res.list.length;
-        this.signInCount = this.data.filter((d: any) => { return d.signIn == SIGNIN.SIGNIN; }).length;
-        this.unSignInCount = this.total - this.signInCount;
+        this.data = res;
+        // this.total = res.list.length;
+        // this.signInCount = this.data.filter((d: any) => { return d.signIn == SIGNIN.SIGNIN; }).length;
+        // this.unSignInCount = this.total - this.signInCount;
         this.cdr.detectChanges();
       });
+
+    this.appCtx.courseService.registerSummaryTotal(this.queryParam)
+      .pipe(
+        tap(() => { this.loading = false; }, () => { this.loading = false; })
+      )
+      .subscribe((res: RegisterSummaryTotal) => {
+        this.total =res.totalCount;
+        this.signInCount = res.signInCount;
+        this.unSignInCount = res.unSignInCount
+      });
+
   }
 
   stChange(e: STChange) {
@@ -113,8 +127,8 @@ export class DailySessionReportComponent implements OnInit {
         this.cdr.detectChanges();
         break;
       case 'pi':
-        // this.queryParam.pageNo = e.pi;
-        // this.getData();
+        this.queryParam.pageNo = e.pi;
+        this.getData();
         break;
     }
 
@@ -130,6 +144,8 @@ export class DailySessionReportComponent implements OnInit {
     this.queryParam.pageNo = 1;
     this.queryParam.registerStartDate = null;
     this.queryParam.registerEndDate = null;
+    this.queryParam.startDate = null;
+    this.queryParam.endDate = null ;
     this.queryParam.season = null;
     this.queryParam.year = null;
     setTimeout(() => this.getData());

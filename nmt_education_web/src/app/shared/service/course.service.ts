@@ -46,6 +46,10 @@ export class CourseService {
     public registerSummary(T: RegisterSummaryQueryParam): Observable<Object> {
         return this.httpClient.post('nmt-education/course/register/summary', T);
     }
+
+    public registerSummaryTotal(T: RegisterSummaryQueryParam): Observable<Object> {
+       return this.httpClient.post('nmt-education/course/register/summary/total', T);
+    }
     public getRegisterDetails(id: number): Observable<Object> {
         return this.httpClient.post(`nmt-education/course/register/detail/${id}`, id);
     }

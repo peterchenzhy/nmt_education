@@ -20,7 +20,6 @@ import com.nmt.education.service.student.account.StudentAccountService;
 import com.nmt.education.service.sysconfig.SysConfigService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -503,6 +502,24 @@ public class CourseRegistrationService {
         return pageInfo;
     }
 
+    public RegisterSummaryTotalVo registerSummaryTotal(RegisterSummarySearchDto dto, Integer logInUser) {
+        RegisterSummaryTotalVo vo = new RegisterSummaryTotalVo();
+        if (Objects.nonNull(dto.getEndDate())) {
+            dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
+        }
+        if (Objects.nonNull(dto.getRegisterEndDate())) {
+            dto.setRegisterEndDate(DateUtil.parseCloseDate(dto.getRegisterEndDate()));
+        }
+        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser);
+        Assert.isTrue(!CollectionUtils.isEmpty(campusList), "没有任何校区权限进行搜索");
+
+        vo.setTotalCount(queryCountBySearchDto(dto, campusList, null));
+        vo.setSignInCount(queryCountBySearchDto(dto, campusList, Enums.SignInType.已签到.getCode()));
+
+        vo.setUnSignInCount(vo.getTotalCount() - vo.getSignInCount());
+        return vo;
+    }
+
     /**
      * 报名记录查询 ，课时消耗查询
      *
@@ -517,6 +534,11 @@ public class CourseRegistrationService {
     private List<RegisterSummaryVo> queryBySearchDto(RegisterSummarySearchDto dto, List<Integer> campusList) {
 
         return this.registerationSummaryService.queryBySearchDto(dto, campusList);
+    }
+
+    private int queryCountBySearchDto(RegisterSummarySearchDto dto, List<Integer> campusList, Integer signInStatus) {
+
+        return this.registerationSummaryService.queryCountBySearchDto(dto, campusList, signInStatus);
     }
 
 
@@ -617,7 +639,7 @@ public class CourseRegistrationService {
      * @since 2020/5/14 23:36
      */
     public List<SignRecordVo> registerStudent(Long courseId) {
-        Map<Long, CourseRegistrationPo> registrationMap = this.courseRegistrationPoMapper.queryByCourseId(courseId,Enums.RegistrationStatus.正常.getCode())
+        Map<Long, CourseRegistrationPo> registrationMap = this.courseRegistrationPoMapper.queryByCourseId(courseId, Enums.RegistrationStatus.正常.getCode())
                 .stream().collect(Collectors.toMap(k -> k.getStudentId(), v -> v));
         if (CollectionUtils.isEmpty(registrationMap)) {
             return Collections.emptyList();
@@ -845,7 +867,7 @@ public class CourseRegistrationService {
     }
 
     public List<CourseRegisterCount> countStudentByCourse(List<Long> courseIds) {
-        if(CollectionUtils.isEmpty(courseIds)){
+        if (CollectionUtils.isEmpty(courseIds)) {
             return Collections.emptyList();
         }
         return this.courseRegistrationPoMapper.countStudentByCourse(courseIds);

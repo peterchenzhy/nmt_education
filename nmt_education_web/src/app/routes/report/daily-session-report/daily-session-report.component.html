@@ -81,8 +81,7 @@
           <nz-form-item>
             <nz-form-label nzFor="registerDate">报名日期</nz-form-label>
             <nz-form-control>
-              <nz-range-picker [ngModel]="registerDate" name="registerDate"
-                (ngModelChange)="onRegisterDateRangeChanged($event)">
+              <nz-range-picker [ngModel]="registerDate" name="registerDate" (ngModelChange)="onRegisterDateRangeChanged($event)">
               </nz-range-picker>
             </nz-form-control>
           </nz-form-item>
@@ -106,7 +105,10 @@
     <sv label="未消耗科目">{{unSignInCount}}</sv>
   </sv-container>
   <nz-divider></nz-divider>
-  <st #st [columns]="columns" [data]="data" [loading]="loading" (change)="stChange($event)">
+<!--  <st #st [columns]="columns" [data]="data" [loading]="loading" (change)="stChange($event)">-->
+    <st #st [columns]="columns" [data]="data.list" [total]="data.total" [ps]="queryParam.pageSize"
+        [pi]="queryParam.pageNo" [page]="pager" [loading]="loading" (change)="stChange($event)">
+
     <ng-template st-row="registrationStatus" let-i>
       <nz-badge [nzStatus]="i.statusDetail.icon" [nzText]="i.statusDetail.label"></nz-badge>
     </ng-template>

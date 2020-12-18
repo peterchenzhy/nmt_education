@@ -117,3 +117,9 @@ export interface FeeSummary {
   startDate?: string;
   endData?: string;
 }
+
+export interface RegisterSummaryTotal {
+  totalCount?: number;
+  signInCount?: number;
+  unSignInCount?: number;
+}

@@ -307,7 +307,7 @@ export class OrderViewComponent implements OnInit {
             // }
         });
         this.modalSrv.create({
-            nzTitle: "选择报名课时",
+            nzTitle: this.order.course.name+ "--选择报名课时",
             nzContent: tpl,
             nzWidth: 700,
             nzOnOk: () => {

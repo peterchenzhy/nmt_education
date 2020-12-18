@@ -58,6 +58,10 @@ public class RegisterationSummaryService {
         return this.registerationSummaryPoMapper.queryBySearchDto(dto,campusList);
     }
 
+    public int queryCountBySearchDto(RegisterSummarySearchDto dto, List<Integer> campusList,Integer signInStatus) {
+        return this.registerationSummaryPoMapper.queryCountBySearchDto(dto,campusList,signInStatus);
+    }
+
     /**
      * 根据报名id 查询报名汇总信息 会包含退费的课程日历
      *

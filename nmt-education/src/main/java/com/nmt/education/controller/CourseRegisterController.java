@@ -84,6 +84,17 @@ public class CourseRegisterController {
         return courseRegistrationService.registerSummary(dto, logInUser);
     }
 
+
+    @ApiOperation(value = "register/summary/total", notes = "课时统计")
+    @RequestMapping(value = "/register/summary/total", method = RequestMethod.POST)
+    public RegisterSummaryTotalVo registerSummaryTotal(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
+                                                       @RequestBody @Validated RegisterSummarySearchDto dto, BindingResult bindingResult) {
+        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
+        Assert.isTrue(Integer.valueOf(roleId).intValue() == RoleIdEnum.校长.getCode()
+                || Integer.valueOf(roleId).intValue() == RoleIdEnum.财务.getCode(), "您没有该功能权限");
+        return courseRegistrationService.registerSummaryTotal(dto, logInUser);
+    }
+
     @ApiOperation(value = "register/summary/{registerId}", notes = "根据报名数据id查询")
     @RequestMapping(value = "/register/summary/{registerId}", method = RequestMethod.GET)
     public PageInfo<RegisterationSummaryPo> registerSummaryByRegisterId(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser,
