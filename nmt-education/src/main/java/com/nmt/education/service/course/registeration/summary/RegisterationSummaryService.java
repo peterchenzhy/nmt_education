@@ -150,4 +150,8 @@ public class RegisterationSummaryService {
     public List<RegisterationSummaryPo> queryByCourseId(Long courseId, ArrayList<Integer> signList) {
         return this.registerationSummaryPoMapper.queryByCourseId(courseId,signList);
     }
+
+    public int checkSignIn(long courseScheduleId) {
+        return this.registerationSummaryPoMapper.checkSignIn(courseScheduleId);
+    }
 }

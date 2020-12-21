@@ -49,4 +49,9 @@ class RegisterationSummaryServiceTest extends BaseTest {
 
         Thread.sleep(5*1000L);
     }
+
+    @Test
+    void checkSignIn1() {
+        System.out.println(this.registerationSummaryService.checkSignIn(11L));
+    }
 }

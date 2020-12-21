@@ -330,4 +330,8 @@
         </foreach>
     </insert>
 
+    <select id="checkSignIn" resultType="java.lang.Integer">
+        select count(*) from registeration_summary where status =  1
+        and course_schedule_id = #{courseScheduleId} and sign_in = 1
+    </select>
 </mapper>

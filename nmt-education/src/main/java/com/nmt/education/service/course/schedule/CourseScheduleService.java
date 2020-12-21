@@ -92,8 +92,8 @@ public class CourseScheduleService {
                     newPoList.add(newPo);
                     i++;
                 }
-                if(!CollectionUtils.isEmpty(newPoList)){
-                    log.info("调整课程编号，员工：[{}],数据:{}",operator,newPoList);
+                if (!CollectionUtils.isEmpty(newPoList)) {
+                    log.info("调整课程编号，员工：[{}],数据:{}", operator, newPoList);
                     updateBatchSelective(newPoList);
                 }
 
@@ -230,10 +230,10 @@ public class CourseScheduleService {
         if (CollectionUtils.isEmpty(list)) {
             return;
         }
-        CourseSchedulePo po = selectByPrimaryKey(list.get(0).getCourseScheduleId());
-        Assert.notNull(po, "课表信息为空，id：" + list.get(0).getCourseScheduleId());
+        CourseSchedulePo courseSchedulePo = selectByPrimaryKey(list.get(0).getCourseScheduleId());
+        Assert.notNull(courseSchedulePo, "课表信息为空，id：" + list.get(0).getCourseScheduleId());
 
-        CoursePo coursePo = courseService.selectByPrimaryKey(po.getCourseId());
+        CoursePo coursePo = courseService.selectByPrimaryKey(courseSchedulePo.getCourseId());
         Assert.isTrue(!Enums.CourseStatus.已结课.getCode().equals(coursePo.getCourseStatus()) &&
                 !Enums.CourseStatus.已取消.getCode().equals(coursePo.getCourseStatus()), "课程已经结课或者取消!");
 
@@ -277,23 +277,7 @@ public class CourseScheduleService {
                 needUpdate.add(courseSignInItem);
             }
         }
-        //更新课程日历信息
-        CourseSchedulePo courseSchedulePo = selectByPrimaryKey(list.get(0).getCourseScheduleId());
-        if (list.stream().anyMatch(e -> Enums.SignInType.已签到.getCode().equals(e.getSignIn()))) {
-            if (!Enums.SignInType.已签到.getCode().equals(courseSchedulePo.getSignIn())) {
-                courseSchedulePo.setSignIn(Enums.SignInType.已签到.getCode());
-                courseSchedulePo.setOperator(operator);
-                courseSchedulePo.setOperateTime(new Date());
-                updateByPrimaryKeySelective(courseSchedulePo);
-            }
-        } else {
-            if (Enums.SignInType.已签到.getCode().equals(courseSchedulePo.getSignIn())) {
-                courseSchedulePo.setSignIn(Enums.SignInType.未签到.getCode());
-                courseSchedulePo.setOperator(operator);
-                courseSchedulePo.setOperateTime(new Date());
-                updateByPrimaryKeySelective(courseSchedulePo);
-            }
-        }
+
         //更新状态
         if (!CollectionUtils.isEmpty(needUpdate)) {
             registerationSummaryService.signIn(needUpdate, operator);
@@ -305,8 +289,29 @@ public class CourseScheduleService {
             log.info("课程签到没有状态变更，" + list);
         }
 
+
+        //更新课程日历信息
+        int signCount = registerationSummaryService.checkSignIn(courseSchedulePo.getId());
+        if (signCount > 0) {
+            if (!Enums.SignInType.已签到.getCode().equals(courseSchedulePo.getSignIn())) {
+                courseSchedulePo.setSignIn(Enums.SignInType.已签到.getCode());
+                courseSchedulePo.setOperator(operator);
+                courseSchedulePo.setOperateTime(new Date());
+                updateByPrimaryKeySelective(courseSchedulePo);
+            }
+        } else if (signCount == 0) {
+            if (Enums.SignInType.已签到.getCode().equals(courseSchedulePo.getSignIn())) {
+                courseSchedulePo.setSignIn(Enums.SignInType.未签到.getCode());
+                courseSchedulePo.setOperator(operator);
+                courseSchedulePo.setOperateTime(new Date());
+                updateByPrimaryKeySelective(courseSchedulePo);
+            }
+        } else {
+            throw new RuntimeException("registerationSummaryService.checkSignIn 异常，结果:"+signCount+"入参："+courseSchedulePo) ;
+        }
+
         //课程状态event
-        SpringContextUtil.getApplicationContext().publishEvent(new CourseStatusChangeEvent(po.getCourseId()));
+        SpringContextUtil.getApplicationContext().publishEvent(new CourseStatusChangeEvent(courseSchedulePo.getCourseId()));
 
     }
 
