@@ -9,6 +9,7 @@ import com.nmt.education.pojo.dto.req.TeacherScheduleReqDto;
 import com.nmt.education.pojo.vo.FeeStatisticsVo;
 import com.nmt.education.pojo.vo.FeeSummaryVo;
 import com.nmt.education.service.campus.authorization.CampusAuthorizationService;
+import com.nmt.education.service.course.registeration.CourseRegistrationService;
 import com.nmt.education.service.course.registeration.RegistrationExpenseDetailService;
 import com.nmt.education.service.course.schedule.CourseScheduleService;
 import com.nmt.education.service.sysconfig.SysConfigService;
@@ -33,6 +34,8 @@ public class FeeStatisticsService {
     private SysConfigService sysConfigService;
     @Autowired
     private CourseScheduleService courseScheduleService;
+    @Autowired
+    private CourseRegistrationService courseRegistrationService;
 
     /**
      * 分页查询接口
@@ -120,6 +123,9 @@ public class FeeStatisticsService {
         List<String> refundList = registrationExpenseDetailService.flowSummary(startDate, endDate, dto.getYear(), dto.getSeason(), campusList,
                 ExpenseDetailFlowTypeEnum.退费.getCode());
         vo.setRefund(NumberUtil.addStringList(refundList).toPlainString());
+
+        long count = courseRegistrationService.registerStudentSummaryTotal(startDate, endDate, dto.getYear(), dto.getSeason(), campusList);
+        vo.setRegisterStudentCount(count);
 
         TeacherScheduleReqDto teacherScheduleReqDto = new TeacherScheduleReqDto();
         teacherScheduleReqDto.setStartDate(startDate);

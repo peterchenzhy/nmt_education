@@ -1,4 +1,4 @@
-<page-header [title]="'费用统计'"></page-header>
+<page-header [title]="'统计信息'"></page-header>
 <nz-card [nzBordered]="false">
   <form nz-form [nzLayout]="'inline'" (ngSubmit)="startQueryData()" class="search__form">
     <div nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 24, xl: 48, xxl: 48 }">
@@ -72,7 +72,8 @@
   </form>
 </nz-card>
 <nz-card [nzBordered]="false">
-  <sv-container  size="large" title="费用统计">
+  <sv-container  size="large" title="统计信息" col="4">
+    <sv label="报名人数">{{summaryData.registerStudentCount}}</sv>
     <sv label="总付费">{{summaryData.pay}}</sv>
     <sv label="总退费">{{summaryData.refund}}</sv>
     <sv label="课时费">{{summaryData.teacherPay}}</sv>

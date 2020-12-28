@@ -873,4 +873,9 @@ public class CourseRegistrationService {
         return this.courseRegistrationPoMapper.countStudentByCourse(courseIds);
 
     }
+
+    //统计报名的学生数量
+    public long registerStudentSummaryTotal(Date startDate, Date endDate, Integer year, Integer season, List<Integer> campusList) {
+        return this.courseRegistrationPoMapper.registerStudentSummaryTotal(startDate,endDate,year,season,campusList);
+    }
 }

@@ -13,6 +13,9 @@ public class FeeSummaryVo {
     //课时费
     private String teacherPay;
 
+    //报名人数
+    private long registerStudentCount;
+
     private String startDate ;
     private String endData ;
 }

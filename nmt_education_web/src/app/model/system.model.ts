@@ -116,6 +116,7 @@ export interface FeeSummary {
   teacherPay?: string;
   startDate?: string;
   endData?: string;
+  registerStudentCount?: number;
 }
 
 export interface RegisterSummaryTotal {

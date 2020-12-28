@@ -715,4 +715,33 @@
         select course_id as courseId ,count(*) as count from course_registration
         where status = 1 and registration_status = 1 GROUP BY course_id
     </select>
+    <select id="registerStudentSummaryTotal" resultType="java.lang.Long">
+        select count(distinct(cr.student_id))
+        from course_registration cr
+        inner join course c on cr.course_id=c.id and c.status = 1
+        <if test="year != null">
+            and c.year = #{year}
+        </if>
+        <if test="season != null">
+            and c.season = #{season}
+        </if>
+        where cr.status = 1
+        and c.campus in
+        <if test="campusList != null and campusList.size() != 0">
+            <foreach collection="campusList" item="campus" open="(" close=")" separator=",">
+                #{campus}
+            </foreach>
+        </if>
+        <if test="startDate != null">
+            <![CDATA[
+            and cr.create_time >= #{startDate}
+            ]]>
+        </if>
+
+        <if test="endDate != null">
+            <![CDATA[    and cr.create_time <= #{endDate}
+        ]]></if>
+
+
+    </select>
 </mapper>

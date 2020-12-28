@@ -4,6 +4,7 @@ import com.nmt.education.pojo.dto.req.RegisterSearchReqDto;
 import com.nmt.education.pojo.po.CourseRegisterCount;
 import com.nmt.education.pojo.po.CourseRegistrationPo;
 
+import java.util.Date;
 import java.util.List;
 
 import com.nmt.education.pojo.vo.CourseRegistrationListVo;
@@ -35,7 +36,10 @@ interface CourseRegistrationPoMapper {
 
     CourseRegistrationListVo queryByCourseStudent(@Param("courseId") Long courseId, @Param("studentId") Long studentId);
 
-    List<CourseRegistrationPo> queryByCourseId(@Param("courseId") Long courseId, @Param( "registerStatus")Integer registerStatus);
+    List<CourseRegistrationPo> queryByCourseId(@Param("courseId") Long courseId, @Param("registerStatus") Integer registerStatus);
 
     List<CourseRegisterCount> countStudentByCourse(@Param("courseIds") List<Long> courseIds);
+
+    long registerStudentSummaryTotal(@Param("startDate") Date startDate, @Param("endDate") Date endDate,
+                                     @Param("year") Integer year, @Param("season") Integer season, @Param("campusList") List<Integer> campusList);
 }
