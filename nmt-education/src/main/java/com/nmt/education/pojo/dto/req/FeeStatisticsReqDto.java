@@ -30,5 +30,7 @@ public class FeeStatisticsReqDto extends BaseSearchPageReqDto {
 
     @ApiModelProperty(value="费用类型 1：付费 2：退费" )
     private Integer feeFlowType;
+    @ApiModelProperty(value="操作人员" )
+    private Integer userCode;
 
 }

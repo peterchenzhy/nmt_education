@@ -73,6 +73,7 @@ export interface RegisterSummaryQueryParam {
     pageSize?: number;
     year?: number;
     season?: number;
+    userCode?: number;
 }
 
 export interface FeeStatisticsQueryParam {
@@ -84,6 +85,7 @@ export interface FeeStatisticsQueryParam {
     pageSize?: number;
     year?: number;
     season?: number;
+    userCode? :number;
 }
 
 export interface RegisterQueryParam {
@@ -123,4 +125,5 @@ export interface RegisterSummaryTotal {
   totalCount?: number;
   signInCount?: number;
   unSignInCount?: number;
+  registerStudentCount?: number;
 }

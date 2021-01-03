@@ -20,5 +20,7 @@ public class RegisterSummaryTotalVo  {
 
     @ApiModelProperty(value = "未消耗科目")
     private Integer unSignInCount ;
+    @ApiModelProperty(value = "报名人数")
+    private long registerStudentCount;
 
 }

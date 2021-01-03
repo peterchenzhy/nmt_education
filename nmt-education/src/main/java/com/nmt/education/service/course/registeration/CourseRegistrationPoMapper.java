@@ -41,5 +41,7 @@ interface CourseRegistrationPoMapper {
     List<CourseRegisterCount> countStudentByCourse(@Param("courseIds") List<Long> courseIds);
 
     long registerStudentSummaryTotal(@Param("startDate") Date startDate, @Param("endDate") Date endDate,
-                                     @Param("year") Integer year, @Param("season") Integer season, @Param("campusList") List<Integer> campusList);
+                                     @Param("year") Integer year, @Param("season") Integer season,
+                                     @Param("userCode") Integer userCode,
+                                     @Param("campusList") List<Integer> campusList);
 }

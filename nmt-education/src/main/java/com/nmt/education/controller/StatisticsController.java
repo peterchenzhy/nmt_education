@@ -10,6 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -36,23 +37,33 @@ public class StatisticsController {
 
     @ApiOperation(value = "费用统计", notes = "费用统计")
     @RequestMapping(value = "/fee", method = RequestMethod.POST)
-    public PageInfo feeStatistics(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
+    public PageInfo feeStatistics(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
+                                  @RequestParam(value = "isManager", required = false, defaultValue = "false") Boolean isManager
             , @RequestBody @Validated FeeStatisticsReqDto dto, BindingResult bindingResult) {
         ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
-        Assert.isTrue(Integer.valueOf(roleId).intValue() == RoleIdEnum.校长.getCode()
-                || Integer.valueOf(roleId).intValue() == RoleIdEnum.财务.getCode(), "您没有该功能权限");
+        baseCheck(logInUser, roleId, isManager, dto);
         return feeStatisticsService.page(dto, logInUser);
     }
 
     @ApiOperation(value = "费用统计--收费，退费，课时费", notes = "费用统计--收费，退费，课时费")
     @RequestMapping(value = "/fee/summary", method = RequestMethod.POST)
-    public FeeSummaryVo feeSummary(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
+    public FeeSummaryVo feeSummary(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
+                                   @RequestParam(value = "isManager", required = false, defaultValue = "false") Boolean isManager
             , @RequestBody @Validated FeeStatisticsReqDto dto, BindingResult bindingResult) {
         ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
-        Assert.isTrue(Integer.valueOf(roleId).intValue() == RoleIdEnum.校长.getCode()
-                || Integer.valueOf(roleId).intValue() == RoleIdEnum.财务.getCode(), "您没有该功能权限");
-        return feeStatisticsService.summary(dto, logInUser);
+        baseCheck(logInUser, roleId, isManager, dto);
+        return feeStatisticsService.summary(dto, logInUser, isManager);
     }
 
+    private void baseCheck(Integer logInUser,  String roleId, Boolean isManager, FeeStatisticsReqDto dto) {
+        if (isManager) {
+            Assert.isTrue(Integer.valueOf(roleId).intValue() == RoleIdEnum.校长.getCode()
+                    || Integer.valueOf(roleId).intValue() == RoleIdEnum.财务.getCode(), "您没有该功能权限");
+        }
+        if (Integer.valueOf(roleId).intValue() == RoleIdEnum.员工.getCode()) {
+            Assert.notNull( dto.getUserCode(), "员工号不能为空");
+            Assert.isTrue(dto.getUserCode().equals(logInUser), "只能查询本人数据");
+        }
+    }
 
 }

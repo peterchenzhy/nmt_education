@@ -503,6 +503,8 @@ public class CourseRegistrationService {
     }
 
     public RegisterSummaryTotalVo registerSummaryTotal(RegisterSummarySearchDto dto, Integer logInUser) {
+        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser);
+        Assert.isTrue(!CollectionUtils.isEmpty(campusList), "没有任何校区权限进行搜索");
         RegisterSummaryTotalVo vo = new RegisterSummaryTotalVo();
         if (Objects.nonNull(dto.getEndDate())) {
             dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
@@ -510,11 +512,14 @@ public class CourseRegistrationService {
         if (Objects.nonNull(dto.getRegisterEndDate())) {
             dto.setRegisterEndDate(DateUtil.parseCloseDate(dto.getRegisterEndDate()));
         }
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser);
-        Assert.isTrue(!CollectionUtils.isEmpty(campusList), "没有任何校区权限进行搜索");
-
+        if (Objects.nonNull(dto.getStartDate())) {
+            dto.setStartDate(DateUtil.parseOpenDate(dto.getStartDate()));
+        }
         vo.setTotalCount(queryCountBySearchDto(dto, campusList, null));
         vo.setSignInCount(queryCountBySearchDto(dto, campusList, Enums.SignInType.已签到.getCode()));
+
+        long count = registerStudentSummaryTotal(dto.getStartDate(), dto.getEndDate(), dto.getYear(), dto.getSeason(),null, campusList);
+        vo.setRegisterStudentCount(count);
 
         vo.setUnSignInCount(vo.getTotalCount() - vo.getSignInCount());
         return vo;
@@ -875,7 +880,7 @@ public class CourseRegistrationService {
     }
 
     //统计报名的学生数量
-    public long registerStudentSummaryTotal(Date startDate, Date endDate, Integer year, Integer season, List<Integer> campusList) {
-        return this.courseRegistrationPoMapper.registerStudentSummaryTotal(startDate,endDate,year,season,campusList);
+    public long registerStudentSummaryTotal(Date startDate, Date endDate, Integer year, Integer season,Integer userCode, List<Integer> campusList) {
+        return this.courseRegistrationPoMapper.registerStudentSummaryTotal(startDate, endDate, year, season, userCode,campusList);
     }
 }

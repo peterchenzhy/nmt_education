@@ -8,7 +8,6 @@ import { Router } from '@angular/router';
 import { AppContextService } from '@shared/service/appcontext.service';
 import {ResponseData, RegisterSummaryQueryParam, RegisterSummaryTotal} from 'src/app/model/system.model';
 import { DatePipe } from '@angular/common';
-import { SIGNIN } from '@shared/constant/system.constant';
 
 @Component({
   selector: 'daily-session-report',
@@ -25,20 +24,11 @@ export class DailySessionReportComponent implements OnInit {
   startDate: Date[] ;
   registerDate: Date[];
   loading = false;
-  total = 0;
-  signInCount = 0;
-  unSignInCount = 0;
-  // pager = {
-  //   front: false
-  // };
+  rst: RegisterSummaryTotal ={registerStudentCount: 0 } ;
   queryParam: RegisterSummaryQueryParam = { pageNo: 1, pageSize: 10 };
-  // data: [];//ResponseData = { list: [], total: 0 };
   data: ResponseData = { list: [], total: 0 };
   courseTypeList = this.appCtx.globalService.COURSE_TYPE_LIST;
   courseSubjectList = this.appCtx.globalService.COURSE_SUBJECT_LIST;
-  courseClassificationList = this.appCtx.globalService.COURSE_CLASSIFICATION_LIST;
-  courseStatusList = this.appCtx.globalService.COURSE_STATUS_LIST;
-  feeTypeList = this.appCtx.globalService.FEE_TYPE_LIST;
   gradeList = this.appCtx.globalService.GRADE_LIST;
   signInList = this.appCtx.globalService.SIGNIN_STATUS_LIST;
   seasonList = this.appCtx.globalService.SEASON_LIST;
@@ -102,9 +92,6 @@ export class DailySessionReportComponent implements OnInit {
           element.statusDetail = this.appCtx.globalService.getOrderStatus(element.registrationStatus);
         });
         this.data = res;
-        // this.total = res.list.length;
-        // this.signInCount = this.data.filter((d: any) => { return d.signIn == SIGNIN.SIGNIN; }).length;
-        // this.unSignInCount = this.total - this.signInCount;
         this.cdr.detectChanges();
       });
 
@@ -113,9 +100,9 @@ export class DailySessionReportComponent implements OnInit {
         tap(() => { this.loading = false; }, () => { this.loading = false; })
       )
       .subscribe((res: RegisterSummaryTotal) => {
-        this.total =res.totalCount;
-        this.signInCount = res.signInCount;
-        this.unSignInCount = res.unSignInCount
+
+        this.rst =res;
+
       });
 
   }

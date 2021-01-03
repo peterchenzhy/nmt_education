@@ -74,4 +74,13 @@ public class FeeStatisticsVo {
     @ApiModelProperty(value = "备注")
     @ExcelProperty(value = "备注",index = 8)
     private String remark;
+
+    @ApiModelProperty(value = "操作人")
+    @ExcelProperty(value = "操作人",index = 9)
+    private String userName;
+
+
+    @ApiModelProperty(value = "操作人code")
+    @ExcelIgnore
+    private Integer userCode;
 }

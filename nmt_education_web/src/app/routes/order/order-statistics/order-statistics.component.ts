@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import {ChangeDetectorRef, Component, Inject, Injector, OnInit, ViewChild} from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { _HttpClient } from '@delon/theme';
 import { tap } from 'rxjs/operators';
@@ -8,12 +8,14 @@ import { Router } from '@angular/router';
 import { AppContextService } from '@shared/service/appcontext.service';
 import {ResponseData, FeeStatisticsQueryParam, FeeSummary} from 'src/app/model/system.model';
 import { DatePipe } from '@angular/common';
+import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 
 @Component({
-  selector: 'fee-statistics-report',
-  templateUrl: './fee-statistics-report.component.html',
+  selector: 'order-statistics',
+  templateUrl: './order-statistics.component.html',
 })
-export class FeeStatisticsReportComponent implements OnInit {
+export class OrderStatisticsComponent implements OnInit {
+
   courseDate = new FormGroup({
     courseDate: new FormControl()
   });
@@ -26,7 +28,7 @@ export class FeeStatisticsReportComponent implements OnInit {
   year: Date;
   queryParam: FeeStatisticsQueryParam = { pageNo: 1, pageSize: 10 };
   data: ResponseData = { list: [], total: 0 };
-  summaryData : FeeSummary={registerStudentCount: 0 };
+  summaryData : FeeSummary ={registerStudentCount: 0 };
   campusList = this.appCtx.globalService.CAMPUS_LIST;
   seasonList = this.appCtx.globalService.SEASON_LIST;
   feeFlowList = [{ label: "退费", value: 0 }, { label: "缴费", value: 1 }];
@@ -60,7 +62,10 @@ export class FeeStatisticsReportComponent implements OnInit {
     private http: _HttpClient,
     public msg: NzMessageService,
     private modalSrv: NzModalService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+
+ private injector: Injector,
+              @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService
   ) {
   }
 
@@ -80,8 +85,9 @@ export class FeeStatisticsReportComponent implements OnInit {
     if(this.year != null){
       this.queryParam.year = new Date(this.year).getFullYear();
     }
-
-    this.appCtx.reportService.queryFeeStatistics(this.queryParam,true)
+    let user = this.tokenService.get();
+    this.queryParam.userCode = user.logInUser;
+    this.appCtx.reportService.queryFeeStatistics(this.queryParam,false)
       .pipe(
         tap(() => { this.loading = false; }, () => { this.loading = false; })
       )
@@ -90,15 +96,12 @@ export class FeeStatisticsReportComponent implements OnInit {
         this.data = res;
         this.cdr.detectChanges();
       });
-    this.appCtx.reportService.queryFeeSummary(this.queryParam,true)
+    this.appCtx.reportService.queryFeeSummary(this.queryParam,false)
       .pipe(
         tap(() => { this.loading = false; }, () => { this.loading = false; })
       )
       .subscribe((res: FeeSummary) => {
         this.summaryData = res;
-        // res.list = res.list || [];
-        // this.data = res;
-        // this.cdr.detectChanges();
       });
   }
 
@@ -133,70 +136,4 @@ export class FeeStatisticsReportComponent implements OnInit {
     this.queryParam.endDate = this.datePipe.transform(result[1], 'yyyy-MM-dd');
   }
 
-  export() {
-    this.loading = true;
-    if(this.year != null){
-      this.queryParam.year = new Date(this.year).getFullYear();
-    }
-
-    this.appCtx.reportService.exportFeeStatistics(this.queryParam)
-      .pipe(
-        tap(() => { this.loading = false; }, () => { this.loading = false; })
-      )
-      .subscribe(((data) => {
-        const link = document.createElement('a');
-        const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
-        link.setAttribute('href', window.URL.createObjectURL(blob));
-        var date = new Date();
-        link.setAttribute('download', '费用统计报表'+date.toLocaleDateString()+'.xlsx');
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }));
-  }
-
-  export2() {
-    this.loading = true;
-    if(this.year != null){
-      this.queryParam.year = new Date(this.year).getFullYear();
-    }
-    this.appCtx.reportService.exportScheduleTeacher(this.queryParam)
-      .pipe(
-        tap(() => { this.loading = false; }, () => { this.loading = false; })
-      )
-      .subscribe(((data) => {
-        const link = document.createElement('a');
-        const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
-        link.setAttribute('href', window.URL.createObjectURL(blob));
-        var date = new Date();
-        link.setAttribute('download', '课程明细统计'+date.toLocaleDateString()+'.xlsx');
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }));
-  }
-  export3() {
-    this.loading = true;
-    if(this.year != null){
-      this.queryParam.year = new Date(this.year).getFullYear();
-    }
-
-    this.appCtx.reportService.exportTeacherSalary(this.queryParam)
-      .pipe(
-        tap(() => { this.loading = false; }, () => { this.loading = false; })
-      )
-      .subscribe(((data) => {
-        const link = document.createElement('a');
-        const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
-        link.setAttribute('href', window.URL.createObjectURL(blob));
-        var date = new Date();
-        link.setAttribute('download', '教师课程统计'+date.toLocaleDateString()+'.xlsx');
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }));
-  }
 }

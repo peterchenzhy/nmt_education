@@ -732,6 +732,9 @@
                 #{campus}
             </foreach>
         </if>
+        <if test="userCode != null">
+            and cr.creator = #{userCode}
+        </if>
         <if test="startDate != null">
             <![CDATA[
             and cr.create_time >= #{startDate}

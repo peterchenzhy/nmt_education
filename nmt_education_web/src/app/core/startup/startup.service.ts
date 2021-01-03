@@ -129,7 +129,13 @@ export class StartupService {
                 text: "订单列表",
                 link: '/order/list',
                 icon: { type: 'icon', value: 'appstore' }
-              }]
+              },
+              {
+                text: "费用信息",
+                link: '/order/statistics',
+                icon: { type: 'icon', value: 'appstore' }
+              }
+              ]
           },
           {
             text: '报表',

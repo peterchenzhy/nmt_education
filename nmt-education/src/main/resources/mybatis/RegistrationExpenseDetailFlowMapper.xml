@@ -57,10 +57,11 @@
         select cr.registration_number as registrationNumber , cr.course_id as courseId ,cr.student_id as studentId
         ,c.campus as campus ,flow.payment as payment
         , c.name as courseName ,s.name as studentName ,flow.create_time as feeTime,flow.amount as amount ,flow.type as feeFlowType
-        ,cr.remark as remark
+        ,cr.remark as remark,u.code as userCode ,u.name as userName
         from registration_expense_detail_flow flow
         inner join course_registration cr on flow.registration_id = cr.id and cr.status = 1
         inner join course c on cr.course_id = c.id and c.status = 1
+        inner join user u on u.code = flow.creator
         and c.campus in
         <if test="campusList != null and campusList.size() != 0">
             <foreach collection="campusList" item="campus" open="(" close=")" separator=",">
@@ -72,7 +73,7 @@
         </if>
         inner join student s on cr.student_id = s.id
         where flow.status = 1
-        and type in
+        and flow.type in
         <if test="typeList != null and typeList.size() != 0">
             <foreach collection="typeList" item="type" open="(" close=")" separator=",">
                 #{type}
@@ -95,6 +96,9 @@
         </if>
         <if test="season != null">
             and c.season = #{season}
+        </if>
+        <if test="userCode != null">
+            and flow.creator = #{userCode}
         </if>
         order by flow.id desc
     </select>
@@ -126,6 +130,9 @@
         </if>
         <if test="season != null">
             and c.season = #{season}
+        </if>
+        <if test="userCode != null">
+            and flow.creator=#{userCode}
         </if>
     </select>
 </mapper>

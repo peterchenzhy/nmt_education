@@ -2,6 +2,7 @@ package com.nmt.education.service.statistics;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
 import com.nmt.education.commmons.*;
 import com.nmt.education.commmons.utils.DateUtil;
 import com.nmt.education.pojo.dto.req.FeeStatisticsReqDto;
@@ -54,8 +55,8 @@ public class FeeStatisticsService {
             dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
         }
         PageInfo<FeeStatisticsVo> pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() ->
-                registrationExpenseDetailService.feeStatistics(dto.getStartDate(), dto.getEndDate(), dto.getYear(),dto.getSeason(),campusList,
-                        ExpenseDetailFlowTypeEnum.feeStatistics2FlowType(dto.getFeeFlowType())));
+                registrationExpenseDetailService.feeStatistics(dto.getStartDate(), dto.getEndDate(), dto.getYear(), dto.getSeason(), campusList,
+                        ExpenseDetailFlowTypeEnum.feeStatistics2FlowType(dto.getFeeFlowType()), dto.getUserCode()));
         pageInfo.getList().stream().forEach(e -> {
             e.setFeeFlowTypeStr(ExpenseDetailFlowTypeEnum.codeOf(e.getFeeFlowType()).getDisplay());
             e.setPaymentStr(Enums.PaymentType.codeOf(e.getPayment()).getDesc());
@@ -98,8 +99,8 @@ public class FeeStatisticsService {
 
     private List<FeeStatisticsVo> getExportData(FeeStatisticsReqDto dto, List<Integer> campusList) {
         PageInfo<FeeStatisticsVo> pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize(), false).doSelectPageInfo(() ->
-                registrationExpenseDetailService.feeStatistics(dto.getStartDate(), dto.getEndDate(),dto.getYear(),dto.getSeason(), campusList,
-                        ExpenseDetailFlowTypeEnum.feeStatistics2FlowType(dto.getFeeFlowType())));
+                registrationExpenseDetailService.feeStatistics(dto.getStartDate(), dto.getEndDate(), dto.getYear(), dto.getSeason(), campusList,
+                        ExpenseDetailFlowTypeEnum.feeStatistics2FlowType(dto.getFeeFlowType()), null));
         pageInfo.getList().stream().forEach(e -> {
                     e.setFeeFlowTypeStr(ExpenseDetailFlowTypeEnum.codeOf(e.getFeeFlowType()).getDisplay());
                     e.setCampusStr(sysConfigService.queryByTypeValue(SysConfigEnum.校区.getCode(), e.getCampus()).getDescription());
@@ -110,31 +111,33 @@ public class FeeStatisticsService {
     }
 
     //一段时间内 收费 退费 教师课时费统计
-    public FeeSummaryVo summary(FeeStatisticsReqDto dto, Integer logInUser) {
+    public FeeSummaryVo summary(FeeStatisticsReqDto dto, Integer logInUser, boolean isManager) {
         Date startDate = DateUtil.parseOpenDate(dto.getStartDate());
         Date endDate = DateUtil.parseCloseDate(dto.getEndDate());
         FeeSummaryVo vo = new FeeSummaryVo();
         List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
 
         List<String> payList = registrationExpenseDetailService.flowSummary(startDate, endDate, dto.getYear(), dto.getSeason(), campusList,
-                ExpenseDetailFlowTypeEnum.新增记录.getCode(), ExpenseDetailFlowTypeEnum.编辑.getCode());
+                dto.getUserCode(),
+                Lists.newArrayList(ExpenseDetailFlowTypeEnum.新增记录.getCode(), ExpenseDetailFlowTypeEnum.编辑.getCode()));
         vo.setPay(NumberUtil.addStringList(payList).toPlainString());
 
         List<String> refundList = registrationExpenseDetailService.flowSummary(startDate, endDate, dto.getYear(), dto.getSeason(), campusList,
-                ExpenseDetailFlowTypeEnum.退费.getCode());
+                dto.getUserCode(),Lists.newArrayList(ExpenseDetailFlowTypeEnum.退费.getCode()));
         vo.setRefund(NumberUtil.addStringList(refundList).toPlainString());
 
-        long count = courseRegistrationService.registerStudentSummaryTotal(startDate, endDate, dto.getYear(), dto.getSeason(), campusList);
+        long count = courseRegistrationService.registerStudentSummaryTotal(startDate, endDate, dto.getYear(), dto.getSeason(), dto.getUserCode(),campusList);
         vo.setRegisterStudentCount(count);
 
-        TeacherScheduleReqDto teacherScheduleReqDto = new TeacherScheduleReqDto();
-        teacherScheduleReqDto.setStartDate(startDate);
-        teacherScheduleReqDto.setEndDate(endDate);
-        teacherScheduleReqDto.setYear(dto.getYear());
-        teacherScheduleReqDto.setSeason(dto.getSeason());
-        List<String> teacherPay = courseScheduleService.getTeacherPay(teacherScheduleReqDto, logInUser);
-        vo.setTeacherPay(NumberUtil.addStringList(teacherPay).toPlainString());
-
+        if (isManager) {
+            TeacherScheduleReqDto teacherScheduleReqDto = new TeacherScheduleReqDto();
+            teacherScheduleReqDto.setStartDate(startDate);
+            teacherScheduleReqDto.setEndDate(endDate);
+            teacherScheduleReqDto.setYear(dto.getYear());
+            teacherScheduleReqDto.setSeason(dto.getSeason());
+            List<String> teacherPay = courseScheduleService.getTeacherPay(teacherScheduleReqDto, logInUser);
+            vo.setTeacherPay(NumberUtil.addStringList(teacherPay).toPlainString());
+        }
         vo.setStartDate(DateUtil.formatDate(startDate));
         vo.setStartDate(DateUtil.formatDate(endDate));
         return vo;

@@ -19,10 +19,13 @@ interface RegistrationExpenseDetailFlowMapper {
 
     List<FeeStatisticsVo> feeStatistics(@Param("startDate") Date startDate, @Param("endDate") Date endDate,
                                         @Param("year") Integer year, @Param("season") Integer season,
-                                        @Param("campusList") List<Integer> campusList, @Param("typeList") List<Integer> typeList);
+                                        @Param("campusList") List<Integer> campusList,
+                                        @Param("userCode") Integer userCode , @Param("typeList") List<Integer> typeList
+                                      );
 
     List<String> flowSummary(@Param("startDate") Date startDate, @Param("endDate") Date endDate,
                              @Param("year") Integer year, @Param("season") Integer season,
                              @Param("campusList") List<Integer> campusList,
-                             @Param("type") int[] type);
+                             @Param("userCode") Integer userCode,
+                             @Param("type") List<Integer> type);
 }

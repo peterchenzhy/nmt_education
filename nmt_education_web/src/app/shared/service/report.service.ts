@@ -13,12 +13,12 @@ export class ReportService {
   ) {
   }
 
-  public queryFeeStatistics(T: FeeStatisticsQueryParam): Observable<Object> {
-    return this.httpClient.post('nmt-education/statistics/fee', T);
+  public queryFeeStatistics(T: FeeStatisticsQueryParam,F: Boolean): Observable<Object> {
+    return this.httpClient.post(`nmt-education/statistics/fee?isManager=${F.valueOf()}`, T);
   }
 
-  public queryFeeSummary(T: FeeStatisticsQueryParam): Observable<Object> {
-    return this.httpClient.post('nmt-education/statistics/fee/summary', T);
+  public queryFeeSummary(T: FeeStatisticsQueryParam,F: Boolean): Observable<Object> {
+    return this.httpClient.post(`nmt-education/statistics/fee/summary?isManager=${F.valueOf()}`, T);
   }
 
   public exportFeeStatistics(T: FeeStatisticsQueryParam): Observable<Blob> {

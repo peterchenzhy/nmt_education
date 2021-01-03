@@ -21,6 +21,6 @@ class FeeStatisticsServiceTest extends BaseTest {
 //        reqDto.setFeeFlowType(copy.getFeeFlowType());
 //        reqDto.setPageNo(copy.getPageNo());
 //        reqDto.setPageSize(copy.getPageSize());
-        System.out.println( feeStatisticsService.summary(reqDto,11000000));
+//        System.out.println( feeStatisticsService.summary(reqDto,11000000));
     }
 }

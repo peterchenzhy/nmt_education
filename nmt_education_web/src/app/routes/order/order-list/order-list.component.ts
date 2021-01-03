@@ -1,14 +1,12 @@
-import { Component, OnInit, ViewChild, TemplateRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { _HttpClient } from '@delon/theme';
-import { tap, map } from 'rxjs/operators';
+import { tap} from 'rxjs/operators';
 import { STComponent, STColumn, STData, STChange } from '@delon/abc';
 import { FormGroup, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Course } from 'src/app/model/course.model';
-import { Order } from 'src/app/model/order.model';
 import { GlobalService } from '@shared/service/global.service';
-import { CourseQueryParam, RegisterQueryParam, RegisterSummaryQueryParam, ResponseData } from "../../../model/system.model";
+import { RegisterQueryParam, ResponseData } from "../../../model/system.model";
 import { AppContextService } from "@shared/service/appcontext.service";
 import { DatePipe } from "@angular/common";
 
@@ -32,10 +30,7 @@ export class OrderListComponent implements OnInit {
     queryParam: RegisterQueryParam = { pageNo: 1, pageSize: 10 };
     courseTypeList = this.appCtx.globalService.COURSE_TYPE_LIST;
     courseSubjectList = this.appCtx.globalService.COURSE_SUBJECT_LIST;
-    courseClassificationList = this.appCtx.globalService.COURSE_CLASSIFICATION_LIST;
-    courseStatusList = this.appCtx.globalService.COURSE_STATUS_LIST;
-    feeTypeList = this.appCtx.globalService.FEE_TYPE_LIST;
-    gradeList = this.appCtx.globalService.GRADE_LIST;
+  gradeList = this.appCtx.globalService.GRADE_LIST;
     seasonList = this.appCtx.globalService.SEASON_LIST;
     q: any = {
         pi: 1,
