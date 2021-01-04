@@ -78,19 +78,37 @@ public class CourseScheduleService {
                         .sorted(Comparator.comparing(CourseSchedulePo::getCourseDatetime)).collect(Collectors.toList());
                 Map<Integer, CourseSchedulePo> idMap = list.stream().collect(Collectors.toMap(CourseSchedulePo::getCourseTimes, Function.identity()));
                 int i = 1;
+                int k = 1;
                 for (CourseSchedulePo e : sortList) {
                     if (e.getCourseTimes() == i) {
                         i++;
+                        k++;
                         continue;
                     }
+                    //原来的时间被删了就是null
+                    CourseSchedulePo courseSchedulePo = idMap.get(k);
+                    while (courseSchedulePo == null) {
+                        if (k > sortList.size()) {
+                            log.error("不存在idMap数据："+e);
+                            break;
+                        }
+                        k = k + 1;
+                        courseSchedulePo = idMap.get(k);
+                    }
+                    if(courseSchedulePo == null){
+                        break;
+                    }
+
                     CourseSchedulePo newPo = new CourseSchedulePo();
                     BeanUtils.copyProperties(e, newPo);
-                    newPo.setSignIn(idMap.get(i).getSignIn());
-                    newPo.setOperateTime(idMap.get(i).getOperateTime());
-                    newPo.setOperator(idMap.get(i).getOperator());
+
+                    newPo.setSignIn(courseSchedulePo.getSignIn());
+                    newPo.setOperateTime(courseSchedulePo.getOperateTime());
+                    newPo.setOperator(courseSchedulePo.getOperator());
                     newPo.setCourseTimes(i);
                     newPoList.add(newPo);
                     i++;
+                    k++;
                 }
                 if (!CollectionUtils.isEmpty(newPoList)) {
                     log.info("调整课程编号，员工：[{}],数据:{}", operator, newPoList);
@@ -307,7 +325,7 @@ public class CourseScheduleService {
                 updateByPrimaryKeySelective(courseSchedulePo);
             }
         } else {
-            throw new RuntimeException("registerationSummaryService.checkSignIn 异常，结果:"+signCount+"入参："+courseSchedulePo) ;
+            throw new RuntimeException("registerationSummaryService.checkSignIn 异常，结果:" + signCount + "入参：" + courseSchedulePo);
         }
 
         //课程状态event

@@ -189,7 +189,7 @@ public class CourseService {
                     eventList.get().add(new TeacherChangeEvent(coursePo.getId(), dto.getTeacherId()));
                 }
                 BeanUtils.copyProperties(dto, coursePo);
-                coursePo.setTimes(dto.getCourseScheduleList().size());
+                coursePo.setTimes(Math.toIntExact(dto.getCourseScheduleList().stream().filter(e ->! Enums.EditFlag.需要删除.getCode().equals(e.getEditFlag())).count()));
                 coursePo.setOperator(operator);
                 coursePo.setOperateTime(new Date());
                 this.updateByPrimaryKeySelective(coursePo);
