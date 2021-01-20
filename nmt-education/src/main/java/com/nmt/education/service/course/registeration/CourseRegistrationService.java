@@ -298,7 +298,7 @@ public class CourseRegistrationService {
      * @param studentAccountPo
      * @param delta                消耗
      * @param flow
-     * @return java.math.BigDecimal 剩下的结余账户
+     * @return java.math.BigDecimal  结余账户 剩下的钱
      * @author PeterChen
      * @modifier PeterChen
      * @version v1
@@ -309,16 +309,18 @@ public class CourseRegistrationService {
         //计算消耗金额
         BigDecimal cost = calculateCost(account, delta);
         BigDecimal lastAmount = account;
-        flow.setRemark(String.format(Consts.结余消耗模板, sysConfigService.queryByTypeValue(Consts.FEE_TYPE_费用类型, flow.getFeeType()).getDescription(),
+        CoursePo coursePo = courseService.selectByPrimaryKey(courseRegistrationPo.getCourseId());
+        flow.setRemark(String.format(Consts.结余消耗模板, coursePo.getName(),sysConfigService.queryByTypeValue(Consts.FEE_TYPE_费用类型,
+                flow.getFeeType()).getDescription(),
                 cost.toPlainString()));
         //设置结余消耗金额
         flow.setAccountAmount(cost.toPlainString());
-        //生成结余流水
-        accountFlowList.add(studentAccountService.generateFlow(updator, studentAccountPo.getId(), cost.toPlainString(),
-                ExpenseDetailFlowTypeEnum.消耗,
-                courseRegistrationPo.getId(), lastAmount.toPlainString(), flow.getRemark()));
         //更新账户余额
         account = account.subtract(cost);
+        //生成结余流水
+        accountFlowList.add(studentAccountService.generateFlow(updator, studentAccountPo.getId(), account.toPlainString(),
+                ExpenseDetailFlowTypeEnum.消耗,
+                courseRegistrationPo.getId(), lastAmount.toPlainString(), flow.getRemark()));
         return account;
     }
 

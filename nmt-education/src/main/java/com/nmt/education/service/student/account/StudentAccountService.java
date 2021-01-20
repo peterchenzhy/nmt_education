@@ -76,7 +76,7 @@ public class StudentAccountService {
         StudentAccountPo accountPo = querybyUserId(userId);
         if (Objects.isNull(accountPo)) {
             //新建账户
-             newStudentAccountPo(logInUser, userId, amount, registerId);
+            newStudentAccountPo(logInUser, userId, amount, registerId);
         } else {
             String lastAmount = accountPo.getAmount();
             accountPo.setAmount(amount.add(NumberUtil.String2Dec(accountPo.getAmount())).toPlainString());
@@ -130,6 +130,18 @@ public class StudentAccountService {
         return po;
     }
 
+    /**
+     * 生成账户流水
+     *
+     * @param logInUser        登录人
+     * @param studentAccountId 学生id
+     * @param amount           账户金额
+     * @param type             类型
+     * @param registerId       报名id
+     * @param lastAmount       账户修改前金额
+     * @param remark           备注
+     * @return
+     */
     public StudentAccountFlowPo generateFlow(Integer logInUser, long studentAccountId, String amount, ExpenseDetailFlowTypeEnum type, Long registerId,
                                              String lastAmount, String remark) {
         StudentAccountFlowPo flowPo = new StudentAccountFlowPo();
