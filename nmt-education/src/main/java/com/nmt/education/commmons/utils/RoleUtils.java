@@ -12,7 +12,7 @@ public class RoleUtils {
      * 校验角色
      * @param roleId
      */
-    public static void check校长财务(@RequestHeader(ROLE_ID_HEAD) String roleId) {
+    public static void check校长财务(String roleId) {
         Assert.notNull(roleId,"角色不存在");
         Assert.isTrue(Integer.valueOf(roleId).intValue() == RoleIdEnum.校长.getCode()
                 || Integer.valueOf(roleId).intValue() == RoleIdEnum.财务.getCode(), "您没有该功能权限");
@@ -22,8 +22,18 @@ public class RoleUtils {
      * 校验角色
      * @param roleId
      */
-    public static void check校长(@RequestHeader(ROLE_ID_HEAD) String roleId) {
+    public static void check校长( String roleId) {
         Assert.notNull(roleId,"角色不存在");
         Assert.isTrue(Integer.valueOf(roleId).intValue() == RoleIdEnum.校长.getCode(), "您没有该功能权限");
     }
+
+    /**
+     * 校验角色
+     * @param roleId
+     */
+    public static boolean is校长( String roleId) {
+        Assert.notNull(roleId,"角色不存在");
+        return Integer.valueOf(roleId).intValue() == RoleIdEnum.校长.getCode();
+    }
+
 }

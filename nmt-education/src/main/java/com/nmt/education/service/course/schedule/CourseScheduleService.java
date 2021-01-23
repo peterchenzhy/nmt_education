@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.*;
 import com.nmt.education.commmons.utils.DateUtil;
+import com.nmt.education.commmons.utils.RoleUtils;
 import com.nmt.education.commmons.utils.SpringContextUtil;
 import com.nmt.education.listener.event.CourseStatusChangeEvent;
 import com.nmt.education.pojo.dto.req.CourseScheduleReqDto;
@@ -244,7 +245,7 @@ public class CourseScheduleService {
      * @param operator
      */
     @Transactional(rollbackFor = Exception.class)
-    public void signIn(List<CourseSignInItem> list, Integer operator) {
+    public void signIn(List<CourseSignInItem> list, Integer operator,String roleId) {
         if (CollectionUtils.isEmpty(list)) {
             return;
         }
@@ -252,8 +253,12 @@ public class CourseScheduleService {
         Assert.notNull(courseSchedulePo, "课表信息为空，id：" + list.get(0).getCourseScheduleId());
 
         CoursePo coursePo = courseService.selectByPrimaryKey(courseSchedulePo.getCourseId());
-        Assert.isTrue(!Enums.CourseStatus.已结课.getCode().equals(coursePo.getCourseStatus()) &&
-                !Enums.CourseStatus.已取消.getCode().equals(coursePo.getCourseStatus()), "课程已经结课或者取消!");
+        Assert.notNull(coursePo,"课程不能为空，id:"+courseSchedulePo.getCourseId());
+
+        if(!RoleUtils.is校长(roleId)){
+            Assert.isTrue(!Enums.CourseStatus.已结课.getCode().equals(coursePo.getCourseStatus()) &&
+                    !Enums.CourseStatus.已取消.getCode().equals(coursePo.getCourseStatus()), "课程已经结课或者取消!");
+        }
 
         List<RegistrationExpenseDetailFlowPo> flowList = new ArrayList<>(list.size());
         List<CourseRegistrationPo> courseRegistrationPoList = new ArrayList<>(list.size());
@@ -281,7 +286,6 @@ public class CourseScheduleService {
                         .stream().filter(p -> Consts.FEE_TYPE_普通单节费用.equals(p.getFeeType()) && Enums.FeeDirection.支付.getCode().equals(p.getFeeDirection()) &&
                                 Enums.FeeStatus.已缴费.getCode().equals(p.getFeeStatus())).findFirst().get();
                 Assert.isTrue(Objects.nonNull(expenseDetailPo), "缴费记录不存在，id：" + courseSignInItem.getRegisterSummaryId());
-//                BigDecimal perAmount = new BigDecimal(expenseDetailPo.getPerAmount());
                 BigDecimal perAmount = NumberUtil.mutify(expenseDetailPo.getPerAmount(), expenseDetailPo.getDiscount());
                 //设置余额
                 if (isConsumed) {

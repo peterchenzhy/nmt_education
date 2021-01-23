@@ -3,10 +3,7 @@ package com.nmt.education.service.student.account;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.nmt.education.commmons.*;
-import com.nmt.education.pojo.po.RegisterationSummaryPo;
-import com.nmt.education.pojo.po.RegistrationExpenseDetailPo;
-import com.nmt.education.pojo.po.StudentAccountFlowPo;
-import com.nmt.education.pojo.po.StudentAccountPo;
+import com.nmt.education.pojo.po.*;
 import com.nmt.education.pojo.vo.StudentAccountVo;
 import com.nmt.education.service.course.registeration.RegistrationExpenseDetailService;
 import com.nmt.education.service.course.registeration.summary.RegisterationSummaryService;
@@ -50,9 +47,10 @@ public class StudentAccountService {
      * 根据课程结转增加结余数据
      *
      * @param logInUser
-     * @param courseId
+     * @param course
      */
-    public void addByCourseFinish(Integer logInUser, Long courseId) {
+    public void addByCourseFinish(Integer logInUser, CoursePo course) {
+        long courseId = course.getId();
         Map<Long, List<RegisterationSummaryPo>> noConsumptionMap = this.registerationSummaryService.queryByCourseId(courseId,
                 Lists.newArrayList(Enums.SignInType.未签到.getCode(), Enums.SignInType.请假.getCode()))
                 .stream().collect(Collectors.groupingBy(RegisterationSummaryPo::getStudentId));
@@ -65,18 +63,18 @@ public class StudentAccountService {
             if (Objects.nonNull(expenseDetailPo)) {
                 BigDecimal amount = NumberUtil.String2Dec(expenseDetailPo.getDiscount())
                         .multiply(NumberUtil.String2Dec(expenseDetailPo.getPerAmount())).multiply(new BigDecimal(v.size()));
-                self.addAmount(logInUser, k, amount, expenseDetailPo.getRegistrationId());
+                self.addAmount(logInUser, k, amount, expenseDetailPo.getRegistrationId(),course);
             }
         });
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Async
-    public void addAmount(Integer logInUser, Long userId, BigDecimal amount, Long registerId) {
+    public void addAmount(Integer logInUser, Long userId, BigDecimal amount, Long registerId, CoursePo course) {
         StudentAccountPo accountPo = querybyUserId(userId);
         if (Objects.isNull(accountPo)) {
             //新建账户
-            newStudentAccountPo(logInUser, userId, amount, registerId);
+            newStudentAccountPo(logInUser, userId, amount, registerId,String.format(Consts.新增结余账户模板,course.getName()+"课程结转"));
         } else {
             String lastAmount = accountPo.getAmount();
             accountPo.setAmount(amount.add(NumberUtil.String2Dec(accountPo.getAmount())).toPlainString());
@@ -84,7 +82,7 @@ public class StudentAccountService {
             accountPo.setOperateTime(new Date());
             this.updateByVersion(accountPo);
             StudentAccountFlowPo flowPo = generateFlow(logInUser, accountPo.getId(), accountPo.getAmount(), ExpenseDetailFlowTypeEnum.编辑, registerId,
-                    lastAmount, "结转增加金额");
+                    lastAmount, course.getName()+"课程结转增加金额："+amount +"元");
             insertFlow(flowPo);
 
         }
@@ -112,7 +110,7 @@ public class StudentAccountService {
      * @version v1
      * @since 2020/8/30 21:57
      */
-    private StudentAccountPo newStudentAccountPo(Integer logInUser, Long userId, BigDecimal amount, Long registerId) {
+    private StudentAccountPo newStudentAccountPo(Integer logInUser, Long userId, BigDecimal amount, Long registerId,String remark) {
         StudentAccountPo po = new StudentAccountPo();
         po.setUserId(userId);
         po.setAmount(amount.toPlainString());
@@ -124,7 +122,7 @@ public class StudentAccountService {
         po.setVersion(1);
         this.insertSelective(po);
         StudentAccountFlowPo flowPo = generateFlow(logInUser, po.getId(), po.getAmount(), ExpenseDetailFlowTypeEnum.新增记录, registerId,
-                BigDecimal.ZERO.toPlainString(), ExpenseDetailFlowTypeEnum.新增记录.getDescription());
+                BigDecimal.ZERO.toPlainString(), remark);
         insertFlow(flowPo);
 
         return po;

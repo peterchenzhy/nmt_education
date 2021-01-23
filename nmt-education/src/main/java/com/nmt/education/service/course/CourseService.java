@@ -350,7 +350,7 @@ public class CourseService {
         Assert.isTrue(!Enums.CourseStatus.已结课.getCode().equals(coursePo.getCourseStatus()) &&
                 !Enums.CourseStatus.已取消.getCode().equals(coursePo.getCourseStatus()), "课程已经结课或者取消，无法再进行编辑");
         //结余数据增加
-        studentAccountService.addByCourseFinish(logInUser, courseId);
+        studentAccountService.addByCourseFinish(logInUser, coursePo);
         //更新课程状态
         coursePo.setCourseStatus(Enums.CourseStatus.已结课.getCode());
         coursePo.setOperateTime(new Date());
