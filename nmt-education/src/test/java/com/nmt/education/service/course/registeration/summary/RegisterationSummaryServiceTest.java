@@ -45,7 +45,7 @@ class RegisterationSummaryServiceTest extends BaseTest {
         c2.setCourseId(7L);
         List list = Lists.newArrayList(c1,c2);
 
-        courseScheduleService.signIn(list,333);
+        courseScheduleService.signIn(list,333,"1");
 
         Thread.sleep(5*1000L);
     }

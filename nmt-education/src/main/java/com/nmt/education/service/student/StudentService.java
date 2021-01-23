@@ -289,12 +289,13 @@ public class StudentService {
     public void accountEdit(AccountEditReqDto accountEditReqDto, int logInUser) {
         StudentAccountPo accountPo = studentAccountService.querybyUserId(accountEditReqDto.getStudentId());
         Assert.notNull(accountPo, "学生账户不存在！");
+        String prevAmount = accountPo.getAmount();
         accountPo.setAmount(accountEditReqDto.getAmount());
         accountPo.setRemark(accountEditReqDto.getRemark());
         studentAccountService.updateByVersion(accountPo);
         //插入流水
         StudentAccountFlowPo flowPo = studentAccountService.generateFlow(logInUser, accountPo.getId(), accountEditReqDto.getAmount(),
-                ExpenseDetailFlowTypeEnum.编辑, -1L, accountPo.getAmount(), Consts.账户金额更新模板 + accountEditReqDto.getRemark());
+                ExpenseDetailFlowTypeEnum.编辑, -1L,prevAmount, Consts.账户金额更新模板 + accountEditReqDto.getRemark());
         studentAccountService.insertFlow(flowPo);
     }
 
