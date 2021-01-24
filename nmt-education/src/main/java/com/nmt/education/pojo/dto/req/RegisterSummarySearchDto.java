@@ -71,6 +71,9 @@ public class RegisterSummarySearchDto {
     @ApiModelProperty(value = "年度")
     private Integer year;
 
+    @ApiModelProperty(value = "校区")
+    private Integer campus;
+
     @ApiModelProperty(value = "分页 页码")
     private Integer pageNo = 1;
 

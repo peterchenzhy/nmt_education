@@ -1,6 +1,6 @@
 import {Injectable, Injector} from '@angular/core'
 import {Observable} from 'rxjs';
-import {FeeStatisticsQueryParam} from 'src/app/model/system.model';
+import {FeeStatisticsQueryParam, RegisterSummaryQueryParam} from 'src/app/model/system.model';
 import {HttpClient} from '@angular/common/http';
 import {SettingsService} from '@delon/theme';
 
@@ -34,4 +34,10 @@ export class ReportService {
     return this.httpClient.post('nmt-education/export/schedule/teacher/salary', T, {responseType: 'blob'});
     // return this.httpClient.post('nmt-education/export/feeStatistics', T);
   }
+
+  public scheduleSignIbSummary(T: RegisterSummaryQueryParam): Observable<Blob> {
+    return this.httpClient.post('nmt-education/export/schedule/signIn/summary', T, {responseType: 'blob'});
+    // return this.httpClient.post('nmt-education/export/feeStatistics', T);
+  }
+
 }

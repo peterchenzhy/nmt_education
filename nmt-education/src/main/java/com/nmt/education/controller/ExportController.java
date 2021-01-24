@@ -3,8 +3,10 @@ package com.nmt.education.controller;
 import com.nmt.education.commmons.utils.ReqDtoCheckUtil;
 import com.nmt.education.commmons.utils.RoleUtils;
 import com.nmt.education.pojo.dto.req.FeeStatisticsReqDto;
+import com.nmt.education.pojo.dto.req.RegisterSummarySearchDto;
 import com.nmt.education.pojo.dto.req.TeacherScheduleReqDto;
 import com.nmt.education.service.export.FeeStatisticsExportService;
+import com.nmt.education.service.export.ScheduleExpiredExportService;
 import com.nmt.education.service.export.ScheduleTeacherExportService;
 import com.nmt.education.service.export.TeacherSalarySummaryExportService;
 import io.swagger.annotations.Api;
@@ -40,6 +42,8 @@ public class ExportController {
     private ScheduleTeacherExportService scheduleTeacher;
     @Autowired
     private TeacherSalarySummaryExportService teacherSalarySummaryExportService;
+    @Autowired
+    private ScheduleExpiredExportService scheduleExpiredExportService;
 
     @ApiOperation(value = "费用统计报表导出", notes = "费用统计报表导出")
     @RequestMapping(value = "/feeStatistics", method = RequestMethod.POST)
@@ -68,6 +72,14 @@ public class ExportController {
         teacherSalarySummaryExportService.doExport(dto, logInUser, response);
     }
 
+    @ApiOperation(value = "签到统计报表", notes = "签到统计报表")
+    @RequestMapping(value = "/schedule/signIn/summary", method = RequestMethod.POST)
+    public void scheduleSignIbSummary(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
+          , @RequestBody @Validated RegisterSummarySearchDto dto, BindingResult bindingResult, HttpServletResponse response) throws IOException {
+        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
+        RoleUtils.check校长财务(roleId);
+        scheduleExpiredExportService.doExport(dto, logInUser, response);
 
+    }
 
 }

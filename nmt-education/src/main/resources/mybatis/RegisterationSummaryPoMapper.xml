@@ -105,7 +105,9 @@
         rs.creator as creator, rs.create_time as createTime, rs.operator as operator, rs.operate_time as operateTime
         ,c.name as courseName,s.name as studentName , rs.create_time as registerTime,cr.registration_number as registrationNumber
         ,cr.balance_amount as balanceAmount ,cr.total_amount as totalAmount,cr.registration_status as registrationStatus
-        ,cr.registration_type as registrationType,cr.fee_status as feeStatus,cr.registration_number as registrationNumber
+        ,cr.registration_type as registrationType,cr.fee_status as feeStatus,cr.registration_number as registrationNumber,
+        c.campus as campus,c.course_subject as courseSubject,c.grade as grade,cs.course_datetime as courseDatetime,
+        c.season as season
         from registeration_summary rs
         inner join course c on c.id= rs.course_id
         inner join course_registration cr on cr.id=rs.course_registration_id

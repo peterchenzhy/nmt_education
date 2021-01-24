@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
 
@@ -26,5 +27,17 @@ public class RegisterSummaryVo extends CourseRegistrationPo {
 
     @ApiModelProperty(value = "签到状态")
     private Integer signIn ;
+
+    @ApiModelProperty(value = "校区")
+    private Integer campus;
+    @ApiModelProperty(value = "科目")
+    private Integer courseSubject ;
+    @ApiModelProperty(value = "年级")
+    private Integer grade;
+    @ApiModelProperty(value = "上课时间")
+    private Date courseDatetime;
+    @ApiModelProperty(value = "季节")
+    private Integer season;
+
 
 }

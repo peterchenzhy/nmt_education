@@ -106,4 +106,6 @@ public class CourseRegistrationPo {
      */
     @ApiModelProperty(value = "更改时间")
     private Date operateTime;
+    @ApiModelProperty(value = "课程报名id")
+    private long courseRegistrationId;
 }

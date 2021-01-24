@@ -32,10 +32,12 @@ export class DailySessionReportComponent implements OnInit {
   gradeList = this.appCtx.globalService.GRADE_LIST;
   signInList = this.appCtx.globalService.SIGNIN_STATUS_LIST;
   seasonList = this.appCtx.globalService.SEASON_LIST;
+  campusList = this.appCtx.globalService.CAMPUS_LIST;
 
   @ViewChild('st', { static: true })
   st: STComponent;
   columns: STColumn[] = [
+    { title: '校区', index: 'campus',render:"campus" },
     { title: '订单编号', index: 'registrationNumber' },
     {
       title: '报名时间', index: 'registerTime', type: 'date',
@@ -148,4 +150,26 @@ export class DailySessionReportComponent implements OnInit {
     this.queryParam.registerEndDate = this.datePipe.transform(result[1], 'yyyy-MM-dd');
   }
 
+  export() {
+    this.loading = true;
+    if(this.year != null){
+      this.queryParam.year = new Date(this.year).getFullYear();
+    }
+
+    this.appCtx.reportService.scheduleSignIbSummary(this.queryParam)
+        .pipe(
+            tap(() => { this.loading = false; }, () => { this.loading = false; })
+        )
+        .subscribe(((data) => {
+          const link = document.createElement('a');
+          const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
+          link.setAttribute('href', window.URL.createObjectURL(blob));
+          var date = new Date();
+          link.setAttribute('download', '签到统计报表'+date.toLocaleDateString()+'.xlsx');
+          link.style.visibility = 'hidden';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }));
+  }
 }

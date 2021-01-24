@@ -104,6 +104,13 @@ public class RegistrationExpenseDetailService {
         return this.registrationExpenseDetailPoMapper.queryRegisterId(registerId);
     }
 
+    public List<RegistrationExpenseDetailPo> queryRegisterIds(List<Long> registerIds) {
+        if(CollectionUtils.isEmpty(registerIds)){
+            return Collections.emptyList();
+        }
+        return this.registrationExpenseDetailPoMapper.queryRegisterIds(registerIds);
+    }
+
     public List<RegistrationExpenseDetailPo> selectByIds(List<Long> ids) {
         if (CollectionUtils.isEmpty(ids)) {
             return Collections.emptyList();

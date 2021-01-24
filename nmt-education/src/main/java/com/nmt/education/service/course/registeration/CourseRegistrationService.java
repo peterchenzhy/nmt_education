@@ -497,7 +497,7 @@ public class CourseRegistrationService {
         if (Objects.nonNull(dto.getRegisterEndDate())) {
             dto.setRegisterEndDate(DateUtil.parseCloseDate(dto.getRegisterEndDate()));
         }
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser);
+        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser,dto.getCampus());
         Assert.isTrue(!CollectionUtils.isEmpty(campusList), "没有任何校区权限进行搜索");
         PageInfo<RegisterSummaryVo> pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> queryBySearchDto(dto
                 , campusList));
@@ -505,7 +505,7 @@ public class CourseRegistrationService {
     }
 
     public RegisterSummaryTotalVo registerSummaryTotal(RegisterSummarySearchDto dto, Integer logInUser) {
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser);
+        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser,dto.getCampus());
         Assert.isTrue(!CollectionUtils.isEmpty(campusList), "没有任何校区权限进行搜索");
         RegisterSummaryTotalVo vo = new RegisterSummaryTotalVo();
         if (Objects.nonNull(dto.getEndDate())) {
@@ -538,7 +538,7 @@ public class CourseRegistrationService {
      * @version v1
      * @since 2020/5/11 22:02
      */
-    private List<RegisterSummaryVo> queryBySearchDto(RegisterSummarySearchDto dto, List<Integer> campusList) {
+    public List<RegisterSummaryVo> queryBySearchDto(RegisterSummarySearchDto dto, List<Integer> campusList) {
 
         return this.registerationSummaryService.queryBySearchDto(dto, campusList);
     }

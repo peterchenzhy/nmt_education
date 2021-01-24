@@ -22,7 +22,7 @@ import static com.nmt.education.commmons.Consts.ROLE_ID_HEAD;
  * StatisticsController
  *
  * @author PeterChen
- * @summary AdminControlle
+ * @summary AdminController
  * @Copyright (c) 2020, PeterChen Group All Rights Reserved.
  * @Description AdminControlle
  * @since 2020-03-22 22:32

@@ -28,6 +28,10 @@ public interface Consts {
 
     Integer FEE_TYPE_普通单节费用 = 1;
     Integer FEE_TYPE_费用类型 = 7;
+    Integer CONFIG_TYPE_校区 = 1;
+    Integer CONFIG_TYPE_科目 = 4;
+    Integer CONFIG_TYPE_年级 = 6;
+    Integer CONFIG_TYPE_季节 = 2;
 
     int BATCH_100 = 100;
 

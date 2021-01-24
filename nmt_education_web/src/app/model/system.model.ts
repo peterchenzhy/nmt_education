@@ -74,6 +74,7 @@ export interface RegisterSummaryQueryParam {
     year?: number;
     season?: number;
     userCode?: number;
+    campus?:number;
 }
 
 export interface FeeStatisticsQueryParam {

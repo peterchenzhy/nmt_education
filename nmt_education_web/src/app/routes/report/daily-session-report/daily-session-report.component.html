@@ -33,7 +33,41 @@
           </nz-form-control>
         </nz-form-item>
       </div>
+
       <div nz-col nzMd="6" nzSm="24">
+        <nz-form-item>
+          <nz-form-label nzFor="campus">校区</nz-form-label>
+          <nz-form-control nzErrorTip="请选择校区">
+            <nz-select [(ngModel)]="queryParam.campus" name="campus" [nzPlaceHolder]="'请选择校区'"
+                       [nzShowSearch]="true">
+              <nz-option *ngFor="let i of campusList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col nzMd="24" nzSm="24"></div>
+      <div nz-col nzMd="6" nzSm="24" *ngIf="expandForm">
+        <nz-form-item>
+          <nz-form-label>针对年级</nz-form-label>
+          <nz-form-control nzErrorTip="请选择年级">
+            <nz-select [(ngModel)]="queryParam.grade" name="grade" [nzPlaceHolder]="'请选择年级'" [nzShowSearch]="true">
+              <nz-option *ngFor="let i of gradeList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzMd="6" nzSm="24" *ngIf="expandForm">
+        <nz-form-item>
+          <nz-form-label>签到状态</nz-form-label>
+          <nz-form-control nzErrorTip="请选择签到状态">
+            <nz-select [(ngModel)]="queryParam.signIn" name="signIn" [nzPlaceHolder]="'请选择签到状态'" [nzShowSearch]="true">
+              <nz-option *ngFor="let i of signInList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzMd="6" nzSm="24" *ngIf="expandForm">
         <nz-form-item>
           <nz-form-label nzFor="courseType">课程类型</nz-form-label>
           <nz-form-control nzErrorTip="请输入课程类型">
@@ -44,27 +78,7 @@
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div nz-col nzMd="24" nzSm="24"></div>
-      <div nz-col nzMd="4" nzSm="24" *ngIf="expandForm">
-        <nz-form-item>
-          <nz-form-label>针对年级</nz-form-label>
-          <nz-form-control nzErrorTip="请选择年级">
-            <nz-select [(ngModel)]="queryParam.grade" name="grade" [nzPlaceHolder]="'请选择年级'" [nzShowSearch]="true">
-              <nz-option *ngFor="let i of gradeList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
-            </nz-select>
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-      <div nz-col nzMd="4" nzSm="24" *ngIf="expandForm">
-        <nz-form-item>
-          <nz-form-label>签到状态</nz-form-label>
-          <nz-form-control nzErrorTip="请选择签到状态">
-            <nz-select [(ngModel)]="queryParam.signIn" name="signIn" [nzPlaceHolder]="'请选择签到状态'" [nzShowSearch]="true">
-              <nz-option *ngFor="let i of signInList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
-            </nz-select>
-          </nz-form-control>
-        </nz-form-item>
-      </div>
+
       <div nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
         <div>
           <nz-form-item>
@@ -88,6 +102,8 @@
         </div>
       </div>
       <div nz-col [nzSpan]="24" class="text-right">
+        <button nz-button type="button" (click)="export()" class="mx-sm" [nzType]="'primary'" [nzLoading]="loading"
+                [nzSize]="'size'"><i nz-icon nzType="download"></i>下载签到统计报表</button>
         <button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
         <button nz-button type="reset" (click)="reset()" class="mx-sm">重置</button>
         <a (click)="expandForm = !expandForm">
@@ -121,6 +137,9 @@
     </ng-template>
     <ng-template st-row="signIn" let-i>
       {{appCtx.globalService.getSignInStatusLabel(i.signIn)}}
+    </ng-template>
+    <ng-template st-row="campus" let-i>
+      {{appCtx.globalService.getCampusLabel(i.campus)}}
     </ng-template>
   </st>
 </nz-card>
