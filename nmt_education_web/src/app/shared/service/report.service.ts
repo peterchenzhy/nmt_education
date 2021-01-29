@@ -40,4 +40,8 @@ export class ReportService {
     // return this.httpClient.post('nmt-education/export/feeStatistics', T);
   }
 
+  public summary(T: RegisterSummaryQueryParam): Observable<Blob> {
+    return this.httpClient.post('nmt-education/export/summary', T, {responseType: 'blob'});
+  }
+
 }

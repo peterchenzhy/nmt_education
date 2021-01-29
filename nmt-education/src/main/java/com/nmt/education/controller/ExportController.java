@@ -4,11 +4,9 @@ import com.nmt.education.commmons.utils.ReqDtoCheckUtil;
 import com.nmt.education.commmons.utils.RoleUtils;
 import com.nmt.education.pojo.dto.req.FeeStatisticsReqDto;
 import com.nmt.education.pojo.dto.req.RegisterSummarySearchDto;
+import com.nmt.education.pojo.dto.req.SummaryExportReqDto;
 import com.nmt.education.pojo.dto.req.TeacherScheduleReqDto;
-import com.nmt.education.service.export.FeeStatisticsExportService;
-import com.nmt.education.service.export.ScheduleExpiredExportService;
-import com.nmt.education.service.export.ScheduleTeacherExportService;
-import com.nmt.education.service.export.TeacherSalarySummaryExportService;
+import com.nmt.education.service.export.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +42,8 @@ public class ExportController {
     private TeacherSalarySummaryExportService teacherSalarySummaryExportService;
     @Autowired
     private ScheduleExpiredExportService scheduleExpiredExportService;
+    @Autowired
+    private SummaryExportService summaryExportService;
 
     @ApiOperation(value = "费用统计报表导出", notes = "费用统计报表导出")
     @RequestMapping(value = "/feeStatistics", method = RequestMethod.POST)
@@ -79,6 +79,16 @@ public class ExportController {
         ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
         RoleUtils.check校长财务(roleId);
         scheduleExpiredExportService.doExport(dto, logInUser, response);
+
+    }
+
+    @ApiOperation(value = "班级汇总统计表", notes = "班级汇总统计表")
+    @RequestMapping(value = "/summary", method = RequestMethod.POST)
+    public void summary(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
+            , @RequestBody @Validated SummaryExportReqDto dto, BindingResult bindingResult, HttpServletResponse response) throws IOException {
+        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
+        RoleUtils.check校长财务(roleId);
+        summaryExportService.doExport(dto, logInUser, response);
 
     }
 

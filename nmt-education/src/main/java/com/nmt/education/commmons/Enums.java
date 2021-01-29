@@ -38,6 +38,19 @@ public interface Enums {
             this.code = code;
             this.icon = icon;
         }
+        public static String code2Desc(Integer code) {
+            CourseStatus type = null;
+            for (CourseStatus e : CourseStatus.values()) {
+                if (e.getCode().equals(code)) {
+                    type =  e;
+                }
+            }
+            if(Objects.nonNull(type)){
+                return type.getDesc();
+            }else{
+                return Strings.EMPTY;
+            }
+        }
     }
 
     /**

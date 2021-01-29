@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.sound.midi.Soundbank;
 import java.util.Date;
 
 import static com.auth0.jwt.impl.PublicClaims.EXPIRES_AT;
@@ -66,23 +67,21 @@ public class TokenUtil {
 
     public static void main(String[] args) throws InterruptedException {
         JWT_KEY = "aa";
-        EXPIRE_MINUTE =1 ;
-        REFRESH_TOKEN_MINUTE = 1 ;
+        EXPIRE_MINUTE =5 ;
+        REFRESH_TOKEN_MINUTE = 2 ;
         Token t = new Token(1, "test");
         String token = generateToken(t);
         System.out.println(new Date()+  "--token: " + token);
 
-        Thread.sleep(10 * 1000);
+        Thread.sleep(59 * 1000);
         Token newToken = verifyToken(token);
         System.out.println(new Date()+"--token: " + newToken.jwtToken);
 
-        Thread.sleep(59 * 1000);
+        Thread.sleep(130 * 1000);
         Token newToken_a = verifyToken(newToken.jwtToken);
         System.out.println(new Date()+"--token: " + newToken_a.jwtToken);
 
 
-        Token newToken2 = verifyToken(token);
-        System.out.println(new Date()+"--token: " + newToken.jwtToken);
     }
 
     @Setter

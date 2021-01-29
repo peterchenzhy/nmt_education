@@ -34,7 +34,7 @@ interface CourseRegistrationPoMapper {
 
     CourseRegistrationVo queryVoById(@Param("id") Long id);
 
-    CourseRegistrationListVo queryByCourseStudent(@Param("courseId") Long courseId, @Param("studentId") Long studentId);
+    List<CourseRegistrationListVo> queryByCourseStudent(@Param("courseId") Long courseId, @Param("studentId") Long studentId);
 
     List<CourseRegistrationPo> queryByCourseId(@Param("courseId") Long courseId, @Param("registerStatus") Integer registerStatus);
 

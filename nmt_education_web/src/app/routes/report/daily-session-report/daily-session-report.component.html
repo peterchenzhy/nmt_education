@@ -104,6 +104,8 @@
       <div nz-col [nzSpan]="24" class="text-right">
         <button nz-button type="button" (click)="export()" class="mx-sm" [nzType]="'primary'" [nzLoading]="loading"
                 [nzSize]="'size'"><i nz-icon nzType="download"></i>下载签到统计报表</button>
+        <button nz-button type="button" (click)="summaryExport()" class="mx-sm" [nzType]="'primary'" [nzLoading]="loading"
+                [nzSize]="'size'"><i nz-icon nzType="download"></i>下载班级统计报表</button>
         <button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
         <button nz-button type="reset" (click)="reset()" class="mx-sm">重置</button>
         <a (click)="expandForm = !expandForm">

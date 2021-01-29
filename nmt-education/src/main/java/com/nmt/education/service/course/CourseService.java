@@ -123,8 +123,7 @@ public class CourseService {
         }
         List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(loginUserId, dto.getCampus());
         Assert.isTrue(!CollectionUtils.isEmpty(campusList), "没有任何校区权限进行课程搜索");
-        PageInfo<CoursePo> poPage = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.coursePoMapper.queryByDto(dto,
-                campusList));
+        PageInfo<CoursePo> poPage = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> getCoursePos(dto, campusList));
         if (CollectionUtils.isEmpty(poPage.getList())) {
             return new PageInfo<>();
         }
@@ -160,6 +159,11 @@ public class CourseService {
         });
         return voPageInfo;
 
+    }
+
+    public List<CoursePo> getCoursePos(CourseSearchDto dto, List<Integer> campusList) {
+        return this.coursePoMapper.queryByDto(dto,
+                campusList);
     }
 
     /**

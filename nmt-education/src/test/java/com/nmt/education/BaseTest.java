@@ -13,7 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {"logging.path=logs",
-                "spring.profiles.active=dev",
+                "spring.profiles.active=prod",
                 "eureka.client.registerWithEureka=false"
         })
 @DirtiesContext

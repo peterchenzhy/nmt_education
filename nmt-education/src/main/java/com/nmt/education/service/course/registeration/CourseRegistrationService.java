@@ -165,9 +165,13 @@ public class CourseRegistrationService {
         Assert.notNull(coursePo, "课程信息不存在！id:" + dto.getCourseId());
         Assert.notEmpty(dto.getCourseScheduleIds(), "报名课时必填！id:" + dto.getCourseId());
         if (Enums.EditFlag.新增.getCode().equals(dto.getEditFlag())) {
-            CourseRegistrationListVo vo = queryByCourseStudent(dto.getCourseId(), dto.getStudentId());
+            List<CourseRegistrationListVo> courseRegistrationListVos = queryByCourseStudent(dto.getCourseId(), dto.getStudentId());
+            CourseRegistrationListVo vo =
+                    courseRegistrationListVos.stream().filter(v -> Enums.RegistrationStatus.正常.getCode().equals(v.getRegistrationStatus()))
+                            .findAny().orElse(null);
             if (Objects.nonNull(vo)) {
-                Assert.isTrue(Enums.RegistrationStatus.已退费.getCode().equals(vo.getRegistrationStatus()), "报名记录已经存在，不能重复报名！id：" + vo.getId());
+                Assert.isTrue(Enums.RegistrationStatus.正常.getCode().equals(vo.getRegistrationStatus()),
+                        "报名记录已经存在，不能重复报名！报名编号：" + vo.getRegistrationNumber());
             }
         }
         Assert.isTrue(!Enums.CourseStatus.已结课.getCode().equals(coursePo.getCourseStatus()) &&
@@ -185,7 +189,7 @@ public class CourseRegistrationService {
      * @version v1
      * @since 2020/5/8 22:38
      */
-    public CourseRegistrationListVo queryByCourseStudent(Long courseId, Long studentId) {
+    public List<CourseRegistrationListVo> queryByCourseStudent(Long courseId, Long studentId) {
         return this.courseRegistrationPoMapper.queryByCourseStudent(courseId, studentId);
     }
 
@@ -310,7 +314,7 @@ public class CourseRegistrationService {
         BigDecimal cost = calculateCost(account, delta);
         BigDecimal lastAmount = account;
         CoursePo coursePo = courseService.selectByPrimaryKey(courseRegistrationPo.getCourseId());
-        flow.setRemark(String.format(Consts.结余消耗模板, coursePo.getName(),sysConfigService.queryByTypeValue(Consts.FEE_TYPE_费用类型,
+        flow.setRemark(String.format(Consts.结余消耗模板, coursePo.getName(), sysConfigService.queryByTypeValue(Consts.FEE_TYPE_费用类型,
                 flow.getFeeType()).getDescription(),
                 cost.toPlainString()));
         //设置结余消耗金额
@@ -497,7 +501,7 @@ public class CourseRegistrationService {
         if (Objects.nonNull(dto.getRegisterEndDate())) {
             dto.setRegisterEndDate(DateUtil.parseCloseDate(dto.getRegisterEndDate()));
         }
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser,dto.getCampus());
+        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
         Assert.isTrue(!CollectionUtils.isEmpty(campusList), "没有任何校区权限进行搜索");
         PageInfo<RegisterSummaryVo> pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> queryBySearchDto(dto
                 , campusList));
@@ -505,7 +509,7 @@ public class CourseRegistrationService {
     }
 
     public RegisterSummaryTotalVo registerSummaryTotal(RegisterSummarySearchDto dto, Integer logInUser) {
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser,dto.getCampus());
+        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
         Assert.isTrue(!CollectionUtils.isEmpty(campusList), "没有任何校区权限进行搜索");
         RegisterSummaryTotalVo vo = new RegisterSummaryTotalVo();
         if (Objects.nonNull(dto.getEndDate())) {
@@ -520,7 +524,7 @@ public class CourseRegistrationService {
         vo.setTotalCount(queryCountBySearchDto(dto, campusList, null));
         vo.setSignInCount(queryCountBySearchDto(dto, campusList, Enums.SignInType.已签到.getCode()));
 
-        long count = registerStudentSummaryTotal(dto.getStartDate(), dto.getEndDate(), dto.getYear(), dto.getSeason(),null, campusList);
+        long count = registerStudentSummaryTotal(dto.getStartDate(), dto.getEndDate(), dto.getYear(), dto.getSeason(), null, campusList);
         vo.setRegisterStudentCount(count);
 
         vo.setUnSignInCount(vo.getTotalCount() - vo.getSignInCount());
@@ -882,7 +886,21 @@ public class CourseRegistrationService {
     }
 
     //统计报名的学生数量
-    public long registerStudentSummaryTotal(Date startDate, Date endDate, Integer year, Integer season,Integer userCode, List<Integer> campusList) {
-        return this.courseRegistrationPoMapper.registerStudentSummaryTotal(startDate, endDate, year, season, userCode,campusList);
+    public long registerStudentSummaryTotal(Date startDate, Date endDate, Integer year, Integer season, Integer userCode, List<Integer> campusList) {
+        return this.courseRegistrationPoMapper.registerStudentSummaryTotal(startDate, endDate, year, season, userCode, campusList);
+    }
+
+    /**
+     * 根据课程id 获取查询报名记录
+     *
+     * @param courseId
+     * @return java.util.List<com.nmt.education.pojo.po.CourseRegistrationPo>
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2021/1/28 22:19
+     */
+    public List<CourseRegistrationPo> queryByCourseId(long courseId) {
+        return this.courseRegistrationPoMapper.queryByCourseId(courseId,null);
     }
 }

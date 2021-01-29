@@ -34,6 +34,7 @@ public interface Consts {
     Integer CONFIG_TYPE_季节 = 2;
 
     int BATCH_100 = 100;
+    int BATCH_10 = 10;
 
 
     String ZERO = "0";
