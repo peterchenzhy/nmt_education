@@ -1,7 +1,9 @@
 package com.nmt.education.service.export;
 
+import com.google.common.collect.Lists;
 import com.nmt.education.commmons.Consts;
 import com.nmt.education.commmons.Enums;
+import com.nmt.education.commmons.ExpenseDetailFlowTypeEnum;
 import com.nmt.education.commmons.NumberUtil;
 import com.nmt.education.pojo.dto.req.CourseSearchDto;
 import com.nmt.education.pojo.dto.req.SummaryExportReqDto;
@@ -76,11 +78,15 @@ public class SummaryExportService extends AbstractExportService<SummaryExportReq
                             .flatMap(l -> l.stream().map(CourseRegistrationPo::getStudentId)).collect(Collectors.toList())
             ).stream().collect(Collectors.toMap(StudentPo::getId, StudentPo::getName));
 
-
             //获取付费记录 k->报名id
             Map<Long, List<RegistrationExpenseDetailPo>> registerExpenseMap =
                     expenseDetailService.queryRegisterIds(registerIds)
                             .stream().collect(Collectors.groupingBy(RegistrationExpenseDetailPo::getRegistrationId));
+            //退费流水
+            Map<Long, List<RegistrationExpenseDetailFlowPo>> registerExpenseRefundFlowMap = expenseDetailService.getExpenseDetailFlowList(registerIds,
+                    Lists.newArrayList(ExpenseDetailFlowTypeEnum.退费.getCode(), ExpenseDetailFlowTypeEnum.编辑.getCode(), ExpenseDetailFlowTypeEnum.新增记录.getCode()))
+                    .stream().collect(Collectors.groupingBy(RegistrationExpenseDetailFlowPo::getRegistrationId));
+
             //报名汇总表 k->报名id
             Map<Long, List<RegisterationSummaryPo>> registerSummaryMap = registerationSummaryService.queryByRegisterIds(registerIds)
                     .stream().collect(Collectors.groupingBy(RegisterationSummaryPo::getCourseRegistrationId));
@@ -92,9 +98,10 @@ public class SummaryExportService extends AbstractExportService<SummaryExportReq
                     BeanUtils.copyProperties(baseSummaryExportDto, personSummaryExportDto);
 
                     //处理报名缴费记录
-                    processRegisterExpenseDetail(personSummaryExportDto, registerExpenseMap.get(registration.getId()), registration);
+                    processRegisterExpenseDetail(personSummaryExportDto, registerExpenseMap.get(registration.getId()),
+                            registerExpenseRefundFlowMap.get(registration.getId()));
                     //处理考勤
-                    processAttendance(registerSummaryMap.get(registration.getId()), registration, personSummaryExportDto);
+                    processAttendance(registerSummaryMap.get(registration.getId()), personSummaryExportDto);
 
                     //学生姓名
                     personSummaryExportDto.setStudentName(studentMap.get(registration.getStudentId()));
@@ -108,7 +115,7 @@ public class SummaryExportService extends AbstractExportService<SummaryExportReq
         return summaryExportDtoList;
     }
 
-    private void processAttendance(List<RegisterationSummaryPo> registerationSummaryPoList1, CourseRegistrationPo registration, SummaryExportDto personSummaryExportDto) {
+    private void processAttendance(List<RegisterationSummaryPo> registerationSummaryPoList1, SummaryExportDto personSummaryExportDto) {
         List<RegisterationSummaryPo> registerationSummaryPoList = registerationSummaryPoList1;
         long signInCount = registerationSummaryPoList.stream().filter(e -> Enums.SignInType.已签到.getCode().equals(e.getSignIn())).count();
         long refundCount = registerationSummaryPoList.stream().filter(e -> Enums.SignInType.已退费.getCode().equals(e.getSignIn())).count();
@@ -118,16 +125,31 @@ public class SummaryExportService extends AbstractExportService<SummaryExportReq
     }
 
     //处理RegisterExpenseDetail
-    private void processRegisterExpenseDetail(SummaryExportDto summaryExportDto, List<RegistrationExpenseDetailPo> expenseDetailPoList, CourseRegistrationPo registration) {
+    private void processRegisterExpenseDetail(SummaryExportDto summaryExportDto, List<RegistrationExpenseDetailPo> expenseDetailPoList,
+                                              List<RegistrationExpenseDetailFlowPo> registrationExpenseDetailFlowPos) {
         expenseDetailPoList.stream().forEach(expenseDetail -> {
             if (Consts.FEE_TYPE_普通单节费用.equals(expenseDetail.getFeeType())) {
                 summaryExportDto.setDiscount(expenseDetail.getDiscount());
                 summaryExportDto.setActuallyApplyAttendance(expenseDetail.getCount());
+                summaryExportDto.setActuallyPerPrice(expenseDetail.getPerAmount());
             } else {
                 //实收材料费
                 summaryExportDto.setActuallyBookFee(expenseDetail.getAmount());
+
             }
         });
+
+        //退费合计
+        BigDecimal refundAmount =
+                registrationExpenseDetailFlowPos.stream().filter(e -> ExpenseDetailFlowTypeEnum.退费.getCode() == e.getType())
+                        .map(e -> NumberUtil.String2Dec(e.getAmount())).reduce(BigDecimal.ZERO, BigDecimal::add);
+        summaryExportDto.setRefund(refundAmount.toPlainString());
+        //结余合计
+        BigDecimal accountAmount =
+                registrationExpenseDetailFlowPos.stream()
+                        .filter(e -> ExpenseDetailFlowTypeEnum.编辑.getCode() == e.getType() || ExpenseDetailFlowTypeEnum.新增记录.getCode() == e.getType())
+                        .map(e -> NumberUtil.String2Dec(e.getAccountAmount())).reduce(BigDecimal.ZERO, BigDecimal::add);
+        summaryExportDto.setSurplusDeduction(accountAmount.toPlainString());
     }
 
 

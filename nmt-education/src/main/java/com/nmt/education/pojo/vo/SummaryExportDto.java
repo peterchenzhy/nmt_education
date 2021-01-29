@@ -1,8 +1,8 @@
 package com.nmt.education.pojo.vo;
 
-import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.converters.string.StringNumberConverter;
+import com.nmt.education.commmons.Consts;
 import com.nmt.education.commmons.NumberUtil;
 import lombok.Getter;
 import lombok.Setter;
@@ -59,50 +59,51 @@ public class SummaryExportDto {
     private String perPrice;
 
     @ExcelProperty(value = "讲义费", index = 12, converter = StringNumberConverter.class)
-    private String bookFee;
+    private String bookFee = Consts.ZERO;
 
     @ExcelProperty(value = "折扣系数", index = 13, converter = StringNumberConverter.class)
     private String discount;
 
+    @ExcelProperty(value = "实际单价（节课）", index = 14, converter = StringNumberConverter.class)
+    private String actuallyPerPrice;
+
+    @ExcelProperty(value = "实际讲义费", index = 15, converter = StringNumberConverter.class)
+    private String actuallyBookFee = Consts.ZERO;
+
     //实际出勤×单价×折扣系数+讲义费
-    @ExcelProperty(value = "实际消耗", index = 14, converter = StringNumberConverter.class)
+    @ExcelProperty(value = "实际消耗", index = 16, converter = StringNumberConverter.class)
     private String actuallyConsume;
 
     //实收学费-实际消耗
-    @ExcelProperty(value = "未消耗", index = 15, converter = StringNumberConverter.class)
+    @ExcelProperty(value = "未消耗", index = 17, converter = StringNumberConverter.class)
     private String unexpired;
 
-
-    //实际材料费
-    @ExcelIgnore
-    private String actuallyBookFee;
-
-//    // TODO: 2021/1/29
-//    @ExcelProperty(value = "退费金额", index = 16, converter = StringNumberConverter.class)
-//    private String refund;
-//
-//    @ExcelProperty(value = "结余抵扣", index = 16, converter = StringNumberConverter.class)
-//    private String surplusDeduction;
-
-    @ExcelProperty(value = "报名备注", index = 17)
+    @ExcelProperty(value = "报名备注", index = 18)
     private String registerRemark;
+
+    @ExcelProperty(value = "退费金额", index = 19, converter = StringNumberConverter.class)
+    private String refund;
+
+    @ExcelProperty(value = "结余抵扣", index = 20, converter = StringNumberConverter.class)
+    private String surplusDeduction;
 
 
     public SummaryExportDto calcFields() {
         //实际消耗
-        this.actuallyConsume = new BigDecimal(this.actuallyAttendance)
+        this.actuallyConsume = (new BigDecimal(this.actuallyAttendance)
                 .multiply(NumberUtil.String2Dec(this.discount))
-                .multiply(NumberUtil.String2Dec(this.perPrice))
+                .multiply(NumberUtil.String2Dec(this.actuallyPerPrice)))
+                .add(NumberUtil.String2Dec(this.actuallyBookFee))
                 .toPlainString();
         //未消耗
         this.unexpired = new BigDecimal(this.actuallyAbsence)
                 .multiply(NumberUtil.String2Dec(this.discount))
-                .multiply(NumberUtil.String2Dec(this.perPrice))
+                .multiply(NumberUtil.String2Dec(this.actuallyPerPrice))
                 .toPlainString();
         //实收学费
         this.actuallyTotalExpense = (new BigDecimal(this.actuallyApplyAttendance)
                 .multiply(NumberUtil.String2Dec(this.discount))
-                .multiply(NumberUtil.String2Dec(this.perPrice)))
+                .multiply(NumberUtil.String2Dec(this.actuallyPerPrice)))
                 .add(NumberUtil.String2Dec(actuallyBookFee))
                 .toPlainString();
         //实付应付差额

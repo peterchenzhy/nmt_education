@@ -46,6 +46,13 @@ public class RegistrationExpenseDetailService {
         return resultList;
     }
 
+    public List<RegistrationExpenseDetailFlowPo> getExpenseDetailFlowList(List<Long> registerIds, List<Integer> types) {
+        if(CollectionUtils.isEmpty(registerIds)){
+            return Collections.emptyList();
+        }
+        return this.registrationExpenseDetailFlowMapper.queryByRegisterIds(registerIds,types);
+    }
+
 
     public void batchInsertFlow(List<RegistrationExpenseDetailFlowPo> list) {
         if (CollectionUtils.isEmpty(list)) {
@@ -105,7 +112,7 @@ public class RegistrationExpenseDetailService {
     }
 
     public List<RegistrationExpenseDetailPo> queryRegisterIds(List<Long> registerIds) {
-        if(CollectionUtils.isEmpty(registerIds)){
+        if (CollectionUtils.isEmpty(registerIds)) {
             return Collections.emptyList();
         }
         return this.registrationExpenseDetailPoMapper.queryRegisterIds(registerIds);

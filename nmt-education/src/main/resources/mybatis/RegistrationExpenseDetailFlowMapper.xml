@@ -135,4 +135,22 @@
             and flow.creator=#{userCode}
         </if>
     </select>
+    <select id="queryByRegisterIds" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from registration_expense_detail_flow
+        where status = 1
+        <if test="registerIds != null and registerIds.size() != 0">
+            and registration_id in
+            <foreach collection="registerIds" item="regisgerId" separator="," open="(" close=")">
+                #{regisgerId}
+            </foreach>
+        </if>
+        <if test="types != null and types.size() != 0">
+            and type in
+            <foreach collection="types" item="type" separator="," open="(" close=")">
+                #{type}
+            </foreach>
+        </if>
+    </select>
 </mapper>

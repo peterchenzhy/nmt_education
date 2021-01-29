@@ -310,7 +310,7 @@ public class CourseRegistrationService {
      */
     private BigDecimal studentAccountCost(int updator, CourseRegistrationPo courseRegistrationPo, BigDecimal account, List<StudentAccountFlowPo> accountFlowList,
                                           StudentAccountPo studentAccountPo, BigDecimal delta, RegistrationExpenseDetailFlowPo flow) {
-        //计算消耗金额
+        //计算结余抵扣金额
         BigDecimal cost = calculateCost(account, delta);
         BigDecimal lastAmount = account;
         CoursePo coursePo = courseService.selectByPrimaryKey(courseRegistrationPo.getCourseId());
@@ -735,6 +735,7 @@ public class CourseRegistrationService {
         List<RegistrationExpenseDetailPo> expenseDetailList = registrationExpenseDetailService.queryRegisterId(dto.getRegisterId());
         //按照费用类型分组
         Map<Integer, List<RefundItemReqDto>> itemMap = dtoList.stream().collect(Collectors.groupingBy(e -> e.getFeeType()));
+        //退费核心逻辑
         self.refundByFeeType(dto, logInUser, expenseDetailList, itemMap);
 
         BigDecimal refundTotal = BigDecimal.ZERO;
