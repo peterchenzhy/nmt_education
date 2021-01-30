@@ -162,6 +162,7 @@ public class SummaryExportService extends AbstractExportService<SummaryExportReq
         summaryExportDto.setTotalTimes(coursePo.getTimes());
         summaryExportDto.setPerPrice(Consts.ZERO);
         summaryExportDto.setBookFee(Consts.ZERO);
+        summaryExportDto.setGrade(coursePo.getGrade());
         List<CourseExpensePo> courseExpensePos = courseExpenseService.queryByCourseId(coursePo.getId());
         if (!CollectionUtils.isEmpty(courseExpensePos)) {
             courseExpensePos.forEach(courseExpensePo -> {
@@ -197,9 +198,25 @@ public class SummaryExportService extends AbstractExportService<SummaryExportReq
         return "班级汇总统计表";
     }
 
+//    @Override
+//    public Class getExportClass() {
+//        return SummaryExportDto.class;
+//    }
+
+
     @Override
-    public Class getExportClass() {
-        return SummaryExportDto.class;
+    protected boolean isWriteSheetBySheet() {
+        return true;
+    }
+
+    @Override
+    protected String getSheetSplitFieldName() {
+        return "courseName";
+    }
+
+    @Override
+    protected String getSheetSortFieldName() {
+        return "grade";
     }
 }
 

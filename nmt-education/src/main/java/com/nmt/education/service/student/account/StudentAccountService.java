@@ -59,7 +59,7 @@ public class StudentAccountService {
         }
         noConsumptionMap.forEach((k, v) -> {
             final RegistrationExpenseDetailPo expenseDetailPo = registrationExpenseDetailService.queryRegisterId(v.get(0).getCourseRegistrationId())
-                    .stream().filter(e -> Consts.FEE_TYPE_普通单节费用.equals(e.getFeeType())).findAny().orElseGet(null);
+                    .stream().filter(e -> Consts.FEE_TYPE_普通单节费用.equals(e.getFeeType())).findAny().orElse(null);
             if (Objects.nonNull(expenseDetailPo)) {
                 BigDecimal amount = NumberUtil.String2Dec(expenseDetailPo.getDiscount())
                         .multiply(NumberUtil.String2Dec(expenseDetailPo.getPerAmount())).multiply(new BigDecimal(v.size()));

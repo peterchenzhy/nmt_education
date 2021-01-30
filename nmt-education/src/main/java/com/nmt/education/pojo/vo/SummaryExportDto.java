@@ -1,5 +1,6 @@
 package com.nmt.education.pojo.vo;
 
+import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.converters.string.StringNumberConverter;
 import com.nmt.education.commmons.Consts;
@@ -87,6 +88,8 @@ public class SummaryExportDto {
     @ExcelProperty(value = "结余抵扣", index = 20, converter = StringNumberConverter.class)
     private String surplusDeduction;
 
+    @ExcelIgnore
+    private int grade;
 
     public SummaryExportDto calcFields() {
         //实际消耗

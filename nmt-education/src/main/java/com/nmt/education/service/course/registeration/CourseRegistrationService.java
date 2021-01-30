@@ -170,7 +170,7 @@ public class CourseRegistrationService {
                     courseRegistrationListVos.stream().filter(v -> Enums.RegistrationStatus.正常.getCode().equals(v.getRegistrationStatus()))
                             .findAny().orElse(null);
             if (Objects.nonNull(vo)) {
-                Assert.isTrue(Enums.RegistrationStatus.正常.getCode().equals(vo.getRegistrationStatus()),
+                Assert.isTrue(Enums.RegistrationStatus.已退费.getCode().equals(vo.getRegistrationStatus()),
                         "报名记录已经存在，不能重复报名！报名编号：" + vo.getRegistrationNumber());
             }
         }
