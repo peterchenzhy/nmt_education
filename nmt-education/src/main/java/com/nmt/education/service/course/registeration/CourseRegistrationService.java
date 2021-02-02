@@ -92,6 +92,7 @@ public class CourseRegistrationService {
         } else {
             //编辑时，总课时仅可增加课时，不能减少
             courseRegistrationPo = selectByPrimaryKey(dto.getId());
+            Assert.isTrue(Enums.RegistrationStatus.正常.getCode().equals(courseRegistrationPo.getRegistrationStatus()),"已经退费，请重新报名");
             courseRegistrationPo.setRemark(dto.getRemark());
             courseRegistrationPo.setOperator(updator);
             courseRegistrationPo.setOperateTime(new Date());

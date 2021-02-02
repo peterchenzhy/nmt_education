@@ -38,16 +38,17 @@ public interface Enums {
             this.code = code;
             this.icon = icon;
         }
+
         public static String code2Desc(Integer code) {
             CourseStatus type = null;
             for (CourseStatus e : CourseStatus.values()) {
                 if (e.getCode().equals(code)) {
-                    type =  e;
+                    type = e;
                 }
             }
-            if(Objects.nonNull(type)){
+            if (Objects.nonNull(type)) {
                 return type.getDesc();
-            }else{
+            } else {
                 return Strings.EMPTY;
             }
         }
@@ -59,7 +60,8 @@ public interface Enums {
     enum FeeStatus implements IEnum {
         未缴费(0, "未缴费", null),
         已缴费(1, "已缴费", null),
-        已冻结(2, "已冻结", null),
+        //已废弃
+//        已冻结(2, "已冻结", null),
         已退费(3, "已退费", null);
 
         @Getter
@@ -82,8 +84,9 @@ public interface Enums {
      */
     enum RegistrationStatus implements IEnum {
         正常(1, "正常", "default"),
-        已冻结(2, "已冻结", "processing"),
-        退费中(3, "退费中", "success"),
+        //废弃
+//        已冻结(2, "已冻结", "processing"),
+//        退费中(3, "退费中", "success"),
         已退费(4, "已退费", "error");
 
         @Getter
@@ -191,16 +194,17 @@ public interface Enums {
             }
             return result;
         }
+
         public static String code2Desc(Integer code) {
             SignInType type = null;
             for (SignInType e : SignInType.values()) {
                 if (e.getCode().equals(code)) {
-                    type =  e;
+                    type = e;
                 }
             }
-            if(Objects.nonNull(type)){
+            if (Objects.nonNull(type)) {
                 return type.getDesc();
-            }else{
+            } else {
                 return Strings.EMPTY;
             }
         }

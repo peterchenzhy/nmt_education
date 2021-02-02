@@ -284,8 +284,8 @@ public class CourseScheduleService {
                 BigDecimal balanceAmount = new BigDecimal(courseRegistrationPo.getBalanceAmount());
                 RegistrationExpenseDetailPo expenseDetailPo = registrationExpenseDetailService.queryRegisterId(courseRegistrationPo.getId())
                         .stream().filter(p -> Consts.FEE_TYPE_普通单节费用.equals(p.getFeeType()) && Enums.FeeDirection.支付.getCode().equals(p.getFeeDirection()) &&
-                                Enums.FeeStatus.已缴费.getCode().equals(p.getFeeStatus())).findFirst().get();
-                Assert.isTrue(Objects.nonNull(expenseDetailPo), "缴费记录不存在，id：" + courseSignInItem.getRegisterSummaryId());
+                                Enums.FeeStatus.已缴费.getCode().equals(p.getFeeStatus())).findFirst().orElse(null);
+                Assert.isTrue(Objects.nonNull(expenseDetailPo), "缴费记录不存在，registger_summary id：" + courseSignInItem.getRegisterSummaryId());
                 BigDecimal perAmount = NumberUtil.mutify(expenseDetailPo.getPerAmount(), expenseDetailPo.getDiscount());
                 //设置余额
                 if (isConsumed) {
