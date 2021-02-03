@@ -43,7 +43,7 @@ public class UserService {
         UserVo vo = new UserVo(userPo);
         TokenUtil.Token token = new TokenUtil.Token(vo.getLogInUser(),vo.getRoleId());
         vo.setToken(TokenUtil.generateToken(token));
-        log.info("用户登录成功,id:[{}] ,姓名:[{}]",userPo.getId(),userPo.getName());
+        log.info("用户登录成功,id:[{}],code:[{}] ,姓名:[{}]",userPo.getId(),userPo.getCode(),userPo.getName());
 
         return vo ;
     }
