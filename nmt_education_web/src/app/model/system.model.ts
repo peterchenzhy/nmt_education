@@ -127,4 +127,5 @@ export interface RegisterSummaryTotal {
   signInCount?: number;
   unSignInCount?: number;
   registerStudentCount?: number;
+  registerCount?: number;
 }

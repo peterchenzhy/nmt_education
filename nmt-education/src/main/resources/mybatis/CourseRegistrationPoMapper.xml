@@ -713,7 +713,14 @@
     </insert>
     <select id="countStudentByCourse" resultType="com.nmt.education.pojo.po.CourseRegisterCount">
         select course_id as courseId ,count(*) as count from course_registration
-        where status = 1 and registration_status = 1 GROUP BY course_id
+        where status = 1 and registration_status = 1
+         <if test="courseIds != null and courseIds.size() != 0">
+             and course_id in
+             <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
+                 #{courseId}
+             </foreach>
+         </if>
+         GROUP BY course_id
     </select>
     <select id="registerStudentSummaryTotal" resultType="java.lang.Long">
         select count(distinct(cr.student_id))
@@ -746,5 +753,43 @@
         ]]></if>
 
 
+    </select>
+
+    <select id="count" resultType="java.lang.Long">
+        <!--@mbg.generated-->
+        select count(*)
+        from course_registration cr
+        inner join course c on c.id= cr.course_id
+        inner join student s on cr.student_id = s.id
+        where cr.status = 1
+        <if test="dto.registerStartDate != null">
+            <![CDATA[
+      and cr.create_time >= #{dto.registerStartDate} ]]>
+        </if>
+        <if test="dto.registerEndDate != null">
+            <![CDATA[
+      and cr.create_time <= #{dto.registerEndDate}  ]]>
+        </if>
+        <if test="dto.grade != null">
+            and c.grade = #{dto.grade}
+        </if>
+        <if test="dto.courseSubject != null">
+            and c.course_subject = #{dto.courseSubject}
+        </if>
+        <if test="dto.courseType != null">
+            and c.course_type = #{dto.courseType}
+        </if>
+        <if test="campusList != null and campusList.size() != 0">
+            and c.campus in
+            <foreach collection="campusList" item="campus" separator="," open="(" close=")">
+                #{campus}
+            </foreach>
+        </if>
+        <if test="dto.season != null">
+            and c.season = #{dto.season}
+        </if>
+        <if test="dto.year !=null" >
+            and c.year = #{dto.year}
+        </if>
     </select>
 </mapper>

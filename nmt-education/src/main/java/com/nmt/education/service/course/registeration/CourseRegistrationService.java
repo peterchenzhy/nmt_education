@@ -92,7 +92,7 @@ public class CourseRegistrationService {
         } else {
             //编辑时，总课时仅可增加课时，不能减少
             courseRegistrationPo = selectByPrimaryKey(dto.getId());
-            Assert.isTrue(Enums.RegistrationStatus.正常.getCode().equals(courseRegistrationPo.getRegistrationStatus()),"已经退费，请重新报名");
+            Assert.isTrue(Enums.RegistrationStatus.正常.getCode().equals(courseRegistrationPo.getRegistrationStatus()), "已经退费，请重新报名");
             courseRegistrationPo.setRemark(dto.getRemark());
             courseRegistrationPo.setOperator(updator);
             courseRegistrationPo.setOperateTime(new Date());
@@ -528,6 +528,8 @@ public class CourseRegistrationService {
         long count = registerStudentSummaryTotal(dto.getStartDate(), dto.getEndDate(), dto.getYear(), dto.getSeason(), null, campusList);
         vo.setRegisterStudentCount(count);
 
+        vo.setRegisterCount(this.courseRegistrationPoMapper.count(dto, campusList));
+
         vo.setUnSignInCount(vo.getTotalCount() - vo.getSignInCount());
         return vo;
     }
@@ -903,6 +905,6 @@ public class CourseRegistrationService {
      * @since 2021/1/28 22:19
      */
     public List<CourseRegistrationPo> queryByCourseId(long courseId) {
-        return this.courseRegistrationPoMapper.queryByCourseId(courseId,null);
+        return this.courseRegistrationPoMapper.queryByCourseId(courseId, null);
     }
 }

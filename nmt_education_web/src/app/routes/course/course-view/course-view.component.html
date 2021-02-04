@@ -303,7 +303,7 @@
       </nz-tab>
       <nz-tab nzTitle="签到记录">
         <nz-card [nzBordered]="false">
-          <st #stSign [columns]="signColumns" [scroll]="{ x: 'auto' }" [data]="signReportList"
+          <st #stSign [columns]="signColumns" [scroll]="{ x: 'auto' }" [data]="signReportList" [ps]="15" 
             [loading]="signReportLoading">
             <ng-template st-row="signInRender" let-i let-column="column">
               <nz-tag nzColor="{{column.tag[i[column.index].signIn].color}}">{{column.tag[i[column.index].signIn].text}}

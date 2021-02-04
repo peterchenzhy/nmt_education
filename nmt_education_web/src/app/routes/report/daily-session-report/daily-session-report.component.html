@@ -117,11 +117,12 @@
   </form>
 </nz-card>
 <nz-card [nzBordered]="false">
-  <sv-container size="large" title="课时统计" col="4">
+  <sv-container size="large" title="课时统计" col="5">
     <sv label="报名人数">{{rst.registerStudentCount}}</sv>
-    <sv label="总科目">{{rst.totalCount}}</sv>
-    <sv label="消耗科目">{{rst.signInCount}}</sv>
-    <sv label="未消耗科目">{{rst.unSignInCount}}</sv>
+    <sv label="总科目">{{rst.registerCount}}</sv>
+    <sv label="总课次">{{rst.totalCount}}</sv>
+    <sv label="消耗课次">{{rst.signInCount}}</sv>
+    <sv label="未消耗课次">{{rst.unSignInCount}}</sv>
   </sv-container>
   <nz-divider></nz-divider>
   <!--  <st #st [columns]="columns" [data]="data" [loading]="loading" (change)="stChange($event)">-->

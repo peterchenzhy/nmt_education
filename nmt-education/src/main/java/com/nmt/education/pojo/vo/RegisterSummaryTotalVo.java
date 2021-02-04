@@ -12,15 +12,20 @@ import lombok.ToString;
 public class RegisterSummaryTotalVo  {
 
 
-    @ApiModelProperty(value = "总科目")
+    @ApiModelProperty(value = "总课次")
     private Integer totalCount ;
 
-    @ApiModelProperty(value = "消耗科目")
+    @ApiModelProperty(value = "消耗课次")
     private Integer signInCount ;
 
-    @ApiModelProperty(value = "未消耗科目")
+    @ApiModelProperty(value = "未消耗课次")
     private Integer unSignInCount ;
     @ApiModelProperty(value = "报名人数")
     private long registerStudentCount;
+
+    @ApiModelProperty(value = "总科目")
+    private long registerCount;
+
+
 
 }

@@ -1,6 +1,7 @@
 package com.nmt.education.service.course.registeration;
 
 import com.nmt.education.pojo.dto.req.RegisterSearchReqDto;
+import com.nmt.education.pojo.dto.req.RegisterSummarySearchDto;
 import com.nmt.education.pojo.po.CourseRegisterCount;
 import com.nmt.education.pojo.po.CourseRegistrationPo;
 
@@ -44,4 +45,6 @@ interface CourseRegistrationPoMapper {
                                      @Param("year") Integer year, @Param("season") Integer season,
                                      @Param("userCode") Integer userCode,
                                      @Param("campusList") List<Integer> campusList);
+
+    long count(@Param("dto") RegisterSummarySearchDto dto, @Param("campusList") List<Integer> campusList);
 }

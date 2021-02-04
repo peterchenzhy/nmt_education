@@ -7,11 +7,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { COURSE_STATUS, EDIT_FLAG } from '@shared/constant/system.constant';
 import { Course, CourseSession } from 'src/app/model/course.model';
-import { GlobalService } from '@shared/service/global.service';
 import { Teacher } from 'src/app/model/teacher.model';
-import { CourseService } from '@shared/service/course.service';
 import { AppContextService } from '@shared/service/appcontext.service';
-import { ResponseData } from 'src/app/model/system.model';
 import { toNumber } from 'ng-zorro-antd';
 import { tap } from 'rxjs/operators';
 import { STComponent, STColumn, STColumnTag } from '@delon/abc';
@@ -45,7 +42,6 @@ export class CourseViewComponent implements OnInit {
   ) {
 
   }
-  Json = JSON;
   seasonList = this.appCtx.globalService.SEASON_LIST;
   courseTypeList = this.appCtx.globalService.COURSE_TYPE_LIST;
   courseSubjectList = this.appCtx.globalService.COURSE_SUBJECT_LIST;
@@ -56,7 +52,6 @@ export class CourseViewComponent implements OnInit {
   campusList = this.appCtx.globalService.CAMPUS_LIST;
   teacherList: Teacher[] = [];
   selectedTeacherList: Teacher[] = [];
-  classroomList: any[] = [{ value: '101', label: '101' }, { value: '202', label: '202' }, { value: '303', label: '303' }];
   loading: boolean = false;
   signReportLoading: boolean = false;
   ngOnInit() {
@@ -121,8 +116,7 @@ export class CourseViewComponent implements OnInit {
             this.feeList.push(field);
           });
 
-          let currentDate = new Date();
-          let activeSessions = this.course.courseScheduleList.filter(s => { return s.editFlag != EDIT_FLAG.DELETE && new Date(s.courseDatetime) > currentDate; });
+          let activeSessions = this.course.courseScheduleList.filter(s => { return s.editFlag != EDIT_FLAG.DELETE ; });
           if (activeSessions && activeSessions.length > 0) {
             this.sessionParam.title = "更换课时";
           }
@@ -194,7 +188,7 @@ export class CourseViewComponent implements OnInit {
       teacherId: this.form.value.teacherId
     };
     let currentDate = new Date();
-    let activeSessions = this.sessions.value.filter(s => { return s.editFlag != EDIT_FLAG.DELETE && new Date(s.courseDatetime) > currentDate; });
+    let activeSessions = this.sessions.value.filter(s => { return s.editFlag != EDIT_FLAG.DELETE ; });
     if (activeSessions && activeSessions.length > 0) {
       this.sessionParam.title = "更换课时";
       this.sessionParam.count = activeSessions.length;
@@ -209,7 +203,7 @@ export class CourseViewComponent implements OnInit {
       });
     }
 
-    let singleFee = this.feeList.value.find(f => { return f.type == 1 && f.editFlag != EDIT_FLAG.DELETE; });
+    // let singleFee = this.feeList.value.find(f => { return f.type == 1 && f.editFlag != EDIT_FLAG.DELETE; });
     //this.sessionParam.price = singleFee ? singleFee.price : 0;
     this.modalSrv.create({
       nzTitle: this.sessionParam.title,
@@ -220,7 +214,7 @@ export class CourseViewComponent implements OnInit {
         let currentDate = new Date();
         for (let i = 0; i < this.sessions.length;) {
           let session = this.sessions.at(i);
-          if (session.value.editFlag != EDIT_FLAG.DELETE && new Date(session.value.courseDatetime) > currentDate) {
+          if (session.value.editFlag != EDIT_FLAG.DELETE ) {
             if (this.sessionParam.count == 0) {
               if (session.value.editFlag == EDIT_FLAG.NEW) {
                 this.sessions.removeAt(i);
@@ -491,7 +485,7 @@ export class CourseViewComponent implements OnInit {
     let currentDate = new Date();
     for (let i = 0; i < this.sessions.length; i++) {
       let session = this.sessions.at(i);
-      if (session.value.editFlag == EDIT_FLAG.DELETE || new Date(session.value.courseDatetime) < currentDate) {
+      if (session.value.editFlag == EDIT_FLAG.DELETE ) {
         continue;
       }
       session.get("perTime").setValue(this.form.value.perTime);
