@@ -528,10 +528,22 @@ public class CourseRegistrationService {
         long count = registerStudentSummaryTotal(dto.getStartDate(), dto.getEndDate(), dto.getYear(), dto.getSeason(), null, campusList);
         vo.setRegisterStudentCount(count);
 
-        vo.setRegisterCount(this.courseRegistrationPoMapper.count(dto, campusList));
+        vo.setRegisterCount(this.countRegistration(dto,campusList));
 
         vo.setUnSignInCount(vo.getTotalCount() - vo.getSignInCount());
         return vo;
+    }
+
+
+    /**
+     * 科目统计
+     *
+     * @return
+     */
+    private long countRegistration(RegisterSummarySearchDto dto, List<Integer> campusList) {
+
+        return this.registerationSummaryService.countRegistration(dto, campusList);
+
     }
 
     /**

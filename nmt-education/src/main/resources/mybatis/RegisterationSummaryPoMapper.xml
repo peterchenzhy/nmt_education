@@ -336,4 +336,59 @@
         select count(*) from registeration_summary where status =  1
         and course_schedule_id = #{courseScheduleId} and sign_in = 1
     </select>
+
+    <select id="countRegistration" resultType="java.lang.Long">
+        <!--@mbg.generated-->
+        select count(*)
+        from
+        (
+        select rs.course_id,rs.student_id
+        from registeration_summary rs
+        inner join course c on c.id= rs.course_id
+        inner join course_registration cr on cr.id=rs.course_registration_id
+        inner join student s on rs.student_id = s.id
+        inner join course_schedule cs on rs.course_schedule_id = cs.id
+        where rs.status = 1 and rs.sign_in = 1
+        <if test="dto.registerStartDate != null">
+            <![CDATA[
+      and rs.create_time >= #{dto.registerStartDate} ]]>
+        </if>
+        <if test="dto.registerEndDate != null">
+            <![CDATA[
+      and rs.create_time <= #{dto.registerEndDate}  ]]>
+        </if>
+        <if test="dto.grade != null">
+            and c.grade = #{dto.grade}
+        </if>
+        <if test="dto.courseSubject != null">
+            and c.course_subject = #{dto.courseSubject}
+        </if>
+        <if test="dto.courseType != null">
+            and c.course_type = #{dto.courseType}
+        </if>
+        <if test="dto.startDate != null">
+            <![CDATA[
+      and cs.course_datetime >= #{dto.startDate} ]]>
+        </if>
+        <if test="dto.endDate != null">
+            <![CDATA[
+      and cs.course_datetime <= #{dto.endDate}  ]]>
+        </if>
+        <if test="campusList != null and campusList.size() != 0">
+            and c.campus in
+            <foreach collection="campusList" item="campus" separator="," open="(" close=")">
+                #{campus}
+            </foreach>
+        </if>
+        <if test="dto.season != null">
+            and c.season = #{dto.season}
+        </if>
+        <if test="dto.year !=null">
+            and c.year = #{dto.year}
+        </if>
+        group by rs.course_id,rs.student_id
+<!--        having count(*)>=3-->
+        ) as temp
+
+    </select>
 </mapper>

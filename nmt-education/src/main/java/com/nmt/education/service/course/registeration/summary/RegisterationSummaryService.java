@@ -154,4 +154,8 @@ public class RegisterationSummaryService {
     public int checkSignIn(long courseScheduleId) {
         return this.registerationSummaryPoMapper.checkSignIn(courseScheduleId);
     }
+
+    public long countRegistration(RegisterSummarySearchDto dto, List<Integer> campusList) {
+        return this.registerationSummaryPoMapper.countRegistration(dto,campusList);
+    }
 }

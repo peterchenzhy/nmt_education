@@ -41,4 +41,6 @@ interface RegisterationSummaryPoMapper {
     int queryCountBySearchDto(@Param("dto") RegisterSummarySearchDto dto, @Param("campusList") List<Integer> campusList, @Param("signInStatus") Integer signInStatus);
 
     int checkSignIn(@Param("courseScheduleId") long courseScheduleId);
+
+    long countRegistration(@Param("dto") RegisterSummarySearchDto dto, @Param("campusList") List<Integer> campusList);
 }

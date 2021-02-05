@@ -46,5 +46,4 @@ interface CourseRegistrationPoMapper {
                                      @Param("userCode") Integer userCode,
                                      @Param("campusList") List<Integer> campusList);
 
-    long count(@Param("dto") RegisterSummarySearchDto dto, @Param("campusList") List<Integer> campusList);
 }
