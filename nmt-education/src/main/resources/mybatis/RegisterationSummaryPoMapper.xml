@@ -387,7 +387,7 @@
             and c.year = #{dto.year}
         </if>
         group by rs.course_id,rs.student_id
-<!--        having count(*)>=3-->
+        having count(*)>=3
         ) as temp
 
     </select>
