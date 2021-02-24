@@ -184,4 +184,26 @@ export class CourseListComponent implements OnInit {
       }
     });
   }
+  signInTableExport() {
+    this.loading = true;
+    if(this.year != null){
+      this.queryParam.year = new Date(this.year).getFullYear();
+    }
+
+    this.appCtx.reportService.signInTable(this.queryParam)
+      .pipe(
+        tap(() => { this.loading = false; }, () => { this.loading = false; })
+      )
+      .subscribe(((data) => {
+        const link = document.createElement('a');
+        const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
+        link.setAttribute('href', window.URL.createObjectURL(blob));
+        var date = new Date();
+        link.setAttribute('download', '班级签到表'+date.toLocaleDateString()+'.xlsx');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }));
+  }
 }

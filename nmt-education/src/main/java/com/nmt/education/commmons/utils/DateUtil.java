@@ -35,6 +35,8 @@ public class DateUtil {
 
     private static final String DEFAULT_DATE_FORMAT_2 = "yyyyMMdd";
 
+    private static final String MMdd_FORMAT = "MM/dd";
+
     private static final String DEFAULT_MONTH_FORMAT = "yyyyMM";
 
     private static final String COMMMON_DATETIME_FORMAT = "yyyyMMddhhmmss";
@@ -46,6 +48,8 @@ public class DateUtil {
     private static DateTimeFormatter COMMON_DATETIME_FORMATTER = DateTimeFormatter.ofPattern(COMMMON_DATETIME_FORMAT);
 
     private static DateTimeFormatter DEFAULT_MONTH_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_MONTH_FORMAT);
+
+    private static DateTimeFormatter MMdd_FORMATTER = DateTimeFormatter.ofPattern(MMdd_FORMAT);
 
     private DateUtil() {
     }
@@ -467,6 +471,10 @@ public class DateUtil {
     public static int currYM() {
         String ym = DEFAULT_MONTH_FORMATTER.format(LocalDateTime.now());
         return Integer.valueOf(ym);
+    }
+
+    public static String  mmdd(Date date) {
+        return  format(MMdd_FORMAT,date);
     }
 
     /**

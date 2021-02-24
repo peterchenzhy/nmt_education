@@ -1,6 +1,6 @@
 import {Injectable, Injector} from '@angular/core'
 import {Observable} from 'rxjs';
-import {FeeStatisticsQueryParam, RegisterSummaryQueryParam} from 'src/app/model/system.model';
+import {CourseQueryParam, FeeStatisticsQueryParam, RegisterSummaryQueryParam} from 'src/app/model/system.model';
 import {HttpClient} from '@angular/common/http';
 import {SettingsService} from '@delon/theme';
 
@@ -42,6 +42,10 @@ export class ReportService {
 
   public summary(T: RegisterSummaryQueryParam): Observable<Blob> {
     return this.httpClient.post('nmt-education/export/summary', T, {responseType: 'blob'});
+  }
+
+  public signInTable(T: CourseQueryParam): Observable<Blob> {
+    return this.httpClient.post('nmt-education/export/signIn/table', T, {responseType: 'blob'});
   }
 
 }

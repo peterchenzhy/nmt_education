@@ -195,7 +195,7 @@ public class SummaryExportService extends AbstractExportService<SummaryExportReq
 
     @Override
     public String getFileName() {
-        return "班级汇总统计表";
+        return "班级消耗统计表";
     }
 
 //    @Override

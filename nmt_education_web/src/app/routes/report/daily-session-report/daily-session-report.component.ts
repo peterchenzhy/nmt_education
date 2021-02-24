@@ -188,7 +188,7 @@ export class DailySessionReportComponent implements OnInit {
         const blob = new Blob([data], {type: 'application/vnd.ms-excel'});
         link.setAttribute('href', window.URL.createObjectURL(blob));
         var date = new Date();
-        link.setAttribute('download', '班级汇总统计表'+date.toLocaleDateString()+'.xlsx');
+        link.setAttribute('download', '班级消耗统计表'+date.toLocaleDateString()+'.xlsx');
         link.style.visibility = 'hidden';
         document.body.appendChild(link);
         link.click();

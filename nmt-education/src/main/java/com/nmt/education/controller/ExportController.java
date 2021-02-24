@@ -2,11 +2,9 @@ package com.nmt.education.controller;
 
 import com.nmt.education.commmons.utils.ReqDtoCheckUtil;
 import com.nmt.education.commmons.utils.RoleUtils;
-import com.nmt.education.pojo.dto.req.FeeStatisticsReqDto;
-import com.nmt.education.pojo.dto.req.RegisterSummarySearchDto;
-import com.nmt.education.pojo.dto.req.SummaryExportReqDto;
-import com.nmt.education.pojo.dto.req.TeacherScheduleReqDto;
+import com.nmt.education.pojo.dto.req.*;
 import com.nmt.education.service.export.*;
+import com.nmt.education.service.export.signInTable.SignInTableExportService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +42,8 @@ public class ExportController {
     private ScheduleExpiredExportService scheduleExpiredExportService;
     @Autowired
     private SummaryExportService summaryExportService;
+    @Autowired
+    private SignInTableExportService signInTableExportService;
 
     @ApiOperation(value = "费用统计报表导出", notes = "费用统计报表导出")
     @RequestMapping(value = "/feeStatistics", method = RequestMethod.POST)
@@ -72,6 +72,7 @@ public class ExportController {
         teacherSalarySummaryExportService.doExport(dto, logInUser, response);
     }
 
+    @Deprecated
     @ApiOperation(value = "签到统计报表", notes = "签到统计报表")
     @RequestMapping(value = "/schedule/signIn/summary", method = RequestMethod.POST)
     public void scheduleSignIbSummary(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
@@ -82,13 +83,22 @@ public class ExportController {
 
     }
 
-    @ApiOperation(value = "班级汇总统计表", notes = "班级汇总统计表")
+    @ApiOperation(value = "班级消耗统计表", notes = "班级消耗统计表")
     @RequestMapping(value = "/summary", method = RequestMethod.POST)
     public void summary(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
             , @RequestBody @Validated SummaryExportReqDto dto, BindingResult bindingResult, HttpServletResponse response) throws IOException {
         ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
         RoleUtils.check校长财务(roleId);
         summaryExportService.doExport(dto, logInUser, response);
+
+    }
+
+    @ApiOperation(value = "课程签到表", notes = "课程签到表")
+    @RequestMapping(value = "/signIn/table", method = RequestMethod.POST)
+    public void signInTable(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId
+            , @RequestBody @Validated CourseSearchDto dto, BindingResult bindingResult, HttpServletResponse response) throws IOException {
+        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
+        signInTableExportService.doExport(dto, logInUser, response);
 
     }
 

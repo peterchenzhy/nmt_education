@@ -2,6 +2,7 @@ package com.nmt.education.service.export;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.annotation.write.style.ContentLoopMerge;
 import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
 import com.alibaba.excel.write.metadata.style.WriteCellStyle;
 import com.alibaba.excel.write.metadata.style.WriteFont;
@@ -59,15 +60,13 @@ public abstract class AbstractExportService<E, T> {
         List<T> dataList = getDataList(dto, logInUser);
         //写excel
         if (isWriteSheetBySheet()) {
+            //如果是一个一个sheet写，那么sheet按照排序字段，进行排序
             Field field = getField(getSheetSplitFieldName());
             Field sortField = getField(getSheetSortFieldName());
             TreeMap<Integer, Map<String, List<T>>> dataMap = dataList.stream().collect(
                     Collectors.groupingBy(k -> (Integer) ReflectionUtils.getField(sortField, k), TreeMap::new,
                             Collectors.groupingBy(k -> (String) ReflectionUtils.getField(field, k))));
 
-
-//            Map<String, List<T>> sheetData = dataList.stream()
-//                    .collect(Collectors.groupingBy(k -> (String) ReflectionUtils.getField(field, k)));
             dataMap.forEach((sort, sortData) -> {
                 sortData.forEach((sheetName, data) -> {
                     ExcelWriterSheetBuilder excelWriterSheetBuilder = new ExcelWriterSheetBuilder(excelWriter);
