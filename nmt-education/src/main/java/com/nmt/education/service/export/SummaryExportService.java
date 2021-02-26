@@ -115,8 +115,9 @@ public class SummaryExportService extends AbstractExportService<SummaryExportReq
         return summaryExportDtoList;
     }
 
-    private void processAttendance(List<RegisterationSummaryPo> registerationSummaryPoList1, SummaryExportDto personSummaryExportDto) {
-        List<RegisterationSummaryPo> registerationSummaryPoList = registerationSummaryPoList1;
+    private void processAttendance(List<RegisterationSummaryPo> registrationsSummaryPoList1, SummaryExportDto personSummaryExportDto) {
+        List<RegisterationSummaryPo> registerationSummaryPoList = registrationsSummaryPoList1;
+        personSummaryExportDto.setActuallyApplyAttendance(registrationsSummaryPoList1.size());
         long signInCount = registerationSummaryPoList.stream().filter(e -> Enums.SignInType.已签到.getCode().equals(e.getSignIn())).count();
         long refundCount = registerationSummaryPoList.stream().filter(e -> Enums.SignInType.已退费.getCode().equals(e.getSignIn())).count();
         long absence = registerationSummaryPoList.size() - signInCount - refundCount;
@@ -130,7 +131,6 @@ public class SummaryExportService extends AbstractExportService<SummaryExportReq
         expenseDetailPoList.stream().forEach(expenseDetail -> {
             if (Consts.FEE_TYPE_普通单节费用.equals(expenseDetail.getFeeType())) {
                 summaryExportDto.setDiscount(expenseDetail.getDiscount());
-                summaryExportDto.setActuallyApplyAttendance(expenseDetail.getCount());
                 summaryExportDto.setActuallyPerPrice(expenseDetail.getPerAmount());
             } else {
                 //实收材料费
@@ -198,10 +198,6 @@ public class SummaryExportService extends AbstractExportService<SummaryExportReq
         return "班级消耗统计表";
     }
 
-//    @Override
-//    public Class getExportClass() {
-//        return SummaryExportDto.class;
-//    }
 
 
     @Override

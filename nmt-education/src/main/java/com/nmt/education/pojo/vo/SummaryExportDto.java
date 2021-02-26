@@ -75,7 +75,7 @@ public class SummaryExportDto {
     @ExcelProperty(value = "实际消耗", index = 16, converter = StringNumberConverter.class)
     private String actuallyConsume;
 
-    //实收学费-实际消耗
+    //实收学费-实际消耗-退费
     @ExcelProperty(value = "未消耗", index = 17, converter = StringNumberConverter.class)
     private String unexpired;
 

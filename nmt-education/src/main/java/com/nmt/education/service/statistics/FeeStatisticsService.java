@@ -15,6 +15,7 @@ import com.nmt.education.service.course.registeration.RegistrationExpenseDetailS
 import com.nmt.education.service.course.schedule.CourseScheduleService;
 import com.nmt.education.service.sysconfig.SysConfigService;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -105,6 +106,9 @@ public class FeeStatisticsService {
                     e.setFeeFlowTypeStr(ExpenseDetailFlowTypeEnum.codeOf(e.getFeeFlowType()).getDisplay());
                     e.setCampusStr(sysConfigService.queryByTypeValue(SysConfigEnum.校区.getCode(), e.getCampus()).getDescription());
                     e.setPaymentStr(Enums.PaymentType.codeOf(e.getPayment()).getDesc());
+                    e.setGradeStr(sysConfigService.queryByTypeValue(Consts.CONFIG_TYPE_年级,e.getGrade()).getDescription());
+                    e.setSubjectStr(sysConfigService.queryByTypeValue(Consts.CONFIG_TYPE_科目,e.getSubject()).getDescription());
+                    e.setFeeTimeDate(DateUtil.formatDate(e.getFeeTime()));
                 }
         );
         return pageInfo.getList();

@@ -106,7 +106,7 @@ public class StudentController {
             , @RequestBody @Validated AccountEditReqDto accountEditReqDto, BindingResult bindingResult) {
         ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
         RoleUtils.check校长财务(roleId);
-        Assert.isTrue(NumberUtil.isNumeric(accountEditReqDto.getAmount()), "账户金额不正确！" + accountEditReqDto.getAmount());
+        Assert.isTrue(NumberUtil.isAmount(accountEditReqDto.getAmount()), "账户金额不正确！" + accountEditReqDto.getAmount());
         studentService.accountEdit(accountEditReqDto, logInUser);
     }
 }

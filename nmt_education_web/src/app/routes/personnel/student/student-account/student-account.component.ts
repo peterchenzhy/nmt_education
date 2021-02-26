@@ -90,7 +90,7 @@ export class StudentAccountComponent implements OnInit {
             remark: this.editRow.remark,
             studentId: this.editRow.studentId
         };
-        if (obj.amount == "" || parseFloat(obj.amount) < 0) {
+        if (obj.amount === "" || parseFloat(obj.amount) < 0) {
             this.errorMsg = "余额不能为空或小于0";
             return false;
         }
