@@ -25,7 +25,7 @@ export class CourseListComponent implements OnInit {
   pager = {
     front: false
   };
-  queryParam: CourseQueryParam = { pageNo: 1, pageSize: 10 };
+  queryParam: CourseQueryParam = { pageNo: 1, pageSize: 25 };
   data: ResponseData = { list: [], total: 0 };
   courseTypeList = this.appCtx.globalService.COURSE_TYPE_LIST;
   courseSubjectList = this.appCtx.globalService.COURSE_SUBJECT_LIST;

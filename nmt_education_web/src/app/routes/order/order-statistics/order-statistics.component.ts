@@ -26,7 +26,7 @@ export class OrderStatisticsComponent implements OnInit {
     front: false
   };
   year: Date;
-  queryParam: FeeStatisticsQueryParam = { pageNo: 1, pageSize: 10 };
+  queryParam: FeeStatisticsQueryParam = { pageNo: 1, pageSize: 25 };
   data: ResponseData = { list: [], total: 0 };
   summaryData : FeeSummary ={registerStudentCount: 0 };
   campusList = this.appCtx.globalService.CAMPUS_LIST;

@@ -82,19 +82,19 @@ public class CourseRegistrationService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void startRegisterTransaction(CourseRegisterReqDto dto, int updator) {
+    public void startRegisterTransaction(CourseRegisterReqDto dto, int operator) {
         //生成报名记录
         CourseRegistrationPo courseRegistrationPo;
         if (Enums.EditFlag.新增.getCode().equals(dto.getEditFlag())) {
             Assert.isTrue(dto.getRegisterExpenseDetail().stream().anyMatch(e -> Consts.FEE_TYPE_普通单节费用.equals(e.getFeeType())), "报名必须含有单节收费项目");
-            courseRegistrationPo = generateCourseRegistrationPo(dto, updator);
+            courseRegistrationPo = generateCourseRegistrationPo(dto, operator);
             this.insertSelective(courseRegistrationPo);
         } else {
             //编辑时，总课时仅可增加课时，不能减少
             courseRegistrationPo = selectByPrimaryKey(dto.getId());
             Assert.isTrue(Enums.RegistrationStatus.正常.getCode().equals(courseRegistrationPo.getRegistrationStatus()), "已经退费，请重新报名");
             courseRegistrationPo.setRemark(dto.getRemark());
-            courseRegistrationPo.setOperator(updator);
+            courseRegistrationPo.setOperator(operator);
             courseRegistrationPo.setOperateTime(new Date());
             BigDecimal prepTotal = new BigDecimal(courseRegistrationPo.getTotalAmount());
             BigDecimal prepBalance = new BigDecimal(courseRegistrationPo.getBalanceAmount());
@@ -119,10 +119,10 @@ public class CourseRegistrationService {
                 "课程：" + dto.getCourseId());
 
         //缴费记录明细
-        generateRegisterExpenseDetail(dto.getRegisterExpenseDetail(), updator, courseRegistrationPo, dto.isUseAccount(), dto.getBalanceAmount());
+        generateRegisterExpenseDetail(dto.getRegisterExpenseDetail(), operator, courseRegistrationPo, dto.isUseAccount(), dto.getBalanceAmount());
 
         //汇总课表
-        registerationSummaryService.batchInsert(generateRegisterationSummary(dto, updator, courseRegistrationPo));
+        registerationSummaryService.batchInsert(generateRegisterationSummary(dto, operator, courseRegistrationPo));
     }
 
     /**

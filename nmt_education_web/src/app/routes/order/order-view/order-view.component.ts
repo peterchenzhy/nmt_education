@@ -243,7 +243,7 @@ export class OrderViewComponent implements OnInit {
     calPayAmount(payVal: any): any {
         let perAmount = payVal.perAmount || 0;
         let count = payVal.count || 0;
-        let discount = payVal.discount || 1;
+        let discount = payVal.discount || 0;
         payVal.receivable = (perAmount * count).toFixed(2);
         payVal.amount = (perAmount * count * discount).toFixed(2);
 

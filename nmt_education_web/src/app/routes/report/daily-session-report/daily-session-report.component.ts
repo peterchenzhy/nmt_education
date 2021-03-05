@@ -25,7 +25,7 @@ export class DailySessionReportComponent implements OnInit {
   registerDate: Date[];
   loading = false;
   rst: RegisterSummaryTotal ={registerStudentCount: 0 } ;
-  queryParam: RegisterSummaryQueryParam = { pageNo: 1, pageSize: 10 };
+  queryParam: RegisterSummaryQueryParam = { pageNo: 1, pageSize: 25 };
   data: ResponseData = { list: [], total: 0 };
   courseTypeList = this.appCtx.globalService.COURSE_TYPE_LIST;
   courseSubjectList = this.appCtx.globalService.COURSE_SUBJECT_LIST;

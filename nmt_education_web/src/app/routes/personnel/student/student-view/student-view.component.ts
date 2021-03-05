@@ -207,7 +207,7 @@ export class StudentViewComponent implements OnInit {
     pager = {
         front: false
     };
-    courseQueryParam: RegisterQueryParam = { pageNo: 1, pageSize: 10 };
+    courseQueryParam: RegisterQueryParam = { pageNo: 1, pageSize: 25 };
     courses: ResponseData = { list: [], total: 0 };
     onSelectedTabChanged(event: any) {
         if (!this.courseLoaded && event.index == 1) {
@@ -268,7 +268,7 @@ export class StudentViewComponent implements OnInit {
         { title: '备注', index: 'remark' }
     ];
     accountLoaded = false;
-    accountQueryParam: RegisterQueryParam = { pageNo: 1, pageSize: 10 };
+    accountQueryParam: RegisterQueryParam = { pageNo: 1, pageSize: 25 };
     account: ResponseData = { list: [], total: 0 };
     getAccountDetails() {
         if (!this.student.id) {

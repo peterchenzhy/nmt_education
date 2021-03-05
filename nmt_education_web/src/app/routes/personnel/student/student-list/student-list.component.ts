@@ -1,16 +1,13 @@
-import { Component, OnInit, ViewChild, TemplateRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { _HttpClient } from '@delon/theme';
 import { tap, map } from 'rxjs/operators';
 import { STComponent, STColumn, STData, STChange } from '@delon/abc';
-import { FormGroup, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Student } from 'src/app/model/student.model';
-import { Buffer } from 'buffer';
 import { GlobalService } from '@shared/service/global.service';
 import { ResponseData, StudentQueryParam } from 'src/app/model/system.model';
 import { StudentService } from '@shared/service/student.service';
-import { StudentViewComponent } from '../student-view/student-view.component';
 import { AppContextService } from '@shared/service/appcontext.service';
 
 @Component({
@@ -22,7 +19,7 @@ export class StudentListComponent implements OnInit {
     pager = {
         front: false
     };
-    queryParam: StudentQueryParam = { pageNo: 1, pageSize: 10 };
+    queryParam: StudentQueryParam = { pageNo: 1, pageSize: 25};
     data: ResponseData = { list: [], total: 0 };
     genderList = this.globalService.GENDER_LIST;
     @ViewChild('st', { static: true })

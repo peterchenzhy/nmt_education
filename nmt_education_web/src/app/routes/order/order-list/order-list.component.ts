@@ -27,7 +27,7 @@ export class OrderListComponent implements OnInit {
         front: false
     };
     year: Date;
-    queryParam: RegisterQueryParam = { pageNo: 1, pageSize: 10 };
+    queryParam: RegisterQueryParam = { pageNo: 1, pageSize: 25 };
     courseTypeList = this.appCtx.globalService.COURSE_TYPE_LIST;
     courseSubjectList = this.appCtx.globalService.COURSE_SUBJECT_LIST;
   gradeList = this.appCtx.globalService.GRADE_LIST;
@@ -144,7 +144,7 @@ export class OrderListComponent implements OnInit {
         this.queryParam.signInDateStart = null;
         this.queryParam.signInDateEnd = null;
         this.queryParam.pageNo = 1;
-        this.queryParam.pageSize = 10;
+        this.queryParam.pageSize = 25;
         this.queryParam.orderCode = null;
         this.queryParam.year = null;
         this.queryParam.season = null ;
