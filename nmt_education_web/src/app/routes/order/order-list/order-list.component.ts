@@ -34,7 +34,7 @@ export class OrderListComponent implements OnInit {
     seasonList = this.appCtx.globalService.SEASON_LIST;
     q: any = {
         pi: 1,
-        ps: 10,
+        ps: 25,
         sorter: '',
         orderCode: '',
         courseCode: '',
