@@ -63,18 +63,18 @@ public class StudentAccountService {
             if (Objects.nonNull(expenseDetailPo)) {
                 BigDecimal amount = NumberUtil.String2Dec(expenseDetailPo.getDiscount())
                         .multiply(NumberUtil.String2Dec(expenseDetailPo.getPerAmount())).multiply(new BigDecimal(v.size()));
-                self.addAmount(logInUser, k, amount, expenseDetailPo.getRegistrationId(),course);
+                self.addAmount(logInUser, k, amount, expenseDetailPo.getRegistrationId(),String.format(Consts.结转进学生账户REMARK,course.getName(),
+                        amount.toPlainString()));
             }
         });
     }
 
     @Transactional(rollbackFor = Exception.class)
-    @Async
-    public void addAmount(Integer logInUser, Long userId, BigDecimal amount, Long registerId, CoursePo course) {
+    public void addAmount(Integer logInUser, Long userId, BigDecimal amount, Long registerId, String remark) {
         StudentAccountPo accountPo = querybyUserId(userId);
         if (Objects.isNull(accountPo)) {
             //新建账户
-            newStudentAccountPo(logInUser, userId, amount, registerId,String.format(Consts.新增结余账户模板,course.getName()+"课程结转"));
+            newStudentAccountPo(logInUser, userId, amount, registerId,String.format(Consts.新增结余账户模板,remark));
         } else {
             String lastAmount = accountPo.getAmount();
             accountPo.setAmount(amount.add(NumberUtil.String2Dec(accountPo.getAmount())).toPlainString());
@@ -82,7 +82,7 @@ public class StudentAccountService {
             accountPo.setOperateTime(new Date());
             this.updateByVersion(accountPo);
             StudentAccountFlowPo flowPo = generateFlow(logInUser, accountPo.getId(), accountPo.getAmount(), ExpenseDetailFlowTypeEnum.编辑, registerId,
-                    lastAmount, course.getName()+"课程结转增加金额："+amount +"元");
+                    lastAmount, remark);
             insertFlow(flowPo);
 
         }

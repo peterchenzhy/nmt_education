@@ -528,7 +528,7 @@ public class CourseRegistrationService {
         long count = registerStudentSummaryTotal(dto.getStartDate(), dto.getEndDate(), dto.getYear(), dto.getSeason(), null, campusList);
         vo.setRegisterStudentCount(count);
 
-        vo.setRegisterCount(this.countRegistration(dto,campusList));
+        vo.setRegisterCount(this.countRegistration(dto, campusList));
 
         vo.setUnSignInCount(vo.getTotalCount() - vo.getSignInCount());
         return vo;
@@ -751,7 +751,7 @@ public class CourseRegistrationService {
         //按照费用类型分组
         Map<Integer, List<RefundItemReqDto>> itemMap = dtoList.stream().collect(Collectors.groupingBy(e -> e.getFeeType()));
         //退费核心逻辑
-        self.refundByFeeType(dto, logInUser, expenseDetailList, itemMap);
+        self.refundByFeeType(dto, logInUser, expenseDetailList, itemMap, courseRegistrationPo);
 
         BigDecimal refundTotal = BigDecimal.ZERO;
         int refundTimes = 0;
@@ -769,9 +769,9 @@ public class CourseRegistrationService {
         courseRegistrationPo.setOperator(logInUser);
 
         //如果费用已经全部退完则更新 报名状态
-        if (!registrationExpenseDetailService.queryRegisterId(dto.getRegisterId())
-                .stream().map(e -> Enums.FeeStatus.已缴费.getCode().equals(e.getFeeStatus()) && Enums.FeeDirection.支付.getCode().equals(e.getFeeDirection()))
-                .findAny().get()) {
+        if (registrationExpenseDetailService.queryRegisterId(dto.getRegisterId())
+                .stream().filter(e -> Enums.FeeDirection.支付.getCode().equals(e.getFeeDirection()))
+                .allMatch(e -> Enums.FeeStatus.已退费.getCode().equals(e.getFeeStatus()))) {
             courseRegistrationPo.setRegistrationStatus(Enums.RegistrationStatus.已退费.getCode());
         }
         updateByPrimaryKeySelective(courseRegistrationPo);
@@ -792,26 +792,48 @@ public class CourseRegistrationService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void refundByFeeType(RefundReqDto dto, Integer logInUser, List<RegistrationExpenseDetailPo> expenseDetailList, Map<Integer,
-            List<RefundItemReqDto>> itemMap) {
-        itemMap.keySet().stream().forEach(k -> {
-            //按费用类型进行退款
+            List<RefundItemReqDto>> itemMap, CourseRegistrationPo courseRegistrationPo) {
+        BigDecimal reFundTotal = null;
+        //按费用类型进行退款
+        for (Integer k : itemMap.keySet()) {
             if (k.equals(Consts.FEE_TYPE_普通单节费用)) {
                 //查询消耗情况
-                List<RegisterationSummaryPo> registerationSummaryPoList = registerationSummaryService.queryByRegisterId(dto.getRegisterId());
-                RegisterationSummaryPo p = registerationSummaryPoList.stream()
+                List<RegisterationSummaryPo> registrationSummaryPoList = registerationSummaryService.queryByRegisterId(dto.getRegisterId());
+                RegisterationSummaryPo p = registrationSummaryPoList.stream()
                         .filter(e -> itemMap.get(k).contains(e.getId()) && !Enums.SignInType.canRefund.contains(e.getSignIn())).findAny().orElse(null);
                 if (Objects.nonNull(p)) {
                     throw new RuntimeException("有记录已经被被退费了，RegisterationSummaryPoId:" + p.getId());
                 }
-                if (processRefund(dto, logInUser, itemMap.get(k), expenseDetailList, k)) {
+
+            }
+            //退费逻辑
+            if (!CollectionUtils.isEmpty(itemMap.get(k))) {
+                if (Objects.isNull(reFundTotal)) {
+                    reFundTotal = BigDecimal.ZERO;
+                }
+                reFundTotal = reFundTotal.add(processRefund(dto, logInUser, itemMap.get(k), expenseDetailList, k));
+                if (k.equals(Consts.FEE_TYPE_普通单节费用)) {
                     //更新报名课表
                     registerationSummaryService.updateSignIn(itemMap.get(k).stream().map(e -> e.getRegisterSummaryId()).collect(Collectors.toList()),
                             logInUser, Enums.SignInType.已退费, Enums.SignInType.已退费.getDesc());
                 }
             } else {
-                processRefund(dto, logInUser, itemMap.get(k), expenseDetailList, k);
+                log.info("费用类型：{},没有项目明细，退费逻辑终止，dto：{}", k, dto);
             }
-        });
+        }
+
+        //如果退费直接进结余
+        if (dto.getToAccount()) {
+            if (Objects.isNull(reFundTotal)) {
+                log.info("无退费数据，退费0元");
+                reFundTotal = BigDecimal.ZERO;
+            }
+            CoursePo coursePo = courseService.selectByPrimaryKey(courseRegistrationPo.getCourseId());
+            studentAccountService.addAmount(logInUser, courseRegistrationPo.getStudentId(),
+                    reFundTotal, courseRegistrationPo.getCourseRegistrationId(), String.format(Consts.退费进学生账户REMARK, coursePo.getName(),
+                            reFundTotal.toPlainString()));
+
+        }
     }
 
     /**
@@ -822,18 +844,14 @@ public class CourseRegistrationService {
      * @param itemList
      * @param expenseDetailList
      * @param feeType
-     * @return 退费结果
+     * @return 退费金额
      * @author PeterChen
      * @modifier PeterChen
      * @version v1
      * @since 2020/6/6 14:38
      */
-    private boolean processRefund(RefundReqDto dto, Integer logInUser, List<RefundItemReqDto> itemList
+    private BigDecimal processRefund(RefundReqDto dto, Integer logInUser, List<RefundItemReqDto> itemList
             , List<RegistrationExpenseDetailPo> expenseDetailList, Integer feeType) {
-        if (CollectionUtils.isEmpty(itemList)) {
-            log.warn("费用类型：{},没有项目明细，退费逻辑终止，dto：{}", feeType, dto);
-            return false;
-        }
         //获取付款记录
         List<RegistrationExpenseDetailPo> payList = expenseDetailList.stream().filter(
                 e -> feeType.equals(e.getFeeType()) && Enums.FeeDirection.支付.getCode().equals(e.getFeeDirection())).collect(Collectors.toList());
@@ -890,7 +908,7 @@ public class CourseRegistrationService {
         ref.setAmount(NumberUtil.String2Dec(ref.getAmount()).subtract(applyRefund).toPlainString());
         ref.setCount(ref.getCount() - itemList.size());
         registrationExpenseDetailService.updateByPrimaryKeySelective(ref);
-        return true;
+        return applyRefund;
     }
 
     public List<CourseRegisterCount> countStudentByCourse(List<Long> courseIds) {

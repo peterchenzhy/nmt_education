@@ -10,7 +10,6 @@
     <result column="fee_status" jdbcType="TINYINT" property="feeStatus" />
     <result column="amount" jdbcType="VARCHAR" property="amount" />
     <result column="per_amount" jdbcType="VARCHAR" property="perAmount" />
-    <result column="account_amount" jdbcType="VARCHAR" property="accountAmount" />
     <result column="count" jdbcType="TINYINT" property="count" />
     <result column="discount" jdbcType="VARCHAR" property="discount" />
     <result column="payment" jdbcType="TINYINT" property="payment" />

@@ -25,6 +25,7 @@ export class OrderRefundComponent implements OnInit {
     registrationTypeList = this.appCtx.globalService.ORDER_TYPE_LIST;
     registrationStatusList = this.appCtx.globalService.ORDER_STATUS_LIST;
     form: FormGroup;
+    toAccount = false;
     editFeeIndex = -1;
     order: Order = {
         registrationStatus: ORDER_STATUS.NORMAL,
@@ -164,12 +165,6 @@ export class OrderRefundComponent implements OnInit {
 
     }
 
-    // clearSelectedCourse() {
-    //     this.order.course = {};
-    //     this.form.patchValue({ courseScheduleIds: [] });
-    //     this.selectedSessions = [];
-    //     this.registerExpenseDetail.clear();
-    // }
 
     stChange(e: STChange) {
         switch (e.type) {
@@ -179,34 +174,7 @@ export class OrderRefundComponent implements OnInit {
                 break;
         }
     }
-    // selectSessions(tpl: TemplateRef<{}>) {
-    //     this.sessionsSTData = this.order.course.courseScheduleList;
-    //     this.selectedSessions = [];
-    //     this.sessionsSTData.forEach(s => {
-    //         s.checked = this.form.value.courseScheduleIds.find(id => { return id == s.id; }) != null;
-    //         if (s.checked) {
-    //             this.selectedSessions.push(s);
-    //         }
-    //     });
-    //     this.modalSrv.create({
-    //         nzTitle: "选择报名课时",
-    //         nzContent: tpl,
-    //         nzWidth: 700,
-    //         nzOnOk: () => {
-    //             let sessionIds = this.selectedSessions.map(d => { return d.id; });
-    //             this.form.patchValue({ courseScheduleIds: sessionIds });
-    //             let feeIndex = this.registerExpenseDetail.value.findIndex(function (fee) { return fee.feeType == 1; });
-    //             if (feeIndex > -1) {
-    //                 let payObject = this.registerExpenseDetail.at(feeIndex);
-    //                 payObject.value.count = sessionIds.length;
-    //                 let newValue = this.calPayAmount(payObject.value);
-    //                 payObject.patchValue(newValue, { emitEvent: true });
-    //                 payObject.markAsDirty();
-    //                 // this.onPayInfoChanged(feeIndex);
-    //             }
-    //         },
-    //     });
-    // }
+
     confirmRefundFee() {
         Object.keys(this.form.controls).forEach(key => {
             this.form.controls[key].markAsDirty();
@@ -218,9 +186,15 @@ export class OrderRefundComponent implements OnInit {
             refundAmount += parseFloat(f.amount);
         });
         let refundAmountShow =  refundAmount.toFixed(2);
+        let msg;
+        if(this.toAccount){
+          msg = `共退费[${refundAmountShow}]元，退费将直接进入结余账户` ;
+        }else{
+          msg = `共退费[${refundAmountShow}]元` ;
+        }
         this.modalSrv.confirm({
             nzTitle: "退费确认",
-            nzContent: `共退费[${refundAmountShow}]元`,
+            nzContent: msg,
             nzOnOk: () => {
                 this._submitForm();
             }
@@ -231,6 +205,7 @@ export class OrderRefundComponent implements OnInit {
     }
     _submitForm() {
         let refundObj = this.form.value;
+        refundObj.toAccount = this.toAccount;
         this.selectedFee.forEach(fee => {
             refundObj.itemList.push({
                 amount: fee.amount,

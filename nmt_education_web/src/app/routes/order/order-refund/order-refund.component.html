@@ -10,40 +10,6 @@
                         <sv label="备注" col="1"> {{order.remark}} </sv>
                     </sv-container>
                     <nz-divider></nz-divider>
-                    <!-- <sv-container size="large" title="学生信息">
-            <sv label="姓名">{{order.student.name}}</sv>
-            <sv label="性别">{{ appCtx.globalService.getGenderLabel(order.student.sex)}}</sv>
-            <sv label="出生年月">{{order.student.birthday|date:"yyyy-MM-dd"}}</sv>
-            <sv label="联系电话">{{order.student.phone}}</sv>
-            <sv label="学校">{{order.student.school}}</sv>
-            <sv label="备注" col="1">{{order.student.remark}}</sv>
-        </sv-container>
-        <nz-divider></nz-divider>
-        <sv-container size="large" title="课程信息">
-            <sv *ngIf="order.courseId != null" label="课程名">{{order.course.name}}
-                [{{order.course.year+" "+appCtx.globalService.getSeasonLabel(order.course.season)}}]
-            </sv>
-            <sv *ngIf="order.courseId == null" label="课程名" nz-form-control nzErrorTip="请选择课程">
-                <nz-select formControlName="courseId" class="enroll-selector" nzShowSearch nzServerSearch
-                    nzPlaceHolder="输入课程编号或课程名称" [nzShowArrow]="false" [nzFilterOption]="nzFilterOption"
-                    [nzDropdownMatchSelectWidth]="false" (nzOnSearch)="search($event)"
-                    (ngModelChange)="courseSelected($event)">
-                    <nz-option *ngFor="let o of coursesOfOption" nzCustomContent [nzLabel]="o.name" [nzValue]="o.id">
-                        <div style="width: 100px; float: left">{{o.name}}</div>
-                        <div style="width: 30px; float: left">
-                            {{appCtx.globalService.getCourseSubjectLabel(o.courseSubject)}}
-                        </div>
-                    </nz-option>
-                </nz-select>
-            </sv>
-            <sv label="科目">{{appCtx.globalService.getCourseSubjectLabel(order.course.courseSubject)}}</sv>
-            <sv label="开课日期">{{order.course.startDate|date:"yyyy-MM-dd"}}</sv>
-            <sv label="年级">{{appCtx.globalService.getGradeLabel(order.course.grade)}}</sv>
-            <sv label="类型">{{appCtx.globalService.getCourseTypeLabel(order.course.courseType)}}</sv>
-            <sv label="任课教师">{{order.course.teacher&&order.course.teacher.name}}</sv>
-            <sv label="校区">{{appCtx.globalService.getCampusLabel(order.course.campus)}}</sv>
-        </sv-container>
-        <nz-divider></nz-divider> -->
                     <sv-container size="large" title="退费处理">
                         <sv label="支付方式">
                             <nz-form-item style="padding-bottom: 0px;margin-bottom: 0px;">
@@ -78,6 +44,8 @@
                     </st>
                 </nz-card>
                 <footer-toolbar errorCollect>
+                  <label nz-checkbox  [ngModelOptions]="{standalone: true}"
+                         [(ngModel)]="toAccount">退费直接进入账户结余</label>
                     <button nz-button type="primary" nzType="primary" (click)="confirmRefundFee()">提交</button>
                 </footer-toolbar>
             </nz-tab>

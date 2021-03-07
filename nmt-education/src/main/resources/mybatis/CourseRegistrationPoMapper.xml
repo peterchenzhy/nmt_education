@@ -5,6 +5,7 @@
         <!--@mbg.generated-->
         <!--@Table course_registration-->
         <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="id" jdbcType="BIGINT" property="courseRegistrationId"/>
         <result column="registration_number" jdbcType="VARCHAR" property="registrationNumber"/>
         <result column="course_id" jdbcType="BIGINT" property="courseId"/>
         <result column="student_id" jdbcType="BIGINT" property="studentId"/>
