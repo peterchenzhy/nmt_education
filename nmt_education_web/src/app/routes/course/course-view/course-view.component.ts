@@ -12,6 +12,7 @@ import { AppContextService } from '@shared/service/appcontext.service';
 import { toNumber } from 'ng-zorro-antd';
 import { tap } from 'rxjs/operators';
 import { STComponent, STColumn, STColumnTag } from '@delon/abc';
+import {StudentService} from "@shared/service/student.service";
 
 @Component({
   selector: 'app-course-view',
@@ -517,7 +518,22 @@ export class CourseViewComponent implements OnInit {
     { title: '性别', index: 'sex', render: "sex" },
     { title: '学校', index: 'school' },
     { title: '年级', index: 'grade', render: "grade" },
-    { title: '电话', index: 'phone' }];
+    { title: '电话', index: 'phone' },
+    {
+      title: '操作',
+      buttons: [
+        {
+          text: '详情',
+          click: (item: any) => {
+             this.appCtx.studentService.getStudentDetail(item.studentId)
+              .subscribe((res:any)=>{
+                this.router.navigate([`/personnel/student/edit/${item.studentId}`
+                  , {student: JSON.stringify({...res, _values: undefined})}]);
+              });
+          }
+        }]
+    }
+    ];
   getRegisteredStudents() {
     if (!this.course.id) {
       return;

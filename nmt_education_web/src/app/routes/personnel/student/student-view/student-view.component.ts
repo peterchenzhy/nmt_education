@@ -99,25 +99,6 @@ export class StudentViewComponent implements OnInit {
             this.pageHeader = `学生信息编辑 -- [${this.student.name}] -- [${this.student.code}] `;
         }
         this.form.patchValue(this.student);
-
-        // const parentsList = [
-        //     {
-        //         key: '1',
-        //         relation: '父亲',
-        //         name: 'Father',
-        //         phone: '130********'
-        //     },
-        //     {
-        //         key: '2',
-        //         relation: '母亲',
-        //         name: 'Mother',
-        //         phone: '131********'
-        //     }];
-        // parentsList.forEach(i => {
-        //     const field = this.createParent();
-        //     field.patchValue(i);
-        //     this.parents.push(field);
-        // });
     }
 
     createParent(): FormGroup {
@@ -129,16 +110,6 @@ export class StudentViewComponent implements OnInit {
         });
     }
 
-    //#region get form fields
-    // get studentName() {
-    //     return this.form.controls.name;
-    // }
-    // get gender() {
-    //     return this.form.controls.sex;
-    // }
-    // get phone() {
-    //     return this.form.controls.phone;
-    // }
 
     get parents() {
         return this.form.controls.parents as FormArray;
@@ -165,15 +136,6 @@ export class StudentViewComponent implements OnInit {
     save(index: number) {
         this.parents.at(index).markAsDirty();
         if (this.parents.at(index).invalid) return;
-        this.editIndex = -1;
-    }
-
-    cancel(index: number) {
-        if (!this.parents.at(index).value.key) {
-            this.del(index);
-        } else {
-            this.parents.at(index).patchValue(this.editObj);
-        }
         this.editIndex = -1;
     }
 

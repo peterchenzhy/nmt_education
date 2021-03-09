@@ -44,8 +44,12 @@ export class StudentService {
     public saveBalanceAccount(T: any): Observable<Object> {
         return this.httpClient.post(`nmt-education/student/account/edit`, T);
     }
-    
+
     public getAccountDetails(studentId: number): Observable<Object> {
         return this.httpClient.post(`nmt-education/student/account/detail/${studentId}`, null);
     }
+
+  public getStudentDetail(studentId: number): Observable<Object> {
+    return this.httpClient.post(`nmt-education/student/detail/${studentId}`, null);
+  }
 }
