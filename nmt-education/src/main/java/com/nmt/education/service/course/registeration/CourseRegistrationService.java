@@ -800,7 +800,7 @@ public class CourseRegistrationService {
                 //查询消耗情况
                 List<RegisterationSummaryPo> registrationSummaryPoList = registerationSummaryService.queryByRegisterId(dto.getRegisterId());
                 RegisterationSummaryPo p = registrationSummaryPoList.stream()
-                        .filter(e -> itemMap.get(k).contains(e.getId()) && !Enums.SignInType.canRefund.contains(e.getSignIn())).findAny().orElse(null);
+                        .filter(e -> itemMap.get(k).contains(e.getId()) && !Enums.SignInType.CAN_REFUND.contains(e.getSignIn())).findAny().orElse(null);
                 if (Objects.nonNull(p)) {
                     throw new RuntimeException("有记录已经被被退费了，RegisterationSummaryPoId:" + p.getId());
                 }

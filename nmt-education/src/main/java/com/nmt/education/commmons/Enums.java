@@ -167,13 +167,24 @@ public interface Enums {
         已签到(1, "已签到", null),
         请假(2, "请假", null),
         已退费(3, "已退费", null),
-//        锁定(3, "锁定", null),
+        冻结(4, "冻结", null),
         ;
-        public static List<Integer> canRefund = Lists.newArrayList(未签到.code, 请假.code);
+        public static List<Integer> CAN_REFUND = Lists.newArrayList(未签到.code, 请假.code,冻结.code);
 
 
+        /**
+         *
+         * @param source
+         * @param target
+         * @return true:消费  false:还原  null:状态没有实质变化
+         */
         public static Boolean isConsumed(SignInType source, SignInType target) {
             if (Objects.isNull(source) || Objects.isNull(target) || source.equals(target) || 已退费.equals(source)) {
+                return null;
+            }
+            if(Objects.nonNull(source)&&Objects.nonNull(target)
+                    &&SignInType.CAN_REFUND.contains(source.getCode())
+                    && SignInType.CAN_REFUND.contains(target.getCode())){
                 return null;
             }
             if (已签到.equals(target)) {

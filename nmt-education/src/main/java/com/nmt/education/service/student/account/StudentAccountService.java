@@ -1,7 +1,6 @@
 package com.nmt.education.service.student.account;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.nmt.education.commmons.*;
 import com.nmt.education.pojo.po.*;
 import com.nmt.education.pojo.vo.StudentAccountVo;
@@ -9,7 +8,6 @@ import com.nmt.education.service.course.registeration.RegistrationExpenseDetailS
 import com.nmt.education.service.course.registeration.summary.RegisterationSummaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -51,8 +49,7 @@ public class StudentAccountService {
      */
     public void addByCourseFinish(Integer logInUser, CoursePo course) {
         long courseId = course.getId();
-        Map<Long, List<RegisterationSummaryPo>> noConsumptionMap = this.registerationSummaryService.queryByCourseId(courseId,
-                Lists.newArrayList(Enums.SignInType.未签到.getCode(), Enums.SignInType.请假.getCode()))
+        Map<Long, List<RegisterationSummaryPo>> noConsumptionMap = this.registerationSummaryService.queryByCourseId(courseId, Enums.SignInType.CAN_REFUND)
                 .stream().collect(Collectors.groupingBy(RegisterationSummaryPo::getStudentId));
         if (CollectionUtils.isEmpty(noConsumptionMap)) {
             return;

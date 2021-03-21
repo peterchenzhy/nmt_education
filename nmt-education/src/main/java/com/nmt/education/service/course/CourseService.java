@@ -193,7 +193,7 @@ public class CourseService {
                     eventList.get().add(new TeacherChangeEvent(coursePo.getId(), dto.getTeacherId()));
                 }
                 BeanUtils.copyProperties(dto, coursePo);
-                coursePo.setTimes(Math.toIntExact(dto.getCourseScheduleList().stream().filter(e ->! Enums.EditFlag.需要删除.getCode().equals(e.getEditFlag())).count()));
+                coursePo.setTimes(Math.toIntExact(dto.getCourseScheduleList().stream().filter(e -> !Enums.EditFlag.需要删除.getCode().equals(e.getEditFlag())).count()));
                 coursePo.setOperator(operator);
                 coursePo.setOperateTime(new Date());
                 this.updateByPrimaryKeySelective(coursePo);
@@ -320,9 +320,17 @@ public class CourseService {
      * @param courseId 课程状态id
      */
     public void adjustCourseStatus(long courseId) {
+        final CoursePo coursePo = this.selectByPrimaryKey(courseId);
+        if (Objects.isNull(coursePo)) {
+            log.error("课程不存在，课程id:" + courseId);
+            return;
+        }
+        if (!Enums.CourseStatus.未开课.getCode().equals(coursePo.getCourseStatus())) {
+            return;
+        }
+
         final CourseSchedulePo courseSchedulePo = this.courseScheduleService.queryByCourseId(courseId)
                 .stream().filter(e -> Enums.SignInType.已签到.getCode().equals(e.getSignIn())).findAny().orElse(null);
-        final CoursePo coursePo = this.selectByPrimaryKey(courseId);
         if (Objects.nonNull(courseSchedulePo)) {
             if (Objects.nonNull(courseId)) {
                 if (Enums.CourseStatus.未开课.getCode().equals(coursePo.getCourseStatus())) {

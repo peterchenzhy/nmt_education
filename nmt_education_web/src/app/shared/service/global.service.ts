@@ -47,7 +47,7 @@ export class GlobalService {
         return obj ? obj.label : "";
     }
 
-    public SIGNIN_STATUS_LIST = [{ value: 0, label: '未签到' }, { value: 1, label: '已签到' },
+    public SIGNIN_STATUS_LIST = [{ value: 0, label: '未签到' }, { value: 1, label: '已签到' },    { value: 4, label: '冻结' },
     { value: 2, label: '请假' }];
     public getSignInStatusLabel(signIn: SIGNIN) {
         if (signIn == SIGNIN.REFUND) {
