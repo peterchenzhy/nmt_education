@@ -2,12 +2,14 @@ package com.nmt.education.service.course.schedule;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
 import com.nmt.education.commmons.*;
 import com.nmt.education.commmons.utils.DateUtil;
 import com.nmt.education.commmons.utils.RoleUtils;
 import com.nmt.education.commmons.utils.SpringContextUtil;
 import com.nmt.education.listener.event.CourseStatusChangeEvent;
 import com.nmt.education.pojo.dto.req.CourseScheduleReqDto;
+import com.nmt.education.pojo.dto.req.CourseSignInReqDto;
 import com.nmt.education.pojo.dto.req.TeacherScheduleReqDto;
 import com.nmt.education.pojo.po.*;
 import com.nmt.education.pojo.vo.CourseSignInItem;
@@ -58,6 +60,9 @@ public class CourseScheduleService {
     private CampusAuthorizationService campusAuthorizationService;
     @Autowired
     private SysConfigService configService;
+    @Autowired
+    @Lazy
+    private CourseScheduleService self ;
 
     public boolean manager(List<CourseScheduleReqDto> dtoList, Long courseId, Integer operator) {
         if (CollectionUtils.isEmpty(dtoList)) {
@@ -90,13 +95,13 @@ public class CourseScheduleService {
                     CourseSchedulePo courseSchedulePo = idMap.get(k);
                     while (courseSchedulePo == null) {
                         if (k > sortList.size()) {
-                            log.error("不存在idMap数据："+e);
+                            log.error("不存在idMap数据：" + e);
                             break;
                         }
                         k = k + 1;
                         courseSchedulePo = idMap.get(k);
                     }
-                    if(courseSchedulePo == null){
+                    if (courseSchedulePo == null) {
                         break;
                     }
 
@@ -239,23 +244,62 @@ public class CourseScheduleService {
     }
 
     /**
+     * 签到v2
+     *
+     * @param courseSignInReqDto 数据
+     * @param logInUser  登录人
+     * @param roleId     角色
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2021/3/22 21:56
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void signInV2(CourseSignInReqDto courseSignInReqDto, Integer logInUser, String roleId) {
+        if(Objects.isNull(courseSignInReqDto)){
+            return ;
+        }
+        RegisterationSummaryPo registerationSummaryPo = registerationSummaryService.selectByPrimaryKey(courseSignInReqDto.getRegisterSummaryId());
+        Assert.notNull(registerationSummaryPo,"报名课时不能为空,"+courseSignInReqDto);
+        CourseSignInItem signInItem = new CourseSignInItem();
+        signInItem.setStudentId(registerationSummaryPo.getStudentId());
+        signInItem.setStudentName("");
+        signInItem.setSignIn(courseSignInReqDto.getSignIn());
+        signInItem.setRegisterSummaryId(registerationSummaryPo.getId());
+        signInItem.setCourseId(registerationSummaryPo.getCourseId());
+        signInItem.setCourseScheduleId(registerationSummaryPo.getCourseScheduleId());
+        signInItem.setSignInRemark("");
+
+        self.doSignIn(Lists.newArrayList(signInItem), logInUser, roleId, registerationSummaryPo.getCourseScheduleId(), registerationSummaryPo.getCourseId());
+    }
+
+    /**
      * 签到
+     * 只能对同一节课进行批量签到
      *
      * @param list
      * @param operator
      */
     @Transactional(rollbackFor = Exception.class)
-    public void signIn(List<CourseSignInItem> list, Integer operator,String roleId) {
+    public void signIn(List<CourseSignInItem> list, Integer operator, String roleId) {
         if (CollectionUtils.isEmpty(list)) {
             return;
         }
-        CourseSchedulePo courseSchedulePo = selectByPrimaryKey(list.get(0).getCourseScheduleId());
-        Assert.notNull(courseSchedulePo, "课表信息为空，id：" + list.get(0).getCourseScheduleId());
+        Long courseScheduleId = list.get(0).getCourseScheduleId();
+        Long courseId = list.get(0).getCourseId();
 
-        CoursePo coursePo = courseService.selectByPrimaryKey(courseSchedulePo.getCourseId());
-        Assert.notNull(coursePo,"课程不能为空，id:"+courseSchedulePo.getCourseId());
+        self.doSignIn(list, operator, roleId, courseScheduleId, courseId);
 
-        if(!RoleUtils.is校长(roleId)){
+    }
+
+    public void doSignIn(List<CourseSignInItem> list, Integer operator, String roleId, Long courseScheduleId, Long courseId) {
+        CourseSchedulePo courseSchedulePo = selectByPrimaryKey(courseScheduleId);
+        Assert.notNull(courseSchedulePo, "课表信息为空，id：" + courseScheduleId);
+
+        CoursePo coursePo = courseService.selectByPrimaryKey(courseId);
+        Assert.notNull(coursePo, "课程不能为空，id:" + courseId);
+
+        if (!RoleUtils.is校长(roleId)) {
             Assert.isTrue(!Enums.CourseStatus.已结课.getCode().equals(coursePo.getCourseStatus()) &&
                     !Enums.CourseStatus.已取消.getCode().equals(coursePo.getCourseStatus()), "课程已经结课或者取消!");
         }
@@ -333,8 +377,7 @@ public class CourseScheduleService {
         }
 
         //课程状态event
-        SpringContextUtil.getApplicationContext().publishEvent(new CourseStatusChangeEvent(courseSchedulePo.getCourseId()));
-
+        SpringContextUtil.getApplicationContext().publishEvent(new CourseStatusChangeEvent(courseId));
     }
 
     /**
@@ -578,4 +621,6 @@ public class CourseScheduleService {
         List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
         return this.courseSchedulePoMapper.getTeacherPay(dto, campusList);
     }
+
+
 }

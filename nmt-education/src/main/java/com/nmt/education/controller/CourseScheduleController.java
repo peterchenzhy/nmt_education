@@ -2,6 +2,7 @@ package com.nmt.education.controller;
 
 import com.nmt.education.commmons.utils.ReqDtoCheckUtil;
 import com.nmt.education.pojo.dto.req.CourseScheduleReqDto;
+import com.nmt.education.pojo.dto.req.CourseSignInReqDto;
 import com.nmt.education.pojo.po.CourseSchedulePo;
 import com.nmt.education.pojo.vo.CourseSignInItem;
 import com.nmt.education.service.course.schedule.CourseScheduleService;
@@ -60,6 +61,14 @@ public class CourseScheduleController {
                        @RequestBody List<CourseSignInItem> list, BindingResult bindingResult) {
         ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
         courseScheduleService.signIn(list, logInUser,roleId);
+    }
+
+    @ApiOperation(value = "signInV2", notes = "签到V2")
+    @RequestMapping(value = "/signIn/v2", method = RequestMethod.POST)
+    public void signInV2(@RequestHeader(LOGIN_USER_HEAD) Integer logInUser, @RequestHeader(ROLE_ID_HEAD) String roleId,
+                         @RequestBody CourseSignInReqDto signInItem, BindingResult bindingResult) {
+        ReqDtoCheckUtil.reqDtoBaseCheck(bindingResult);
+        courseScheduleService.signInV2(signInItem, logInUser,roleId);
     }
 
     @ApiOperation(value = "manager", notes = "课表管理")

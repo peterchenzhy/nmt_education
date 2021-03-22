@@ -580,6 +580,7 @@ export class CourseViewComponent implements OnInit {
     0: { text: '未签到', color: '' },
     1: { text: '已签到', color: 'green' },
     2: { text: '请假', color: 'orange' },
-    3: { text: '已退费', color: 'red' }
+    3: { text: '已退费', color: 'red' },
+    4: { text: '锁定', color: 'blue' }
   };
 }
