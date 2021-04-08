@@ -291,7 +291,7 @@ public class CourseScheduleService {
         self.doSignIn(list, operator, roleId, courseScheduleId, courseId);
 
     }
-
+    @Transactional(rollbackFor = Exception.class)
     public void doSignIn(List<CourseSignInItem> list, Integer operator, String roleId, Long courseScheduleId, Long courseId) {
         CourseSchedulePo courseSchedulePo = selectByPrimaryKey(courseScheduleId);
         Assert.notNull(courseSchedulePo, "课表信息为空，id：" + courseScheduleId);
