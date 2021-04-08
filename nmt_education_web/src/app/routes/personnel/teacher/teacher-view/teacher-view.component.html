@@ -91,7 +91,7 @@
                                 <span
                                     *ngIf="editIndex !== i">{{ appCtx.globalService.getGradeLabel(teacherSalaryConfigList.value[i].grade) }}</span>
                                 <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请选择年级">
-                                    <nz-select formControlName="grade" [nzPlaceHolder]="'请选择年级'" [nzShowSearch]="true">
+                                    <nz-select formControlName="grade" [nzPlaceHolder]="'请选择年级'" [nzShowSearch]="true" [nzAllowClear]="true" >
                                         <nz-option *ngFor="let i of gradeList" [nzLabel]="i.label" [nzValue]="i.value">
                                         </nz-option>
                                     </nz-select>
@@ -102,7 +102,7 @@
                                     *ngIf="editIndex !== i">{{ appCtx.globalService.getCourseSubjectLabel(teacherSalaryConfigList.value[i].courseSubject) }}</span>
                                 <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请选择科目">
                                     <nz-select formControlName="courseSubject" [nzPlaceHolder]="'请选择科目'"
-                                        [nzShowSearch]="true">
+                                        [nzShowSearch]="true" [nzAllowClear]="true" >
                                         <nz-option *ngFor="let i of courseSubjectList" [nzLabel]="i.label"
                                             [nzValue]="i.value">
                                         </nz-option>
@@ -114,7 +114,7 @@
                                     *ngIf="editIndex !== i">{{ appCtx.globalService.getCourseTypeLabel(teacherSalaryConfigList.value[i].courseType) }}</span>
                                 <span *ngIf="editIndex === i" nz-form-control nzErrorTip="请选择课程类型">
                                     <nz-select formControlName="courseType" [nzPlaceHolder]="'请选择课程类型'"
-                                        [nzShowSearch]="true">
+                                        [nzShowSearch]="true" [nzAllowClear]="true" >
                                         <nz-option *ngFor="let i of courseTypeList" [nzLabel]="i.label"
                                             [nzValue]="i.value">
                                         </nz-option>

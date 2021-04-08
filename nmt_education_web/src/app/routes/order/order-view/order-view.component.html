@@ -42,13 +42,13 @@
             <nz-divider></nz-divider>
             <sv-container size="large" title="报名状态">
                 <sv label="报名类型" nz-form-control nzErrorTip="请选择报名类型">
-                    <nz-select formControlName="registrationType" [nzPlaceHolder]="'请选择报名类型'" [nzShowSearch]="true">
+                    <nz-select formControlName="registrationType" [nzPlaceHolder]="'请选择报名类型'" [nzShowSearch]="true" [nzAllowClear]="true" >
                         <nz-option *ngFor="let i of registrationTypeList" [nzLabel]="i.label" [nzValue]="i.value">
                         </nz-option>
                     </nz-select>
                 </sv>
                 <sv *ngIf="isEditOrder" label="状态" nz-form-control nzErrorTip="请选择状态">
-                    <nz-select formControlName="registrationStatus" [nzPlaceHolder]="'请选择状态'" [nzShowSearch]="true">
+                    <nz-select formControlName="registrationStatus" [nzPlaceHolder]="'请选择状态'" [nzShowSearch]="true" [nzAllowClear]="true" >
                         <nz-option *ngFor="let i of registrationStatusList" [nzLabel]="i.label" [nzValue]="i.value">
                         </nz-option>
                     </nz-select>
@@ -80,7 +80,7 @@
                     <tr *ngFor="let item of registerExpenseDetail.controls; let i = index" [formGroupName]="i">
                         <td>
                             <span nz-form-control nzErrorTip="请选费用类型">
-                                <nz-select formControlName="feeType" [nzPlaceHolder]="'请选费用类型'" [nzShowSearch]="true">
+                                <nz-select formControlName="feeType" [nzPlaceHolder]="'请选费用类型'" [nzShowSearch]="true" [nzAllowClear]="true" >
                                     <nz-option *ngFor="let o of feeTypeList" [nzLabel]="o.label" [nzValue]="o.value">
                                     </nz-option>
                                 </nz-select>
@@ -125,7 +125,7 @@
                             <nz-form-item style="padding-bottom: 0px;margin-bottom: 0px;">
                                 <nz-form-control nzErrorTip="">
                                     <nz-select style="width: 100px;" formControlName="payment"
-                                        [nzPlaceHolder]="'请选支付方式'" [nzShowSearch]="true"
+                                        [nzPlaceHolder]="'请选支付方式'" [nzShowSearch]="true" [nzAllowClear]="true"
                                         (ngModelChange)="onPayInfoChanged(i,false,$event)">
                                         <nz-option *ngFor="let i of payMethodList" [nzLabel]="i.label"
                                             [nzValue]="i.value">
@@ -137,7 +137,7 @@
                         <td>
                             <span nz-form-control>
                                 <nz-select [nzDisabled]=true style="width: 100px;" formControlName="feeStatus"
-                                    [nzPlaceHolder]="'请选支付状态'" [nzShowSearch]="true"
+                                    [nzPlaceHolder]="'请选支付状态'" [nzShowSearch]="true" [nzAllowClear]="true"
                                     (ngModelChange)="onPayInfoChanged(i,false,$event)">
                                     <nz-option *ngFor="let i of payStatusList" [nzLabel]="i.label" [nzValue]="i.value">
                                     </nz-option>

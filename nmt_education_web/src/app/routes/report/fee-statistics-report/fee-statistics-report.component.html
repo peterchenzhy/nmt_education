@@ -14,7 +14,7 @@
         <nz-form-item>
           <nz-form-label>季度</nz-form-label>
           <nz-form-control nzErrorTip="请选择季度">
-            <nz-select [(ngModel)]="queryParam.season" name="season" [nzPlaceHolder]="'请选择季度'" [nzShowSearch]="true">
+            <nz-select [(ngModel)]="queryParam.season" name="season" [nzPlaceHolder]="'请选择季度'" [nzShowSearch]="true" [nzAllowClear]="true" >
               <nz-option *ngFor="let i of seasonList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
             </nz-select>
           </nz-form-control>
@@ -35,7 +35,7 @@
           <nz-form-label nzFor="campus">所在校区</nz-form-label>
           <nz-form-control nzErrorTip="请选择校区">
             <nz-select [(ngModel)]="queryParam.campus" name="campus" [nzPlaceHolder]="'请选择校区'"
-                       [nzShowSearch]="true">
+                       [nzShowSearch]="true" [nzAllowClear]="true" >
               <nz-option *ngFor="let i of campusList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
             </nz-select>
           </nz-form-control>
@@ -46,7 +46,7 @@
           <nz-form-label nzFor="feeFlowType">费用类型</nz-form-label>
           <nz-form-control nzErrorTip="请选择费用类型">
             <nz-select [(ngModel)]="queryParam.feeFlowType" name="feeFlowType" [nzPlaceHolder]="'请选择费用类型'"
-                       [nzShowSearch]="true">
+                       [nzShowSearch]="true" [nzAllowClear]="true" >
               <nz-option *ngFor="let i of feeFlowList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
             </nz-select>
           </nz-form-control>
