@@ -34,7 +34,8 @@
               <nz-form-item>
                 <nz-form-label nzFor="season">季度</nz-form-label>
                 <nz-form-control nzErrorTip="请输入季度">
-                  <nz-select formControlName="season" id="season" [nzPlaceHolder]="'请输入季度'" [nzShowSearch]="true" [nzAllowClear]="true" >
+                  <nz-select formControlName="season" id="season" [nzPlaceHolder]="'请输入季度'" [nzShowSearch]="true"
+                    [nzAllowClear]="true">
                     <nz-option *ngFor="let i of seasonList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
                   </nz-select>
                 </nz-form-control>
@@ -46,7 +47,8 @@
               <nz-form-item>
                 <nz-form-label>针对年级</nz-form-label>
                 <nz-form-control nzErrorTip="请选择年级">
-                  <nz-select formControlName="grade" [nzPlaceHolder]="'请选择年级'" [nzShowSearch]="true" [nzAllowClear]="true" >
+                  <nz-select formControlName="grade" [nzPlaceHolder]="'请选择年级'" [nzShowSearch]="true"
+                    [nzAllowClear]="true">
                     <nz-option *ngFor="let i of gradeList" [nzLabel]="i.label" [nzValue]="i.value"> </nz-option>
                   </nz-select>
                 </nz-form-control>
@@ -56,7 +58,8 @@
               <nz-form-item>
                 <nz-form-label nzFor="courseSubject">课程科目</nz-form-label>
                 <nz-form-control nzErrorTip="请输入课程科目">
-                  <nz-select formControlName="courseSubject" [nzPlaceHolder]="'请选择课程科目'" [nzShowSearch]="true" [nzAllowClear]="true" >
+                  <nz-select formControlName="courseSubject" [nzPlaceHolder]="'请选择课程科目'" [nzShowSearch]="true"
+                    [nzAllowClear]="true">
                     <nz-option *ngFor="let i of courseSubjectList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
                   </nz-select>
                 </nz-form-control>
@@ -66,7 +69,8 @@
               <nz-form-item>
                 <nz-form-label nzFor="courseType">课程类型</nz-form-label>
                 <nz-form-control nzErrorTip="请输入课程类型">
-                  <nz-select formControlName="courseType" [nzPlaceHolder]="'请选择课程类型'" [nzShowSearch]="true" [nzAllowClear]="true" >
+                  <nz-select formControlName="courseType" [nzPlaceHolder]="'请选择课程类型'" [nzShowSearch]="true"
+                    [nzAllowClear]="true">
                     <nz-option *ngFor="let i of courseTypeList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
                   </nz-select>
                 </nz-form-control>
@@ -76,7 +80,8 @@
               <nz-form-item>
                 <nz-form-label>课程归类</nz-form-label>
                 <nz-form-control nzErrorTip="请选择课程归类">
-                  <nz-select formControlName="courseClassification" [nzPlaceHolder]="'请选择课程归类'" [nzShowSearch]="true" [nzAllowClear]="true" >
+                  <nz-select formControlName="courseClassification" [nzPlaceHolder]="'请选择课程归类'" [nzShowSearch]="true"
+                    [nzAllowClear]="true">
                     <nz-option *ngFor="let i of courseClassificationList" [nzLabel]="i.label" [nzValue]="i.value">
                     </nz-option>
                   </nz-select>
@@ -142,7 +147,8 @@
               <nz-form-item>
                 <nz-form-label>所在校区</nz-form-label>
                 <nz-form-control nzErrorTip="请选择校区">
-                  <nz-select formControlName="campus" [nzPlaceHolder]="'请选择校区'" [nzShowSearch]="true" [nzAllowClear]="true" >
+                  <nz-select formControlName="campus" [nzPlaceHolder]="'请选择校区'" [nzShowSearch]="true"
+                    [nzAllowClear]="true">
                     <nz-option *ngFor="let i of campusList" [nzLabel]="i.label" [nzValue]="i.value"> </nz-option>
                   </nz-select>
                 </nz-form-control>
@@ -179,11 +185,12 @@
               <ng-container *ngFor="let item of feeList.controls; let i = index">
                 <tr *ngIf="feeList.value[i].editFlag!=3" [formGroupName]="i">
                   <td>
-                    <span
-                      *ngIf="editFeeIndex !== i">{{ appCtx.globalService.getFeeTypeLabel(feeList.value[i].type) }}</span>
+                    <span *ngIf="editFeeIndex !== i">{{ appCtx.globalService.getFeeTypeLabel(feeList.value[i].type)
+                      }}</span>
                     <nz-form-item *ngIf="editFeeIndex === i">
                       <nz-form-control nzErrorTip="请选费用类型">
-                        <nz-select formControlName="type" [nzPlaceHolder]="'请选费用类型'" [nzShowSearch]="true" [nzAllowClear]="true" >
+                        <nz-select formControlName="type" [nzPlaceHolder]="'请选费用类型'" [nzShowSearch]="true"
+                          [nzAllowClear]="true">
                           <nz-option *ngFor="let i of feeTypeList" [nzLabel]="i.label" [nzValue]="i.value"> </nz-option>
                         </nz-select>
                       </nz-form-control>
@@ -247,8 +254,8 @@
                     </span>
                   </td>
                   <td>
-                    <span
-                      *ngIf="editSessionIndex !== i">{{ sessions.value[i].courseDatetime|date:"yyyy-MM-dd HH:mm" }}</span>
+                    <span *ngIf="editSessionIndex !== i">{{ sessions.value[i].courseDatetime|date:"yyyy-MM-dd HH:mm"
+                      }}</span>
                     <span *ngIf="editSessionIndex === i" nz-form-control nzErrorTip="请输入上课时间">
                       <nz-date-picker nzShowTime nzFormat="yyyy-MM-dd HH:mm:ss" nzPlaceHolder="Select Time"
                         formControlName="courseDatetime"></nz-date-picker>
@@ -260,7 +267,7 @@
                       <nz-input-number formControlName="perTime" placeholder="请输入时长"></nz-input-number>
                     </span>
                   </td>
-                  <td  *ngIf="canEditSalary">
+                  <td *ngIf="canEditSalary">
                     <span *ngIf="editSessionIndex !== i">{{ sessions.value[i].teacherPrice }}</span>
                     <span *ngIf="editSessionIndex === i" nz-form-control nzErrorTip="请输教师入薪资">
                       <nz-input-number formControlName="teacherPrice" placeholder="请输入教师薪资"></nz-input-number>
@@ -306,8 +313,16 @@
           <st #stSign [columns]="signColumns" [scroll]="{ x: 'auto' }" [data]="signReportList" [ps]="15"
             [loading]="signReportLoading">
             <ng-template st-row="signInRender" let-i let-column="column">
-              <nz-tag nzColor="{{column.tag[i[column.index].signIn].color}}">{{column.tag[i[column.index].signIn].text}}
-              </nz-tag>
+              <nz-select class="borderless" [nzCustomTemplate]="signInTemplate" ngModel="{{i[column.index].signIn}}"
+                [ngModelOptions]="{standalone: true}">
+                <nz-option nzLabel=" 未报名" nzValue="-1">
+                </nz-option>
+                <nz-option nzLabel="未签到" nzValue="0"></nz-option>
+                <nz-option nzLabel="已签到" nzValue="1"></nz-option>
+                <nz-option nzLabel="请假" nzValue="2"></nz-option>
+                <nz-option nzLabel="已退费" nzValue="3"></nz-option>
+                <nz-option nzLabel="锁定" nzValue="4"></nz-option>
+              </nz-select>
             </ng-template>
           </st>
         </nz-card>
@@ -317,7 +332,7 @@
     <ng-template #courseStatusTemplate>
       <nz-form-item *ngIf="isEditCourse" style="padding: 0; margin: 0;">
         <nz-form-control nzErrorTip="请选择课程状态">
-          <nz-select formControlName="status" [nzPlaceHolder]="'请选择课程状态'" [nzShowSearch]="true" [nzAllowClear]="true" >
+          <nz-select formControlName="status" [nzPlaceHolder]="'请选择课程状态'" [nzShowSearch]="true" [nzAllowClear]="true">
             <nz-option *ngFor="let i of courseStatusList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
           </nz-select>
         </nz-form-control>
@@ -386,4 +401,8 @@
     <i nz-icon nzType="plus"></i>
     <span>新增费用</span>
   </button>
+</ng-template>
+<ng-template #signInTemplate let-selected>
+  <nz-tag nzColor="{{SIGNIN_TAG[selected.nzValue].color}}">{{selected.nzLabel}}
+  </nz-tag>
 </ng-template>

@@ -12,11 +12,18 @@ import { AppContextService } from '@shared/service/appcontext.service';
 import { toNumber } from 'ng-zorro-antd';
 import { tap } from 'rxjs/operators';
 import { STComponent, STColumn, STColumnTag } from '@delon/abc';
-import {StudentService} from "@shared/service/student.service";
+import { StudentService } from "@shared/service/student.service";
 
 @Component({
   selector: 'app-course-view',
   templateUrl: './course-view.component.html',
+  styles: [`::ng-deep .borderless .ant-select-selection {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    }
+    ::ng-deep .borderless .ant-select-selection__rendered, .borderless .ng-trigger {margin:0 !important}
+    `]
 })
 export class CourseViewComponent implements OnInit {
   pageHeader: string = "课程信息编辑";
@@ -117,7 +124,7 @@ export class CourseViewComponent implements OnInit {
             this.feeList.push(field);
           });
 
-          let activeSessions = this.course.courseScheduleList.filter(s => { return s.editFlag != EDIT_FLAG.DELETE ; });
+          let activeSessions = this.course.courseScheduleList.filter(s => { return s.editFlag != EDIT_FLAG.DELETE; });
           if (activeSessions && activeSessions.length > 0) {
             this.sessionParam.title = "更换课时";
           }
@@ -189,7 +196,7 @@ export class CourseViewComponent implements OnInit {
       teacherId: this.form.value.teacherId
     };
     let currentDate = new Date();
-    let activeSessions = this.sessions.value.filter(s => { return s.editFlag != EDIT_FLAG.DELETE ; });
+    let activeSessions = this.sessions.value.filter(s => { return s.editFlag != EDIT_FLAG.DELETE; });
     if (activeSessions && activeSessions.length > 0) {
       this.sessionParam.title = "更换课时";
       this.sessionParam.count = activeSessions.length;
@@ -215,7 +222,7 @@ export class CourseViewComponent implements OnInit {
         let currentDate = new Date();
         for (let i = 0; i < this.sessions.length;) {
           let session = this.sessions.at(i);
-          if (session.value.editFlag != EDIT_FLAG.DELETE ) {
+          if (session.value.editFlag != EDIT_FLAG.DELETE) {
             if (this.sessionParam.count == 0) {
               if (session.value.editFlag == EDIT_FLAG.NEW) {
                 this.sessions.removeAt(i);
@@ -422,8 +429,8 @@ export class CourseViewComponent implements OnInit {
     return teacher ? teacher.name : "";
   }
   initSelectedTeacherList(id: number) {
-    if(id == -1){
-      return ;
+    if (id == -1) {
+      return;
     }
     if (this.getTeacherName(id) == "") {
       this.appCtx.teacherService.getTeacherDetails(id).subscribe((data: Teacher) => {
@@ -486,7 +493,7 @@ export class CourseViewComponent implements OnInit {
     let currentDate = new Date();
     for (let i = 0; i < this.sessions.length; i++) {
       let session = this.sessions.at(i);
-      if (session.value.editFlag == EDIT_FLAG.DELETE ) {
+      if (session.value.editFlag == EDIT_FLAG.DELETE) {
         continue;
       }
       session.get("perTime").setValue(this.form.value.perTime);
@@ -525,15 +532,15 @@ export class CourseViewComponent implements OnInit {
         {
           text: '详情',
           click: (item: any) => {
-             this.appCtx.studentService.getStudentDetail(item.studentId)
-              .subscribe((res:any)=>{
+            this.appCtx.studentService.getStudentDetail(item.studentId)
+              .subscribe((res: any) => {
                 this.router.navigate([`/personnel/student/edit/${item.studentId}`
-                  , {student: JSON.stringify({...res, _values: undefined})}]);
+                  , { student: JSON.stringify({ ...res, _values: undefined }) }]);
               });
           }
         }]
     }
-    ];
+  ];
   getRegisteredStudents() {
     if (!this.course.id) {
       return;
