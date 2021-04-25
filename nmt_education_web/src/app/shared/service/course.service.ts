@@ -48,7 +48,7 @@ export class CourseService {
     }
 
     public registerSummaryTotal(T: RegisterSummaryQueryParam): Observable<Object> {
-       return this.httpClient.post('nmt-education/course/register/summary/total', T);
+        return this.httpClient.post('nmt-education/course/register/summary/total', T);
     }
     public getRegisterDetails(id: number): Observable<Object> {
         return this.httpClient.post(`nmt-education/course/register/detail/${id}`, id);
@@ -63,6 +63,10 @@ export class CourseService {
 
     public sessionStudentsSignIn(list: any): Observable<Object> {
         return this.httpClient.post('nmt-education/course/schedule/signIn', list);
+    }
+
+    public quickStudentsSignIn(obj: any): Observable<Object> {
+        return this.httpClient.post('nmt-education/course/schedule/signIn/v2', obj);
     }
 
     public refundFee(feeList: any): Observable<Object> {

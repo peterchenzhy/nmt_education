@@ -313,15 +313,17 @@
           <st #stSign [columns]="signColumns" [scroll]="{ x: 'auto' }" [data]="signReportList" [ps]="15"
             [loading]="signReportLoading">
             <ng-template st-row="signInRender" let-i let-column="column">
-              <nz-select class="borderless" [nzCustomTemplate]="signInTemplate" ngModel="{{i[column.index].signIn}}"
-                [ngModelOptions]="{standalone: true}">
-                <nz-option nzLabel=" 未报名" nzValue="-1">
+              <nz-select class="borderless" [nzCustomTemplate]="signInTemplate" [nzDropdownMatchSelectWidth]="false"
+                ngModel="{{i[column.index].signIn}}" [ngModelOptions]="{standalone: true}"
+                [nzDisabled]="isSignInDropDownDisabled(i[column.index])"
+                (ngModelChange)="quickSignIn($event,i[column.index])">
+                <nz-option nzLabel=" 未报名" nzValue="-1" nzHide="true">
                 </nz-option>
                 <nz-option nzLabel="未签到" nzValue="0"></nz-option>
                 <nz-option nzLabel="已签到" nzValue="1"></nz-option>
                 <nz-option nzLabel="请假" nzValue="2"></nz-option>
-                <nz-option nzLabel="已退费" nzValue="3"></nz-option>
-                <nz-option nzLabel="锁定" nzValue="4"></nz-option>
+                <nz-option nzLabel="已退费" nzValue="3" nzHide="true"></nz-option>
+                <nz-option nzLabel=" 锁定" nzValue="4"></nz-option>
               </nz-select>
             </ng-template>
           </st>

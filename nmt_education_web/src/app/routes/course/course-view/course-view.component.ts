@@ -582,6 +582,25 @@ export class CourseViewComponent implements OnInit {
       this.getRegisteredStudents();
     }
   }
+
+  isSignInDropDownDisabled(item): boolean {
+    return item.signIn == -1 || item.signIn == 3;
+  }
+
+  quickSignIn(event, item) {
+    this.signReportLoading = true;
+    let origVal = item.signIn;
+    item.signIn = event;
+    this.cdr.detectChanges();
+    this.appCtx.courseService.quickStudentsSignIn({
+      registerSummaryId: item.registerSummaryId,
+      signIn: event
+    }).pipe(
+      tap(() => { this.signReportLoading = false; }, () => { item.signIn = origVal; this.cdr.detectChanges(); this.signReportLoading = false; })
+    ).subscribe((res: any) => {
+    });
+  }
+
   SIGNIN_TAG: STColumnTag = {
     "-1": { text: '未报名', color: 'grey' },
     0: { text: '未签到', color: '' },
