@@ -14,7 +14,7 @@ spring:
     maxActive: 20
     maxWait: 60000
 
-swagger.enabled: true
+swagger.enabled: false
 nmt.token.key: prod1i8esadEplkc
 nmt.token.expireMinute: 15
 nmt.token.refreshMinute: 2
