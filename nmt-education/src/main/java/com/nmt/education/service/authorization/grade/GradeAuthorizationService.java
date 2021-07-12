@@ -60,7 +60,7 @@ public class GradeAuthorizationService {
         Assert.isTrue(userId != null, "用户id不正确");
         List<Integer> campusList = self.getGradeAuthorization(userId);
         if(Objects.nonNull(grade)){
-            Assert.isTrue(campusList.contains(grade), "没有系统权限，请联系管理员");
+            Assert.isTrue(campusList.contains(grade), "没有系统权限（年级），请联系管理员");
             return Lists.newArrayList(grade);
         }else{
             return campusList;
