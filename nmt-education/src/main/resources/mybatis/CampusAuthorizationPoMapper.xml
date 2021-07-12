@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.nmt.education.service.campus.authorization.CampusAuthorizationPoMapper">
+<mapper namespace="com.nmt.education.service.authorization.campus.CampusAuthorizationPoMapper">
   <resultMap id="BaseResultMap" type="com.nmt.education.pojo.po.CampusAuthorizationPo">
     <!--@mbg.generated-->
     <!--@Table campus_authorization-->

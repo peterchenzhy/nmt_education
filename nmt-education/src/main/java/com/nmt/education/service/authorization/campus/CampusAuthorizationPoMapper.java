@@ -1,4 +1,4 @@
-package com.nmt.education.service.campus.authorization;
+package com.nmt.education.service.authorization.campus;
 
 import com.nmt.education.pojo.po.CampusAuthorizationPo;
 import org.apache.ibatis.annotations.Mapper;

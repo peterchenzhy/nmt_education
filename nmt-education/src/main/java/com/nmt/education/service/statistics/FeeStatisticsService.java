@@ -9,13 +9,15 @@ import com.nmt.education.pojo.dto.req.FeeStatisticsReqDto;
 import com.nmt.education.pojo.dto.req.TeacherScheduleReqDto;
 import com.nmt.education.pojo.vo.FeeStatisticsVo;
 import com.nmt.education.pojo.vo.FeeSummaryVo;
-import com.nmt.education.service.campus.authorization.CampusAuthorizationService;
+import com.nmt.education.service.authorization.AuthorizationCheckDto;
+import com.nmt.education.service.authorization.AuthorizationDto;
+import com.nmt.education.service.authorization.AuthorizationService;
+import com.nmt.education.service.authorization.campus.CampusAuthorizationService;
 import com.nmt.education.service.course.registeration.CourseRegistrationService;
 import com.nmt.education.service.course.registeration.RegistrationExpenseDetailService;
 import com.nmt.education.service.course.schedule.CourseScheduleService;
 import com.nmt.education.service.sysconfig.SysConfigService;
 import lombok.extern.slf4j.Slf4j;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -31,7 +33,7 @@ public class FeeStatisticsService {
     @Autowired
     private RegistrationExpenseDetailService registrationExpenseDetailService;
     @Autowired
-    private CampusAuthorizationService campusAuthorizationService;
+    private AuthorizationService authorizationService;
     @Autowired
     private SysConfigService sysConfigService;
     @Autowired
@@ -51,12 +53,18 @@ public class FeeStatisticsService {
      * @since 2020/7/22 22:38
      */
     public PageInfo page(FeeStatisticsReqDto dto, Integer logInUser) {
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
+//        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
+        AuthorizationCheckDto reqDto = new AuthorizationCheckDto();
+        reqDto.setUserId(logInUser);
+        reqDto.setCampus(dto.getCampus());
+        AuthorizationDto authorization = authorizationService.getAuthorization(reqDto);
+
         if (dto.getEndDate() != null) {
             dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
         }
         PageInfo<FeeStatisticsVo> pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() ->
-                registrationExpenseDetailService.feeStatistics(dto.getStartDate(), dto.getEndDate(), dto.getYear(), dto.getSeason(), campusList,
+                registrationExpenseDetailService.feeStatistics(dto.getStartDate(), dto.getEndDate(), dto.getYear(), dto.getSeason(),
+                        authorization.getCampusList(),
                         ExpenseDetailFlowTypeEnum.feeStatistics2FlowType(dto.getFeeFlowType()), dto.getUserCode()));
         pageInfo.getList().stream().forEach(e -> {
             e.setFeeFlowTypeStr(ExpenseDetailFlowTypeEnum.codeOf(e.getFeeFlowType()).getDisplay());
@@ -79,7 +87,12 @@ public class FeeStatisticsService {
      */
     public List<FeeStatisticsVo> exportList(FeeStatisticsReqDto dto, Integer logInUser) {
         //获取权限范围
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
+//        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
+        AuthorizationCheckDto reqDto = new AuthorizationCheckDto();
+        reqDto.setUserId(logInUser);
+        reqDto.setCampus(dto.getCampus());
+        AuthorizationDto authorization = authorizationService.getAuthorization(reqDto);
+
         if (dto.getEndDate() != null) {
             dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
         }
@@ -88,7 +101,7 @@ public class FeeStatisticsService {
         dto.setPageSize(Consts.BATCH_100);
         List<FeeStatisticsVo> dataList;
         do {
-            dataList = getExportData(dto, campusList);
+            dataList = getExportData(dto, authorization.getCampusList());
             int pageNo = dto.getPageNo() + 1;
             dto.setPageNo(pageNo);
             resultList.addAll(dataList);
@@ -119,7 +132,12 @@ public class FeeStatisticsService {
         Date startDate = DateUtil.parseOpenDate(dto.getStartDate());
         Date endDate = DateUtil.parseCloseDate(dto.getEndDate());
         FeeSummaryVo vo = new FeeSummaryVo();
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
+//        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
+        AuthorizationCheckDto reqDto = new AuthorizationCheckDto();
+        reqDto.setUserId(logInUser);
+        reqDto.setCampus(dto.getCampus());
+        AuthorizationDto authorization = authorizationService.getAuthorization(reqDto);
+        List<Integer> campusList = authorization.getCampusList();
 
         List<String> payList = registrationExpenseDetailService.flowSummary(startDate, endDate, dto.getYear(), dto.getSeason(), campusList,
                 dto.getUserCode(),
@@ -130,7 +148,12 @@ public class FeeStatisticsService {
                 dto.getUserCode(),Lists.newArrayList(ExpenseDetailFlowTypeEnum.退费.getCode()));
         vo.setRefund(NumberUtil.addStringList(refundList).toPlainString());
 
-        long count = courseRegistrationService.registerStudentSummaryTotal(startDate, endDate, dto.getYear(), dto.getSeason(), dto.getUserCode(),campusList);
+
+
+
+        long count = courseRegistrationService.registerStudentSummaryTotal(startDate, endDate, dto.getYear(), dto.getSeason(), dto.getUserCode(),
+                campusList,
+                authorization.getGradeList());
         vo.setRegisterStudentCount(count);
 
         if (isManager) {

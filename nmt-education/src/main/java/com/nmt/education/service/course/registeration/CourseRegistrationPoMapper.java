@@ -31,7 +31,8 @@ interface CourseRegistrationPoMapper {
 
     int insertOrUpdateSelective(CourseRegistrationPo record);
 
-    List<CourseRegistrationPo> queryByDto(@Param("dto") RegisterSearchReqDto dto, @Param("campusList") List<Integer> campusList);
+    List<CourseRegistrationPo> queryByDto(@Param("dto") RegisterSearchReqDto dto, @Param("campusList") List<Integer> campusList,
+                                          @Param("gradeList") List<Integer> gradeList);
 
     CourseRegistrationVo queryVoById(@Param("id") Long id);
 
@@ -44,6 +45,7 @@ interface CourseRegistrationPoMapper {
     long registerStudentSummaryTotal(@Param("startDate") Date startDate, @Param("endDate") Date endDate,
                                      @Param("year") Integer year, @Param("season") Integer season,
                                      @Param("userCode") Integer userCode,
-                                     @Param("campusList") List<Integer> campusList);
+                                     @Param("campusList") List<Integer> campusList,
+                                     @Param("gradeList") List<Integer> gradeList);
 
 }

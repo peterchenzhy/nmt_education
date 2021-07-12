@@ -21,7 +21,8 @@ interface RegisterationSummaryPoMapper {
 
     int batchInsert(@Param("list") List<RegisterationSummaryPo> list);
 
-    List<RegisterSummaryVo> queryBySearchDto(@Param("dto") RegisterSummarySearchDto dto, @Param("campusList") List<Integer> campusList);
+    List<RegisterSummaryVo> queryBySearchDto(@Param("dto") RegisterSummarySearchDto dto, @Param("campusList") List<Integer> campusList
+            , @Param("gradeList") List<Integer> gradeList);
 
     List<RegisterationSummaryPo> queryByRegisterId(@Param("registerId") Long registerId);
 
@@ -38,7 +39,8 @@ interface RegisterationSummaryPoMapper {
 
     List<RegisterationSummaryPo> queryByCourseId(@Param("courseId") Long courseId, @Param("signList") List<Integer> signList);
 
-    int queryCountBySearchDto(@Param("dto") RegisterSummarySearchDto dto, @Param("campusList") List<Integer> campusList, @Param("signInStatus") Integer signInStatus);
+    int queryCountBySearchDto(@Param("dto") RegisterSummarySearchDto dto, @Param("campusList") List<Integer> campusList,
+                              @Param("signInStatus") Integer signInStatus, @Param("gradeList") List<Integer> gradeList);
 
     int checkSignIn(@Param("courseScheduleId") long courseScheduleId);
 

@@ -16,7 +16,7 @@ import com.nmt.education.pojo.vo.StudentAccountDetailVo;
 import com.nmt.education.pojo.vo.StudentAccountVo;
 import com.nmt.education.pojo.vo.StudentVo;
 import com.nmt.education.service.CodeService;
-import com.nmt.education.service.campus.authorization.CampusAuthorizationService;
+import com.nmt.education.service.authorization.campus.CampusAuthorizationService;
 import com.nmt.education.service.student.account.StudentAccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;

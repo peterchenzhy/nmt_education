@@ -73,8 +73,14 @@
         <if test="campusList == null or campusList.size() == 0">
             (-1)
         </if>
-        <if test="dto.grade != null">
-            and c.grade = #{dto.grade}
+        and c.grade in
+        <if test="gradeList != null and gradeList.size() != 0">
+            <foreach collection="gradeList" item="grade" open="(" close=")" separator=",">
+                #{grade}
+            </foreach>
+        </if>
+        <if test="gradeList == null or gradeList.size() == 0">
+            (-1)
         </if>
         <if test="dto.courseSubject != null">
             and c.course_subject = #{dto.courseSubject}
@@ -738,6 +744,12 @@
         <if test="campusList != null and campusList.size() != 0">
             <foreach collection="campusList" item="campus" open="(" close=")" separator=",">
                 #{campus}
+            </foreach>
+        </if>
+        and c.grade in
+        <if test="gradeList != null and gradeList.size() != 0">
+            <foreach collection="gradeList" item="grade" open="(" close=")" separator=",">
+                #{grade}
             </foreach>
         </if>
         <if test="userCode != null">

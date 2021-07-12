@@ -18,7 +18,8 @@ interface CoursePoMapper {
 
     void invalidByPrimaryKey(@Param("id") Long id, @Param("operator") Integer operator);
 
-    List<CoursePo> queryByDto(@Param("dto") CourseSearchDto dto, @Param("campusList") List<Integer> campusList);
+    List<CoursePo> queryByDto(@Param("dto") CourseSearchDto dto, @Param("campusList") List<Integer> campusList,
+                              @Param("gradeList") List<Integer> gradeList);
 
     List<CoursePo> queryFuzzy(@Param("name") String name);
 }

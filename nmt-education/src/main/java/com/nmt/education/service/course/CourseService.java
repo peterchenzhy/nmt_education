@@ -16,7 +16,10 @@ import com.nmt.education.pojo.po.CourseSchedulePo;
 import com.nmt.education.pojo.vo.CourseDetailVo;
 import com.nmt.education.pojo.vo.CourseVo;
 import com.nmt.education.service.CodeService;
-import com.nmt.education.service.campus.authorization.CampusAuthorizationService;
+import com.nmt.education.service.authorization.AuthorizationCheckDto;
+import com.nmt.education.service.authorization.AuthorizationDto;
+import com.nmt.education.service.authorization.AuthorizationService;
+import com.nmt.education.service.authorization.campus.CampusAuthorizationService;
 import com.nmt.education.service.course.expense.CourseExpenseService;
 import com.nmt.education.service.course.registeration.CourseRegistrationService;
 import com.nmt.education.service.course.schedule.CourseScheduleService;
@@ -56,6 +59,8 @@ public class CourseService {
     @Autowired
     @Lazy
     private CourseRegistrationService courseRegistrationService;
+    @Autowired
+    private AuthorizationService authorizationService;
 
     private final static ThreadLocal<List<BaseEvent>> eventList = ThreadLocal.withInitial(() -> new ArrayList<>(5));
 
@@ -74,7 +79,12 @@ public class CourseService {
      */
     @Transactional(rollbackFor = Exception.class)
     public Boolean courseManager(Integer loginUser, CourseReqDto dto) {
-        campusAuthorizationService.getCampusAuthorization(loginUser, dto.getCampus());
+//        campusAuthorizationService.getCampusAuthorization(loginUser, dto.getCampus());
+        AuthorizationCheckDto checkDto = new AuthorizationCheckDto();
+        checkDto.setUserId(loginUser);
+        checkDto.setCampus(dto.getCampus());
+        checkDto.setGrade(dto.getGrade());
+        authorizationService.getAuthorization(checkDto);
         Enums.EditFlag editFlag = Enums.EditFlag.codeOf(dto.getEditFlag());
         if (dto.getCourseExpenseList().stream().collect(Collectors.groupingBy(k -> k.getType())).values()
                 .stream().filter(v -> v.size() > 1).findAny().isPresent()) {
@@ -121,9 +131,18 @@ public class CourseService {
         if (Objects.isNull(dto)) {
             return new PageInfo();
         }
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(loginUserId, dto.getCampus());
-        Assert.isTrue(!CollectionUtils.isEmpty(campusList), "没有任何校区权限进行课程搜索");
-        PageInfo<CoursePo> poPage = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> getCoursePos(dto, campusList));
+//        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(loginUserId, dto.getCampus());
+//        Assert.isTrue(!CollectionUtils.isEmpty(campusList), "没有任何校区权限进行课程搜索");
+
+        AuthorizationCheckDto checkDto = new AuthorizationCheckDto();
+        checkDto.setUserId(loginUserId);
+        checkDto.setCampus(dto.getCampus());
+        checkDto.setGrade(dto.getGrade());
+        AuthorizationDto authorization = authorizationService.getAuthorization(checkDto);
+
+
+        PageInfo<CoursePo> poPage = PageHelper.startPage(dto.getPageNo(), dto.getPageSize())
+                .doSelectPageInfo(() -> getCoursePos(dto, authorization.getCampusList(),authorization.getGradeList()));
         if (CollectionUtils.isEmpty(poPage.getList())) {
             return new PageInfo<>();
         }
@@ -161,9 +180,9 @@ public class CourseService {
 
     }
 
-    public List<CoursePo> getCoursePos(CourseSearchDto dto, List<Integer> campusList) {
+    public List<CoursePo> getCoursePos(CourseSearchDto dto, List<Integer> campusList,List<Integer> gradeList) {
         return this.coursePoMapper.queryByDto(dto,
-                campusList);
+                campusList,gradeList);
     }
 
     /**
@@ -282,7 +301,14 @@ public class CourseService {
     public CourseDetailVo detail(Integer logInUser, Long id) {
         CoursePo po = selectByPrimaryKey(id);
         Assert.notNull(po, "没有获取到课程信息，id:" + id);
-        campusAuthorizationService.getCampusAuthorization(logInUser, po.getCampus());
+//        campusAuthorizationService.getCampusAuthorization(logInUser, po.getCampus());
+
+        AuthorizationCheckDto reqDto = new AuthorizationCheckDto();
+        reqDto.setUserId(logInUser);
+        reqDto.setCampus(po.getCampus());
+        reqDto.setGrade(po.getGrade());
+        authorizationService.getAuthorization(reqDto);
+
         CourseDetailVo vo = new CourseDetailVo();
         BeanUtils.copyProperties(po, vo);
         vo.getCourseExpenseList().addAll(courseExpenseService.queryByCourseId(id));
@@ -310,8 +336,11 @@ public class CourseService {
     public List<CoursePo> searchFuzzy(Integer logInUser, String name) {
         Assert.hasLength(name, "课程模糊搜索关键字不能为空");
         List<CoursePo> coursePoList = this.coursePoMapper.queryFuzzy(name);
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser);
-        return coursePoList.stream().filter(e -> campusList.contains(e.getCampus())).collect(Collectors.toList());
+//        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser);
+        AuthorizationDto authorization = authorizationService.getAuthorization(logInUser);
+        return coursePoList.stream()
+                .filter(e -> authorization.getCampusList().contains(e.getCampus())
+                && authorization.getGradeList().contains(e.getGrade())).collect(Collectors.toList());
     }
 
     /**

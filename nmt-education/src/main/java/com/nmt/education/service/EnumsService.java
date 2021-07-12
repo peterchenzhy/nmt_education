@@ -1,12 +1,14 @@
 package com.nmt.education.service;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.nmt.education.commmons.Enums;
 import com.nmt.education.commmons.IEnum;
 import com.nmt.education.commmons.SysConfigEnum;
 import com.nmt.education.pojo.po.SysConfigPo;
 import com.nmt.education.pojo.vo.EnumVo;
-import com.nmt.education.service.campus.authorization.CampusAuthorizationService;
+import com.nmt.education.service.authorization.campus.CampusAuthorizationService;
+import com.nmt.education.service.authorization.grade.GradeAuthorizationService;
 import com.nmt.education.service.sysconfig.SysConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,10 @@ public class EnumsService {
 
     @Autowired
     private CampusAuthorizationService campusAuthorizationService;
+    @Autowired
+    private GradeAuthorizationService gradeAuthorizationService;
+
+    private List<Integer> FILTER_LIST = Lists.newArrayList(SysConfigEnum.校区.getCode(), SysConfigEnum.年级.getCode());
 
     /**
      * 返回全部枚举
@@ -49,7 +55,7 @@ public class EnumsService {
     private Map<String, List<EnumVo>> getDbEnums(Integer logInUser) {
         Map<Integer, List<SysConfigPo>> sysConfigMap = sysConfigService.getAllConfigs().stream()
                 //过滤校区类型
-                .filter(e -> !e.getType().equals(SysConfigEnum.校区.getCode()))
+                .filter(e -> !FILTER_LIST.contains(e))
                 .collect(Collectors.groupingBy(SysConfigPo::getType));
         if (CollectionUtils.isEmpty(sysConfigMap)) {
             return Maps.newHashMap();
@@ -70,6 +76,7 @@ public class EnumsService {
             map.put(SysConfigEnum.codeOf(k).getDesc(), l);
         });
         map.put(SysConfigEnum.校区.getDesc(), getCampus(logInUser));
+        map.put(SysConfigEnum.年级.getDesc(), getGrade(logInUser));
 
         return map;
     }
@@ -147,6 +154,48 @@ public class EnumsService {
                 .collect(Collectors.toMap(k -> k.getValue(), v -> v, (v1, v2) -> v2));
         for (Integer campus : campusAuthorization) {
             SysConfigPo e = campusMap.get(campus);
+            if (e == null) {
+                continue;
+            }
+            EnumVo v = new EnumVo();
+            v.setLabel(e.getDescription());
+            v.setValue(e.getValue());
+            v.setDbConfig(true);
+            v.setType(e.getType());
+            v.setTypeCode(e.getTypeCode());
+            v.setTypeDesc(e.getTypeDesc());
+            list.add(v);
+        }
+        return list;
+    }
+
+
+    /**
+     * 获取有权限的年级枚举
+     *
+     * @param logInUser
+     * @author PeterChen
+     * @modifier PeterChen
+     * @version v1
+     * @since 2020/7/18 13:07
+     */
+    public List<EnumVo> getGrade(Integer logInUser) {
+        List<Integer> gradeAuthorization = null;
+        try {
+            gradeAuthorization = gradeAuthorizationService.getGradeAuthorization(logInUser);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        if (CollectionUtils.isEmpty(gradeAuthorization)) {
+            return Collections.EMPTY_LIST;
+        }
+        List<EnumVo> list = new ArrayList<>(gradeAuthorization.size());
+        Map<Integer, SysConfigPo> campusMap = sysConfigService.getAllConfigs().stream()
+                //过滤校区类型
+                .filter(e -> e.getType().equals(SysConfigEnum.年级.getCode()))
+                .collect(Collectors.toMap(k -> k.getValue(), v -> v, (v1, v2) -> v2));
+        for (Integer grade : gradeAuthorization) {
+            SysConfigPo e = campusMap.get(grade);
             if (e == null) {
                 continue;
             }

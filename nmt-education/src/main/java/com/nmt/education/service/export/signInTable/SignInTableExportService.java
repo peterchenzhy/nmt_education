@@ -12,11 +12,12 @@ import com.nmt.education.pojo.po.CoursePo;
 import com.nmt.education.pojo.po.CourseRegistrationPo;
 import com.nmt.education.pojo.po.CourseSchedulePo;
 import com.nmt.education.pojo.po.StudentPo;
-import com.nmt.education.service.campus.authorization.CampusAuthorizationService;
+import com.nmt.education.service.authorization.AuthorizationCheckDto;
+import com.nmt.education.service.authorization.AuthorizationDto;
+import com.nmt.education.service.authorization.AuthorizationService;
+import com.nmt.education.service.authorization.campus.CampusAuthorizationService;
 import com.nmt.education.service.course.CourseService;
 import com.nmt.education.service.course.registeration.CourseRegistrationService;
-import com.nmt.education.service.course.registeration.RegistrationExpenseDetailService;
-import com.nmt.education.service.course.registeration.summary.RegisterationSummaryService;
 import com.nmt.education.service.course.schedule.CourseScheduleService;
 import com.nmt.education.service.student.StudentService;
 import com.nmt.education.service.sysconfig.SysConfigService;
@@ -50,6 +51,8 @@ public class SignInTableExportService {
     private CourseScheduleService courseScheduleService;
     @Autowired
     private StudentService studentService;
+    @Autowired
+    private AuthorizationService authorizationService;
 
 
     private final static String 课程签到表 = "课程签到表";
@@ -61,10 +64,15 @@ public class SignInTableExportService {
 
 
     public void doExport(CourseSearchDto dto, Integer loginUserId, HttpServletResponse response) throws IOException {
-
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(loginUserId, dto.getCampus());
-        Assert.isTrue(!CollectionUtils.isEmpty(campusList), "没有任何校区权限进行课程搜索");
-        List<CoursePo> coursePos = courseService.getCoursePos(dto, campusList);
+        AuthorizationCheckDto authorizationCheckDto = new AuthorizationCheckDto();
+        authorizationCheckDto.setUserId(loginUserId);
+        authorizationCheckDto.setCampus(dto.getCampus());
+        authorizationCheckDto.setGrade(dto.getGrade());
+        AuthorizationDto authorization = authorizationService.getAuthorization(authorizationCheckDto);
+//        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(loginUserId, dto.getCampus());
+        Assert.isTrue(!CollectionUtils.isEmpty(authorization.getCampusList()), "没有任何校区权限进行课程搜索");
+        Assert.isTrue(!CollectionUtils.isEmpty(authorization.getGradeList()), "没有任何年级权限进行课程搜索");
+        List<CoursePo> coursePos = courseService.getCoursePos(dto,authorization.getCampusList(),authorization.getGradeList());
 
         //设置response
         response.setContentType("application/vnd.ms-excel");

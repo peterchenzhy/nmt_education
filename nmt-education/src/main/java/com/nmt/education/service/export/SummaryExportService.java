@@ -9,7 +9,10 @@ import com.nmt.education.pojo.dto.req.CourseSearchDto;
 import com.nmt.education.pojo.dto.req.SummaryExportReqDto;
 import com.nmt.education.pojo.po.*;
 import com.nmt.education.pojo.vo.SummaryExportDto;
-import com.nmt.education.service.campus.authorization.CampusAuthorizationService;
+import com.nmt.education.service.authorization.AuthorizationCheckDto;
+import com.nmt.education.service.authorization.AuthorizationDto;
+import com.nmt.education.service.authorization.AuthorizationService;
+import com.nmt.education.service.authorization.campus.CampusAuthorizationService;
 import com.nmt.education.service.course.CourseService;
 import com.nmt.education.service.course.expense.CourseExpenseService;
 import com.nmt.education.service.course.registeration.CourseRegistrationService;
@@ -34,7 +37,7 @@ public class SummaryExportService extends AbstractExportService<SummaryExportReq
     @Autowired
     private CourseService courseService;
     @Autowired
-    private CampusAuthorizationService campusAuthorizationService;
+    private AuthorizationService authorizationService;
     @Autowired
     private CourseRegistrationService courseRegistrationService;
     @Autowired
@@ -183,14 +186,20 @@ public class SummaryExportService extends AbstractExportService<SummaryExportReq
     }
 
     private List<CoursePo> getCourseList(SummaryExportReqDto dto, Integer logInUser) {
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
+
+        AuthorizationCheckDto checkDto = new AuthorizationCheckDto();
+        checkDto.setUserId(logInUser);
+        checkDto.setCampus(dto.getCampus());
+        checkDto.setGrade(dto.getGrade());
+        AuthorizationDto authorization = authorizationService.getAuthorization(checkDto);
+
         CourseSearchDto courseSearchDto = new CourseSearchDto();
         courseSearchDto.setCourseSubject(dto.getCourseSubject());
         courseSearchDto.setCourseType(dto.getCourseType());
         courseSearchDto.setYear(dto.getYear());
         courseSearchDto.setSeason(dto.getSeason());
         courseSearchDto.setGrade(dto.getGrade());
-        return courseService.getCoursePos(courseSearchDto, campusList);
+        return courseService.getCoursePos(courseSearchDto, authorization.getCampusList(),authorization.getGradeList());
     }
 
     @Override

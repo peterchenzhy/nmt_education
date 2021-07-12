@@ -5,6 +5,7 @@ import com.nmt.education.commmons.utils.TokenUtil;
 import com.nmt.education.pojo.dto.req.UserLoginDto;
 import com.nmt.education.pojo.po.UserPo;
 import com.nmt.education.pojo.vo.UserVo;
+import com.nmt.education.service.authorization.AuthorizationService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
@@ -26,6 +27,8 @@ public class UserService {
 
     @Resource
     private UserPoMapper userPoMapper;
+    @Resource
+    private AuthorizationService authorizationService;
 
     /**
      * 登录
@@ -40,6 +43,8 @@ public class UserService {
     public UserVo login(UserLoginDto dto) {
         UserPo userPo = this.userPoMapper.queryByLoginDto(dto);
         Assert.notNull(userPo,"登录失败，用户："+dto.getCode());
+        //check 校区权限 及 年级权限
+        authorizationService.getAuthorization(userPo.getCode());
         UserVo vo = new UserVo(userPo);
         TokenUtil.Token token = new TokenUtil.Token(vo.getLogInUser(),vo.getRoleId());
         vo.setToken(TokenUtil.generateToken(token));

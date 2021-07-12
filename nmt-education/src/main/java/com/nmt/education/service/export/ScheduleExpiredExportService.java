@@ -10,7 +10,10 @@ import com.nmt.education.pojo.po.CourseRegistrationPo;
 import com.nmt.education.pojo.po.RegistrationExpenseDetailPo;
 import com.nmt.education.pojo.vo.RegisterSummaryVo;
 import com.nmt.education.pojo.vo.ScheduleSignInSummaryDto;
-import com.nmt.education.service.campus.authorization.CampusAuthorizationService;
+import com.nmt.education.service.authorization.AuthorizationCheckDto;
+import com.nmt.education.service.authorization.AuthorizationDto;
+import com.nmt.education.service.authorization.AuthorizationService;
+import com.nmt.education.service.authorization.campus.CampusAuthorizationService;
 import com.nmt.education.service.course.registeration.CourseRegistrationService;
 import com.nmt.education.service.course.registeration.RegistrationExpenseDetailService;
 import com.nmt.education.service.sysconfig.SysConfigService;
@@ -27,7 +30,7 @@ public class ScheduleExpiredExportService extends AbstractExportService<Register
     @Autowired
     private CourseRegistrationService courseRegistrationService;
     @Autowired
-    private CampusAuthorizationService campusAuthorizationService;
+    private AuthorizationService authorizationService;
     @Autowired
     private RegistrationExpenseDetailService registrationExpenseDetailService;
     @Autowired
@@ -41,9 +44,13 @@ public class ScheduleExpiredExportService extends AbstractExportService<Register
         if (Objects.nonNull(dto.getRegisterEndDate())) {
             dto.setRegisterEndDate(DateUtil.parseCloseDate(dto.getRegisterEndDate()));
         }
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
-
-        List<RegisterSummaryVo> list = courseRegistrationService.queryBySearchDto(dto, campusList);
+//        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
+        AuthorizationCheckDto req = new AuthorizationCheckDto() ;
+        req.setUserId(logInUser);
+        req.setCampus(dto.getCampus());
+        req.setGrade(dto.getGrade());
+        AuthorizationDto authorization = authorizationService.getAuthorization(req);
+        List<RegisterSummaryVo> list = courseRegistrationService.queryBySearchDto(dto, authorization.getCampusList(),authorization.getGradeList());
         if (CollectionUtils.isEmpty(list)) {
             return Collections.emptyList();
         }

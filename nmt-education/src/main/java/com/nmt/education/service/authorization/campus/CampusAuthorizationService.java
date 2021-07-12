@@ -1,4 +1,4 @@
-package com.nmt.education.service.campus.authorization;
+package com.nmt.education.service.authorization.campus;
 
 import com.google.common.collect.Lists;
 import com.nmt.education.config.cache.CacheManagerConfig;
@@ -41,7 +41,7 @@ public class CampusAuthorizationService {
     public List<Integer> getCampusAuthorization(Integer userId) {
         Assert.isTrue(userId != null, "用户id不正确");
         List<CampusAuthorizationPo> poList = getCampusAuthorizationByUserId(userId);
-        Assert.isTrue(!CollectionUtils.isEmpty(poList), "没有系统权限，请联系管理员");
+        Assert.isTrue(!CollectionUtils.isEmpty(poList), "没有校区系统权限，请联系管理员");
         return poList.stream().map(e -> e.getCode()).collect(Collectors.toList());
     }
 

@@ -228,9 +228,6 @@
         <if test="dto.courseType != null">
             and course_type = #{dto.courseType}
         </if>
-        <if test="dto.grade != null">
-            and grade = #{dto.grade}
-        </if>
         <if test="dto.startDate != null">
             <![CDATA[
             and   start_date != "1970-01-02 00:00:00"
@@ -253,6 +250,10 @@
         and campus in
         <foreach collection="campusList" item="campus" separator="," open="(" close=")">
             #{campus}
+        </foreach>
+        and grade in
+        <foreach collection="gradeList" item="grade" separator="," open="(" close=")">
+            #{grade}
         </foreach>
         order by id desc
     </select>

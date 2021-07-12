@@ -16,7 +16,10 @@ import com.nmt.education.pojo.vo.CourseSignInItem;
 import com.nmt.education.pojo.vo.CourseSignInVo;
 import com.nmt.education.pojo.vo.TeacherSalarySummaryDto;
 import com.nmt.education.pojo.vo.TeacherScheduleDto;
-import com.nmt.education.service.campus.authorization.CampusAuthorizationService;
+import com.nmt.education.service.authorization.AuthorizationCheckDto;
+import com.nmt.education.service.authorization.AuthorizationDto;
+import com.nmt.education.service.authorization.AuthorizationService;
+import com.nmt.education.service.authorization.campus.CampusAuthorizationService;
 import com.nmt.education.service.course.CourseService;
 import com.nmt.education.service.course.registeration.CourseRegistrationService;
 import com.nmt.education.service.course.registeration.RegistrationExpenseDetailService;
@@ -57,7 +60,7 @@ public class CourseScheduleService {
     @Autowired
     private RegistrationExpenseDetailService registrationExpenseDetailService;
     @Autowired
-    private CampusAuthorizationService campusAuthorizationService;
+    private AuthorizationService authorizationService;
     @Autowired
     private SysConfigService configService;
     @Autowired
@@ -503,7 +506,14 @@ public class CourseScheduleService {
      * @return
      */
     public List<TeacherScheduleDto> scheduleTeacherExportList(TeacherScheduleReqDto dto, Integer logInUser) {
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
+
+        AuthorizationCheckDto reqDto = new AuthorizationCheckDto();
+        reqDto.setUserId(logInUser);
+        reqDto.setCampus(dto.getCampus());
+//        reqDto.setGrade(dto.getGrade());
+        AuthorizationDto authorization = authorizationService.getAuthorization(reqDto);
+
+//        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
         if (dto.getEndDate() != null) {
             dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
         }
@@ -512,7 +522,7 @@ public class CourseScheduleService {
         dto.setPageSize(Consts.BATCH_100);
         List<TeacherScheduleDto> dataList;
         do {
-            dataList = getExportData(dto, campusList);
+            dataList = getExportData(dto, authorization.getCampusList() );
             int pageNo = dto.getPageNo() + 1;
             dto.setPageNo(pageNo);
             resultList.addAll(dataList);
@@ -546,7 +556,12 @@ public class CourseScheduleService {
     public List<TeacherSalarySummaryDto> teacherSummaryExportList(TeacherScheduleReqDto dto, Integer logInUser) {
 
         //先获取数据范围
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
+//        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
+        AuthorizationCheckDto reqDto = new AuthorizationCheckDto();
+        reqDto.setUserId(logInUser);
+        reqDto.setCampus(dto.getCampus());
+//        reqDto.setGrade(dto.getGrade());
+        AuthorizationDto authorization = authorizationService.getAuthorization(reqDto);
         if (dto.getEndDate() != null) {
             dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
         }
@@ -556,7 +571,7 @@ public class CourseScheduleService {
         Map<Long, Map<Long, TeacherSalarySummaryDto>> teacherMap = new HashMap<>();
 
         do {
-            dataList = getExportData(dto, campusList);
+            dataList = getExportData(dto, authorization.getCampusList());
             dataList.stream()
                     .collect(Collectors.groupingBy(TeacherScheduleDto::getTeacherId))
                     .forEach((k, v) -> {
@@ -618,8 +633,15 @@ public class CourseScheduleService {
     //获取一段时间内 教师课时费
     public List<String> getTeacherPay(TeacherScheduleReqDto dto, Integer logInUser) {
         //先获取数据范围
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
-        return this.courseSchedulePoMapper.getTeacherPay(dto, campusList);
+//        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
+        AuthorizationCheckDto reqDto = new AuthorizationCheckDto();
+        reqDto.setUserId(logInUser);
+        reqDto.setCampus(dto.getCampus());
+//        reqDto.setGrade(dto.getGrade());
+        AuthorizationDto authorization = authorizationService.getAuthorization(reqDto);
+
+
+        return this.courseSchedulePoMapper.getTeacherPay(dto, authorization.getCampusList());
     }
 
 

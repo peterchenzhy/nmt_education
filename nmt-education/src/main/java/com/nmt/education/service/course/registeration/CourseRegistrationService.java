@@ -11,7 +11,10 @@ import com.nmt.education.pojo.dto.req.*;
 import com.nmt.education.pojo.po.*;
 import com.nmt.education.pojo.vo.*;
 import com.nmt.education.service.CodeService;
-import com.nmt.education.service.campus.authorization.CampusAuthorizationService;
+import com.nmt.education.service.authorization.AuthorizationCheckDto;
+import com.nmt.education.service.authorization.AuthorizationDto;
+import com.nmt.education.service.authorization.AuthorizationService;
+import com.nmt.education.service.authorization.campus.CampusAuthorizationService;
 import com.nmt.education.service.course.CourseService;
 import com.nmt.education.service.course.registeration.summary.RegisterationSummaryService;
 import com.nmt.education.service.course.schedule.CourseScheduleService;
@@ -64,6 +67,8 @@ public class CourseRegistrationService {
     @Autowired
     @Lazy
     private SysConfigService sysConfigService;
+    @Autowired
+    private AuthorizationService authorizationService;
 
 
     /**
@@ -162,7 +167,14 @@ public class CourseRegistrationService {
     private void registerCheck(int loginUserId, CourseRegisterReqDto dto) {
         Assert.notNull(studentService.selectByPrimaryKey(dto.getStudentId()), "学生信息不存在！id:" + dto.getStudentId());
         CoursePo coursePo = courseService.selectByPrimaryKey(dto.getCourseId());
-        campusAuthorizationService.getCampusAuthorization(loginUserId, coursePo.getCampus());
+//        campusAuthorizationService.getCampusAuthorization(loginUserId, coursePo.getCampus());
+
+        AuthorizationCheckDto reqDto = new AuthorizationCheckDto();
+        reqDto.setUserId(loginUserId);
+        reqDto.setCampus(coursePo.getCampus());
+        reqDto.setGrade(coursePo.getGrade());
+        authorizationService.getAuthorization(reqDto);
+
         Assert.notNull(coursePo, "课程信息不存在！id:" + dto.getCourseId());
         Assert.notEmpty(dto.getCourseScheduleIds(), "报名课时必填！id:" + dto.getCourseId());
         if (Enums.EditFlag.新增.getCode().equals(dto.getEditFlag())) {
@@ -426,17 +438,29 @@ public class CourseRegistrationService {
      * @since 2020/5/5 15:45
      */
     public PageInfo<CourseRegistrationListVo> registerSearch(RegisterSearchReqDto dto, Integer logInUser) {
-        List<Integer> queryList = new ArrayList<>();
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser);
+        List<Integer> campusList = new ArrayList<>();
+//        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser);
+        AuthorizationDto authorization = authorizationService.getAuthorization(logInUser);
         if (dto.getCampus() != null) {
-            Assert.isTrue(campusList.contains(dto.getCampus()), "该校区没有权限");
-            queryList.add(dto.getCampus());
+            Assert.isTrue(authorization.getCampusList().contains(dto.getCampus()), "该校区没有权限");
+            campusList.add(dto.getCampus());
         } else {
-            queryList.addAll(campusList);
+            campusList.addAll(authorization.getCampusList());
         }
+
+        List<Integer> gradeList = new ArrayList<>();
+        if (dto.getGrade() != null) {
+            Assert.isTrue(authorization.getGradeList().contains(dto.getGrade()), "该年级没有权限");
+            gradeList.add(dto.getGrade());
+        } else {
+            gradeList.addAll(authorization.getGradeList());
+        }
+
+
         dto.setSignInDateStart(Objects.nonNull(dto.getSignInDateStart()) ? DateUtil.parseOpenDate(dto.getSignInDateStart()) : null);
         dto.setSignInDateEnd(Objects.nonNull(dto.getSignInDateEnd()) ? DateUtil.parseCloseDate(dto.getSignInDateEnd()) : null);
-        return PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.courseRegistrationPoMapper.queryByDto(dto, queryList));
+        return PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> this.courseRegistrationPoMapper.queryByDto(dto,
+                campusList,gradeList));
     }
 
     /**
@@ -502,16 +526,35 @@ public class CourseRegistrationService {
         if (Objects.nonNull(dto.getRegisterEndDate())) {
             dto.setRegisterEndDate(DateUtil.parseCloseDate(dto.getRegisterEndDate()));
         }
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
-        Assert.isTrue(!CollectionUtils.isEmpty(campusList), "没有任何校区权限进行搜索");
+//        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
+
+        AuthorizationCheckDto req = new AuthorizationCheckDto() ;
+        req.setUserId(logInUser);
+        req.setCampus(dto.getCampus());
+        req.setGrade(dto.getGrade());
+        AuthorizationDto authorization = authorizationService.getAuthorization(req);
+
+        Assert.isTrue(!CollectionUtils.isEmpty(authorization.getCampusList()), "没有任何校区权限进行搜索");
+        Assert.isTrue(!CollectionUtils.isEmpty(authorization.getGradeList()), "没有任何年级权限进行搜索");
         PageInfo<RegisterSummaryVo> pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize()).doSelectPageInfo(() -> queryBySearchDto(dto
-                , campusList));
+                , authorization.getCampusList(),authorization.getGradeList()));
         return pageInfo;
     }
 
     public RegisterSummaryTotalVo registerSummaryTotal(RegisterSummarySearchDto dto, Integer logInUser) {
-        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
+//        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
+
+        AuthorizationCheckDto reqDto = new AuthorizationCheckDto();
+        reqDto.setUserId(logInUser);
+        reqDto.setCampus(dto.getCampus());
+        reqDto.setGrade(dto.getGrade());
+        AuthorizationDto authorization = authorizationService.getAuthorization(reqDto);
+
+        List<Integer> campusList =authorization.getCampusList();
+        List<Integer> gradeList =authorization.getGradeList() ;
+
         Assert.isTrue(!CollectionUtils.isEmpty(campusList), "没有任何校区权限进行搜索");
+        Assert.isTrue(!CollectionUtils.isEmpty(gradeList), "没有任何年级权限进行搜索");
         RegisterSummaryTotalVo vo = new RegisterSummaryTotalVo();
         if (Objects.nonNull(dto.getEndDate())) {
             dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
@@ -522,10 +565,10 @@ public class CourseRegistrationService {
         if (Objects.nonNull(dto.getStartDate())) {
             dto.setStartDate(DateUtil.parseOpenDate(dto.getStartDate()));
         }
-        vo.setTotalCount(queryCountBySearchDto(dto, campusList, null));
-        vo.setSignInCount(queryCountBySearchDto(dto, campusList, Enums.SignInType.已签到.getCode()));
+        vo.setTotalCount(queryCountBySearchDto(dto, campusList, null,gradeList));
+        vo.setSignInCount(queryCountBySearchDto(dto, campusList, Enums.SignInType.已签到.getCode(),gradeList));
 
-        long count = registerStudentSummaryTotal(dto.getStartDate(), dto.getEndDate(), dto.getYear(), dto.getSeason(), null, campusList);
+        long count = registerStudentSummaryTotal(dto.getStartDate(), dto.getEndDate(), dto.getYear(), dto.getSeason(), null, campusList,gradeList);
         vo.setRegisterStudentCount(count);
 
         vo.setRegisterCount(this.countRegistration(dto, campusList));
@@ -557,14 +600,14 @@ public class CourseRegistrationService {
      * @version v1
      * @since 2020/5/11 22:02
      */
-    public List<RegisterSummaryVo> queryBySearchDto(RegisterSummarySearchDto dto, List<Integer> campusList) {
+    public List<RegisterSummaryVo> queryBySearchDto(RegisterSummarySearchDto dto, List<Integer> campusList,List<Integer> gradeList) {
 
-        return this.registerationSummaryService.queryBySearchDto(dto, campusList);
+        return this.registerationSummaryService.queryBySearchDto(dto, campusList,gradeList);
     }
 
-    private int queryCountBySearchDto(RegisterSummarySearchDto dto, List<Integer> campusList, Integer signInStatus) {
+    private int queryCountBySearchDto(RegisterSummarySearchDto dto, List<Integer> campusList, Integer signInStatus,List<Integer> gradeList) {
 
-        return this.registerationSummaryService.queryCountBySearchDto(dto, campusList, signInStatus);
+        return this.registerationSummaryService.queryCountBySearchDto(dto, campusList, signInStatus,  gradeList);
     }
 
 
@@ -920,8 +963,9 @@ public class CourseRegistrationService {
     }
 
     //统计报名的学生数量
-    public long registerStudentSummaryTotal(Date startDate, Date endDate, Integer year, Integer season, Integer userCode, List<Integer> campusList) {
-        return this.courseRegistrationPoMapper.registerStudentSummaryTotal(startDate, endDate, year, season, userCode, campusList);
+    public long registerStudentSummaryTotal(Date startDate, Date endDate, Integer year, Integer season, Integer userCode, List<Integer> campusList,
+                                            List<Integer> gradeList) {
+        return this.courseRegistrationPoMapper.registerStudentSummaryTotal(startDate, endDate, year, season, userCode, campusList,  gradeList);
     }
 
     /**

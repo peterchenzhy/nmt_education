@@ -54,12 +54,12 @@ public class RegisterationSummaryService {
 
 
 
-    public List<RegisterSummaryVo> queryBySearchDto(RegisterSummarySearchDto dto, List<Integer> campusList) {
-        return this.registerationSummaryPoMapper.queryBySearchDto(dto,campusList);
+    public List<RegisterSummaryVo> queryBySearchDto(RegisterSummarySearchDto dto, List<Integer> campusList, List<Integer> gradeList) {
+        return this.registerationSummaryPoMapper.queryBySearchDto(dto,campusList,gradeList);
     }
 
-    public int queryCountBySearchDto(RegisterSummarySearchDto dto, List<Integer> campusList,Integer signInStatus) {
-        return this.registerationSummaryPoMapper.queryCountBySearchDto(dto,campusList,signInStatus);
+    public int queryCountBySearchDto(RegisterSummarySearchDto dto, List<Integer> campusList,Integer signInStatus,List<Integer> gradeList) {
+        return this.registerationSummaryPoMapper.queryCountBySearchDto(dto,campusList,signInStatus,gradeList);
     }
 
     /**

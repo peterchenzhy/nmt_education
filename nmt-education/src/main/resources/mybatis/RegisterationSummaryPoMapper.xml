@@ -125,8 +125,14 @@
             <![CDATA[
       and rs.create_time <= #{dto.registerEndDate}  ]]>
         </if>
-        <if test="dto.grade != null">
-            and c.grade = #{dto.grade}
+<!--        <if test="dto.grade != null">-->
+<!--            and c.grade = #{dto.grade}-->
+<!--        </if>-->
+        <if test="gradeList != null and gradeList.size() != 0">
+            and c.grade in
+            <foreach collection="gradeList" item="grade" separator="," open="(" close=")">
+                #{grade}
+            </foreach>
         </if>
         <if test="dto.courseSubject != null">
             and c.course_subject = #{dto.courseSubject}
@@ -181,9 +187,9 @@
             <![CDATA[
       and rs.create_time <= #{dto.registerEndDate}  ]]>
         </if>
-        <if test="dto.grade != null">
-            and c.grade = #{dto.grade}
-        </if>
+<!--        <if test="dto.grade != null">-->
+<!--            and c.grade = #{dto.grade}-->
+<!--        </if>-->
         <if test="dto.courseSubject != null">
             and c.course_subject = #{dto.courseSubject}
         </if>
@@ -202,6 +208,12 @@
             and c.campus in
             <foreach collection="campusList" item="campus" separator="," open="(" close=")">
                 #{campus}
+            </foreach>
+        </if>
+        <if test="gradeList != null and gradeList.size() != 0">
+            and c.grade in
+            <foreach collection="gradeList" item="grade" separator="," open="(" close=")">
+                #{grade}
             </foreach>
         </if>
         <if test="dto.season != null">
