@@ -78,6 +78,7 @@ public class CourseScheduleService {
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
             @Override
             public void afterCommit() {
+                log.info("开始课程排序，courseId:[{}]",courseId);
                 List<CourseSchedulePo> list = queryByCourseId(courseId);
                 if (CollectionUtils.isEmpty(list)) {
                     return;
@@ -85,39 +86,15 @@ public class CourseScheduleService {
                 List<CourseSchedulePo> newPoList = new ArrayList<>(list.size());
                 List<CourseSchedulePo> sortList = list.stream()
                         .sorted(Comparator.comparing(CourseSchedulePo::getCourseDatetime)).collect(Collectors.toList());
-                Map<Integer, CourseSchedulePo> idMap = list.stream().collect(Collectors.toMap(CourseSchedulePo::getCourseTimes, Function.identity()));
                 int i = 1;
-                int k = 1;
                 for (CourseSchedulePo e : sortList) {
                     if (e.getCourseTimes() == i) {
                         i++;
-                        k++;
                         continue;
                     }
-                    //原来的时间被删了就是null
-                    CourseSchedulePo courseSchedulePo = idMap.get(k);
-                    while (courseSchedulePo == null) {
-                        if (k > sortList.size()) {
-                            log.error("不存在idMap数据：" + e);
-                            break;
-                        }
-                        k = k + 1;
-                        courseSchedulePo = idMap.get(k);
-                    }
-                    if (courseSchedulePo == null) {
-                        break;
-                    }
-
-                    CourseSchedulePo newPo = new CourseSchedulePo();
-                    BeanUtils.copyProperties(e, newPo);
-
-                    newPo.setSignIn(courseSchedulePo.getSignIn());
-                    newPo.setOperateTime(courseSchedulePo.getOperateTime());
-                    newPo.setOperator(courseSchedulePo.getOperator());
-                    newPo.setCourseTimes(i);
-                    newPoList.add(newPo);
+                    e.setCourseTimes(i);
+                    newPoList.add(e);
                     i++;
-                    k++;
                 }
                 if (!CollectionUtils.isEmpty(newPoList)) {
                     log.info("调整课程编号，员工：[{}],数据:{}", operator, newPoList);
