@@ -74,6 +74,10 @@ public class FeeStatisticsVo {
     @ExcelProperty(value = "结余抵扣",index = 11,converter = StringNumberConverter.class )
     private String accountAmount;
 
+    //实际收费= 费用-结余抵扣
+    @ExcelIgnore
+    private String actuallyAmount;
+
     /**
      * @see com.nmt.education.commmons.ExpenseDetailFlowTypeEnum
      */

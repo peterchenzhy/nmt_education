@@ -69,6 +69,7 @@ public class FeeStatisticsService {
         pageInfo.getList().stream().forEach(e -> {
             e.setFeeFlowTypeStr(ExpenseDetailFlowTypeEnum.codeOf(e.getFeeFlowType()).getDisplay());
             e.setPaymentStr(Enums.PaymentType.codeOf(e.getPayment()).getDesc());
+            e.setActuallyAmount(NumberUtil.String2Dec(e.getAmount()).subtract(NumberUtil.String2Dec(e.getAccountAmount())).toPlainString());
         });
         return pageInfo;
     }
