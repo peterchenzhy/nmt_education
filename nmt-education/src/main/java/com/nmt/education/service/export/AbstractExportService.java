@@ -100,7 +100,8 @@ public abstract class AbstractExportService<E, T, S> {
             excelWriterSheetBuilder.sheetName("汇总");
             WriteSheet writeSheet = excelWriterSheetBuilder.build();
             writeSheet.setClazz(getSummaryExportClass());
-            excelWriter.write(threadLocalSummary.get(), writeSheet);
+            List<S> summaryTotalDto = getSummaryTotalDto(threadLocalSummary.get());
+            excelWriter.write(summaryTotalDto, writeSheet);
         }
         excelWriter.finish();
         threadLocalSummary.remove();
@@ -161,6 +162,11 @@ public abstract class AbstractExportService<E, T, S> {
     //获得汇总数据
     protected S getSummaryDto(List<T> t) {
         return null;
+    }
+
+    //最终汇总数据
+    protected List<S> getSummaryTotalDto(List<S> ss) {
+        return ss;
     }
 
 

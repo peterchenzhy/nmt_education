@@ -57,6 +57,7 @@ public class TokenUtil {
                 t.setJwtToken(newToken);
             }
         }
+        log.debug("token验证通过，user:[{}]",t.getLoginUserId());
         return t;
     }
 

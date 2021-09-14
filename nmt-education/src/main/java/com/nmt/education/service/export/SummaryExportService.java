@@ -246,6 +246,23 @@ public class SummaryExportService extends AbstractExportService<SummaryExportReq
 
         return dto;
     }
+
+    @Override
+    protected List<SummarySummaryExportDto> getSummaryTotalDto(List<SummarySummaryExportDto> ss) {
+        if(CollectionUtils.isEmpty(ss)){
+            return Collections.emptyList() ;
+        }
+        SummarySummaryExportDto dto = new SummarySummaryExportDto();
+        dto.setCourseName("总计");
+        dto.setExpired(
+                ss.stream().map(e->NumberUtil.String2Dec(e.getExpired())).reduce(BigDecimal::add).get().stripTrailingZeros().toPlainString()
+        );
+        dto.setUnexpired(
+                ss.stream().map(e->NumberUtil.String2Dec(e.getUnexpired())).reduce(BigDecimal::add).get().stripTrailingZeros().toPlainString()
+        );
+        ss.add(dto);
+        return ss ;
+    }
 }
 
 
