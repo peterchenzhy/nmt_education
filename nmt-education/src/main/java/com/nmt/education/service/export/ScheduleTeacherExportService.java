@@ -1,6 +1,7 @@
 package com.nmt.education.service.export;
 
 import com.nmt.education.pojo.dto.req.TeacherScheduleReqDto;
+import com.nmt.education.pojo.vo.SummaryDefaultDto;
 import com.nmt.education.pojo.vo.TeacherScheduleDto;
 import com.nmt.education.service.course.schedule.CourseScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ScheduleTeacherExportService extends AbstractExportService<TeacherScheduleReqDto, TeacherScheduleDto> {
+public class ScheduleTeacherExportService extends AbstractExportService<TeacherScheduleReqDto, TeacherScheduleDto, SummaryDefaultDto> {
     @Autowired
     private CourseScheduleService courseScheduleService;
 

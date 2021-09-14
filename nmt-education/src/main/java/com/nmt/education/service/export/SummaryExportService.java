@@ -9,6 +9,7 @@ import com.nmt.education.pojo.dto.req.CourseSearchDto;
 import com.nmt.education.pojo.dto.req.SummaryExportReqDto;
 import com.nmt.education.pojo.po.*;
 import com.nmt.education.pojo.vo.SummaryExportDto;
+import com.nmt.education.pojo.vo.SummarySummaryExportDto;
 import com.nmt.education.service.authorization.AuthorizationCheckDto;
 import com.nmt.education.service.authorization.AuthorizationDto;
 import com.nmt.education.service.authorization.AuthorizationService;
@@ -33,7 +34,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class SummaryExportService extends AbstractExportService<SummaryExportReqDto, SummaryExportDto> {
+public class SummaryExportService extends AbstractExportService<SummaryExportReqDto, SummaryExportDto, SummarySummaryExportDto> {
     @Autowired
     private CourseService courseService;
     @Autowired
@@ -222,6 +223,28 @@ public class SummaryExportService extends AbstractExportService<SummaryExportReq
     @Override
     protected String getSheetSortFieldName() {
         return "grade";
+    }
+
+    @Override
+    protected boolean hasSummarySheet() {
+        return true;
+    }
+
+    @Override
+    protected SummarySummaryExportDto getSummaryDto(List<SummaryExportDto> t) {
+        if(CollectionUtils.isEmpty(t)){
+            return null ;
+        }
+        SummarySummaryExportDto dto = new SummarySummaryExportDto();
+        dto.setCourseName(t.get(0).getCourseName());
+        dto.setExpired(
+                t.stream().map(e->NumberUtil.String2Dec(e.getActuallyConsume())).reduce(BigDecimal::add).get().stripTrailingZeros().toPlainString()
+        );
+        dto.setUnexpired(
+                t.stream().map(e->NumberUtil.String2Dec(e.getUnexpired())).reduce(BigDecimal::add).get().stripTrailingZeros().toPlainString()
+        );
+
+        return dto;
     }
 }
 

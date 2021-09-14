@@ -10,6 +10,7 @@ import com.nmt.education.pojo.po.CourseRegistrationPo;
 import com.nmt.education.pojo.po.RegistrationExpenseDetailPo;
 import com.nmt.education.pojo.vo.RegisterSummaryVo;
 import com.nmt.education.pojo.vo.ScheduleSignInSummaryDto;
+import com.nmt.education.pojo.vo.SummaryDefaultDto;
 import com.nmt.education.service.authorization.AuthorizationCheckDto;
 import com.nmt.education.service.authorization.AuthorizationDto;
 import com.nmt.education.service.authorization.AuthorizationService;
@@ -26,7 +27,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class ScheduleExpiredExportService extends AbstractExportService<RegisterSummarySearchDto, ScheduleSignInSummaryDto> {
+public class ScheduleExpiredExportService extends AbstractExportService<RegisterSummarySearchDto, ScheduleSignInSummaryDto, SummaryDefaultDto> {
     @Autowired
     private CourseRegistrationService courseRegistrationService;
     @Autowired
