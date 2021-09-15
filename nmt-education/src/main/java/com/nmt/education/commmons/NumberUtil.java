@@ -159,7 +159,7 @@ public class NumberUtil {
                 if (StringUtils.isBlank(e)) {
                     continue;
                 }
-                result = result.add(new BigDecimal(e));
+                result = result.add(String2Dec(e));
             }
         }
         return result;

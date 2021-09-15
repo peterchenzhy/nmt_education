@@ -137,6 +137,39 @@
             and flow.creator=#{userCode}
         </if>
     </select>
+    <select id="flowAmountSummary" resultType="java.lang.String">
+        select flow.account_amount
+        from registration_expense_detail_flow flow
+        inner join course_registration cr on flow.registration_id = cr.id and cr.status = 1
+        inner join course c on cr.course_id = c.id and c.status = 1
+        and c.campus in
+        <foreach collection="campusList" item="campus" open="(" close=")" separator=",">
+            #{campus}
+        </foreach>
+        where flow.status= 1
+        and flow.type in
+        <foreach collection="type" item="t" open="(" close=")" separator=",">
+            #{t}
+        </foreach>
+        <if test="startDate != null">
+            <![CDATA[
+            and flow.create_time >= #{startDate}
+        ]]>
+        </if>
+        <if test="endDate != null">
+            <![CDATA[
+            and flow.create_time <= #{endDate}     ]]>
+        </if>
+        <if test="year != null">
+            and c.year = #{year}
+        </if>
+        <if test="season != null">
+            and c.season = #{season}
+        </if>
+        <if test="userCode != null">
+            and flow.creator=#{userCode}
+        </if>
+    </select>
     <select id="queryByRegisterIds" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>

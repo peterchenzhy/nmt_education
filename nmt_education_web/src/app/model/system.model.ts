@@ -115,10 +115,12 @@ export interface ResponseData {
 }
 export interface FeeSummary {
   pay?: string;
+  actuallyHandIn?: string;
+  amountSummary?: string;
   refund?: string;
   teacherPay?: string;
   startDate?: string;
-  endData?: string;
+  endDate?: string;
   registerStudentCount?: number;
 }
 

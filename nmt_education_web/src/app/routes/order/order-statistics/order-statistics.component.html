@@ -64,10 +64,12 @@
   </form>
 </nz-card>
 <nz-card [nzBordered]="false">
-  <sv-container  size="large" title="统计信息">
+  <sv-container  size="small" title="统计信息" col="5">
     <sv label="报名人数">{{summaryData.registerStudentCount}}</sv>
     <sv label="总付费">{{summaryData.pay}}</sv>
     <sv label="总退费">{{summaryData.refund}}</sv>
+    <sv label="总抵扣">{{summaryData.amountSummary}}</sv>
+    <sv label="实际上交">{{summaryData.actuallyHandIn}}</sv>
   </sv-container>
   <st #st [columns]="columns" [data]="data.list" [total]="data.total" [ps]="queryParam.pageSize"
       [pi]="queryParam.pageNo" [page]="pager" [loading]="loading" (change)="stChange($event)">

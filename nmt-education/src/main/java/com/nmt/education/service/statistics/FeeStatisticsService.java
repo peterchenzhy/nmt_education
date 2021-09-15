@@ -133,24 +133,28 @@ public class FeeStatisticsService {
         Date startDate = DateUtil.parseOpenDate(dto.getStartDate());
         Date endDate = DateUtil.parseCloseDate(dto.getEndDate());
         FeeSummaryVo vo = new FeeSummaryVo();
-//        List<Integer> campusList = campusAuthorizationService.getCampusAuthorization(logInUser, dto.getCampus());
         AuthorizationCheckDto reqDto = new AuthorizationCheckDto();
         reqDto.setUserId(logInUser);
         reqDto.setCampus(dto.getCampus());
         AuthorizationDto authorization = authorizationService.getAuthorization(reqDto);
         List<Integer> campusList = authorization.getCampusList();
 
+        //总费用
         List<String> payList = registrationExpenseDetailService.flowSummary(startDate, endDate, dto.getYear(), dto.getSeason(), campusList,
                 dto.getUserCode(),
                 Lists.newArrayList(ExpenseDetailFlowTypeEnum.新增记录.getCode(), ExpenseDetailFlowTypeEnum.编辑.getCode()));
         vo.setPay(NumberUtil.addStringList(payList).toPlainString());
 
+        //总抵扣
+        List<String> amountSummary = registrationExpenseDetailService.flowAmountSummary(startDate, endDate, dto.getYear(), dto.getSeason(), campusList,
+                dto.getUserCode(),
+                Lists.newArrayList(ExpenseDetailFlowTypeEnum.新增记录.getCode(), ExpenseDetailFlowTypeEnum.编辑.getCode()));
+        vo.setAmountSummary(NumberUtil.addStringList(amountSummary).toPlainString());
+
+        //总退费
         List<String> refundList = registrationExpenseDetailService.flowSummary(startDate, endDate, dto.getYear(), dto.getSeason(), campusList,
                 dto.getUserCode(),Lists.newArrayList(ExpenseDetailFlowTypeEnum.退费.getCode()));
         vo.setRefund(NumberUtil.addStringList(refundList).toPlainString());
-
-
-
 
         long count = courseRegistrationService.registerStudentSummaryTotal(startDate, endDate, dto.getYear(), dto.getSeason(), dto.getUserCode(),
                 campusList,
@@ -167,7 +171,8 @@ public class FeeStatisticsService {
             vo.setTeacherPay(NumberUtil.addStringList(teacherPay).toPlainString());
         }
         vo.setStartDate(DateUtil.formatDate(startDate));
-        vo.setStartDate(DateUtil.formatDate(endDate));
+        vo.setEndDate(DateUtil.formatDate(endDate));
+        vo.setActuallyHandIn();
         return vo;
     }
 }

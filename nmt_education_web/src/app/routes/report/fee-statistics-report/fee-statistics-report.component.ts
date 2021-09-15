@@ -39,6 +39,8 @@ export class FeeStatisticsReportComponent implements OnInit {
     { title: '校区', index: 'campus', render: "courseCampus" },
     { title: '学生姓名', index: 'studentName' },
     { title: '支付金额', index: 'amount' },
+    { title: '结余抵扣', index: 'accountAmount' },
+    { title: '实际费用', index: 'actuallyAmount' },
     { title: '费用状态', index: 'feeFlowTypeStr' },
     { title: '支付方式', index: 'paymentStr' },
     { title: '操作人', index: 'userName' },

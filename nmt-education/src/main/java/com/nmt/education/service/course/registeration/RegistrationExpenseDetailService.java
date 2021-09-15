@@ -47,10 +47,10 @@ public class RegistrationExpenseDetailService {
     }
 
     public List<RegistrationExpenseDetailFlowPo> getExpenseDetailFlowList(List<Long> registerIds, List<Integer> types) {
-        if(CollectionUtils.isEmpty(registerIds)){
+        if (CollectionUtils.isEmpty(registerIds)) {
             return Collections.emptyList();
         }
-        return this.registrationExpenseDetailFlowMapper.queryByRegisterIds(registerIds,types);
+        return this.registrationExpenseDetailFlowMapper.queryByRegisterIds(registerIds, types);
     }
 
 
@@ -135,5 +135,11 @@ public class RegistrationExpenseDetailService {
     public List<String> flowSummary(Date startDate, Date endDate, Integer year, Integer season, List<Integer> campusList, Integer userCode,
                                     List<Integer> type) {
         return this.registrationExpenseDetailFlowMapper.flowSummary(startDate, endDate, year, season, campusList, userCode, type);
+    }
+
+    //根据类型统计结余抵扣
+    public List<String> flowAmountSummary(Date startDate, Date endDate, Integer year, Integer season, List<Integer> campusList, Integer userCode,
+                                          List<Integer> type) {
+        return this.registrationExpenseDetailFlowMapper.flowAmountSummary(startDate, endDate, year, season, campusList, userCode, type);
     }
 }
