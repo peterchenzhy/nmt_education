@@ -566,7 +566,10 @@ export class CourseViewComponent implements OnInit {
   signReportList = [];
   @ViewChild('stSign', { static: true })
   stSign: STComponent;
-  signColumns: STColumn[] = [{ title: "姓名", index: "name", fixed: 'left', width: 100 }];
+  signColumns: STColumn[] = [
+      { title: "序号", type: "no", fixed: 'left', width: 50 },
+      { title: "姓名", index: "name", fixed: 'left', width: 100 }
+      ];
   getSignReport() {
     if (!this.course.id || !this.course.courseScheduleList
       || this.course.courseScheduleList.length == 0) {

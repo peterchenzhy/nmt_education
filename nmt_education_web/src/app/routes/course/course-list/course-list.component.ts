@@ -73,11 +73,11 @@ export class CourseListComponent implements OnInit {
           text: (item: any) => item.courseStatus != COURSE_STATUS.COMPLETE ? '编辑' : '查看',
           click: (item: any) => this.router.navigate([`/course/edit/${item.id}`]),
         },
-        {
-          text: '签到',
-          iif: (item: any) => item.courseStatus != COURSE_STATUS.COMPLETE,
-          click: (item: any) => this.router.navigate([`/course/signsession/${item.id}`]),
-        },
+        // {
+        //   text: '签到',
+        //   iif: (item: any) => item.courseStatus != COURSE_STATUS.COMPLETE,
+        //   click: (item: any) => this.router.navigate([`/course/signsession/${item.id}`]),
+        // },
         {
           text: '结课',
           iif: (item: any) => item.courseStatus != COURSE_STATUS.COMPLETE,

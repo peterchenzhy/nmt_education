@@ -56,6 +56,7 @@
             and registration_status = #{registerStatus}
         </if>
         and course_id = #{courseId}
+        order by id
     </select>
     <select id="queryByDto" parameterType="com.nmt.education.pojo.dto.req.RegisterSearchReqDto"
             resultMap="CourseRegistrationListVoResultMap">
@@ -114,16 +115,17 @@
 
     <select id="queryVoById"
             resultMap="CourseRegistrationVoResultMap">
-        select cr.*,cr.create_time as cr_registerTime
+        select cr.*, cr.create_time as cr_registerTime
         from course_registration cr
-        where cr.status = 1 and cr.id = #{id}
+        where cr.status = 1
+          and cr.id = #{id}
     </select>
     <select id="queryByCourseStudent"
             resultMap="CourseRegistrationListVoResultMap">
-        select cr.*,s.name as s_name,c.name as c_name,cr.create_time as cr_registerTime
+        select cr.*, s.name as s_name, c.name as c_name, cr.create_time as cr_registerTime
         from course_registration cr
-        inner join course c on c.id= cr.course_id and cr.course_id = #{courseId}
-        inner join student s on s.id =cr.student_id and cr.student_id= #{studentId}
+                 inner join course c on c.id = cr.course_id and cr.course_id = #{courseId}
+                 inner join student s on s.id = cr.student_id and cr.student_id = #{studentId}
         where cr.status = 1
     </select>
 
@@ -721,13 +723,13 @@
     <select id="countStudentByCourse" resultType="com.nmt.education.pojo.po.CourseRegisterCount">
         select course_id as courseId ,count(*) as count from course_registration
         where status = 1 and registration_status = 1
-         <if test="courseIds != null and courseIds.size() != 0">
-             and course_id in
-             <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
-                 #{courseId}
-             </foreach>
-         </if>
-         GROUP BY course_id
+        <if test="courseIds != null and courseIds.size() != 0">
+            and course_id in
+            <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
+                #{courseId}
+            </foreach>
+        </if>
+        GROUP BY course_id
     </select>
     <select id="registerStudentSummaryTotal" resultType="java.lang.Long">
         select count(distinct(cr.student_id))

@@ -708,33 +708,36 @@ public class CourseRegistrationService {
      * @since 2020/5/14 23:36
      */
     public List<SignRecordVo> registerStudent(Long courseId) {
-        Map<Long, CourseRegistrationPo> registrationMap = this.courseRegistrationPoMapper.queryByCourseId(courseId, Enums.RegistrationStatus.正常.getCode())
-                .stream().collect(Collectors.toMap(k -> k.getStudentId(), v -> v));
-        if (CollectionUtils.isEmpty(registrationMap)) {
+        List<CourseRegistrationPo> courseRegistrationList = this.courseRegistrationPoMapper.queryByCourseId(courseId, Enums.RegistrationStatus.正常.getCode());
+        if (CollectionUtils.isEmpty(courseRegistrationList)) {
             return Collections.emptyList();
         }
 
-        List<StudentPo> studentPoList =
-                studentService.queryByIds(registrationMap.values().stream().map(e -> e.getStudentId()).collect(Collectors.toList()));
+        Map<Long, StudentPo> studentMap =
+                studentService.queryByIds(courseRegistrationList.stream().map(CourseRegistrationPo::getStudentId).distinct().collect(Collectors.toList()))
+                .stream().collect(Collectors.toMap(StudentPo::getId, v -> v));
+
         Map<Long, List<RegisterationSummaryPo>> summaryMap =
-                registerationSummaryService.queryByRegisterIds(registrationMap.values().stream().map(e -> e.getId()).collect(Collectors.toList()))
+                registerationSummaryService.queryByRegisterIds(courseRegistrationList.stream().map(e -> e.getId()).collect(Collectors.toList()))
                         .stream().collect(Collectors.groupingBy(k -> k.getStudentId()));
 
         Map<Long, CourseSchedulePo> courseScheduleMap =
                 courseScheduleService.queryByCourseId(courseId).stream().collect(Collectors.toMap(CourseSchedulePo::getId, Function.identity()));
 
-        List<SignRecordVo> voList = new ArrayList<>(studentPoList.size());
-        studentPoList.stream().forEach(e -> {
+        List<SignRecordVo> voList = new ArrayList<>(courseRegistrationList.size());
+        courseRegistrationList.stream().forEach(e -> {
             SignRecordVo vo = new SignRecordVo();
-            vo.setStudentId(e.getId());
-            vo.setName(e.getName());
-            vo.setCode(e.getStudentCode());
-            vo.setSchool(e.getSchool());
-            vo.setPhone(e.getPhone());
-            vo.setGrade(e.getGrade());
-            vo.setSex(e.getSex());
-            CourseRegistrationPo courseRegistrationPo = registrationMap.get(vo.getStudentId());
-            vo.setCourseRegisterId(courseRegistrationPo.getId());
+            StudentPo studentPo = studentMap.get(e.getStudentId());
+            if(Objects.nonNull(studentPo)){
+                vo.setStudentId(studentPo.getId());
+                vo.setName(studentPo.getName());
+                vo.setCode(studentPo.getStudentCode());
+                vo.setSchool(studentPo.getSchool());
+                vo.setPhone(studentPo.getPhone());
+                vo.setGrade(studentPo.getGrade());
+                vo.setSex(studentPo.getSex());
+            }
+            vo.setCourseRegisterId(e.getId());
             //填充报名的课程
             vo.setSignInMap(summaryMap.get(vo.getStudentId()).stream().collect(Collectors.toMap(k -> k.getCourseScheduleId(),
                     v -> new SignRecordVo.SignInfo(v.getSignIn(), v.getSignInRemark(), v.getId()), (k1, k2) -> k2)));
