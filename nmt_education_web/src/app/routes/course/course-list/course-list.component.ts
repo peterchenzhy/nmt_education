@@ -172,7 +172,7 @@ export class CourseListComponent implements OnInit {
   finishCourse(course: Course) {
     this.modalSrv.confirm({
       nzTitle: "结课确认",
-      nzContent: `是否确认结课[${course.name}]? 结课后，课程信息不可再编辑/签到，未消耗课时将计入学生账户余额。`,
+      nzContent: `是否确认结课[${course.name}]? 结课后，课程信息不可再编辑/签到，材料费将默认扣除，未消耗课时将计入学生账户余额。`,
       nzOnOk: () => {
         this.loading = true;
         this.appCtx.courseService.finishCourse(course.id).pipe(

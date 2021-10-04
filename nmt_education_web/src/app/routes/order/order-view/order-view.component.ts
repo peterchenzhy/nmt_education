@@ -194,6 +194,9 @@ export class OrderViewComponent implements OnInit {
                         let pay: Payment = {};
                         pay.feeType = i.type;
                         pay.perAmount = i.price;
+                        if(i.type == 3 || i.type == 4){
+                          pay.count = 1 ;
+                        }
                         const field = this.createPay();
                         field.patchValue(pay);
                         this.registerExpenseDetail.push(field);

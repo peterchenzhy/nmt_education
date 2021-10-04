@@ -4,24 +4,24 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.nmt.education.commmons.Consts;
 import com.nmt.education.commmons.Enums;
+import com.nmt.education.commmons.ExpenseDetailFlowTypeEnum;
+import com.nmt.education.commmons.StatusEnum;
 import com.nmt.education.commmons.utils.SpringContextUtil;
 import com.nmt.education.listener.event.BaseEvent;
 import com.nmt.education.listener.event.TeacherChangeEvent;
 import com.nmt.education.pojo.dto.req.CourseReqDto;
 import com.nmt.education.pojo.dto.req.CourseScheduleReqDto;
 import com.nmt.education.pojo.dto.req.CourseSearchDto;
-import com.nmt.education.pojo.po.CoursePo;
-import com.nmt.education.pojo.po.CourseRegisterCount;
-import com.nmt.education.pojo.po.CourseSchedulePo;
+import com.nmt.education.pojo.po.*;
 import com.nmt.education.pojo.vo.CourseDetailVo;
 import com.nmt.education.pojo.vo.CourseVo;
 import com.nmt.education.service.CodeService;
 import com.nmt.education.service.authorization.AuthorizationCheckDto;
 import com.nmt.education.service.authorization.AuthorizationDto;
 import com.nmt.education.service.authorization.AuthorizationService;
-import com.nmt.education.service.authorization.campus.CampusAuthorizationService;
 import com.nmt.education.service.course.expense.CourseExpenseService;
 import com.nmt.education.service.course.registeration.CourseRegistrationService;
+import com.nmt.education.service.course.registeration.RegistrationExpenseDetailService;
 import com.nmt.education.service.course.schedule.CourseScheduleService;
 import com.nmt.education.service.student.account.StudentAccountService;
 import com.nmt.education.service.teacher.TeacherService;
@@ -35,8 +35,11 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.nmt.education.commmons.Consts.SYSTEM_USER;
 
 @Service
 @Slf4j
@@ -53,7 +56,8 @@ public class CourseService {
     @Autowired
     private TeacherService teacherService;
     @Autowired
-    private CampusAuthorizationService campusAuthorizationService;
+    @Lazy
+    private CourseService self;
     @Autowired
     private StudentAccountService studentAccountService;
     @Autowired
@@ -61,6 +65,9 @@ public class CourseService {
     private CourseRegistrationService courseRegistrationService;
     @Autowired
     private AuthorizationService authorizationService;
+    @Autowired
+    @Lazy
+    private RegistrationExpenseDetailService registrationExpenseDetailService;
 
     private final static ThreadLocal<List<BaseEvent>> eventList = ThreadLocal.withInitial(() -> new ArrayList<>(5));
 
@@ -142,7 +149,7 @@ public class CourseService {
 
 
         PageInfo<CoursePo> poPage = PageHelper.startPage(dto.getPageNo(), dto.getPageSize())
-                .doSelectPageInfo(() -> getCoursePos(dto, authorization.getCampusList(),authorization.getGradeList()));
+                .doSelectPageInfo(() -> getCoursePos(dto, authorization.getCampusList(), authorization.getGradeList()));
         if (CollectionUtils.isEmpty(poPage.getList())) {
             return new PageInfo<>();
         }
@@ -180,9 +187,9 @@ public class CourseService {
 
     }
 
-    public List<CoursePo> getCoursePos(CourseSearchDto dto, List<Integer> campusList,List<Integer> gradeList) {
+    public List<CoursePo> getCoursePos(CourseSearchDto dto, List<Integer> campusList, List<Integer> gradeList) {
         return this.coursePoMapper.queryByDto(dto,
-                campusList,gradeList);
+                campusList, gradeList);
     }
 
     /**
@@ -340,7 +347,7 @@ public class CourseService {
         AuthorizationDto authorization = authorizationService.getAuthorization(logInUser);
         return coursePoList.stream()
                 .filter(e -> authorization.getCampusList().contains(e.getCampus())
-                && authorization.getGradeList().contains(e.getGrade())).collect(Collectors.toList());
+                        && authorization.getGradeList().contains(e.getGrade())).collect(Collectors.toList());
     }
 
     /**
@@ -383,19 +390,75 @@ public class CourseService {
      * @param logInUser
      * @param courseId
      */
-    @Transactional(rollbackFor = Exception.class)
     public void finish(Integer logInUser, Long courseId) {
         final CoursePo coursePo = this.coursePoMapper.selectByPrimaryKey(courseId);
         Assert.isTrue(Objects.nonNull(coursePo), "课程信息为空，id:" + courseId);
-//        Assert.isTrue(logInUser.equals(coursePo.getCreator()),"非次课程创建人不可结课");
         Assert.isTrue(!Enums.CourseStatus.已结课.getCode().equals(coursePo.getCourseStatus()) &&
+                !Enums.CourseStatus.结课中.getCode().equals(coursePo.getCourseStatus()) &&
                 !Enums.CourseStatus.已取消.getCode().equals(coursePo.getCourseStatus()), "课程已经结课或者取消，无法再进行编辑");
+        int i = this.coursePoMapper.setFinishing(courseId);
+        Assert.isTrue(i > 0, "课程信息设置结算中状态失败，id:" + courseId);
+        self.finishTrx(logInUser, coursePo);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void finishTrx(Integer logInUser, CoursePo coursePo) {
         //结余数据增加
         studentAccountService.addByCourseFinish(logInUser, coursePo);
+        //材料费消耗
+        processOtherFee(logInUser, coursePo);
+
+
         //更新课程状态
         coursePo.setCourseStatus(Enums.CourseStatus.已结课.getCode());
         coursePo.setOperateTime(new Date());
         coursePo.setOperator(logInUser);
         this.updateByPrimaryKeySelective(coursePo);
     }
+
+    /**
+     * 处理其他费用
+     *
+     * @param logInUser
+     * @param coursePo
+     */
+    private void processOtherFee(Integer logInUser, CoursePo coursePo) {
+        List<CourseRegistrationPo> courseRegistrationPos = courseRegistrationService.queryByCourseId(coursePo.getId());
+        Map<Long, CourseRegistrationPo> registrationPoMap = courseRegistrationPos.stream()
+                .collect(Collectors.toMap(e -> e.getId(), v -> v, (v1, v2) -> v1));
+        List<RegistrationExpenseDetailPo> expenseDetailPos =
+                registrationExpenseDetailService.queryRegisterIds(courseRegistrationPos.stream().map(CourseRegistrationPo::getId).collect(Collectors.toList()))
+                        .stream().filter(p -> !Consts.FEE_TYPE_普通单节费用.equals(p.getFeeType()) && Enums.FeeDirection.支付.getCode().equals(p.getFeeDirection()) &&
+                        Enums.FeeStatus.已缴费.getCode().equals(p.getFeeStatus())).collect(Collectors.toList());
+        List<CourseRegistrationPo> registrationUpdateList = new ArrayList<>();
+        List<RegistrationExpenseDetailFlowPo> flowList = new ArrayList<>();
+        for (RegistrationExpenseDetailPo expenseDetailPo : expenseDetailPos) {
+            CourseRegistrationPo courseRegistrationPo = registrationPoMap.get(expenseDetailPo.getRegistrationId());
+            BigDecimal balanceAmount = new BigDecimal(courseRegistrationPo.getBalanceAmount());
+            courseRegistrationPo.setBalanceAmount(balanceAmount.subtract(new BigDecimal(expenseDetailPo.getAmount())).toPlainString());
+            registrationUpdateList.add(courseRegistrationPo);
+            RegistrationExpenseDetailFlowPo flow = new RegistrationExpenseDetailFlowPo();
+            flow.setRegistrationId(courseRegistrationPo.getId());
+            flow.setFeeType(expenseDetailPo.getFeeType());
+            flow.setType(ExpenseDetailFlowTypeEnum.消耗.getCode());
+            flow.setAmount(expenseDetailPo.getAmount());
+            flow.setRegisterExpenseDetailId(expenseDetailPo.getId());
+            flow.setStatus(StatusEnum.VALID.getCode());
+            flow.setRemark("结余消耗");
+            flow.setCreator(logInUser);
+            flow.setCreateTime(new Date());
+            flow.setOperator(logInUser);
+            flow.setOperateTime(new Date());
+            flow.setPerAmount(expenseDetailPo.getAmount());
+            flow.setCount(1);
+            flow.setDiscount(expenseDetailPo.getDiscount());
+            flow.setPayment(SYSTEM_USER);
+            flow.setAccountAmount(Consts.ZERO);
+            flowList.add(flow);
+        }
+        courseRegistrationService.updateBatch(registrationUpdateList);
+        registrationExpenseDetailService.batchInsertFlow(flowList);
+    }
+
+
 }

@@ -22,4 +22,11 @@ interface CoursePoMapper {
                               @Param("gradeList") List<Integer> gradeList);
 
     List<CoursePo> queryFuzzy(@Param("name") String name);
+
+    /**
+     * 设置结算中标志
+     * @param courseId
+     * @return
+     */
+    int setFinishing(@Param("courseId") Long courseId);
 }

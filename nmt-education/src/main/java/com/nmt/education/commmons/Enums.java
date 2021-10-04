@@ -24,7 +24,8 @@ public interface Enums {
         未开课(0, "未开课", "default"),
         已开学(1, "已开学", "processing"),
         已结课(2, "已结课", "success"),
-        已取消(3, "已取消", "error");
+        已取消(3, "已取消", "error"),
+        结课中(4, "结课中", "processing");
 
         @Getter
         private Integer code;

@@ -96,7 +96,7 @@
                         <td>
                             <span nz-form-control>
                                 <nz-input-number style="width: 80px;"
-                                    [nzDisabled]="registerExpenseDetail.value[i].feeType == 1" formControlName="count"
+                                    [nzDisabled]="registerExpenseDetail.value[i].feeType != 6" formControlName="count"
                                     (ngModelChange)="onPayInfoChanged(i,true,$event)">
                                 </nz-input-number>
                                 <i *ngIf="registerExpenseDetail.value[i].feeType == 1" nz-icon nzType="edit"
@@ -126,7 +126,7 @@
                                 <nz-form-control nzErrorTip="">
                                     <nz-select style="width: 100px;" formControlName="payment"
                                         [nzPlaceHolder]="'请选支付方式'" [nzShowSearch]="true" [nzAllowClear]="true"
-                                        (ngModelChange)="onPayInfoChanged(i,false,$event)">
+                                        (ngModelChange)="onPayInfoChanged(i,true,$event)">
                                         <nz-option *ngFor="let i of payMethodList" [nzLabel]="i.label"
                                             [nzValue]="i.value">
                                         </nz-option>
