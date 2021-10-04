@@ -261,7 +261,7 @@ public class CourseRegistrationService {
                 }
                 //再编辑金额
                 expenseDetailPo.setFeeType(dto.getFeeType());
-                expenseDetailPo.setFeeStatus(dto.getFeeStatus());
+                expenseDetailPo.setFeeStatus(Enums.FeeStatus.已缴费.getCode());
                 expenseDetailPo.setAmount(dto.getAmount());
                 expenseDetailPo.setPerAmount(dto.getPerAmount());
                 expenseDetailPo.setCount(dto.getCount());
@@ -779,7 +779,7 @@ public class CourseRegistrationService {
      * @version v1
      * @since 2020/6/5 22:37
      */
-
+    @Transactional(rollbackFor = Exception.class)
     public void registerRefund(RefundReqDto dto, Integer logInUser) {
         CourseRegistrationPo courseRegistrationPo = courseRegistrationPoMapper.selectByPrimaryKey(dto.getRegisterId());
         Assert.isTrue(Objects.nonNull(courseRegistrationPo), "报名信息不存在，id：" + dto.getRegisterId());
@@ -797,12 +797,10 @@ public class CourseRegistrationService {
         //按照费用类型分组
         Map<Integer, List<RefundItemReqDto>> itemMap = dtoList.stream().collect(Collectors.groupingBy(e -> e.getFeeType()));
         //退费核心逻辑
-        self.refundByFeeType(dto, logInUser, expenseDetailList, itemMap, courseRegistrationPo);
+        BigDecimal refundTotal  = refundByFeeType(dto, logInUser, expenseDetailList, itemMap, courseRegistrationPo);
 
-        BigDecimal refundTotal = BigDecimal.ZERO;
         int refundTimes = 0;
         for (RefundItemReqDto refundItemReqDto : dto.getItemList()) {
-            refundTotal = refundTotal.add(new BigDecimal(refundItemReqDto.getAmount()));
             if (Consts.FEE_TYPE_普通单节费用.equals(refundItemReqDto.getFeeType())) {
                 refundTimes++;
             }
@@ -836,10 +834,9 @@ public class CourseRegistrationService {
      * @version v1
      * @since 2020/6/13 13:01
      */
-    @Transactional(rollbackFor = Exception.class)
-    public void refundByFeeType(RefundReqDto dto, Integer logInUser, List<RegistrationExpenseDetailPo> expenseDetailList, Map<Integer,
+    private BigDecimal refundByFeeType(RefundReqDto dto, Integer logInUser, List<RegistrationExpenseDetailPo> expenseDetailList, Map<Integer,
             List<RefundItemReqDto>> itemMap, CourseRegistrationPo courseRegistrationPo) {
-        BigDecimal reFundTotal = null;
+        BigDecimal reFundTotal = BigDecimal.ZERO;
         //按费用类型进行退款
         for (Integer k : itemMap.keySet()) {
             if (k.equals(Consts.FEE_TYPE_普通单节费用)) {
@@ -854,9 +851,6 @@ public class CourseRegistrationService {
             }
             //退费逻辑
             if (!CollectionUtils.isEmpty(itemMap.get(k))) {
-                if (Objects.isNull(reFundTotal)) {
-                    reFundTotal = BigDecimal.ZERO;
-                }
                 reFundTotal = reFundTotal.add(processRefund(dto, logInUser, itemMap.get(k), expenseDetailList, k));
                 if (k.equals(Consts.FEE_TYPE_普通单节费用)) {
                     //更新报名课表
@@ -868,18 +862,17 @@ public class CourseRegistrationService {
             }
         }
 
+        Assert.isTrue(reFundTotal.compareTo(new BigDecimal(courseRegistrationPo.getBalanceAmount())) <= 0, "退费金额大于可用余额");
+
         //如果退费直接进结余
-        if (dto.getToAccount()) {
-            if (Objects.isNull(reFundTotal)) {
-                log.info("无退费数据，退费0元");
-                reFundTotal = BigDecimal.ZERO;
-            }
+        if (dto.getToAccount()&&reFundTotal.compareTo(BigDecimal.ZERO)>0 ) {
             CoursePo coursePo = courseService.selectByPrimaryKey(courseRegistrationPo.getCourseId());
             studentAccountService.addAmount(logInUser, courseRegistrationPo.getStudentId(),
                     reFundTotal, courseRegistrationPo.getCourseRegistrationId(), String.format(Consts.退费进学生账户REMARK, coursePo.getName(),
                             reFundTotal.toPlainString()));
 
         }
+        return reFundTotal ;
     }
 
     /**
@@ -916,8 +909,14 @@ public class CourseRegistrationService {
             maxCanRefund = maxCanRefund.subtract(NumberUtil.String2Dec(e.getAmount()));
         }
         //退费金额
-        BigDecimal applyRefund = NumberUtil.String2Dec(payList.get(0).getPerAmount())
-                .multiply(NumberUtil.String2Dec(payList.get(0).getDiscount())).multiply(BigDecimal.valueOf(itemList.size()));
+        BigDecimal applyRefund ;
+        if (Consts.FEE_TYPE_普通单节费用.equals(ref.getFeeType())) {
+            applyRefund = NumberUtil.String2Dec(payList.get(0).getPerAmount())
+                    .multiply(NumberUtil.String2Dec(payList.get(0).getDiscount())).multiply(BigDecimal.valueOf(itemList.size()));
+        }else{
+            applyRefund = NumberUtil.String2Dec(payList.get(0).getAmount());
+        }
+
         Assert.isTrue(applyRefund.compareTo(maxCanRefund) <= 0, "退费金额不可大于最大可退费金额，" + maxCanRefund);
         //生成退费记录
         RegistrationExpenseDetailFlowPo flow = new RegistrationExpenseDetailFlowPo();
@@ -945,10 +944,10 @@ public class CourseRegistrationService {
         registrationExpenseDetailService.batchInsertFlow(Lists.newArrayList(flow));
 
         //如果所有的钱都退了那么就改变退费状态
-        if (maxCanRefund.compareTo(applyRefund) == 0) {
-            //修改支付状态
-            ref.setFeeStatus(Enums.FeeStatus.已退费.getCode());
-        }
+            if (maxCanRefund.compareTo(applyRefund) == 0) {
+                //修改支付状态
+                ref.setFeeStatus(Enums.FeeStatus.已退费.getCode());
+            }
         ref.setOperateTime(new Date());
         ref.setOperator(logInUser);
         ref.setAmount(NumberUtil.String2Dec(ref.getAmount()).subtract(applyRefund).toPlainString());
