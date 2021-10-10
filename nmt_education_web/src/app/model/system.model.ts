@@ -121,6 +121,7 @@ export interface FeeSummary {
   teacherPay?: string;
   startDate?: string;
   endDate?: string;
+  refund2Account?: string;
   registerStudentCount?: number;
 }
 

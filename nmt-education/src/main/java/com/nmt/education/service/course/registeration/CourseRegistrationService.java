@@ -313,7 +313,7 @@ public class CourseRegistrationService {
      * @param account              账户金额
      * @param accountFlowList
      * @param studentAccountPo
-     * @param delta                消耗
+     * @param delta                消耗金额
      * @param flow
      * @return java.math.BigDecimal  结余账户 剩下的钱
      * @author PeterChen
@@ -668,7 +668,9 @@ public class CourseRegistrationService {
         flowThread.start();
 
         Thread flowThread2 =
-                new Thread(() -> vo.setStudentAccountFlowPoList(this.studentAccountService.queryFlowByRegisterId(vo.getId())));
+                new Thread(() -> vo.setStudentAccountFlowPoList(this.studentAccountService.queryFlowByRegisterId(vo.getId())
+                .stream().filter(e->NumberUtil.String2Dec(e.getAmount()).compareTo(NumberUtil.String2Dec(e.getBeforeAmount()))<0)
+                .collect(Collectors.toList())));
         flowThread2.start();
 
         vo.setCourse(courseService.selectByPrimaryKey(vo.getCourseId()));
@@ -845,7 +847,7 @@ public class CourseRegistrationService {
                 RegisterationSummaryPo p = registrationSummaryPoList.stream()
                         .filter(e -> itemMap.get(k).contains(e.getId()) && !Enums.SignInType.CAN_REFUND.contains(e.getSignIn())).findAny().orElse(null);
                 if (Objects.nonNull(p)) {
-                    throw new RuntimeException("有记录已经被被退费了，RegisterationSummaryPoId:" + p.getId());
+                    throw new RuntimeException("有记录已经被退费或者被消费了，RegisterationSummaryPoId:" + p.getId());
                 }
 
             }
@@ -865,7 +867,7 @@ public class CourseRegistrationService {
         Assert.isTrue(reFundTotal.compareTo(new BigDecimal(courseRegistrationPo.getBalanceAmount())) <= 0, "退费金额大于可用余额");
 
         //如果退费直接进结余
-        if (dto.getToAccount()&&reFundTotal.compareTo(BigDecimal.ZERO)>0 ) {
+        if (dto.getToAccount() && reFundTotal.compareTo(BigDecimal.ZERO) > 0) {
             CoursePo coursePo = courseService.selectByPrimaryKey(courseRegistrationPo.getCourseId());
             studentAccountService.addAmount(logInUser, courseRegistrationPo.getStudentId(),
                     reFundTotal, courseRegistrationPo.getCourseRegistrationId(), String.format(Consts.退费进学生账户REMARK, coursePo.getName(),

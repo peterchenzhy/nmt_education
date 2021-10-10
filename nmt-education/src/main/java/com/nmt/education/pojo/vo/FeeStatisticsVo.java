@@ -4,6 +4,7 @@ import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.converters.bigdecimal.BigDecimalStringConverter;
 import com.alibaba.excel.converters.string.StringNumberConverter;
+import com.nmt.education.commmons.NumberUtil;
 import io.swagger.annotations.ApiModelProperty;
 import javafx.util.converter.NumberStringConverter;
 import lombok.Getter;
@@ -18,6 +19,8 @@ public class FeeStatisticsVo {
     @ApiModelProperty(value = "订单编号")
     @ExcelProperty(value = "订单编号",index = 0)
     private String registrationNumber;
+    @ExcelIgnore
+    private Long registerId;
 
     @ApiModelProperty(value = "课程id")
     @ExcelIgnore
@@ -74,9 +77,17 @@ public class FeeStatisticsVo {
     @ExcelProperty(value = "结余抵扣",index = 11,converter = StringNumberConverter.class )
     private String accountAmount;
 
+    @ApiModelProperty(value = "实际费用")
     //实际收费= 费用-结余抵扣
-    @ExcelIgnore
+    @ExcelProperty(value = "实际费用",index = 12,converter = StringNumberConverter.class )
     private String actuallyAmount;
+    public void  setActuallyAmount(){
+       this.actuallyAmount=
+               NumberUtil.String2Dec(this.getAmount())
+                       .subtract(NumberUtil.String2Dec(this.getAccountAmount()))
+                       .stripTrailingZeros()
+                       .toPlainString();
+    }
 
     /**
      * @see com.nmt.education.commmons.ExpenseDetailFlowTypeEnum
@@ -85,11 +96,11 @@ public class FeeStatisticsVo {
     private Integer feeFlowType;
 
     @ApiModelProperty(value = "费用类型")
-    @ExcelProperty(value = "费用类型",index = 12)
+    @ExcelProperty(value = "费用类型",index = 13)
     private String feeFlowTypeStr;
 
     @ApiModelProperty(value = "支付方式--中文")
-    @ExcelProperty(value = "支付方式",index = 13)
+    @ExcelProperty(value = "支付方式",index = 14)
     private String paymentStr;
 
     @ApiModelProperty(value = "支付方式")
@@ -101,16 +112,16 @@ public class FeeStatisticsVo {
     private int campus;
 
     @ApiModelProperty(value = "所在校区--中文")
-    @ExcelProperty(value = "所在校区",index = 14)
+    @ExcelProperty(value = "所在校区",index = 15)
     private String campusStr;
 
 
     @ApiModelProperty(value = "备注")
-    @ExcelProperty(value = "备注",index = 15)
+    @ExcelProperty(value = "备注",index = 16)
     private String remark;
 
     @ApiModelProperty(value = "操作人")
-    @ExcelProperty(value = "操作人",index = 16)
+    @ExcelProperty(value = "操作人",index = 17)
     private String userName;
 
 

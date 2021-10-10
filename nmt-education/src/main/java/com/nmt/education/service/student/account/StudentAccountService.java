@@ -1,6 +1,7 @@
 package com.nmt.education.service.student.account;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.nmt.education.commmons.*;
 import com.nmt.education.pojo.po.*;
 import com.nmt.education.pojo.vo.StudentAccountVo;
@@ -208,7 +209,13 @@ public class StudentAccountService {
         if (Objects.isNull(registerId)) {
             return Collections.emptyList();
         }
-        return this.studentAccountFlowPoMapper.queryByRegisterId(registerId);
+        return this.studentAccountFlowPoMapper.queryByRegisterIds(Lists.newArrayList(registerId));
+    }
+    public List<StudentAccountFlowPo> queryFlowByRegisterIds(List<Long> registerIds) {
+        if (CollectionUtils.isEmpty(registerIds)) {
+            return Collections.emptyList();
+        }
+        return this.studentAccountFlowPoMapper.queryByRegisterIds(registerIds);
     }
 
     public List<StudentAccountFlowPo> queryAccountFlowByAccountId(Long accountId) {

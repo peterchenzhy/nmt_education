@@ -54,7 +54,8 @@
     select * from registration_expense_detail_flow where status = 1 and registration_id = #{registerId}
   </select>
     <select id="feeStatistics" resultType="com.nmt.education.pojo.vo.FeeStatisticsVo">
-        select cr.registration_number as registrationNumber , cr.course_id as courseId ,cr.student_id as studentId
+        select cr.registration_number as registrationNumber , cr.id as registerId,
+               cr.course_id as courseId ,cr.student_id as studentId
         ,c.campus as campus ,flow.payment as payment
         , c.name as courseName ,c.grade as grade,c.course_subject as subject ,
                s.name as studentName ,flow.create_time as feeTime,flow.amount as amount ,flow.type as feeFlowType
@@ -104,8 +105,10 @@
         </if>
         order by flow.id desc
     </select>
-    <select id="flowSummary" resultType="java.lang.String">
-        select flow.amount
+    <select id="flowSummary" resultType="com.nmt.education.service.course.registeration.RegistrationExpenseDetailFlowDto">
+        select
+               flow.amount as amount,flow.id as id,
+               flow.registration_id as registrationId,flow.register_expense_detail_id as registerExpenseDetailId
         from registration_expense_detail_flow flow
         inner join course_registration cr on flow.registration_id = cr.id and cr.status = 1
         inner join course c on cr.course_id = c.id and c.status = 1

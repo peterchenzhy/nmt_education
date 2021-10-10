@@ -29,11 +29,15 @@
     from student_account_flow
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <select id="queryByRegisterId" resultMap="BaseResultMap">
+  <select id="queryByRegisterIds" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List" />
+    <include refid="Base_Column_List"/>
     from student_account_flow
-    where ref_id = #{registerId} and status = 1
+    where status = 1
+    and ref_id in
+    <foreach collection="registerIds" item="registerId" open="(" close=")" separator=",">
+      #{registerId}
+    </foreach>
   </select>
 
   <select id="queryByAccountId" resultMap="BaseResultMap">

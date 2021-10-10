@@ -34,7 +34,7 @@ public class RefundReqDto {
     @ApiModelProperty(value = "退款项目")
     private List<RefundItemReqDto> itemList;
 
-    @ApiModelProperty(value = "退费是有进结余")
+    @ApiModelProperty(value = "退费进结余")
     private Boolean toAccount = false;
 
 

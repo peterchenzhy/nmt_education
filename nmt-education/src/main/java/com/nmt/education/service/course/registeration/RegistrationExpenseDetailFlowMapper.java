@@ -23,7 +23,7 @@ interface RegistrationExpenseDetailFlowMapper {
                                         @Param("userCode") Integer userCode, @Param("typeList") List<Integer> typeList
     );
 
-    List<String> flowSummary(@Param("startDate") Date startDate, @Param("endDate") Date endDate,
+    List<RegistrationExpenseDetailFlowDto> flowSummary(@Param("startDate") Date startDate, @Param("endDate") Date endDate,
                              @Param("year") Integer year, @Param("season") Integer season,
                              @Param("campusList") List<Integer> campusList,
                              @Param("userCode") Integer userCode,

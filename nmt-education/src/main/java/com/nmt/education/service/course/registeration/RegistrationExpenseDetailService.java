@@ -132,7 +132,7 @@ public class RegistrationExpenseDetailService {
     }
 
     //根据类型统计收入费用数据
-    public List<String> flowSummary(Date startDate, Date endDate, Integer year, Integer season, List<Integer> campusList, Integer userCode,
+    public List<RegistrationExpenseDetailFlowDto> flowSummary(Date startDate, Date endDate, Integer year, Integer season, List<Integer> campusList, Integer userCode,
                                     List<Integer> type) {
         return this.registrationExpenseDetailFlowMapper.flowSummary(startDate, endDate, year, season, campusList, userCode, type);
     }

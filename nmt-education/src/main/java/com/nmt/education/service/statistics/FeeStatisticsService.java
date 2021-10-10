@@ -7,24 +7,26 @@ import com.nmt.education.commmons.*;
 import com.nmt.education.commmons.utils.DateUtil;
 import com.nmt.education.pojo.dto.req.FeeStatisticsReqDto;
 import com.nmt.education.pojo.dto.req.TeacherScheduleReqDto;
+import com.nmt.education.pojo.po.StudentAccountFlowPo;
 import com.nmt.education.pojo.vo.FeeStatisticsVo;
 import com.nmt.education.pojo.vo.FeeSummaryVo;
 import com.nmt.education.service.authorization.AuthorizationCheckDto;
 import com.nmt.education.service.authorization.AuthorizationDto;
 import com.nmt.education.service.authorization.AuthorizationService;
-import com.nmt.education.service.authorization.campus.CampusAuthorizationService;
 import com.nmt.education.service.course.registeration.CourseRegistrationService;
+import com.nmt.education.service.course.registeration.RegistrationExpenseDetailFlowDto;
 import com.nmt.education.service.course.registeration.RegistrationExpenseDetailService;
 import com.nmt.education.service.course.schedule.CourseScheduleService;
+import com.nmt.education.service.student.account.StudentAccountService;
 import com.nmt.education.service.sysconfig.SysConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -40,6 +42,8 @@ public class FeeStatisticsService {
     private CourseScheduleService courseScheduleService;
     @Autowired
     private CourseRegistrationService courseRegistrationService;
+    @Autowired
+    private StudentAccountService studentAccountService;
 
     /**
      * 分页查询接口
@@ -66,12 +70,53 @@ public class FeeStatisticsService {
                 registrationExpenseDetailService.feeStatistics(dto.getStartDate(), dto.getEndDate(), dto.getYear(), dto.getSeason(),
                         authorization.getCampusList(),
                         ExpenseDetailFlowTypeEnum.feeStatistics2FlowType(dto.getFeeFlowType()), dto.getUserCode()));
+        //退费入结余的数据
+        Map<Long, BigDecimal> refund2AccountMap = getRefund2AccountMap(pageInfo.getList());
+
         pageInfo.getList().stream().forEach(e -> {
             e.setFeeFlowTypeStr(ExpenseDetailFlowTypeEnum.codeOf(e.getFeeFlowType()).getDisplay());
             e.setPaymentStr(Enums.PaymentType.codeOf(e.getPayment()).getDesc());
-            e.setActuallyAmount(NumberUtil.String2Dec(e.getAmount()).subtract(NumberUtil.String2Dec(e.getAccountAmount())).toPlainString());
+            setRefundAccountAmount(refund2AccountMap, e);
+            e.setActuallyAmount();
         });
         return pageInfo;
+    }
+
+    /**
+     * 退费进结余的数据处理
+     * @param refund2AccountMap
+     * @param e
+     */
+    private void setRefundAccountAmount(Map<Long, BigDecimal> refund2AccountMap, FeeStatisticsVo e) {
+        if (Objects.equals(e.getFeeFlowType(), ExpenseDetailFlowTypeEnum.退费.getCode())) {
+            BigDecimal amount = refund2AccountMap.get(e.getRegisterId());
+            if (Objects.nonNull(amount) && amount.compareTo(BigDecimal.ZERO) > 0) {
+                BigDecimal remainAccount = amount.subtract(NumberUtil.String2Dec(e.getAmount()));
+                if (remainAccount.compareTo(BigDecimal.ZERO) >= 0) {
+                    e.setAccountAmount(e.getAmount());
+                    //更新map中的结余数据
+                    refund2AccountMap.put(e.getRegisterId(), remainAccount);
+                }
+            }
+        }
+    }
+
+    /**
+     * 获取退费进结余 数据
+     * @param list
+     * @return
+     */
+    private Map<Long, BigDecimal> getRefund2AccountMap(List<FeeStatisticsVo> list) {
+        Map<Long, BigDecimal> refund2AccountMap =
+                studentAccountService.queryFlowByRegisterIds(list.stream().filter(e -> Objects.equals(e.getFeeFlowType(),
+                ExpenseDetailFlowTypeEnum.退费.getCode())).map(FeeStatisticsVo::getRegisterId).collect(Collectors.toList()))
+                .stream()
+                .filter(e -> NumberUtil.String2Dec(e.getAmount()).compareTo(NumberUtil.String2Dec(e.getBeforeAmount())) > 0)
+                .collect(Collectors.groupingBy(e -> e.getRefId(),
+                        Collectors.reducing(BigDecimal.ZERO,
+                                e -> NumberUtil.String2Dec(e.getAmount()).subtract(NumberUtil.String2Dec(e.getBeforeAmount())),
+                                BigDecimal::add)));
+        return refund2AccountMap;
     }
 
 
@@ -116,6 +161,9 @@ public class FeeStatisticsService {
         PageInfo<FeeStatisticsVo> pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize(), false).doSelectPageInfo(() ->
                 registrationExpenseDetailService.feeStatistics(dto.getStartDate(), dto.getEndDate(), dto.getYear(), dto.getSeason(), campusList,
                         ExpenseDetailFlowTypeEnum.feeStatistics2FlowType(dto.getFeeFlowType()), null));
+
+        Map<Long, BigDecimal> refund2AccountMap = this.getRefund2AccountMap(pageInfo.getList());
+
         pageInfo.getList().stream().forEach(e -> {
                     e.setFeeFlowTypeStr(ExpenseDetailFlowTypeEnum.codeOf(e.getFeeFlowType()).getDisplay());
                     e.setCampusStr(sysConfigService.queryByTypeValue(SysConfigEnum.校区.getCode(), e.getCampus()).getDescription());
@@ -123,6 +171,8 @@ public class FeeStatisticsService {
                     e.setGradeStr(sysConfigService.queryByTypeValue(Consts.CONFIG_TYPE_年级,e.getGrade()).getDescription());
                     e.setSubjectStr(sysConfigService.queryByTypeValue(Consts.CONFIG_TYPE_科目,e.getSubject()).getDescription());
                     e.setFeeTimeDate(DateUtil.formatDate(e.getFeeTime()));
+                    setRefundAccountAmount(refund2AccountMap,e);
+            e.setActuallyAmount();
                 }
         );
         return pageInfo.getList();
@@ -140,22 +190,34 @@ public class FeeStatisticsService {
         List<Integer> campusList = authorization.getCampusList();
 
         //总费用
-        List<String> payList = registrationExpenseDetailService.flowSummary(startDate, endDate, dto.getYear(), dto.getSeason(), campusList,
-                dto.getUserCode(),
+        List<RegistrationExpenseDetailFlowDto> payList = registrationExpenseDetailService.flowSummary(startDate, endDate,
+                dto.getYear(), dto.getSeason(), campusList, dto.getUserCode(),
                 Lists.newArrayList(ExpenseDetailFlowTypeEnum.新增记录.getCode(), ExpenseDetailFlowTypeEnum.编辑.getCode()));
-        vo.setPay(NumberUtil.addStringList(payList).toPlainString());
+        vo.setPay(NumberUtil.addStringList(
+                payList.stream().map(RegistrationExpenseDetailFlowDto::getAmount).collect(Collectors.toList())).stripTrailingZeros().toPlainString());
 
         //总抵扣
         List<String> amountSummary = registrationExpenseDetailService.flowAmountSummary(startDate, endDate, dto.getYear(), dto.getSeason(), campusList,
                 dto.getUserCode(),
                 Lists.newArrayList(ExpenseDetailFlowTypeEnum.新增记录.getCode(), ExpenseDetailFlowTypeEnum.编辑.getCode()));
-        vo.setAmountSummary(NumberUtil.addStringList(amountSummary).toPlainString());
+        vo.setAmountSummary(NumberUtil.addStringList(amountSummary).stripTrailingZeros().toPlainString());
 
         //总退费
-        List<String> refundList = registrationExpenseDetailService.flowSummary(startDate, endDate, dto.getYear(), dto.getSeason(), campusList,
-                dto.getUserCode(),Lists.newArrayList(ExpenseDetailFlowTypeEnum.退费.getCode()));
-        vo.setRefund(NumberUtil.addStringList(refundList).toPlainString());
+        List<RegistrationExpenseDetailFlowDto> refundList = registrationExpenseDetailService.flowSummary(startDate, endDate, dto.getYear(), dto.getSeason(), campusList,
+                dto.getUserCode(), Lists.newArrayList(ExpenseDetailFlowTypeEnum.退费.getCode()));
+        vo.setRefund(NumberUtil.addStringList(
+                refundList.stream().map(RegistrationExpenseDetailFlowDto::getAmount).collect(Collectors.toList())
+        ).stripTrailingZeros().toPlainString());
 
+        //退费进结余部分
+        List<StudentAccountFlowPo> refund2AccountList =
+                studentAccountService.queryFlowByRegisterIds(refundList.stream().map(RegistrationExpenseDetailFlowDto::getRegistrationId).collect(Collectors.toList()))
+                .stream().filter(e -> NumberUtil.String2Dec(e.getAmount()).compareTo(NumberUtil.String2Dec(e.getBeforeAmount())) > 0).collect(Collectors.toList());
+        vo.setRefund2Account(
+        refund2AccountList.stream().map(e->NumberUtil.String2Dec(e.getAmount()).subtract(NumberUtil.String2Dec(e.getBeforeAmount())))
+                .reduce(BigDecimal::add).orElse(BigDecimal.ZERO).stripTrailingZeros().toPlainString()
+        );
+        //报名人数
         long count = courseRegistrationService.registerStudentSummaryTotal(startDate, endDate, dto.getYear(), dto.getSeason(), dto.getUserCode(),
                 campusList,
                 authorization.getGradeList());
@@ -168,7 +230,7 @@ public class FeeStatisticsService {
             teacherScheduleReqDto.setYear(dto.getYear());
             teacherScheduleReqDto.setSeason(dto.getSeason());
             List<String> teacherPay = courseScheduleService.getTeacherPay(teacherScheduleReqDto, logInUser);
-            vo.setTeacherPay(NumberUtil.addStringList(teacherPay).toPlainString());
+            vo.setTeacherPay(NumberUtil.addStringList(teacherPay).stripTrailingZeros().toPlainString());
         }
         vo.setStartDate(DateUtil.formatDate(startDate));
         vo.setEndDate(DateUtil.formatDate(endDate));
