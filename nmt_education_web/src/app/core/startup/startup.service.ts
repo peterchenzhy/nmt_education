@@ -151,11 +151,6 @@ export class StartupService {
                 link: '/report/feestatistics',
                 icon: { type: 'icon', value: 'appstore' }
               }]
-          },
-          {
-            text: 'Quick Menu',
-            icon: { type: 'icon', value: 'rocket' },
-            shortcutRoot: true
           }
         ]
       }

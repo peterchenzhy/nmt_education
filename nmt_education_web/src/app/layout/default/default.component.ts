@@ -69,7 +69,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
     updateHostClass(el.nativeElement, renderer, {
       ['alain-default']: true,
       [`alain-default__fixed`]: layout.fixed,
-      [`alain-default__collapsed`]: layout.collapsed,
+      // [`alain-default__collapsed`]: layout.collapsed,
     });
 
     doc.body.classList[layout.colorWeak ? 'add' : 'remove']('color-weak');
