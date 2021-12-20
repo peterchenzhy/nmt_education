@@ -169,7 +169,7 @@ export class StudentViewComponent implements OnInit {
     pager = {
         front: false
     };
-    courseQueryParam: RegisterQueryParam = { pageNo: 1, pageSize: 25 };
+    courseQueryParam: RegisterQueryParam = { pageNo: 1, pageSize: 10 };
     courses: ResponseData = { list: [], total: 0 };
     onSelectedTabChanged(event: any) {
         if (!this.courseLoaded && event.index == 1) {
@@ -230,7 +230,7 @@ export class StudentViewComponent implements OnInit {
         { title: '备注', index: 'remark' }
     ];
     accountLoaded = false;
-    accountQueryParam: RegisterQueryParam = { pageNo: 1, pageSize: 25 };
+    accountQueryParam: RegisterQueryParam = { pageNo: 1, pageSize: 10 };
     account: ResponseData = { list: [], total: 0 };
     getAccountDetails() {
         if (!this.student.id) {
@@ -238,7 +238,7 @@ export class StudentViewComponent implements OnInit {
         }
         this.loading = true;
         //this.accountQueryParam.studentId = this.student.id;
-        this.appCtx.studentService.getAccountDetails(this.student.id)
+        this.appCtx.studentService.getAccountDetails(this.student.id,this.accountQueryParam)
             .pipe(
                 tap(() => { this.loading = false; }, () => { this.loading = false; })
             )

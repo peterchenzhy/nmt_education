@@ -96,8 +96,9 @@
                         <td>
                             <span nz-form-control>
                                 <nz-input-number style="width: 80px;"
-                                    [nzDisabled]="registerExpenseDetail.value[i].feeType != 10" formControlName="count"
-                                    (ngModelChange)="onPayInfoChanged(i,true,$event)">
+                                                 [nzDisabled]="registerExpenseDetail.value[i].feeType == 1
+                                          || (registerExpenseDetail.value[i].feeType != 1 && !registerExpenseDetail.value[i].id)" formControlName="count"
+                                                 (ngModelChange)="onPayInfoChanged(i,true,$event)">
                                 </nz-input-number>
                                 <i *ngIf="registerExpenseDetail.value[i].feeType == 1" nz-icon nzType="edit"
                                     nzTheme="outline" title="选择报名课程"
