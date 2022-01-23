@@ -83,4 +83,11 @@ public class StudentAccountFlowPo {
     */
     @ApiModelProperty(value="更改时间")
     private Date operateTime;
+
+    /**
+     * @see com.nmt.education.commmons.AccountFlowSourceEnum
+     * 数据来源；结转：0；退费：1；编辑：2
+     * 消耗时的source为-1
+     */
+    private Integer source ;
 }

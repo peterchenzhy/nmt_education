@@ -871,7 +871,7 @@ public class CourseRegistrationService {
             CoursePo coursePo = courseService.selectByPrimaryKey(courseRegistrationPo.getCourseId());
             studentAccountService.addAmount(logInUser, courseRegistrationPo.getStudentId(),
                     reFundTotal, courseRegistrationPo.getCourseRegistrationId(), String.format(Consts.退费进学生账户REMARK, coursePo.getName(),
-                            reFundTotal.toPlainString()));
+                            reFundTotal.toPlainString()),AccountFlowSourceEnum.退费);
 
         }
         return reFundTotal ;

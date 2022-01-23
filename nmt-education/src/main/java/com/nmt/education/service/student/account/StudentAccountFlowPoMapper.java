@@ -14,9 +14,6 @@ interface StudentAccountFlowPoMapper {
 
     StudentAccountFlowPo selectByPrimaryKey(Long id);
 
-    int updateByPrimaryKeySelective(StudentAccountFlowPo record);
-
-    int updateBatchSelective(List<StudentAccountFlowPo> list);
 
     int batchInsert(@Param("list") List<StudentAccountFlowPo> list);
 

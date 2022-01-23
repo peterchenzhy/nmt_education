@@ -109,13 +109,15 @@ public class FeeStatisticsService {
     private Map<Long, BigDecimal> getRefund2AccountMap(List<FeeStatisticsVo> list) {
         Map<Long, BigDecimal> refund2AccountMap =
                 studentAccountService.queryFlowByRegisterIds(list.stream().filter(e -> Objects.equals(e.getFeeFlowType(),
-                ExpenseDetailFlowTypeEnum.退费.getCode())).map(FeeStatisticsVo::getRegisterId).collect(Collectors.toList()))
-                .stream()
-                .filter(e -> NumberUtil.String2Dec(e.getAmount()).compareTo(NumberUtil.String2Dec(e.getBeforeAmount())) > 0)
-                .collect(Collectors.groupingBy(e -> e.getRefId(),
-                        Collectors.reducing(BigDecimal.ZERO,
-                                e -> NumberUtil.String2Dec(e.getAmount()).subtract(NumberUtil.String2Dec(e.getBeforeAmount())),
-                                BigDecimal::add)));
+                        ExpenseDetailFlowTypeEnum.退费.getCode()))
+                        .map(FeeStatisticsVo::getRegisterId).collect(Collectors.toList()))
+                        .stream()
+                        .filter(e -> e.getSource() == AccountFlowSourceEnum.退费.getCode())
+//                        .filter(e -> NumberUtil.String2Dec(e.getAmount()).compareTo(NumberUtil.String2Dec(e.getBeforeAmount())) > 0)
+                        .collect(Collectors.groupingBy(e -> e.getRefId(),
+                                Collectors.reducing(BigDecimal.ZERO,
+                                        e -> NumberUtil.String2Dec(e.getAmount()).subtract(NumberUtil.String2Dec(e.getBeforeAmount())),
+                                        BigDecimal::add)));
         return refund2AccountMap;
     }
 
@@ -214,7 +216,9 @@ public class FeeStatisticsService {
                 studentAccountService.queryFlowByRegisterIds(refundList.stream().map(RegistrationExpenseDetailFlowDto::getRegistrationId).collect(Collectors.toList()))
                 .stream().filter(e -> NumberUtil.String2Dec(e.getAmount()).compareTo(NumberUtil.String2Dec(e.getBeforeAmount())) > 0).collect(Collectors.toList());
         vo.setRefund2Account(
-        refund2AccountList.stream().map(e->NumberUtil.String2Dec(e.getAmount()).subtract(NumberUtil.String2Dec(e.getBeforeAmount())))
+        refund2AccountList.stream()
+                .filter(e->e.getSource()==AccountFlowSourceEnum.退费.getCode())
+                .map(e->NumberUtil.String2Dec(e.getAmount()).subtract(NumberUtil.String2Dec(e.getBeforeAmount())))
                 .reduce(BigDecimal::add).orElse(BigDecimal.ZERO).stripTrailingZeros().toPlainString()
         );
         //报名人数

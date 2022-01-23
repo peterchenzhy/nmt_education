@@ -2,10 +2,7 @@ package com.nmt.education.service.student;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.nmt.education.commmons.Consts;
-import com.nmt.education.commmons.Enums;
-import com.nmt.education.commmons.ExpenseDetailFlowTypeEnum;
-import com.nmt.education.commmons.StatusEnum;
+import com.nmt.education.commmons.*;
 import com.nmt.education.pojo.dto.req.AccountEditReqDto;
 import com.nmt.education.pojo.dto.req.StudentReqDto;
 import com.nmt.education.pojo.dto.req.StudentSearchReqDto;
@@ -296,6 +293,7 @@ public class StudentService {
         //插入流水
         StudentAccountFlowPo flowPo = studentAccountService.generateFlow(logInUser, accountPo.getId(), accountEditReqDto.getAmount(),
                 ExpenseDetailFlowTypeEnum.编辑, -1L,prevAmount, Consts.账户金额更新模板 + accountEditReqDto.getRemark());
+        flowPo.setSource(AccountFlowSourceEnum.后台编辑.getCode());
         studentAccountService.insertFlow(flowPo);
     }
 

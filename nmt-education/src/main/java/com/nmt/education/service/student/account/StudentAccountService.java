@@ -62,17 +62,17 @@ public class StudentAccountService {
                 BigDecimal amount = NumberUtil.String2Dec(expenseDetailPo.getDiscount())
                         .multiply(NumberUtil.String2Dec(expenseDetailPo.getPerAmount())).multiply(new BigDecimal(v.size()));
                 self.addAmount(logInUser, k, amount, expenseDetailPo.getRegistrationId(),String.format(Consts.结转进学生账户REMARK,course.getName(),
-                        amount.toPlainString()));
+                        amount.toPlainString()),AccountFlowSourceEnum.结转);
             }
         });
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void addAmount(Integer logInUser, Long userId, BigDecimal amount, Long registerId, String remark) {
+    public void addAmount(Integer logInUser, Long userId, BigDecimal amount, Long registerId, String remark,AccountFlowSourceEnum sourceEnum) {
         StudentAccountPo accountPo = querybyUserId(userId);
         if (Objects.isNull(accountPo)) {
             //新建账户
-            newStudentAccountPo(logInUser, userId, amount, registerId,String.format(Consts.新增结余账户模板,remark));
+            newStudentAccountPo(logInUser, userId, amount, registerId,String.format(Consts.新增结余账户模板,remark),sourceEnum);
         } else {
             String lastAmount = accountPo.getAmount();
             accountPo.setAmount(amount.add(NumberUtil.String2Dec(accountPo.getAmount())).toPlainString());
@@ -81,6 +81,7 @@ public class StudentAccountService {
             this.updateByVersion(accountPo);
             StudentAccountFlowPo flowPo = generateFlow(logInUser, accountPo.getId(), accountPo.getAmount(), ExpenseDetailFlowTypeEnum.编辑, registerId,
                     lastAmount, remark);
+            flowPo.setSource(sourceEnum.getCode());
             insertFlow(flowPo);
 
         }
@@ -108,7 +109,8 @@ public class StudentAccountService {
      * @version v1
      * @since 2020/8/30 21:57
      */
-    private StudentAccountPo newStudentAccountPo(Integer logInUser, Long userId, BigDecimal amount, Long registerId,String remark) {
+    private StudentAccountPo newStudentAccountPo(Integer logInUser, Long userId, BigDecimal amount, Long registerId,String remark
+    ,AccountFlowSourceEnum sourceEnum) {
         StudentAccountPo po = new StudentAccountPo();
         po.setUserId(userId);
         po.setAmount(amount.toPlainString());
@@ -121,6 +123,7 @@ public class StudentAccountService {
         this.insertSelective(po);
         StudentAccountFlowPo flowPo = generateFlow(logInUser, po.getId(), po.getAmount(), ExpenseDetailFlowTypeEnum.新增记录, registerId,
                 BigDecimal.ZERO.toPlainString(), remark);
+        flowPo.setSource(sourceEnum.getCode());
         insertFlow(flowPo);
 
         return po;
@@ -152,6 +155,8 @@ public class StudentAccountService {
         flowPo.setOperator(logInUser);
         flowPo.setOperateTime(new Date());
         flowPo.setRemark(Strings.nullToEmpty(remark));
+        //消耗的source为-1 后面根据业务可能再次赋值
+        flowPo.setSource(-1);
 
         return flowPo;
     }
