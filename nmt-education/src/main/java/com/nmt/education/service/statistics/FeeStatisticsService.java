@@ -96,6 +96,10 @@ public class FeeStatisticsService {
                     e.setAccountAmount(e.getAmount());
                     //更新map中的结余数据
                     refund2AccountMap.put(e.getRegisterId(), remainAccount);
+                }else{
+                    e.setAccountAmount(amount.toPlainString());
+                    e.setAmount(NumberUtil.String2Dec(e.getAccountAmount()).subtract(amount).toPlainString());
+                    refund2AccountMap.put(e.getRegisterId(), BigDecimal.ZERO);
                 }
             }
         }
