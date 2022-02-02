@@ -12,14 +12,13 @@ import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.Base64Utils;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.security.MessageDigest;
-import java.util.Base64;
-import java.util.Date;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -90,5 +89,19 @@ public class UserService {
         String str = Base64Utils.encodeToString(str1.getBytes());
         String md51 = DigestUtils.md5Hex(DigestUtils.md5Hex(str));
        return md51;
+    }
+
+    public List<UserVo> getUsers() {
+        List<UserPo> users = this.userPoMapper.getUsers();
+        if(CollectionUtils.isEmpty(users)){
+            return Collections.emptyList();
+        }
+
+        return users.stream().map(e->{
+            UserVo vo = new UserVo();
+            vo.setLogInUser(e.getCode());
+            vo.setName(e.getName());
+            return vo;
+        }).collect(Collectors.toList());
     }
 }

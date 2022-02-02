@@ -52,6 +52,17 @@
           </nz-form-control>
         </nz-form-item>
       </div>
+      <div nz-col nzMd="8" nzSm="24">
+        <nz-form-item>
+          <nz-form-label nzFor="operator">操作人</nz-form-label>
+          <nz-form-control nzErrorTip="请选择操作人">
+            <nz-select [(ngModel)]="queryParam.userCode" name="operator" [nzPlaceHolder]="'请选择操作人'"
+                       [nzShowSearch]="true" [nzAllowClear]="true" >
+              <nz-option *ngFor="let i of userList" [nzLabel]="i.name" [nzValue]="i.logInUser"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
       <div nz-col [nzSpan]="24" class="text-right">
         <button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
         <button nz-button type="button" (click)="export()" class="mx-sm" [nzType]="'primary'" [nzLoading]="loading"

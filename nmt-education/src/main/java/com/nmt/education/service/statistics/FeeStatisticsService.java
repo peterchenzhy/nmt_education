@@ -166,7 +166,7 @@ public class FeeStatisticsService {
     private List<FeeStatisticsVo> getExportData(FeeStatisticsReqDto dto, List<Integer> campusList) {
         PageInfo<FeeStatisticsVo> pageInfo = PageHelper.startPage(dto.getPageNo(), dto.getPageSize(), false).doSelectPageInfo(() ->
                 registrationExpenseDetailService.feeStatistics(dto.getStartDate(), dto.getEndDate(), dto.getYear(), dto.getSeason(), campusList,
-                        ExpenseDetailFlowTypeEnum.feeStatistics2FlowType(dto.getFeeFlowType()), null));
+                        ExpenseDetailFlowTypeEnum.feeStatistics2FlowType(dto.getFeeFlowType()), dto.getUserCode()));
 
         Map<Long, BigDecimal> refund2AccountMap = this.getRefund2AccountMap(pageInfo.getList());
 

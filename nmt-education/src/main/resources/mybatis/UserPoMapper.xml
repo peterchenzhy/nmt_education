@@ -38,6 +38,12 @@
         and password = #{dto.password}
         and ( code = #{dto.code} or tel =#{dto.code})
     </select>
+    <select id="getUsers" resultType="com.nmt.education.pojo.po.UserPo">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where status = 1 and code !='10000001'
+    </select>
     <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.nmt.education.pojo.po.UserPo" useGeneratedKeys="true">
         <!--@mbg.generated-->
         insert into user

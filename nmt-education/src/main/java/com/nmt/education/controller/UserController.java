@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -32,4 +33,11 @@ public class UserController {
     private String updatePassword( @RequestBody Map<String,String> map){
         return userService.updatePassword(map);
     }
+
+    @ApiOperation(value = "getUsers", notes = "获取用户")
+    @RequestMapping(value = "/getUsers", method = RequestMethod.GET)
+    public List<UserVo> getUsers() {
+        return userService.getUsers();
+    }
+
 }

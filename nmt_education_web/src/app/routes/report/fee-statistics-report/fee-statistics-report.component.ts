@@ -29,6 +29,7 @@ export class FeeStatisticsReportComponent implements OnInit {
   summaryData : FeeSummary={registerStudentCount: 0 };
   campusList = this.appCtx.globalService.CAMPUS_LIST;
   seasonList = this.appCtx.globalService.SEASON_LIST;
+  userList = this.appCtx.globalService.USER_LIST;
   feeFlowList = [{ label: "退费", value: 0 }, { label: "缴费", value: 1 }];
 
   @ViewChild('st', { static: true })

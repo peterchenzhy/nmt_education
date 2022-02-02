@@ -13,4 +13,8 @@ export class HttpService {
     public loadSystemEnums(): Observable<Object> {
         return this.httpClient.get('nmt-education/enums/all?_allow_anonymous=true');
     }
+
+  public getUsers(): Observable<Object> {
+    return this.httpClient.get('nmt-education/user/getUsers?_allow_anonymous=true');
+  }
 }

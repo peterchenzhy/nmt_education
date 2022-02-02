@@ -9,17 +9,23 @@ export interface SysEnum {
 }
 
 export interface SysEnums {
-    courseClassification: SysEnum[],
-    registrationStatus: SysEnum[],
-    courseType: SysEnum[],
-    courseSubject: SysEnum[],
-    campus: SysEnum[],
-    grade: SysEnum[],
-    season: SysEnum[],
-    courseStatus: SysEnum[],
-    feeType: SysEnum[],
-    feeStatus: SysEnum[]
+  courseClassification: SysEnum[],
+  registrationStatus: SysEnum[],
+  courseType: SysEnum[],
+  courseSubject: SysEnum[],
+  campus: SysEnum[],
+  grade: SysEnum[],
+  season: SysEnum[],
+  courseStatus: SysEnum[],
+  feeType: SysEnum[],
+  feeStatus: SysEnum[]
 }
+
+export interface User {
+  name: string,
+  logInUser: any,
+}
+
 
 export interface StudentQueryParam {
     name?: string;

@@ -1,7 +1,7 @@
 import { Injectable, Injector } from '@angular/core'
 import { BehaviorSubject } from 'rxjs';
 import { HttpService } from './http.service';
-import { SysEnums, SysEnum } from 'src/app/model/system.model';
+import {SysEnums, SysEnum,  User} from 'src/app/model/system.model';
 import { COURSE_STATUS, COURSE_TYPE, GENDER, ORDER_STATUS, PAY_STATUS, RELATIONSHIP, ORDER_TYPE, SIGNIN } from '@shared/constant/system.constant';
 
 @Injectable()
@@ -111,6 +111,13 @@ export class GlobalService {
         return obj ? obj.label : "";
     }
 
+  public USER_LIST: User[] = [];
+  public getUser(user: number) {
+    let obj = this.USER_LIST.find(i => { return i.logInUser == user });
+    return obj ? obj.name : "";
+  }
+
+
     public loadSystemEnums() {
         this.httpService.loadSystemEnums()
             .subscribe((res: SysEnums) => {
@@ -124,6 +131,11 @@ export class GlobalService {
                 this.CAMPUS_LIST = res.campus;
                 this.FEE_TYPE_LIST = res.feeType;
                 this.PAY_STATUS_LIST = res.feeStatus;
-            })
+            });
+
+      this.httpService.getUsers()
+        .subscribe((res :[])=>{
+          this.USER_LIST = res;
+        });
     }
 }
