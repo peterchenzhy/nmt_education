@@ -77,7 +77,7 @@ public class SignInTableExportService {
         //设置response
         response.setContentType("application/vnd.ms-excel");
         response.setCharacterEncoding("utf-8");
-        response.setHeader("Content-disposition", "attachment;filename=" + "课程签到表" + ".xlsx");
+        response.setHeader("Content-disposition", "attachment;filename=" + 课程签到表 + ".xlsx");
 
         ExcelWriter excelWriter = EasyExcel.write(response.getOutputStream()).build();
 

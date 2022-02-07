@@ -14,6 +14,7 @@ public class CellStyleUtil {
 
     private static String DEFAULT_CELL_STYLE = "default_cell_style";
     private static String HEAD_CELL_STYLE = "head_cell_style";
+    private static String DATA_CELL_STYLE = "data_cell_style";
     /**
      * 表头 style
      *
@@ -55,7 +56,7 @@ public class CellStyleUtil {
         WriteCellStyle defaultWriteCell = new WriteCellStyle();
         defaultWriteCell.setHorizontalAlignment(HorizontalAlignment.CENTER);
         WriteFont headWriteFont = new WriteFont();
-        headWriteFont.setFontHeightInPoints((short) 10);
+        headWriteFont.setFontHeightInPoints((short) 15);
         headWriteFont.setBold(false);
         defaultWriteCell.setWriteFont(headWriteFont);
 
@@ -63,6 +64,30 @@ public class CellStyleUtil {
 
         writeCellStyleMap.put(DEFAULT_CELL_STYLE,defaultWriteCell);
         return defaultWriteCell;
+    }
+    /**
+     * data style
+     * @return
+     */
+    public static WriteCellStyle dataCellStyle() {
+
+        WriteCellStyle writeCellStyle = writeCellStyleMap.get(DATA_CELL_STYLE);
+        if(writeCellStyle!=null){
+            return writeCellStyle;
+        }
+
+        //设置header
+        WriteCellStyle cellStyle = new WriteCellStyle();
+        cellStyle.setHorizontalAlignment(HorizontalAlignment.CENTER);
+        WriteFont headWriteFont = new WriteFont();
+        headWriteFont.setFontHeightInPoints((short) 15);
+        headWriteFont.setBold(false);
+        cellStyle.setWriteFont(headWriteFont);
+
+        setBorderStyle(cellStyle);
+
+        writeCellStyleMap.put(DATA_CELL_STYLE,cellStyle);
+        return cellStyle;
     }
 
 

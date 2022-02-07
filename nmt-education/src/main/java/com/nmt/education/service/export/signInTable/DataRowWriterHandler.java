@@ -34,7 +34,7 @@ public class DataRowWriterHandler extends AbstractRowWriteHandler {
         if (row.getRowNum() < 4) {
             return;
         }
-        CellStyle cellStyle = StyleUtil.buildContentCellStyle(writeSheetHolder.getSheet().getWorkbook(), CellStyleUtil.defaultCellStyle());
+        CellStyle cellStyle = StyleUtil.buildContentCellStyle(writeSheetHolder.getSheet().getWorkbook(), CellStyleUtil.dataCellStyle());
 
         //补足单元格，不然合并的时候样式会有问题
         for (int i = 0; i < maxCellSize; i++) {
