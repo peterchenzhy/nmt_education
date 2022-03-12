@@ -19,7 +19,7 @@ export class EntitlementService {
     canEditTeacherSalary(): boolean {
         let user = this.tokenService.get();
         let roleId = user && user.roleId ? user.roleId : "";
-        return roleId == "91";
+        return roleId == "91" || roleId == "21";
     }
 
 }

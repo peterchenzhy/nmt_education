@@ -60,7 +60,7 @@ public class StatisticsController {
             Assert.isTrue(Integer.valueOf(roleId).intValue() == RoleIdEnum.校长.getCode()
                     || Integer.valueOf(roleId).intValue() == RoleIdEnum.财务.getCode(), "您没有该功能权限");
         }
-        if (Integer.valueOf(roleId).intValue() == RoleIdEnum.员工.getCode()) {
+        if (Integer.valueOf(roleId).intValue() == RoleIdEnum.员工.getCode() || Integer.valueOf(roleId).intValue() == RoleIdEnum.资深员工.getCode()) {
             Assert.notNull( dto.getUserCode(), "员工号不能为空");
             Assert.isTrue(dto.getUserCode().equals(logInUser), "只能查询本人数据");
         }
