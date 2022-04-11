@@ -237,6 +237,7 @@ public class FeeStatisticsService {
             teacherScheduleReqDto.setEndDate(endDate);
             teacherScheduleReqDto.setYear(dto.getYear());
             teacherScheduleReqDto.setSeason(dto.getSeason());
+            teacherScheduleReqDto.setCampus(dto.getCampus());
             List<String> teacherPay = courseScheduleService.getTeacherPay(teacherScheduleReqDto, logInUser);
             vo.setTeacherPay(NumberUtil.addStringList(teacherPay).stripTrailingZeros().toPlainString());
         }

@@ -240,9 +240,10 @@
         <foreach collection="campusList" item="campus" open="(" close=")" separator=",">
           #{campus}
         </foreach>
-    inner join teacher t on c.teacher_id = t.id
+    inner join teacher t on cs.teacher_id = t.id
     where 1=1
     and cs.status = 1
+    and cs.sign_in = 1
     <if test="dto.year != null">
       and c.year = #{dto.year}
     </if>
@@ -272,6 +273,7 @@
     inner join teacher t on c.teacher_id = t.id
     where 1=1
     and cs.status = 1
+      and cs.sign_in = 1
     <if test="dto.startDate != null">
       <![CDATA[
       and  cs.course_datetime >= #{dto.startDate}
