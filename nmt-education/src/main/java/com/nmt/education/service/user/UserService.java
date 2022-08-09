@@ -1,8 +1,10 @@
 package com.nmt.education.service.user;
+import java.util.Date;
 
 import com.nmt.education.commmons.Consts;
 import com.nmt.education.commmons.utils.TokenUtil;
 import com.nmt.education.pojo.dto.req.UserLoginDto;
+import com.nmt.education.pojo.po.UserLoginLogPo;
 import com.nmt.education.pojo.po.UserPo;
 import com.nmt.education.pojo.vo.UserVo;
 import com.nmt.education.service.authorization.AuthorizationService;
@@ -29,6 +31,9 @@ public class UserService {
     @Resource
     private AuthorizationService authorizationService;
 
+    @Resource
+    private UserLoginLogMapper userLoginLogMapper;
+
     /**
      * 登录
      *
@@ -48,6 +53,17 @@ public class UserService {
         TokenUtil.Token token = new TokenUtil.Token(vo.getLogInUser(),vo.getRoleId());
         vo.setToken(TokenUtil.generateToken(token));
         log.info("用户登录成功,id:[{}],code:[{}] ,姓名:[{}]",userPo.getId(),userPo.getCode(),userPo.getName());
+
+        //记录登录日志
+        UserLoginLogPo loginLogPo = new UserLoginLogPo();
+        loginLogPo.setName(userPo.getName());
+        loginLogPo.setCode(userPo.getCode());
+        loginLogPo.setCreator(userPo.getCode());
+        loginLogPo.setCreateTime(new Date());
+        loginLogPo.setOperator(userPo.getCode());
+        loginLogPo.setOperateTime(new Date());
+        loginLogPo.setRoleId(Integer.valueOf(vo.getRoleId()));
+        userLoginLogMapper.insertSelective(loginLogPo);
 
         return vo ;
     }
