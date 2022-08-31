@@ -28,6 +28,9 @@ public class FeeSummaryVo {
     //总结余抵扣
     private String amountSummary;
 
+    //未消耗费用
+    private String unSignInPay;
+
     private String startDate ;
     private String endDate ;
 

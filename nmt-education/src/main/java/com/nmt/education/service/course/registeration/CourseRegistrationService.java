@@ -972,6 +972,12 @@ public class CourseRegistrationService {
         return this.courseRegistrationPoMapper.registerStudentSummaryTotal(startDate, endDate, year, season, userCode, campusList,  gradeList);
     }
 
+    //统计未消耗费用
+    public BigDecimal registerStudentUnSignPay(Date startDate, Date endDate, Integer year, Integer season, Integer userCode, List<Integer> campusList,
+                                            List<Integer> gradeList) {
+        return this.courseRegistrationPoMapper.registerStudentUnSignPay(startDate, endDate, year, season, userCode, campusList,  gradeList);
+    }
+
     /**
      * 根据课程id 获取查询报名记录
      *

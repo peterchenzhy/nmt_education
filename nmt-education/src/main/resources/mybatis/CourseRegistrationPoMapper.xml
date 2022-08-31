@@ -770,5 +770,44 @@
 
     </select>
 
+    <select id="registerStudentUnSignPay" resultType="java.math.BigDecimal">
+        select sum( cast(cr.balance_amount as decimal ))
+        from course_registration cr
+        inner join course c on cr.course_id=c.id and c.status = 1
+        <if test="year != null">
+            and c.year = #{year}
+        </if>
+        <if test="season != null">
+            and c.season = #{season}
+        </if>
+        where cr.status = 1
+        and c.campus in
+        <if test="campusList != null and campusList.size() != 0">
+            <foreach collection="campusList" item="campus" open="(" close=")" separator=",">
+                #{campus}
+            </foreach>
+        </if>
+        and c.grade in
+        <if test="gradeList != null and gradeList.size() != 0">
+            <foreach collection="gradeList" item="grade" open="(" close=")" separator=",">
+                #{grade}
+            </foreach>
+        </if>
+        <if test="userCode != null">
+            and cr.creator = #{userCode}
+        </if>
+        <if test="startDate != null">
+            <![CDATA[
+            and cr.create_time >= #{startDate}
+            ]]>
+        </if>
+
+        <if test="endDate != null">
+            <![CDATA[    and cr.create_time <= #{endDate}
+        ]]></if>
+
+
+    </select>
+
 
 </mapper>

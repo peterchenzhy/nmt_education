@@ -1,13 +1,13 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { _HttpClient } from '@delon/theme';
-import { tap } from 'rxjs/operators';
-import { STChange, STColumn, STComponent, STData } from '@delon/abc';
-import { FormControl, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
-import { AppContextService } from '@shared/service/appcontext.service';
-import {ResponseData, RegisterSummaryQueryParam, RegisterSummaryTotal} from 'src/app/model/system.model';
-import { DatePipe } from '@angular/common';
+import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {NzMessageService, NzModalService} from 'ng-zorro-antd';
+import {_HttpClient} from '@delon/theme';
+import {tap} from 'rxjs/operators';
+import {STChange, STColumn, STComponent, STData} from '@delon/abc';
+import {FormControl, FormGroup} from '@angular/forms';
+import {Router} from '@angular/router';
+import {AppContextService} from '@shared/service/appcontext.service';
+import {RegisterSummaryQueryParam, RegisterSummaryTotal, ResponseData} from 'src/app/model/system.model';
+import {DatePipe} from '@angular/common';
 
 @Component({
   selector: 'daily-session-report',
@@ -104,6 +104,8 @@ export class DailySessionReportComponent implements OnInit {
       .subscribe((res: RegisterSummaryTotal) => {
 
         this.rst =res;
+        var unSignInRate = this.rst.unSignInCount / (this.rst.signInCount + this.rst.unSignInCount);
+        this.rst.unSignInRate =(unSignInRate*100).toFixed(2);
 
       });
 

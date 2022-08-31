@@ -5,6 +5,7 @@ import com.nmt.education.pojo.dto.req.RegisterSummarySearchDto;
 import com.nmt.education.pojo.po.CourseRegisterCount;
 import com.nmt.education.pojo.po.CourseRegistrationPo;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -48,4 +49,12 @@ interface CourseRegistrationPoMapper {
                                      @Param("campusList") List<Integer> campusList,
                                      @Param("gradeList") List<Integer> gradeList);
 
+    BigDecimal registerStudentUnSignPay(
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate,
+            @Param("year") Integer year,
+            @Param("season") Integer season,
+            @Param("userCode") Integer userCode,
+            @Param("campusList") List<Integer> campusList,
+            @Param("gradeList") List<Integer> gradeList);
 }

@@ -231,6 +231,13 @@ public class FeeStatisticsService {
                 authorization.getGradeList());
         vo.setRegisterStudentCount(count);
 
+        //未消耗费用
+        BigDecimal unSignPay = courseRegistrationService.registerStudentUnSignPay(startDate, endDate, dto.getYear(), dto.getSeason(),
+                dto.getUserCode(),
+                campusList,
+                authorization.getGradeList());
+        vo.setUnSignInPay(unSignPay.stripTrailingZeros().toPlainString());
+
         if (isManager) {
             TeacherScheduleReqDto teacherScheduleReqDto = new TeacherScheduleReqDto();
             teacherScheduleReqDto.setStartDate(startDate);

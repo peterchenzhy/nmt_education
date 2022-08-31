@@ -129,6 +129,7 @@ export interface FeeSummary {
   endDate?: string;
   refund2Account?: string;
   registerStudentCount?: number;
+  unSignInPay?: string;
 }
 
 export interface RegisterSummaryTotal {
@@ -137,4 +138,5 @@ export interface RegisterSummaryTotal {
   unSignInCount?: number;
   registerStudentCount?: number;
   registerCount?: number;
+  unSignInRate?: string;
 }
