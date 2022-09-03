@@ -545,6 +545,9 @@ public class CourseScheduleService {
         List<TeacherScheduleDto> dataList;
         Map<Long, Map<Long, TeacherSalarySummaryDto>> teacherMap = new HashMap<>();
 
+        //报名数据
+        Map<Long,BigDecimal> courseRegisterPriceMap = new HashMap<>();
+
         do {
             dataList = getExportData(dto, authorization.getCampusList());
             dataList.stream()
@@ -575,6 +578,19 @@ public class CourseScheduleService {
                         });
                     });
 
+            List<Long> courseIds = dataList.stream().map(TeacherScheduleDto::getCourseId).distinct()
+                    .filter(e->!courseRegisterPriceMap.containsKey(e))
+                    .collect(Collectors.toList());
+            if(!CollectionUtils.isEmpty(courseIds)){
+                courseRegisterPriceMap.putAll( courseRegistrationService.courseRegisterFeeSummary(courseIds).stream()
+                      .collect(Collectors.toMap(k->k.getCourseId(),v->{
+                          if(Objects.isNull(v.getTotalAmount())||v.getTotalAmount().compareTo(BigDecimal.ZERO)==0 ){
+                              return BigDecimal.ONE;
+                          }
+                             return  v.getTotalAmount();
+                      })));
+            }
+
             int pageNo = dto.getPageNo() + 1;
             dto.setPageNo(pageNo);
         } while (!CollectionUtils.isEmpty(dataList));
@@ -583,6 +599,10 @@ public class CourseScheduleService {
                 .map(e -> {
                     e.setStartDate(dto.getStartDate());
                     e.setEndDate(dto.getEndDate());
+                    e.setCourseTeacherFeeRatio(
+                            new BigDecimal(e.getTeacherPrice()).divide(courseRegisterPriceMap.getOrDefault(e.getCourseId(),BigDecimal.ONE),
+                            5,BigDecimal.ROUND_DOWN)
+                    );
                     return e;
                 }).collect(Collectors.toList());
     }

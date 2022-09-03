@@ -403,4 +403,12 @@
         ) as temp
 
     </select>
+    <select id="courseRegisterFeeSummaryList"
+            resultType="com.nmt.education.service.course.registeration.CourseRegisterFeeSummary">
+        select course_id as courseId ,sum(cast( as decimal )) as totalAmount
+        from registeration_summary where status =  1
+group  by course_id
+
+
+    </select>
 </mapper>

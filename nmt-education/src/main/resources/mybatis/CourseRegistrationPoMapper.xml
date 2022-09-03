@@ -808,6 +808,16 @@
 
 
     </select>
-
+    <select id="courseRegisterFeeSummary"
+            resultType="com.nmt.education.service.course.registeration.CourseRegisterFeeSummary">
+        select cr.course_id as courseId , sum( cast(cr.total_amount as decimal )) as totalAmount
+        from course_registration cr
+        where cr.status = 1
+        and cr.course_id in
+        <foreach collection="courseIds" open="(" close=")" separator="," item="courseId">
+            #{courseId}
+        </foreach>
+        group by cr.course_id
+    </select>
 
 </mapper>

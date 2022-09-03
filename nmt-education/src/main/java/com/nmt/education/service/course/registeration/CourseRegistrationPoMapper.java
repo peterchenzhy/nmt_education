@@ -57,4 +57,6 @@ interface CourseRegistrationPoMapper {
             @Param("userCode") Integer userCode,
             @Param("campusList") List<Integer> campusList,
             @Param("gradeList") List<Integer> gradeList);
+
+    List<CourseRegisterFeeSummary> courseRegisterFeeSummary(@Param("courseIds") List<Long> courseIds);
 }
