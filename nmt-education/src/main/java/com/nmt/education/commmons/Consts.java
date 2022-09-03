@@ -33,7 +33,7 @@ public interface Consts {
     Integer CONFIG_TYPE_年级 = 6;
     Integer CONFIG_TYPE_季节 = 2;
 
-    int BATCH_100 = 100;
+    int BATCH_200 = 200;
     int BATCH_10 = 10;
 
 

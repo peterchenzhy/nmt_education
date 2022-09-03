@@ -19,7 +19,6 @@ import com.nmt.education.pojo.vo.TeacherScheduleDto;
 import com.nmt.education.service.authorization.AuthorizationCheckDto;
 import com.nmt.education.service.authorization.AuthorizationDto;
 import com.nmt.education.service.authorization.AuthorizationService;
-import com.nmt.education.service.authorization.campus.CampusAuthorizationService;
 import com.nmt.education.service.course.CourseService;
 import com.nmt.education.service.course.registeration.CourseRegistrationService;
 import com.nmt.education.service.course.registeration.RegistrationExpenseDetailService;
@@ -39,7 +38,6 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.nmt.education.commmons.Consts.SYSTEM_USER;
@@ -494,9 +492,9 @@ public class CourseScheduleService {
         if (dto.getEndDate() != null) {
             dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
         }
-        List<TeacherScheduleDto> resultList = new ArrayList<>(Consts.BATCH_100);
+        List<TeacherScheduleDto> resultList = new ArrayList<>(Consts.BATCH_200);
         dto.setPageNo(1);
-        dto.setPageSize(Consts.BATCH_100);
+        dto.setPageSize(Consts.BATCH_200);
         List<TeacherScheduleDto> dataList;
         do {
             dataList = getExportData(dto, authorization.getCampusList() );
@@ -543,7 +541,7 @@ public class CourseScheduleService {
             dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
         }
         dto.setPageNo(1);
-        dto.setPageSize(Consts.BATCH_100);
+        dto.setPageSize(Consts.BATCH_200);
         List<TeacherScheduleDto> dataList;
         Map<Long, Map<Long, TeacherSalarySummaryDto>> teacherMap = new HashMap<>();
 

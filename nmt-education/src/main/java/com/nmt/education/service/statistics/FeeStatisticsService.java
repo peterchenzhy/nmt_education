@@ -148,9 +148,9 @@ public class FeeStatisticsService {
         if (dto.getEndDate() != null) {
             dto.setEndDate(DateUtil.parseCloseDate(dto.getEndDate()));
         }
-        List<FeeStatisticsVo> resultList = new ArrayList<>(Consts.BATCH_100);
+        List<FeeStatisticsVo> resultList = new ArrayList<>(Consts.BATCH_200);
         dto.setPageNo(1);
-        dto.setPageSize(Consts.BATCH_100);
+        dto.setPageSize(Consts.BATCH_200);
         List<FeeStatisticsVo> dataList;
         do {
             dataList = getExportData(dto, authorization.getCampusList());
