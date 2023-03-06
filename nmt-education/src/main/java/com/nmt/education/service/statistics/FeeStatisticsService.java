@@ -236,7 +236,11 @@ public class FeeStatisticsService {
                 dto.getUserCode(),
                 campusList,
                 authorization.getGradeList());
-        vo.setUnSignInPay(unSignPay.stripTrailingZeros().toPlainString());
+        if(Objects.isNull(unSignPay)){
+            vo.setUnSignInPay(BigDecimal.ZERO.toPlainString());
+        }else {
+            vo.setUnSignInPay(unSignPay.stripTrailingZeros().toPlainString());
+        }
 
         if (isManager) {
             TeacherScheduleReqDto teacherScheduleReqDto = new TeacherScheduleReqDto();
