@@ -116,7 +116,7 @@ public class SignInTableExportService {
 
 
             WriteSheet writeSheet = new ExcelWriterSheetBuilder(excelWriter)
-                    .sheetName(coursePo.getName().replace("/", "_")).needHead(false)
+                    .sheetName(coursePo.getName().replace("/", "_").replace(":","_")).needHead(false)
                     .registerWriteHandler(new Row1Row2WriterHandler(columns))
                     .registerWriteHandler(new Row3Row4WriterHandler(columns, times, date))
                     .registerWriteHandler(new DataRowWriterHandler(columns, dataList))
